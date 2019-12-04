@@ -508,7 +508,7 @@ var fnGetPendientesEnviar = function () {
   arrProveedores = $('#cboProveedor').val();
   strMoneda = $('#rdMXN').is(':checked') ? 'MXN' : 'USD';
   WaitMe_Show('#divTablaPendientesEnviar');
-  fetch("/PendientesEnviar/FilterBy?FechaDescargaDesde="+ startDate +"&FechaDescargaHasta="+ endDate +"&Status="+ JSON.stringify(arrStatus) +"&Cliente="+ JSON.stringify(arrProveedores) +"&Moneda="+ strMoneda, {
+  fetch("/PendientesEnviar/FilterBy?FechaDescargaDesde="+ startDate +"&FechaDescargaHasta="+ endDate +"&Status="+ JSON.stringify(arrStatus) +"&Proveedor="+ JSON.stringify(arrProveedores) +"&Moneda="+ strMoneda, {
     method: "GET",
     credentials: "same-origin",
     headers: {
