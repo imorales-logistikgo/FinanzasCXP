@@ -65,22 +65,23 @@
 							<h4 class="kt-menu__section-text">Facturas</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
-						<li class="kt-menu__item {% block activatePendientesEnviar %} {% endblock %}" aria-haspopup="true"><a href="{% url 'PendienteEnviar' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-file-1"></i><span class="kt-menu__link-text">Pendientes de enviar</span></a></li>
+						<li class="kt-menu__item {% block activatePendientesEnviar %} {% endblock %}" aria-haspopup="true"><a href="{% url 'PendienteEnviar' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-file-invoice"></i><span class="kt-menu__link-text">Pendientes de enviar</span></a></li>
 
 
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Pagos</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
-						<li class="kt-menu__item {% block activateEstadosCuenta %} {% endblock %}" aria-haspopup="true"><a href="{% url 'EstadosCuenta' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-coins"></i><span class="kt-menu__link-text">Estados de cuenta</span></a></li>
+						<li class="kt-menu__item {% block activateEstadosCuenta %} {% endblock %}" aria-haspopup="true"><a href="{% url 'EstadosCuenta' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-money-bill-wave"></i><span class="kt-menu__link-text">Estados de cuenta</span></a></li>
 
 
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Reportes</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
-						<li class="kt-menu__item {% block activateReporteCobros %} {% endblock %}" aria-haspopup="true"><a href="#" class="kt-menu__link "><i class="kt-menu__link-icon flaticon2-checkmark"></i><span class="kt-menu__link-text">Pagos</span></a></li>
-						<li class="kt-menu__item {% block activateReporteCanceladas %} {% endblock %}" aria-haspopup="true"><a href="#" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Canceladas</span></a></li>
+						<li class="kt-menu__item {% block activateReporteFacturas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteFacturas' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-file-invoice-dollar"></i><span class="kt-menu__link-text">Facturas</span></a></li>
+						<li class="kt-menu__item {% block activateReportePagos %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagos' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon2-checkmark"></i><span class="kt-menu__link-text">Pagos</span></a></li>
+						<li class="kt-menu__item {% block activateReporteCanceladas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteCanceladas' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Canceladas</span></a></li>
 
 
 					</ul>
@@ -193,7 +194,10 @@
 			{% block ContadoresEstadosCuenta %}
 			{% endblock %}
 
-			{% block ContadoresReporteCobros %}
+			{% block ContadoresReporteFacturas %}
+			{% endblock %}
+
+			{% block ContadoresReportePagos %}
 			{% endblock %}
 
 			{% block ContadoresReporteCanceladas %}
@@ -208,7 +212,10 @@
 			{% block FiltrosEstadosCuenta %}
 			{% endblock %}
 
-			{% block FiltrosReporteCobros %}
+			{% block FiltrosReporteFacturas %}
+			{% endblock %}
+
+			{% block FiltrosReportePagos %}
 			{% endblock %}
 
 			{% block FiltrosReporteCanceladas %}
@@ -225,7 +232,10 @@
 			{% block EstadosCuenta %}
 			{% endblock %}
 
-			{% block ReporteCobros %}
+			{% block ReporteFacturas %}
+			{% endblock %}
+
+			{% block ReportePagos %}
 			{% endblock %}
 
 			{% block ReporteCanceladas %}

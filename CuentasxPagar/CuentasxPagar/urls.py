@@ -15,11 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('PendientesEnviar/', include('PendientesEnviar.urls')),
     path('Dashboard/', include('Dashboard.urls')),
     path('EstadosdeCuenta/', include('EstadosCuenta.urls')),
+    path('', include('ReporteFacturas.urls')),
+    path('', include('ReportePagos.urls')),
+    path('', include('ReporteCanceladas.urls')),
     path('Usuario/', include('Usuario.urls')),
+
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += path('_debug_/', include(debug_toolbar.urls)),

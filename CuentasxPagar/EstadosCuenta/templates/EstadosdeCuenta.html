@@ -10,10 +10,10 @@ kt-menu__item--active
 	<div class="kt-container  kt-container--fluid ">
 
 		<div>
-			<span class="badge badge-pill badge-primary">Pendientes<span class="badge badge-pill badge-dark"><strong>{{ContadoresPendientes}}</strong></span></span>
-			<span class="badge badge-pill badge-secondary">Abonadas<span class="badge badge-pill badge-dark"><strong>15</strong></span></span>
-			<span class="badge badge-pill badge-success">Pagadas<span class="badge badge-pill badge-dark"><strong>{{ContadoresAbonadas}}</strong></span></span>
-			<span class="badge badge-pill badge-danger">Canceladas<span class="badge badge-pill badge-dark"><strong>{{ContadoresAbonadas}}</strong></span></span>
+			<span class="badge badge-pill badge-primary">Pendientes<span class="badge badge-pill badge-secondary"><strong>{{ContadoresPendientes}}</strong></span></span>
+			<span class="badge badge-pill badge-warning">Abonadas<span class="badge badge-pill badge-secondary"><strong>{{ContadoresPendientes}}</strong></span></span>
+			<span class="badge badge-pill badge-success">Pagadas<span class="badge badge-pill badge-secondary"><strong>{{ContadoresAbonadas}}</strong></span></span>
+			<span class="badge badge-pill badge-danger">Canceladas<span class="badge badge-pill badge-secondary"><strong>{{ContadoresAbonadas}}</strong></span></span>
 		</div>
 
 		<div class="kt-header__topbar-item kt-header__topbar-item--quick-panel" data-toggle="kt-tooltip" title="Filtros" data-placement="right">
@@ -155,7 +155,7 @@ kt-menu__item--active
 					<div class="tab-content" id="nav-tabContent">
 						<ul class="nav nav-tabs" id="myTab" role="tablist">
 							<li class="nav-item">
-								<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Pago</a>
+								<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Pagos</a>
 							</li>
 							<li class="nav-item">
 								<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Complementos</a>
@@ -260,7 +260,7 @@ kt-menu__item--active
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-success btn-elevate" id="btnSaveCobro">Guardar</button>
+				<button type="button" class="btn btn-success btn-elevate" id="btnSavePago">Guardar</button>
 				<button type="button" class="btn btn-danger btn-elevate " data-dismiss="modal" id="cerrarModalSF">Close</button>
 			</div>
 		</div>

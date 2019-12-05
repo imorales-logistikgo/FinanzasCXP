@@ -14,10 +14,10 @@ formatDataTable();
 //on click select row checkbox
         $(document).on( 'change', 'input[name="checkPE"]', function () {
           var input = 'input[name="checkPE"]';
-          var btnSubir = '#BtnSubirFacturaPendietnesEnviar';
+          var btnSubir = '#btnSubirFacturaPendietnesEnviar';
           if($(this).is(':checked'))
           {
-            FiltroCheckboxCliente();
+            FiltroCheckboxProveedor();
             adddatos();
             ContadorCheck(input, btnSubir);
           }
@@ -31,9 +31,9 @@ formatDataTable();
 
 
 //on click para el boton del modal subir factura
-$(document).on('click', '#BtnSubirFacturaPendietnesEnviar',getDatos);
+$(document).on('click', '#btnSubirFacturaPendietnesEnviar',getDatos);
 
-$('#BtnAplicarFiltro').on('click', fnGetPendientesEnviar);
+$('#btnAplicarFiltro').on('click', fnGetPendientesEnviar);
 
 $('#btnGuardarFactura').on('click', function(){
   if($('#kt_uppy_1').data("rutaarchivoPDF") != undefined && $('#kt_uppy_1').data("rutaarchivoXML") != undefined)
@@ -129,7 +129,7 @@ $('#kt_modal_2').on('hidden.bs.modal', function(){
   KTUppy.init()
 });
 
-$('input[name="TipoCambio"]').on('change', function(){
+$('input[name="TipoCambio"]').on('keyup', function(){
   getDatos();
 });
 
@@ -140,7 +140,7 @@ $('input[name="TipoCambio"]').on('change', function(){
 
 
 //validacion mismo cliente en los checkbox
-function FiltroCheckboxCliente(){
+function FiltroCheckboxProveedor(){
   var checked = $("input[name='checkPE']:checked");
   $("input[name=checkPE]:checked").each(function () {
    var check = table.row($(this).parents('tr')).data();
@@ -171,7 +171,6 @@ function LimpiarModalSF()
   $('input[name="TipoCambio"]').val(1);
   TestFile = null;
   $('.uploaded-files ol').remove();
-  $('#Fragmentada').remove();
   $('#see').hide();
   $('#seeAlert').hide();
   //ids = [];
@@ -427,7 +426,7 @@ function getDatos(){
 
       if(response.status == 200)
       {
-        $('#BtnSubirFacturaPendietnesEnviar').prop("disabled", true);
+        $('#btnSubirFacturaPendietnesEnviar').prop("disabled", true);
     //  console.log(ids);
     return response.clone().json();
   }

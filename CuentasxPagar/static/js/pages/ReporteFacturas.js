@@ -1,28 +1,27 @@
 $(document).ready(function(){
+  formatTableReporteFacturas();
 
-
-  formatTableCobros();
-
-  //rago fecha para el Filtro
-  $('input[name="FiltroFechaReporteCobros"]').daterangepicker({
-   autoUpdateInput: false
- });
-
-  $('input[name="FiltroFechaReporteCobros"]').on('apply.daterangepicker', function(ev, picker) {
-    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-  });
-
-  $('#BtnAplicarFiltro').on('click', getReportesByFilters);
-
+//rago fecha para el Filtro
+$('input[name="filtroFechaReporteFacturas"]').daterangepicker({
+ autoUpdateInput: false
 });
+
+$('input[name="filtroFechaReporteFacturas"]').on('apply.daterangepicker', function(ev, picker) {
+  $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+});
+
+$('#btnAplicarFiltro').on('click', getReportesByFilters);
+
 
 function getReportesByFilters() {
   startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
   endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
-  arrClientes = $('#cboCliente').val();
-  strMoneda = $('#rdMXN').is(':checked') ? 'MXN' : 'USD';
+  arrProveedor = $('#cboProveedor').val();
+  strMoneda = [];
+  $('#rdMXN').is(':checked') ? strMoneda.push('MXN') : null;
+  $('#rdUSD').is(':checked') ? strMoneda.push('USD') : null;
   //WaitMe_Show('#TbPading');
-  fetch("/ReporteCobros/FilterBy?FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Cliente="+ JSON.stringify(arrClientes) +"&Moneda="+ strMoneda, {
+  fetch("/ReporteCobros/FilterBy?FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Cliente="+ JSON.stringify(arrProveedor) +"&Moneda="+ JSON.stringify(strMoneda), {
     method: "GET",
     credentials: "same-origin",
     headers: {
@@ -40,8 +39,9 @@ function getReportesByFilters() {
   });
 }
 
-function formatTableCobros() {
-  $("#TableReporteCobros").DataTable({
+function formatTableReporteFacturas() {
+  $("#TableReporteFacturas").DataTable({
+    "scrollX": true,
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
@@ -49,7 +49,10 @@ function formatTableCobros() {
     "paging": true,
     "dom": 'Bfrtip',
     "buttons": [
-    'excel'
+      {
+        extend: 'excel',
+        text: '<i class="fas fa-file-excel fa-lg"></i>',
+      }
     ],
     columnDefs: [
     {
@@ -72,3 +75,4 @@ function formatTableCobros() {
     ]
   });
 }
+});
