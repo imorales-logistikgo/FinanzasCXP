@@ -436,10 +436,10 @@ function savePagoxProveedor()  {
     Comentarios: $('#comentariosEC').val(),
     RutaXML: $('#RutaXML').attr('href'),
     RutaPDF: $('#RutaPDF').attr('href'),
-    proveedor: proveedor,
+    Proveedor: proveedor,
   }
 
-  fetch("/EstadosdeCuenta/SaveCobroxCliente", {
+  fetch("/EstadosdeCuenta/SaveCobroxProveedor", {
     method: "POST",
     credentials: "same-origin",
     headers: {

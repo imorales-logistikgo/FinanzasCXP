@@ -51,7 +51,7 @@ def SaveFacturaxProveedor(request):
 	jParams = json.loads(request.body.decode('utf-8'))
 	newFactura = FacturasxProveedor()
 	newFactura.Folio = jParams["FolioFactura"]
-	newFactura.NombreCortoProovedor = jParams["Proovedor"]
+	newFactura.NombreCortoProveedor = jParams["Proveedor"]
 	newFactura.FechaFactura = datetime.datetime.strptime(jParams["FechaFactura"],'%Y/%m/%d')
 	newFactura.FechaRevision = datetime.datetime.strptime(jParams["FechaRevision"],'%Y/%m/%d')
 	newFactura.FechaVencimiento = datetime.datetime.strptime(jParams["FechaVencimiento"],'%Y/%m/%d')
@@ -76,10 +76,10 @@ def SavePartidasxFactura(request):
 		Viaje = View_PendientesEnviarCxP.objects.get(IDConcepto = IDConcepto)
 		newPartida = PartidaProveedor()
 		newPartida.FechaAlta = datetime.datetime.now()
-		newPartida.Subtotal = Viaje.PrecioSubtotal
-		newPartida.IVA = Viaje.PrecioIVA
-		newPartida.Retencion = Viaje.PrecioRetencion
-		newPartida.Total = Viaje.PrecioTotal
+		newPartida.Subtotal = Viaje.CostoSubtotal
+		newPartida.IVA = Viaje.CostoIVA
+		newPartida.Retencion = Viaje.CostoRetencion
+		newPartida.Total = Viaje.CostoTotal
 		newPartida.save()
 		newRelacionFacturaxPartida = RelacionFacturaProveedorxPartidas()
 		newRelacionFacturaxPartida.IDFacturaxProveedor = FacturasxProveedor.objects.get(IDFactura = jParams["IDFactura"])
