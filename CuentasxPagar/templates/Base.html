@@ -80,7 +80,7 @@
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
 						<li class="kt-menu__item {% block activateReporteFacturas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteFacturas' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-file-invoice-dollar"></i><span class="kt-menu__link-text">Facturas</span></a></li>
-						<li class="kt-menu__item {% block activateReporteCobros %} {% endblock %}" aria-haspopup="true"><a href="#" class="kt-menu__link "><i class="kt-menu__link-icon flaticon2-checkmark"></i><span class="kt-menu__link-text">Pagos</span></a></li>
+						<li class="kt-menu__item {% block activateReportePagos %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagos' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon2-checkmark"></i><span class="kt-menu__link-text">Pagos</span></a></li>
 						<li class="kt-menu__item {% block activateReporteCanceladas %} {% endblock %}" aria-haspopup="true"><a href="#" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Canceladas</span></a></li>
 
 
@@ -197,7 +197,7 @@
 			{% block ContadoresReporteFacturas %}
 			{% endblock %}
 
-			{% block ContadoresReporteCanceladas %}
+			{% block ContadoresReportePagos %}
 			{% endblock %}
 
 			<!-- fin contadores-->
@@ -212,7 +212,7 @@
 			{% block FiltrosReporteFacturas %}
 			{% endblock %}
 
-			{% block FiltrosReporteCanceladas %}
+			{% block FiltrosReportePagos %}
 			{% endblock %}
 			<!-- fin filtros-->
 
@@ -229,7 +229,7 @@
 			{% block ReporteFacturas %}
 			{% endblock %}
 
-			{% block ReporteCanceladas %}
+			{% block ReportePagos %}
 			{% endblock %}
 			<!--end contenido-->
 

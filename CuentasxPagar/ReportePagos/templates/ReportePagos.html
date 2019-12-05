@@ -1,16 +1,13 @@
 {% extends "Base.html" %}
 {% load static %}
-{% block activateReporteFacturas %}
+{% block activateReportePagos %}
 kt-menu__item--active
 {% endblock %}
 
-{% block ContadoresReporteFacturas %}
+{% block ContadoresReportePagos %}
 <div class="kt-subheader kt-grid__item">
 	<div class="kt-container  kt-container--fluid ">
 		<div>
-			<span class="badge badge-pill badge-success">Pagadas<span class="badge badge-pill badge-secondary"><strong>12</strong></span></span>
-			<span class="badge badge-pill badge-info">Abonadas<span class="badge badge-pill badge-secondary"><strong>12</strong></span></span>
-			<span class="badge badge-pill badge-danger">Canceladas<span class="badge badge-pill badge-secondary"><strong>12</strong></span></span>
 		</div>
 		<div class="kt-header__topbar-item kt-header__topbar-item--quick-panel" data-toggle="kt-tooltip" title="Filtros" data-placement="right">
 			<span class="kt-header__topbar-icon" id="kt_quick_panel_toggler_btn">
@@ -22,7 +19,7 @@ kt-menu__item--active
 {% endblock %}
 
 
-{% block FiltrosReporteFacturas %}
+{% block FiltrosReportePagos %}
 <div id="kt_quick_panel" class="kt-quick-panel">
 	<div class="kt-quick-panel__content">
 		<div class="tab-content">
@@ -32,7 +29,7 @@ kt-menu__item--active
 						<label class="col-form-label col-lg-3 col-sm-12"><strong>Fecha: </strong></label>
 						<div class="col-lg-12 col-md-8 col-sm-12">
 							<div class="kt-input-icon pull-right" id='kt_daterangepicker_2_modal'>
-								<input type="text" class="form-control " placeholder="Desde - Hasta" name="filtroFechaReporteFacturas" id="cboFechaDescarga">
+								<input type="text" class="form-control " placeholder="Desde - Hasta" name="filtroFechaReportePagos" id="cboFechaDescarga">
 								<span class="kt-input-icon__icon kt-input-icon__icon--right"><span><i class="la la-calendar-check-o"></i></span></span>
 							</div>
 						</div>
@@ -83,13 +80,13 @@ kt-menu__item--active
 </div>
 {% endblock %}
 
-{% block ReporteFacturas %}
+{% block ReportePagos %}
 
 <div class="kt-subheader   kt-grid__item" id="kt_subheader">
 	<div class="kt-container  kt-container--fluid ">
 		<div class="kt-subheader__toolbar">
 			<div class="kt-subheader__wrapper">
-				<h3>Reporte de facturas</h3>
+				<h3>Reporte de pagos</h3>
 			</div>
 		</div>
 	</div>
@@ -98,13 +95,13 @@ kt-menu__item--active
 <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
 		<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
-			{% include "TablaReporteFacturas.html" %}
+			{% include "TablaReportePagos.html" %}
 		</div>
 	</div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src='{% static "js/pages/ReporteFacturas.js" %}' type="text/javascript"></script>
+<script src='{% static "js/pages/ReportePagos.js" %}' type="text/javascript"></script>
 <script src='{% static "js/es_ES.min.js" %}'></script>
 {% endblock %}

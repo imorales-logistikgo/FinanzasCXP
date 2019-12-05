@@ -129,7 +129,7 @@ $('#kt_modal_2').on('hidden.bs.modal', function(){
   KTUppy.init()
 });
 
-$('input[name="TipoCambio"]').on('change', function(){
+$('input[name="TipoCambio"]').on('keyup', function(){
   getDatos();
 });
 
