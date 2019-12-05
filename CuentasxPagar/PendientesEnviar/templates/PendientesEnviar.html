@@ -119,7 +119,7 @@ kt-menu__item--active
 															<div class="container py-4">
 										            <div class="row justify-content-between">
 										              <div class="col-4">
-										              <button type="Submit" name="button" class="btn btn-brand btn-elevate btn-pill btn-elevate-air btn-sm float-right" id="BtnAplicarFiltro">Aplicar</button>
+										              <button type="Submit" name="button" class="btn btn-brand btn-elevate btn-pill btn-elevate-air btn-sm float-right" id="btnAplicarFiltro">Aplicar</button>
 										              </div>
 										              <div class="col-4">
 										              <button type="button" name="button" class="btn btn-danger btn-elevate btn-pill btn-elevate-air btn-sm" id="kt_quick_panel_close_btn">Cancelar</button>
@@ -267,52 +267,6 @@ kt-menu__item--active
 																		<ol></ol>
 																	</div>
 																 </div>
-
-																	<!-- fragmentada -->
-																	<div class="alert alert-light alert-elevate" role="alert" id="seeAlert">
-																			<div class="alert-icon"><i class="flaticon-warning"></i></div>
-																			<div class="alert-text"><p class="h3 text-center text-danger">Servicios</p></div>
-																	</div>
-
-																  	<div class="container" id="seeFolioAndComen">
-																			<div class="row">
-																				<div class="col col-md-4">
-																					<label for="Folio">Folio Servicio:</label>
-																					<input type="text" class="form-control form-control-sm" id="txtFolioServicios" name="FolioServicios" required>
-																				</div>
-																				<div class="col">
-																					<label for="Comentarios">Comentarios:</label>
-																					<input type="text" class="form-control form-control-sm" id="txtComentariosServicios" name="ComentariosServicios">
-																				</div>
-																			</div>
-																		</div></br>
-
-																	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid" id="see">
-
-																		<div class="col-lg-12">
-																			<div class="kt-portlet kt-portlet--height-fluid">
-																				<div class="kt-portlet__head">
-																					<div class="kt-portlet__head-label">
-																						<h3 class="kt-portlet__head-title">
-																							PDF y XML Servicios
-																						</h3>
-																					</div>
-																				</div>
-																				<div id="divFragmentada">
-
-																				</div>
-																			</div>
-																		</div>
-																		<!--ver archivos subidos (PDF y XML) fragmentada-->
-																	<div class="container">
-																		<div class="uploaded-files-fragmentadas">
-																			<h5>Archivos Subidos:</h5>
-																			<ol></ol>
-																		</div>
-																	 </div>
-																	</div>
-
-
 																	</div>
 
 																<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -402,6 +356,6 @@ kt-menu__item--active
 
 									{% block scripts %}
 									<script src='{% static "js/pages/FuncionesDinamicasCxP.js" %}'></script>
-									<script src='{% static "js/PendientesEnviarCxP.js" %}' type="text/javascript"></script>
+									<script src='{% static "js/pages/PendientesEnviarCxP.js" %}' type="text/javascript"></script>
 									<script src='{% static "js/es_ES.min.js" %}'></script>
 									{% endblock %}

@@ -108,14 +108,14 @@ $('#tableAddPago').on("change", 'input[name="totalPago"]', function(){
 
 
 //validacion si tienes los archivos pdf y xml
-$(document).on('click', '#btnSaveCobro', function(){
+$(document).on('click', '#btnSavePago', function(){
   //console.log($('input[name="TipoCambioPago"]').val());
   if($('#ComplementosPagos').data("rutaarchivoPDF") != undefined || $('#ComplementosPagos').data("rutaarchivoXML") != undefined)
   {
     if($('input[name="FolioPago"]').val() != "")
     {
       //alert("puedes subir el pago");
-      saveCobroxCliente();
+      savePagoxProveedor();
     }
     else
     {
@@ -427,7 +427,7 @@ function getDetalleFactura()
   });
 }
 
-function saveCobroxCliente()  {
+function savePagoxProveedor()  {
   jParams = {
     Folio: $('#FolioPago').val(),
     Total:$('#AddCosto').val(),
@@ -466,13 +466,13 @@ function saveCobroxCliente()  {
     }
 
   }).then(function(IDCobro){
-    SaveCobroxFactura(IDCobro);
+    SavePagoxFactura(IDCobro);
   }).catch(function(ex){
     console.log("no success!");
   });
 }
 
-function SaveCobroxFactura(IDCobro)
+function SavePagoxFactura(IDCobro)
 {
   var arrCobros = [];
   $('.valCobro').each(function() {

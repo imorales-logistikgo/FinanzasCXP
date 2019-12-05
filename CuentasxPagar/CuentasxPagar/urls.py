@@ -21,5 +21,6 @@ urlpatterns = [
     path('', include('PendientesEnviar.urls')),
     path('Dashboard/', include('Dashboard.urls')),
     path('', include('EstadosCuenta.urls')),
+    path('', include('ReporteFacturas.urls')),
     path('Usuario/', include('Usuario.urls')),
 ]

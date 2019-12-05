@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'PendientesEnviar',
     'Dashboard',
     'EstadosCuenta',
+    'ReporteFacturas',
     'Usuario',
 ]
 
