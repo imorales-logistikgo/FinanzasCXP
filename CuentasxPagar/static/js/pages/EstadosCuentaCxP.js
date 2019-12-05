@@ -92,9 +92,9 @@ $('#modalSubirPagos').on('hidden.bs.modal', function(){
 $(document).on('click', '#btnSubirPagos',showDatosObtenidos);
 
 //validar el total del cobro por cada factura seleccionada -- en el modal subir cobros
-$('#tableAddPago').on("change", 'input[name="totalPago"]', function(){
-  var table = $('#tableAddPago').DataTable();
-  var datosRow = table.row($(this).parents('tr')).data();
+$('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
+  var table1 = $('#tableAddPago').DataTable();
+  var datosRow = table1.row($(this).parents('tr')).data();
   if(parseFloat($(this).val()) >= datosRow[2])
   {
     (datosRow[3] === 'MXN') ?  $(this).val(datosRow[2]) : $(this).val(totConv)
@@ -110,8 +110,6 @@ $('#tableAddPago').on("change", 'input[name="totalPago"]', function(){
 //validacion si tienes los archivos pdf y xml
 $(document).on('click', '#btnSavePago', function(){
   //console.log($('input[name="TipoCambioPago"]').val());
-  if($('#ComplementosPagos').data("rutaarchivoPDF") != undefined || $('#ComplementosPagos').data("rutaarchivoXML") != undefined)
-  {
     if($('input[name="FolioPago"]').val() != "")
     {
       //alert("puedes subir el pago");
@@ -121,11 +119,6 @@ $(document).on('click', '#btnSavePago', function(){
     {
       alertToastError("El folio no puede estar vacio");
     }
-  }
-  else
-  {
-    alertToastError("Son necesarios los complementos PDF y XML");
-  }
 });
 
 
@@ -156,7 +149,7 @@ KTUtil.ready(function() {
 });
 
 
-$('input[name="TipoCambioPago"]').on('change', function(){
+$('input[name="TipoCambioPago"]').on('keyup', function(){
   showDatosObtenidos();
 });
 
