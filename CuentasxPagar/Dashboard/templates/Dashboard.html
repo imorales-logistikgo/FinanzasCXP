@@ -1,23 +1,5 @@
-{%extends "Master.html"%}
-{%block body_block%}
+{% extends "Base.html" %}
 {% load static %}
-<link href='{% static "css/Dashboard.css" %}' rel="stylesheet" type="text/css" />
-<div class="row">
-	<div class="col-lg-12 text-center">
-		<h3>AREA EN DESARROLLO</h3>
-	</div>
-</div>
-<div class="row">
-	<div class="col-lg-12 feature-chart feature-chart__right"><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block;  border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; position: absolute; pointer-events: none; z-index: -1;"></iframe>
-		<canvas id="animate-chart" style="width: 400px; height: 400px; padding: 0; margin: auto; display: block;"></canvas>
-	</div>
-</div>
-<div class="row">
-	<div class="col-lg-12 text-center">
-		<p>Se esta trabajando en esta pagina para darte un servicio único</p>
-	</div>
-</div>
-
-
-<script src='{% static "js/dashboard.js" %}' type="text/javascript"></script>
-{%endblock%}
+{% block activateIndicadores %}
+kt-menu__item--active
+{% endblock %}
