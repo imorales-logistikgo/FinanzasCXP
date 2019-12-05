@@ -12,17 +12,17 @@ $(document).ready(function(){
     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
-  $('#BtnAplicarFiltro').on('click', getReportesByFilters);
+  $('#btnAplicarFiltro').on('click', getReportesByFilters);
 
 });
 
 function getReportesByFilters() {
   startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
   endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
-  arrClientes = $('#cboCliente').val();
+  arrProveedores = $('#cboProveedor').val();
   strMoneda = $('#rdMXN').is(':checked') ? 'MXN' : 'USD';
   //WaitMe_Show('#divTablaFacturas');
-  fetch("/ReporteCanceladas/FilterBy?FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Cliente="+ JSON.stringify(arrClientes) +"&Moneda="+ strMoneda, {
+  fetch("/ReporteCanceladas/FilterBy?FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Cliente="+ JSON.stringify(arrProveedores) +"&Moneda="+ strMoneda, {
     method: "GET",
     credentials: "same-origin",
     headers: {
@@ -49,7 +49,11 @@ function formatDataTableCanceladas() {
     "paging": true,
     "dom": 'Bfrtip',
     "buttons": [
-    'excel'
+      {
+        extend: 'excel',
+        text: '<i class="fas fa-file-excel fa-lg"></i>',
+
+      }
     ],
     columnDefs: [
       {
@@ -65,7 +69,12 @@ function formatDataTableCanceladas() {
       },
 
       {
-        "targets": [4,5],
+        "targets": 4,
+        "width": "12px",
+        "className": "dt-head-center dt-body-center"
+      },
+      {
+        "targets": [5,6],
         "width": "12px",
         "className": "dt-head-center dt-body-right"
       },

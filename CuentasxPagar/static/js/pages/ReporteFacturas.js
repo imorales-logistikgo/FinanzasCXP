@@ -16,12 +16,12 @@ $('#btnAplicarFiltro').on('click', getReportesByFilters);
 function getReportesByFilters() {
   startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
   endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
-  arrClientes = $('#cboCliente').val();
+  arrProveedor = $('#cboProveedor').val();
   strMoneda = [];
   $('#rdMXN').is(':checked') ? strMoneda.push('MXN') : null;
   $('#rdUSD').is(':checked') ? strMoneda.push('USD') : null;
   //WaitMe_Show('#TbPading');
-  fetch("/ReporteCobros/FilterBy?FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Cliente="+ JSON.stringify(arrClientes) +"&Moneda="+ JSON.stringify(strMoneda), {
+  fetch("/ReporteCobros/FilterBy?FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Cliente="+ JSON.stringify(arrProveedor) +"&Moneda="+ JSON.stringify(strMoneda), {
     method: "GET",
     credentials: "same-origin",
     headers: {
@@ -41,6 +41,7 @@ function getReportesByFilters() {
 
 function formatTableReporteFacturas() {
   $("#TableReporteFacturas").DataTable({
+    "scrollX": true,
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },

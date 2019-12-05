@@ -1,5 +1,7 @@
 $(document).ready(function(){
+
   $('#TableReportePagos').DataTable({
+    "scrollX": true,
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
@@ -30,6 +32,22 @@ $(document).ready(function(){
       "width": "12px",
       "className": "dt-head-center dt-body-right"
     },
+
+    {
+      "targets": 5,
+      "width": "3px",
+      "mRender": function (data, type, full) {
+        return  '<button type ="button" class="btn btn-success btn-elevate btn-pill btn-sm" data-toggle="modal" data-target="#ModalComplemento" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>';
+      }
+    },
+
+    {
+        "targets": 6,
+        "width": "3px",
+        "mRender": function (data, type, full) {
+          return  '<button type ="button" class="btnEliminarPago btn btn-danger btn-elevate btn-pill btn-sm"><i class="flaticon-delete"></i></button>';
+        }
+    }
     ]
   });
 
@@ -37,7 +55,7 @@ $(document).ready(function(){
   $('input[name="filtroFechaReportePagos"]').daterangepicker({
    autoUpdateInput: false
   });
-  
+
   $('input[name="filtroFechaReportePagos"]').on('apply.daterangepicker', function(ev, picker) {
     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
