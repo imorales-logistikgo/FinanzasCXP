@@ -38,12 +38,12 @@
 					<tr data-IDConcepto="{{pendiente.IDConcepto}}">
 						<td></td>
 						<td style="font-weight: bold;">{{pendiente.Folio}}</td>
-						<td>{{pendiente.NombreCliente}}</td>
+						<td>{{pendiente.NombreProveedor}}</td>
 						<td>{{pendiente.FechaDescarga|date:'Y/m/d'}}</td>
-						<td>{{pendiente.PrecioSubtotal|floatformat:"2"}}</td>
-						<td>{{pendiente.PrecioIVA|floatformat:"2"}}</td>
-						<td>{{pendiente.PrecioRetencion|floatformat:"2"}}</td>
-						<td>{{pendiente.PrecioTotal|floatformat:"2"}}</td>
+						<td>{{pendiente.CostoSubtotal|floatformat:"2"}}</td>
+						<td>{{pendiente.CostoIVA|floatformat:"2"}}</td>
+						<td>{{pendiente.CostoRetencion|floatformat:"2"}}</td>
+						<td>{{pendiente.CostoTotal|floatformat:"2"}}</td>
 						<td>{{pendiente.Moneda}}</td>
 						<td id="status">{{pendiente.Status}}</td>
 						<!--<td><input id="isEvicencias" name="isEvicencias" type="hidden" value="{{pendiente.IsEvidenciaDigital}}"></td>-->
