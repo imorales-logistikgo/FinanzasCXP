@@ -1,43 +1,43 @@
 from django.db import models
 from PendientesEnviar.models import FacturasxProveedor
 
-class CobrosxFacturasProveedor(models.Model):
-    IDCobroxFactura = models.AutoField(primary_key=True)
+class PagosxFacturas(models.Model):
+    IDPagoxFactura = models.AutoField(primary_key=True)
     FechaAlta = models.DateTimeField()
     Total = models.DecimalField(default=0, max_digits=30, decimal_places=5)
 
     class Meta:
-        db_table="CobrosxFacturasProveedor"
+        db_table="PagosxFacturas"
 
 
 
-class CobrosxProveedor(models.Model):
-    IDCobro = models.AutoField(primary_key=True)
+class PagosxProveedor(models.Model):
+    IDPago = models.AutoField(primary_key=True)
     FechaAlta = models.DateTimeField()
     Total = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     Folio = models.CharField(max_length=50, unique=True)
     RutaPDF = models.CharField(max_length=300)
     RutaXML = models.CharField(max_length=300)
-    FechaCobro = models.DateTimeField()
+    FechaPago = models.DateTimeField()
     Comentarios = models.CharField(max_length=500, default = "")
     TipoCambio = models.DecimalField(default=1, max_digits=10, decimal_places=5)
     NombreCortoProveedor = models.CharField(max_length=100)
 
     class Meta:
-        db_table="CobrosxProveedor"
+        db_table="PagosxProveedor"
 
 
 
-class RelacionCobrosFacturasxProveedor(models.Model):
-    IDRelacionCobroFacturasxProveedor = models.AutoField(primary_key=True)
-    IDCobro = models.ForeignKey(CobrosxProveedor, on_delete=models.CASCADE, db_column = 'IDCobro')
-    IDCobroxFactura = models.ForeignKey(CobrosxFacturasProveedor, on_delete=models.CASCADE, db_column = 'IDCobroxFactura')
+class RelacionPagosFacturasxProveedor(models.Model):
+    IDRelacionPagoFacturasxProveedor = models.AutoField(primary_key=True)
+    IDPago = models.ForeignKey(PagosxProveedor, on_delete=models.CASCADE, db_column = 'IDPago')
+    IDPagoxFactura = models.ForeignKey(PagosxFacturas, on_delete=models.CASCADE, db_column = 'IDPagoxFactura')
     IDFactura = models.ForeignKey(FacturasxProveedor, on_delete=models.CASCADE, db_column = 'IDFactura')
     IDUsuarioAlta = models.IntegerField(default=0)
     IDProveedor = models.IntegerField(default=0)
 
     class Meta:
-        db_table="RelacionCobrosFacturasxProveedor"
+        db_table="RelacionPagosFacturasxProveedor"
 
 
 

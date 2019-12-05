@@ -1,7 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from PendientesEnviar.models import RelacionFacturaProveedorxPartidas, FacturasxProveedor, PendientesEnviar, RelacionConceptoxProyecto
-from EstadosCuenta.models import  View_FacturasxProveedor, CobrosxProveedor, CobrosxFacturasProveedor, RelacionCobrosFacturasxProveedor
+from EstadosCuenta.models import  View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor
 from django.template.loader import render_to_string
 from decimal import Decimal
 import json, datetime
@@ -13,11 +13,11 @@ def EstadosdeCuenta(request):
 	result = FacturasPendiente | FacturasAbonada
 	Folios = list()
 	for Factura in result:
-		FoliosCobro= ""
-		for Cobro in RelacionCobrosFacturasxProveedor.objects.filter(IDFactura = Factura.IDFactura):
-			FoliosCobro += Cobro.IDCobro.Folio + ", "
-		FoliosCobro = FoliosCobro[:-2]
-		Folios.append(FoliosCobro)
+		FoliosPago= ""
+		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura.IDFactura):
+			FoliosPago += Pago.IDPago.Folio + ", "
+		FoliosPago = FoliosPago[:-2]
+		Folios.append(FoliosPago)
 	ContadoresPendientes = len(list(FacturasPendiente))
 	ContadoresAbonadas = len(list(FacturasAbonada))
 	return render(request, 'EstadosdeCuenta.html', {'Facturas': result, 'Folios': Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas})
@@ -39,11 +39,11 @@ def GetFacturasByFilters(request):
 		Facturas = Facturas.filter(Moneda__in = Moneda)
 	Folios = list()
 	for Factura in Facturas:
-		FoliosCobro= ""
-		for Cobro in RelacionCobrosFacturasxProveedor.objects.filter(IDFactura = Factura.IDFactura):
-			FoliosCobro += Cobro.IDCobro.Folio + ", "
-		FoliosCobro = FoliosCobro[:-2]
-		Folios.append(FoliosCobro)
+		FoliosPago= ""
+		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura.IDFactura):
+			FoliosPago += Pago.IDPago.Folio + ", "
+		FoliosPago = FoliosPago[:-2]
+		Folios.append(FoliosPago)
 	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas':Facturas, 'Folios': Folios}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
 
@@ -78,42 +78,42 @@ def GetDetallesFactura(request):
 
 
 
-def SaveCobroxProveedor(request):
+def SavePagoxProveedor(request):
 	jParams = json.loads(request.body.decode('utf-8'))
-	newCobro = CobrosxProveedor()
-	newCobro.FechaAlta = datetime.datetime.now()
-	newCobro.Folio = jParams["Folio"]
-	newCobro.Total = jParams["Total"]
-	newCobro.FechaCobro = datetime.datetime.strptime(jParams["FechaCobro"],'%Y/%m/%d')
-	newCobro.RutaXML = jParams["RutaXML"]
-	newCobro.RutaPDF = jParams["RutaPDF"]
-	newCobro.Comentarios = jParams["Comentarios"]
-	newCobro.TipoCambio = jParams["TipoCambio"]
-	newCobro.NombreCortoProveedor = jParams["Proveedor"]
-	newCobro.save()
-	return HttpResponse(newCobro.IDCobro)
+	newPago = PagosxProveedor()
+	newPago.FechaAlta = datetime.datetime.now()
+	newPago.Folio = jParams["Folio"]
+	newPago.Total = jParams["Total"]
+	newPago.FechaPago = datetime.datetime.strptime(jParams["FechaPago"],'%Y/%m/%d')
+	newPago.RutaXML = jParams["RutaXML"]
+	newPago.RutaPDF = jParams["RutaPDF"]
+	newPago.Comentarios = jParams["Comentarios"]
+	newPago.TipoCambio = jParams["TipoCambio"]
+	newPago.NombreCortoProveedor = jParams["Proveedor"]
+	newPago.save()
+	return HttpResponse(newPago.IDPago)
 
 
 
-def SaveCobroxFactura(request):
+def SavePagoxFactura(request):
 	jParams = json.loads(request.body.decode('utf-8'))
-	for Cobro in jParams["arrCobros"]:
-		newCobroxFactura = CobrosxFacturasProveedor()
-		newCobroxFactura.Total = Cobro["Total"]
-		newCobroxFactura.FechaAlta = datetime.datetime.now()
-		newCobroxFactura.save()
-		newRelacionCobroxFactura = RelacionCobrosFacturasxProveedor()
-		newRelacionCobroxFactura.IDCobro = CobrosxProveedor.objects.get(IDCobro = jParams["IDCobro"])
-		newRelacionCobroxFactura.IDCobroxFactura = CobrosxFacturasProveedor.objects.get(IDCobroxFactura = newCobroxFactura.IDCobroxFactura)
-		Factura = FacturasxProveedor.objects.get(IDFactura = Cobro["IDFactura"])
-		Factura.Saldo -= Decimal(Cobro["Total"])
-		newRelacionCobroxFactura.IDFactura = Factura
-		newRelacionCobroxFactura.IDUsuarioAlta = 1
-		newRelacionCobroxFactura.IDProveedor = 1
+	for Pago in jParams["arrPagos"]:
+		newPagoxFactura = PagosxFacturas()
+		newPagoxFactura.Total = Pago["Total"]
+		newPagoxFactura.FechaAlta = datetime.datetime.now()
+		newPagoxFactura.save()
+		newRelacionPagoxFactura = RelacionPagosFacturasxProveedor()
+		newRelacionPagoxFactura.IDPago = PagosxProveedor.objects.get(IDPago = jParams["IDPago"])
+		newRelacionPagoxFactura.IDPagoxFactura = PagosxFacturas.objects.get(IDPagoxFactura = newPagoxFactura.IDPagoxFactura)
+		Factura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
+		Factura.Saldo -= Decimal(Pago["Total"])
+		newRelacionPagoxFactura.IDFactura = Factura
+		newRelacionPagoxFactura.IDUsuarioAlta = 1
+		newRelacionPagoxFactura.IDProveedor = 1
 		if Factura.Saldo == 0:
 			Factura.Status = "Cobrada"
 		else:
 			Factura.Status = "Abonada"
 		Factura.save()
-		newRelacionCobroxFactura.save()
+		newRelacionPagoxFactura.save()
 	return HttpResponse("")

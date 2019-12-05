@@ -431,7 +431,7 @@ function savePagoxProveedor()  {
   jParams = {
     Folio: $('#FolioPago').val(),
     Total:$('#AddCosto').val(),
-    FechaPago: $('#Fechapago').val(),
+    FechaPago: $('#FechaPago').val(),
     TipoCambio: $('#TipoCambioPago').val(),
     Comentarios: $('#comentariosEC').val(),
     RutaXML: $('#RutaXML').attr('href'),
@@ -439,7 +439,7 @@ function savePagoxProveedor()  {
     Proveedor: proveedor,
   }
 
-  fetch("/EstadosdeCuenta/SaveCobroxProveedor", {
+  fetch("/EstadosdeCuenta/SavePagoxProveedor", {
     method: "POST",
     credentials: "same-origin",
     headers: {
@@ -465,14 +465,14 @@ function savePagoxProveedor()  {
       WaitMe_Hide('#WaitModalPE');
     }
 
-  }).then(function(IDCobro){
-    SavePagoxFactura(IDCobro);
+  }).then(function(IDPago){
+    SavePagoxFactura(IDPago);
   }).catch(function(ex){
     console.log("no success!");
   });
 }
 
-function SavePagoxFactura(IDCobro)
+function SavePagoxFactura(IDPago)
 {
   var arrCobros = [];
   $('.valCobro').each(function() {
@@ -482,11 +482,11 @@ function SavePagoxFactura(IDCobro)
   });
 
   jParams = {
-    IDCobro: IDCobro,
-    arrCobros: arrCobros,
+    IDPago: IDPago,
+    arrPagos: arrPagos,
   }
 
-  fetch("/EstadosdeCuenta/SaveCobroxFactura", {
+  fetch("/EstadosdeCuenta/SavePagoxFactura", {
     method: "POST",
     credentials: "same-origin",
     headers: {
