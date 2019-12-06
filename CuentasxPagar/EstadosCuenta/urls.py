@@ -5,6 +5,6 @@ urlpatterns = [
     path('FilterBy', views.GetFacturasByFilters, name='FilterBy'),
     path('CancelarFactura', views.CancelarFactura, name='CancelarFactura'),
     path('GetDetallesFactura', views.GetDetallesFactura, name='GetDetallesFactura'),
-    path('SaveCobroxProveedor', views.SaveCobroxProveedor, name='SaveCobroxProveedor'),
-    path('SaveCobroxFactura', views.SaveCobroxFactura, name='SaveCobroxFactura'),
+    path('SavePagoxProveedor', views.SavePagoxProveedor, name='SavePagoxProveedor'),
+    path('SavePagoxFactura', views.SavePagoxFactura, name='SavePagoxFactura'),
 ]
