@@ -49,6 +49,7 @@ $(document).ready(function(){
 
 
     function withoutEvidencias() {
+      WaitMe_Show('#sinEvidencias');
 	  var data = google.visualization.arrayToDataTable([
 		['Viajes', 'Sin evidencias'],
 		['Eaton',     1],
@@ -64,7 +65,7 @@ $(document).ready(function(){
 	  };
 
 	  var chart = new google.visualization.PieChart(document.getElementById('sinEvidencias'));
-
 	  chart.draw(data, options);
+    WaitMe_Hide('#sinEvidencias');
 	}
 });

@@ -366,13 +366,13 @@ function formatDataTableFacturas(){
     {
       "width": "5%",
       "className": "text-center",
-      "targets": [8,9, 10]
+      "targets": [9, 10]
 
     },
     {
       "className": "text-right",
       'width' : '5%',
-      "targets": [4,5,6,7]
+      "targets": [4,5,6,7,8]
     },
     {
       "width": "3%",
