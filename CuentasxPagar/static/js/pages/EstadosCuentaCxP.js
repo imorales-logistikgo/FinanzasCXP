@@ -466,11 +466,11 @@ function savePagoxProveedor()  {
 
 function SavePagoxFactura(IDPago)
 {
-  var arrCobros = [];
+  var arrPagos = [];
   $('.valCobro').each(function() {
     IDFactura = $(this).data('idfact');
     Total = $(this).val();
-    arrCobros.push({'Total': Total, 'IDFactura': IDFactura});
+    arrPagos.push({'Total': Total, 'IDFactura': IDFactura});
   });
 
   jParams = {

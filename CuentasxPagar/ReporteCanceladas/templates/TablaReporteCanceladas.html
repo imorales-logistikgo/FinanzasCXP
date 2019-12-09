@@ -3,7 +3,7 @@
 		<tr>
 			<th>Folio</th>
 			<th>Proveedor</th>
-      <th>Usuario</th>
+			<th>Usuario</th>
 			<th>Fecha Factura</th>
 			<th>Fecha cancelacion</th>
 			<th>Total</th>
@@ -14,8 +14,8 @@
 		{% for Factura in Facturas %}
 		<tr>
 			<td>{{Factura.Folio}}</td>
-			<td>{{Factura.Cliente}}</td>
-      <td></td>
+			<td>{{Factura.Proveedor}}</td>
+			<td></td>
 			<td>{{Factura.FechaFactura|date:'Y/m/d'}}</td>
 			<td>{{Factura.FechaBaja|date:'Y/m/d'}}</td>
 			<td>{{Factura.Total|floatformat:"2"}}</td>
