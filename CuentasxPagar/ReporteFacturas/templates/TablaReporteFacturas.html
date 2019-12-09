@@ -4,18 +4,24 @@
 			<th>Folio Factura</th>
 			<th>Proveedor</th>
 			<th>Fecha Factura</th>
+			<th>Subtotal</th>
+			<th>IVA</th>
+			<th>Retencion</th>
 			<th>Total</th>
-			<th>Folio Viaje</th>
+			<th>Folio viaje</th>
 		</tr>
 	</thead>
 	<tbody>
-		{% for Cobro in Cobros %}
+		{% for Factura in Facturas %}
 		<tr>
-			<td>{{Cobro.IDCobro.Folio}}</td>
-			<td>{{Cobro.IDCobro.NombreCortoCliente}}</td>
-			<td>{{Cobro.IDCobro.FechaCobro|date:'Y/m/d'}}</td>
-			<td>{{Cobro.IDCobro.Total|floatformat:"2"}}</td>
-			<td>{{Cobro.IDFactura.Folio}}</td>
+			<td>{{Factura.Folio}}</td>
+			<td>{{Factura.Proveedor}}</td>
+			<td>{{Factura.FechaFactura|date:'Y/m/d'}}</td>
+			<td>{{Factura.Subtotal|floatformat:"2"}}</td>
+			<td>{{Factura.IVA|floatformat:"2"}}</td>
+			<td>{{Factura.Retencion|floatformat:"2"}}</td>
+			<td>{{Factura.Total|floatformat:"2"}}</td>
+			<td>{{Factura.Viajes}}</td>
 		</tr>
 		{%endfor%}
 	</tbody>

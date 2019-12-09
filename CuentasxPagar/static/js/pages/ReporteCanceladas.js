@@ -22,7 +22,7 @@ function getReportesByFilters() {
   arrProveedores = $('#cboProveedor').val();
   strMoneda = $('#rdMXN').is(':checked') ? 'MXN' : 'USD';
   //WaitMe_Show('#divTablaFacturas');
-  fetch("/ReporteCanceladas/FilterBy?FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Cliente="+ JSON.stringify(arrProveedores) +"&Moneda="+ strMoneda, {
+  fetch("/ReporteCanceladas/FilterBy?FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Proveedor="+ JSON.stringify(arrProveedores) +"&Moneda="+ strMoneda, {
     method: "GET",
     credentials: "same-origin",
     headers: {
