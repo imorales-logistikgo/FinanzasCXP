@@ -51,11 +51,11 @@ def GetFacturasByFilters(request):
 
 def CancelarFactura(request):
 	IDFactura = json.loads(request.body.decode('utf-8'))["IDFactura"]
-	conRelacionFacturaxPartidas = RelacionFacturaxPartidas.objects.filter(IDFacturaxProveedor = IDFactura)
-	if conRelacionFacturaxPartidas:
-		conRelacionFacturaxPartidas[0].IDFacturaxProveedor.Status = 'Cancelada'
-		conRelacionFacturaxPartidas[0].IDFacturaxProveedor.save()
-		for Partida in conRelacionFacturaxPartidas:
+	conRelacionFacturaProveedorxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = IDFactura)
+	if conRelacionFacturaProveedorxPartidas:
+		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.Status = 'Cancelada'
+		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.save()
+		for Partida in conRelacionFacturaProveedorxPartidas:
 			Partida.IDPartida.IsActiva = False
 			Partida.IDPartida.FechaBaja = datetime.datetime.now()
 			conPendienteEnviar = RelacionConceptoxProyecto.objects.get(IDConcepto = Partida.IDConcepto)
@@ -69,9 +69,9 @@ def CancelarFactura(request):
 def GetDetallesFactura(request):
 	ListaViajes = list()
 	IDFactura = request.GET["IDFactura"]
-	conRelacionFacturaxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = IDFactura)
-	if conRelacionFacturaxPartidas:
-		for Partida in conRelacionFacturaxPartidas:
+	conRelacionFacturaProveedorxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = IDFactura)
+	if conRelacionFacturaProveedorxPartidas:
+		for Partida in conRelacionFacturaProveedorxPartidas:
 			ListaViajes.append(RelacionConceptoxProyecto.objects.get(IDConcepto = Partida.IDConcepto))
 	htmlRes = render_to_string('TablaDetallesFactura.html', {'Pendientes':ListaViajes}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
