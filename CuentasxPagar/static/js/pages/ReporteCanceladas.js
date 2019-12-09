@@ -74,7 +74,7 @@ function formatDataTableCanceladas() {
         "className": "dt-head-center dt-body-center"
       },
       {
-        "targets": [5,6],
+        "targets": [5,6,7,8,9],
         "width": "12px",
         "className": "dt-head-center dt-body-right"
       },

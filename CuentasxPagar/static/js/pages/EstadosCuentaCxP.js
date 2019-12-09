@@ -39,7 +39,7 @@ $(document).on( 'click', '.btnEliminarFactura', function () {
   showCancelButton: true,
   confirmButtonColor: '#3085d6',
   cancelButtonColor: '#d33',
-  confirmButtonText: 'Si'
+  confirmButtonText: 'Aceptar'
 }).then(function(result) {
   if(result.value)
     return fnCancelarFactura($(this).data('idfact'));
@@ -95,9 +95,19 @@ $(document).on('click', '#btnSubirPagos',showDatosObtenidos);
 $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
   var table1 = $('#tableAddPago').DataTable();
   var datosRow = table1.row($(this).parents('tr')).data();
-  if(parseFloat($(this).val()) >= datosRow[2])
+  if(datosRow[3] === 'MXN')
   {
-    (datosRow[3] === 'MXN') ?  $(this).val(datosRow[2]) : $(this).val(totConv)
+    if(parseFloat($(this).val()) >= datosRow[2])
+    {
+      (datosRow[3] === 'MXN') ?  $(this).val(datosRow[2]) : $(this).val(totConv)
+    }
+  }
+  else
+  {
+    if(parseFloat($(this).val()) >= totConv)
+    {
+      (datosRow[3] === 'MXN') ?  $(this).val(datosRow[2]) : $(this).val(totConv)
+    }
   }
   $('input#valCobro').each(function(){
    calculo = calculo + parseFloat($(this).val());
@@ -109,14 +119,13 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
 
 //validacion si tienes los archivos pdf y xml
 $(document).on('click', '#btnSavePago', function(){
-  //console.log($('input[name="TipoCambioPago"]').val());
     if($('input[name="FolioPago"]').val() != "" && $('#FechaPago').val() != "")
     {
       savePagoxProveedor();
     }
     else
     {
-      alertToastError("El folio y la fecha no pueden ser vacias");
+      alertToastError("El folio y la fecha no pueden ser vacios");
     }
 });
 
