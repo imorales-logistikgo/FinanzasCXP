@@ -1,7 +1,7 @@
 <table class="table table-striped table-bordered" id="TableReporteCanceladas" style="width: 100%">
 	<thead>
 		<tr>
-			<th>Folio</th>
+			<th>Folio Factura</th>
 			<th>Proveedor</th>
 			<th>Usuario</th>
 			<th>Fecha Factura</th>
@@ -22,7 +22,7 @@
 			<td>{{Factura.FechaFactura|date:'Y/m/d'}}</td>
 			<td>{{Factura.FechaBaja|date:'Y/m/d'}}</td>
 			<td>{{Factura.Subtotal|floatformat:"2"}}</td>
-			<td>{{Factura.Iva|floatformat:"2"}}</td>
+			<td>{{Factura.IVA|floatformat:"2"}}</td>
 			<td>{{Factura.Retencion|floatformat:"2"}}</td>
 			<td>{{Factura.Total|floatformat:"2"}}</td>
 			<td>{{Factura.Viajes}}</td>

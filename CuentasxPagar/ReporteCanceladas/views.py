@@ -15,6 +15,9 @@ def ReporteCanceladas(request):
 		Factura['Proveedor'] = Cancelada.NombreCortoProveedor
 		Factura['FechaFactura'] = Cancelada.FechaFactura
 		Factura['FechaBaja'] = conFacturaxPartidas.first().IDPartida.FechaBaja
+		Factura["Subtotal"] = Cancelada.Subtotal
+		Factura["IVA"] = Cancelada.IVA
+		Factura["Retencion"] = Cancelada.Retencion
 		Factura['Total'] = Cancelada.Total
 		Factura['Viajes'] = ''
 		for Pendiente in conFacturaxPartidas:
