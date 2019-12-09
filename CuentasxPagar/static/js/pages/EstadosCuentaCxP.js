@@ -110,14 +110,13 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
 //validacion si tienes los archivos pdf y xml
 $(document).on('click', '#btnSavePago', function(){
   //console.log($('input[name="TipoCambioPago"]').val());
-    if($('input[name="FolioPago"]').val() != "")
+    if($('input[name="FolioPago"]').val() != "" && $('#FechaPago').val() != "")
     {
-      //alert("puedes subir el pago");
       savePagoxProveedor();
     }
     else
     {
-      alertToastError("El folio no puede estar vacio");
+      alertToastError("El folio y la fecha no pueden ser vacias");
     }
 });
 
@@ -149,7 +148,7 @@ KTUtil.ready(function() {
 });
 
 
-$('input[name="TipoCambioPago"]').on('keyup', function(){
+$('input[name="TipoCambioPago"]').on('keyup change', function(){
   showDatosObtenidos();
 });
 
@@ -227,7 +226,7 @@ function showDatosObtenidos(){
     "className": "dt-head-center dt-body-right",
     "targets": 4,
     "mRender": function (data, type, full) {
-     return (full[3] === 'MXN' ? `$ <input class="col-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2]}">` : '<input type="number" class="valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'">');
+     return (full[3] === 'MXN' ? `$ <input class="col-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2]}">` : '$ <input type="number" class="col-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'">');
    }
  },
 

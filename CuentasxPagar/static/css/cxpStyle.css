@@ -65,7 +65,7 @@ footer{
 {
   display: none;
 }
-#fragmentada{
+#VerTotalModal{
   padding-left: 400px;
 }
 
@@ -83,4 +83,9 @@ footer{
 {
   height: 440px;
 }
+}
+
+#filtroxMesyAno
+{
+  display: none;
 }
