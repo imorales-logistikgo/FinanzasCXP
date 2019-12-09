@@ -199,3 +199,25 @@ function truncarDecimales (x, posiciones = 0) {
         return Number(numStr)
     }
 }
+
+
+function fechaVencimineto(fecha)
+{
+  var newDate;
+  var day = $(fecha).datepicker('getDate').getDate();
+  var month = $(fecha).datepicker('getDate').getMonth() +1;
+  var year = $(fecha).datepicker('getDate').getFullYear();
+
+  if (month != 12)
+  {
+    var newMonth =  month + 1;
+    newDate = year + "/" + newMonth + "/" + day;
+  }
+  else
+  {
+    var newMonth = 1;
+    var newYear = year + 1;
+    newDate = newYear + "/" + newMonth + "/" + day;
+  }
+  return newDate;
+}

@@ -14,7 +14,7 @@ formatDataTable();
 //on click select row checkbox
         $(document).on( 'change', 'input[name="checkPE"]', function () {
           var input = 'input[name="checkPE"]';
-          var btnSubir = '#btnSubirFacturaPendietnesEnviar';
+          var btnSubir = '#btnSubirFacturaPendientesEnviar';
           if($(this).is(':checked'))
           {
             FiltroCheckboxProveedor();
@@ -29,23 +29,35 @@ formatDataTable();
          }
        });
 
+//filtro de fecha solo por mes y año
+$(document).on( 'change', 'input[name="fechaxMesyAño"]', function () {
+  if($(this).is(':checked')){
+    $('#filtroxMesyAno').css("display", "block");
+    $('#fechaRango').hide();
+  }
+  else
+  {
+    $('#filtroxMesyAno').css("display", "none");
+    $('#fechaRango').show();
+  }
+});
 
 //on click para el boton del modal subir factura
-$(document).on('click', '#btnSubirFacturaPendietnesEnviar',getDatos);
+$(document).on('click', '#btnSubirFacturaPendientesEnviar',getDatos);
 
 $('#btnAplicarFiltro').on('click', fnGetPendientesEnviar);
 
 $('#btnGuardarFactura').on('click', function(){
   if($('#kt_uppy_1').data("rutaarchivoPDF") != undefined && $('#kt_uppy_1').data("rutaarchivoXML") != undefined)
   {
-    if($('#txtFolioFactura').val() != "")
+    if($('#txtFolioFactura').val() != "" && $('#FechaRevision').val() != "" && $('#FechaFactura').val() != "" && $('#FechaVencimiento').val() != "")
     {
       WaitMe_Show('#WaitModalPE');
       saveFactura();
     }
     else
     {
-      alertToastError("El folio no puede estar vacio");
+      alertToastError("El folio y las fechas no pueden estar vacias");
     }
 
   }
@@ -88,7 +100,7 @@ $('input[name="Total"]').on('change', function(e){
 
 //Filtro Rango fecha
 $('input[name="FiltroFecha"]').daterangepicker({
- autoUpdateInput: false
+ autoUpdateInput: false,
 });
 
 $('input[name="FiltroFecha"]').on('apply.daterangepicker', function(ev, picker) {
@@ -116,12 +128,24 @@ $('#kt_modal_2').on('shown.bs.modal', function(){
 
   $('#FechaVencimiento').datepicker({
    format: 'yyyy/mm/dd',
-   todayHighlight: true
+   todayHighlight: true,
+   changeMonth: true,
+   changeYear: true
  });
-  $("#FechaVencimiento").datepicker('setDate', 'today' );
-  $('#FechaVencimiento').prop('disabled', true);
+//var FechaVen = fechaVencimineto("#FechaRevision");
+//  $("#FechaVencimiento").datepicker('setDate', FechaVen);
+
+  //$('#FechaVencimiento').prop('disabled', true);
 				//KTUppy.init()
       });
+
+$('#FechaRevision').on('change', function(){
+  $('#FechaVencimiento').datepicker({
+    format: 'yyyy/mm/dd',
+  });
+  $("#FechaVencimiento").datepicker('setDate', fechaVencimineto("#FechaRevision"));
+});
+
 
 //limpiar modal
 $('#kt_modal_2').on('hidden.bs.modal', function(){
@@ -174,6 +198,8 @@ function LimpiarModalSF()
   $('#see').hide();
   $('#seeAlert').hide();
   //ids = [];
+  $('#kt_uppy_1').data("rutaarchivoXML", undefined);
+  $('#kt_uppy_1').data("rutaarchivoPDF", undefined);
 }
 
 
@@ -306,6 +332,7 @@ function LimpiarModalSF()
 
   });
 
+
 //funcion para obtener los datos de cada checkbox seleccionado en la tabla pendientes de enviar
 function adddatos(){
   var arrSelect=[];
@@ -362,6 +389,9 @@ function getDatos(){
 
     var h = [datos];
     var table = $('#ResumTable').DataTable({
+      "language": {
+        "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+      },
      destroy: true,
      data: h[0],
      columnDefs: [
@@ -392,6 +422,7 @@ function getDatos(){
     $('#total').html('<strong>$'+total+'</strong>');
     $('#Moneda').html('');
     $('#totalCambio').html('<strong>$'+truncarDecimales(totalCambio, 2)+'<strong>');
+    $('#verTotalPE').html('<strong>$'+total+'</strong>');
   }
 
 
@@ -426,7 +457,7 @@ function getDatos(){
 
       if(response.status == 200)
       {
-        $('#btnSubirFacturaPendietnesEnviar').prop("disabled", true);
+        $('#btnSubirFacturaPendientesEnviar').prop("disabled", true);
     //  console.log(ids);
     return response.clone().json();
   }
