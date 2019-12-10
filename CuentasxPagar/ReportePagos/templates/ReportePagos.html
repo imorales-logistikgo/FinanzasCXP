@@ -135,16 +135,12 @@ kt-menu__item--active
 							<!--ver archivos subidos (PDF y XML)-->
 							<div class="uploaded-files-pagos">
 								<h5>Archivos Subidos:</h5>
-								{% for Cobro in Cobros %}
-								<ol>{{Cobro.RutaXML}}</ol>
-								<ol>{{Cobro.RutaPDF}}</ol>
-								{%endfor%}
+								<ol></ol>
 							</div>
 						</div>
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success">Guardar</button>
 				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
       </div>
     </div>

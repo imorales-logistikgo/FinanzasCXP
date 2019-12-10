@@ -43,7 +43,7 @@ $(document).ready(function(){
       "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {
-        return  '<button type ="button" class="btn btn-success btn-elevate btn-pill btn-sm" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>';
+        return  `<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-vercomplementoxml="${full[7]}" data-vercomplementopdf="${full[8]}" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`;
       }
     },
 
@@ -54,6 +54,10 @@ $(document).ready(function(){
         "mRender": function (data, type, full) {
           return  '<button type ="button" class="btnEliminarPago btn btn-danger btn-elevate btn-pill btn-sm"><i class="flaticon-delete"></i></button>';
         }
+    },
+    {
+      "targets": [7,8],
+      "visible": false
     }
     ]
   });
@@ -68,6 +72,7 @@ $(document).ready(function(){
   });
 
   $('#ModalComplementos').on('hidden.bs.modal', function(){
+   $('.uploaded-files-pagos ol').remove();
    var id = '#ComplementosPagos';
    var verComp = '.uploaded-files-pagos';
    KTUppyEvidencias.init(id, verComp)
@@ -81,5 +86,12 @@ $(document).ready(function(){
   });
 
 
+$(document).on('click', '#btnComplementos', function() {
+  console.log($(this).data("vercomplementoxml"));
+  document.querySelector('.uploaded-files-pagos').innerHTML +=
+  `<ol><li id="listaArchivos"><a href="${$(this).data("vercomplementoxml")}" target="_blank" name="url" id="RutaXML">XML</a></li></ol>`
+  document.querySelector('.uploaded-files-pagos').innerHTML +=
+  `<ol><li id="listaArchivos"><a href="${$(this).data("vercomplementopdf")}" target="_blank" name="url" id="RutaPDF">PDF</a></li></ol>`
+});
 
 });
