@@ -8,6 +8,7 @@
 			<th>IVA</th>
 			<th>Retencion</th>
 			<th>Total</th>
+			<th>Status</th>
 			<th>Folio viaje</th>
 		</tr>
 	</thead>
@@ -21,6 +22,7 @@
 			<td>{{Factura.IVA|floatformat:"2"}}</td>
 			<td>{{Factura.Retencion|floatformat:"2"}}</td>
 			<td>{{Factura.Total|floatformat:"2"}}</td>
+			<td>{{Factura.Status}}</td>
 			<td>{{Factura.Viajes}}</td>
 		</tr>
 		{%endfor%}

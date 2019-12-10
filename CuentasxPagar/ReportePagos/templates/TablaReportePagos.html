@@ -1,9 +1,10 @@
+{% load Tags_EstadosCuenta %}
 <table class="table table-striped table-bordered" id="TableReportePagos">
 	<thead>
 		<tr>
 			<th>Folio Pago</th>
 			<th>Proveedor</th>
-			<th>Fecha Cobro</th>
+			<th>Fecha Pago</th>
 			<th>Total</th>
 			<th>Folio Factura</th>
 			<th></th>
@@ -11,13 +12,13 @@
 		</tr>
 	</thead>
 	<tbody>
-		{% for Cobro in Cobros %}
+		{% for Pago in Pagos %}
 		<tr>
-			<td>{{Cobro.Folio}}</td>
-			<td>{{Cobro.NombreCortoProveedor}}</td>
-			<td>{{Cobro.FechaPago|date:'Y/m/d'}}</td>
-			<td>{{Cobro.Total|floatformat:"2"}}</td>
-			<th></th>
+			<td>{{Pago.Folio}}</td>
+			<td>{{Pago.NombreCortoProveedor}}</td>
+			<td>{{Pago.FechaPago|date:'Y/m/d'}}</td>
+			<td>{{Pago.Total|floatformat:"2"}}</td>
+			<th>{{Folios|index:forloop.counter0}}</th>
 			<td></td>
 			<td></td>
 		</tr>
