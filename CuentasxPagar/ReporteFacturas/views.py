@@ -18,6 +18,7 @@ def ReporteFacturas(request):
 		Factura["Subtotal"] = Fact.Subtotal
 		Factura["IVA"] = Fact.IVA
 		Factura["Retencion"] = Fact.Retencion
+		Factura["Status"] = Fact.Status
 		Factura['Total'] = Fact.Total
 		Factura['Viajes'] = ''
 		for Pendiente in conFacturaxPartidas:

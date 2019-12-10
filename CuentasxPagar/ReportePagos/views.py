@@ -3,5 +3,13 @@ from EstadosCuenta.models import RelacionPagosFacturasxProveedor, PagosxProveedo
 
 def ReportePagos(request):
 	Pagos = PagosxProveedor.objects.all()
-	#for Pago in Pagos:
-	return render(request, 'ReportePagos.html', {"Cobros": Pagos});
+	Folios = list()
+	for Pago in Pagos:
+		FoliosFactura = ""
+		for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago):
+			FoliosFactura += Factura.IDFactura.Folio + ", "
+		FoliosFactura = FoliosFactura[:-2]
+		Folios.append(FoliosFactura)
+	return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios});
+
+
