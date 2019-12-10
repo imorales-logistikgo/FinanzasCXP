@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'ReporteFacturas',
     'ReportePagos',
     'ReporteCanceladas',
+    'ReportePagosCancelados',
     'Usuario',
 ]
 
