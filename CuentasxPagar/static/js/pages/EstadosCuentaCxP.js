@@ -119,6 +119,7 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
 
 //validacion si tienes los archivos pdf y xml
 $(document).on('click', '#btnSavePago', function(){
+    WaitMe_Show('#waitModalSubirPagos');
     if($('input[name="FolioPago"]').val() != "" && $('#FechaPago').val() != "")
     {
       savePagoxProveedor();
@@ -463,7 +464,7 @@ function savePagoxProveedor()  {
         showConfirmButton: false,
         timer: 2500
       })
-      WaitMe_Hide('#WaitModalPE');
+      WaitMe_Hide('#waitModalSubirPagos');
     }
 
   }).then(function(IDPago){
@@ -506,7 +507,12 @@ function SavePagoxFactura(IDPago)
         showConfirmButton: false,
         timer: 2500
       })
-      WaitMe_Hide('#WaitModalPE');
+      $('#modalSubirPagos').modal('hide');
+      WaitMe_Hide('#waitModalSubirPagos');
+      var table = $('#TableEstadosdeCuenta').DataTable();
+      $("#TableEstadosdeCuenta input[name=checkEC]:checked").each(function () {
+        table.row($(this).parents('tr')).remove().draw();
+      });
     }
     else if(response.status == 500)
     {
@@ -516,7 +522,7 @@ function SavePagoxFactura(IDPago)
         showConfirmButton: false,
         timer: 2500
       })
-      WaitMe_Hide('#WaitModalPE');
+      WaitMe_Hide('#waitModalSubirPagos');
     }
 
   }).catch(function(ex){

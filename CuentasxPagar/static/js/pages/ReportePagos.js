@@ -88,10 +88,19 @@ $(document).ready(function(){
 
 $(document).on('click', '#btnComplementos', function() {
   console.log($(this).data("vercomplementoxml"));
-  document.querySelector('.uploaded-files-pagos').innerHTML +=
-  `<ol><li id="listaArchivos"><a href="${$(this).data("vercomplementoxml")}" target="_blank" name="url" id="RutaXML">XML</a></li></ol>`
-  document.querySelector('.uploaded-files-pagos').innerHTML +=
-  `<ol><li id="listaArchivos"><a href="${$(this).data("vercomplementopdf")}" target="_blank" name="url" id="RutaPDF">PDF</a></li></ol>`
+  if($(this).data("vercomplementoxml") != "" && $(this).data("vercomplementopdf") != "")
+  {
+    $('#alertaComplementos').hide();
+    document.querySelector('.uploaded-files-pagos').innerHTML +=
+    `<ol><li id="listaArchivos"><a href="${$(this).data("vercomplementoxml")}" target="_blank" name="url" id="RutaXML">XML</a></li></ol>`
+    document.querySelector('.uploaded-files-pagos').innerHTML +=
+    `<ol><li id="listaArchivos"><a href="${$(this).data("vercomplementopdf")}" target="_blank" name="url" id="RutaPDF">PDF</a></li></ol>`
+  }
+  else
+  {
+    $('#alertaComplementos').show();
+    $('#alertaComplementos').html('<strong class="alert alert-warning">Este pago no tiene complementos</strong>');
+  }
 });
 
 });
