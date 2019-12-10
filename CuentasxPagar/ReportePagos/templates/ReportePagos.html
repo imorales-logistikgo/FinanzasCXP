@@ -116,6 +116,9 @@ kt-menu__item--active
 							<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
 								<div class="col-lg-12">
 									<div class="kt-portlet kt-portlet--height-fluid">
+										<div class="container" id="alertaComplementos">
+
+										</div>
 										<div class="kt-portlet__head">
 											<div class="kt-portlet__head-label">
 												<h3 class="kt-portlet__head-title">
@@ -135,16 +138,12 @@ kt-menu__item--active
 							<!--ver archivos subidos (PDF y XML)-->
 							<div class="uploaded-files-pagos">
 								<h5>Archivos Subidos:</h5>
-								{% for Cobro in Cobros %}
-								<ol>{{Cobro.RutaXML}}</ol>
-								<ol>{{Cobro.RutaPDF}}</ol>
-								{%endfor%}
+								<ol></ol>
 							</div>
 						</div>
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success">Guardar</button>
 				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
       </div>
     </div>
