@@ -85,8 +85,10 @@ def SavePagoxProveedor(request):
 	newPago.Folio = jParams["Folio"]
 	newPago.Total = jParams["Total"]
 	newPago.FechaPago = datetime.datetime.strptime(jParams["FechaPago"],'%Y/%m/%d')
-	newPago.RutaXML = jParams["RutaXML"]
-	newPago.RutaPDF = jParams["RutaPDF"]
+	if "RutaXML" in jParams:
+		newPago.RutaXML = jParams["RutaXML"]
+	if "RutaPDF" in jParams:
+		newPago.RutaPDF = jParams["RutaPDF"]
 	newPago.Comentarios = jParams["Comentarios"]
 	newPago.TipoCambio = jParams["TipoCambio"]
 	newPago.NombreCortoProveedor = jParams["Proveedor"]
