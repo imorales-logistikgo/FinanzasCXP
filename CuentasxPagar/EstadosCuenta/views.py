@@ -25,16 +25,16 @@ def EstadosdeCuenta(request):
 
 
 def GetFacturasByFilters(request):
-	FechaDescargaDesde = request.GET["FechaDescargaDesde"]
-	FechaDescargaHasta = request.GET["FechaDescargaHasta"]
+	FechaFacturaDesde = request.GET["FechaFacturaDesde"]
+	FechaFacturaHasta = request.GET["FechaFacturaHasta"]
 	Proveedores = json.loads(request.GET["Proveedor"])
 	Status = json.loads(request.GET["Status"])
 	Moneda = json.loads(request.GET["Moneda"])
-	Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__range = [datetime.datetime.strptime(FechaDescargaDesde,'%m/%d/%Y'), datetime.datetime.strptime(FechaDescargaHasta,'%m/%d/%Y')])
+	Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__range = [datetime.datetime.strptime(FechaFacturaDesde,'%m/%d/%Y'), datetime.datetime.strptime(FechaFacturaHasta,'%m/%d/%Y')])
 	if Status:
 		Facturas = Facturas.filter(Status__in = Status)
 	if Proveedores:
-		Facturas = Facturas.filter(NombreCortoProveedor__in = Proveedores)
+		Facturas = Facturas.filter(Proveedor__in = Proveedores)
 	if Moneda:
 		Facturas = Facturas.filter(Moneda__in = Moneda)
 	Folios = list()

@@ -309,9 +309,11 @@ var fnGetFacturas = function () {
   endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
   arrStatus = $('#cboStatus').val();
   arrProveedor = $('#cboCliente').val();
-  strMoneda = $('#rdMXN').is(':checked') ? 'MXN' : 'USD';
+  strMoneda = [];
+  $('#rdMXN').is(':checked') ? strMoneda.push('MXN') : null;
+  $('#rdUSD').is(':checked') ? strMoneda.push('USD') : null;
   WaitMe_Show('#divTablaFacturas');
-  fetch("/EstadosdeCuenta/FilterBy?FechaDescargaDesde="+ startDate +"&FechaDescargaHasta="+ endDate +"&Status="+ JSON.stringify(arrStatus) +"&Cliente="+ JSON.stringify(arrProveedor) +"&Moneda="+ strMoneda, {
+  fetch("/EstadosdeCuenta/FilterBy?FechaFacturaDesde="+ startDate +"&FechaFacturaHasta="+ endDate +"&Status="+ JSON.stringify(arrStatus) +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Moneda="+ JSON.stringify(strMoneda), {
     method: "GET",
     credentials: "same-origin",
     headers: {
