@@ -39,4 +39,18 @@ $(document).ready(function(){
       },
     ]
   });
+
+  //filtro de fecha solo por mes y año
+  $(document).on( 'change', 'input[name="fechaxMesyAño"]', function () {
+    if($(this).is(':checked')){
+      $('#filtroxMesyAno').css("display", "block");
+      $('#fechaRango').hide();
+    }
+    else
+    {
+      $('#filtroxMesyAno').css("display", "none");
+      $('#fechaRango').show();
+    }
+  });
+
 });

@@ -31,6 +31,51 @@ kt-menu__item--active
 		<div class="tab-content">
 			<div class="tab-pane fade show kt-scroll active" id="kt_quick_panel_tab_notifications" role="tabpanel">
 				<div class="kt-notification">
+					<div class="container">
+						<div class="form-group row">
+							<label class="col-8 col-form-label"><strong>Fecha por mes y año</strong></label>
+							<div class="col-sm-12 col-md-4 col-lg-3">
+								<span class="kt-switch kt-switch--outline kt-switch--icon kt-switch--info">
+									<label>
+										<input type="checkbox" name="fechaxMesyAño">
+										<span></span>
+									</label>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="container" id="filtroxMesyAno">
+						<div class="row form-group">
+							<div class="col-md-7">
+								<label><strong>Mes:</strong></label>
+								<select class="selectpicker btn-xs btn" id="filtroxMes" multiple title="Mes" data-width="100%" data-live-search="true">
+									<option value="1">Enero</option>
+									<option value="2">Febrero</option>
+									<option value="3">Marzo</option>
+									<option value="4">Abril</option>
+									<option value="5">Mayo</option>
+									<option value="6">Junio</option>
+									<option value="7">Julio</option>
+									<option value="8">Agosto</option>
+									<option value="9">Septiembre</option>
+									<option value="10">Octubre</option>
+									<option value="11">Noviembre</option>
+									<option value="12">Diciembre</option>
+								</select>
+
+							</div>
+							<div class="col-md-5">
+								<label><strong>Año:</strong></label>
+								<select class="selectpicker btn-xs btn" id="filtroxAno" title="Año" data-width="100%" data-live-search="true">
+									<option value="2020">2020</option>
+									<option value="2019">2019</option>
+									<option value="2018">2018</option>
+									<option value="2017">2017</option>
+									<option value="2016">2016</option>
+								</select>
+							</div>
+						</div>
+					</div>
 					<div class="kt-subheader__main">
 						<label class="col-form-label col-lg-3 col-sm-12"><strong>Fecha: </strong></label>
 						<div class="col-lg-12 col-md-8 col-sm-12">
