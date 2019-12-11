@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+var idPago;
   $('#TableReportePagos').DataTable({
     "scrollX": true,
     "language": {
@@ -63,7 +63,8 @@ $(document).ready(function(){
         "width": "2%",
         "className": "dt-head-center dt-body-center",
         "mRender": function (data, type, full) {
-          return  '<button type ="button" class="btnEliminarPago btn btn-danger btn-elevate btn-pill btn-sm"><i class="flaticon-delete"></i></button>';
+        idPago = $('input[name="IDPago"]').data("pagoid");
+          return  '<button type ="button" class="btnEliminarPago btn btn-danger btn-elevate btn-pill btn-sm" data-idpago="'+idPago+'"><i class="flaticon-delete"></i></button>';
         }
     },
 
@@ -124,5 +125,30 @@ $(document).on('click', '#btnComplementos', function() {
     $('#alertaComplementos').html('<strong class="alert alert-warning">Este pago no tiene complementos</strong>');
   }
 });
+
+//eliminar row de la tabla estados de cuenta
+$(document).on( 'click', '.btnEliminarPago', function () {
+ Swal.fire({
+  title: '¿Estas Seguro?',
+  text: "Estas a un click de eliminar un pago importante",
+  type: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Aceptar'
+}).then((result) => {
+  if (result.value) {
+    console.log($(this).data('idpago'));
+    Swal.fire(
+      'Eliminado!',
+      'Eliminado con exito',
+      'success'
+      )
+  }
+  //else
+  //  alertToastError("Error al eliminar la factura");
+})
+});
+
 
 });
