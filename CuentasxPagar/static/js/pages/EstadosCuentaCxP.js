@@ -99,16 +99,16 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
   var datosRow = table1.row($(this).parents('tr')).data();
   if(datosRow[3] === 'MXN')
   {
-    if(parseFloat($(this).val()) >= datosRow[2])
+    if(parseFloat($(this).val()) >= datosRow[2].replace(/(\$)|(,)/g,''))
     {
-      (datosRow[3] === 'MXN') ?  $(this).val(datosRow[2]) : $(this).val(totConv)
+      (datosRow[3] === 'MXN') ?  $(this).val(datosRow[2].replace(/(\$)|(,)/g,'')) : $(this).val(totConv)
     }
   }
   else
   {
     if(parseFloat($(this).val()) >= totConv)
     {
-      (datosRow[3] === 'MXN') ?  $(this).val(datosRow[2]) : $(this).val(totConv)
+      (datosRow[3] === 'MXN') ?  $(this).val(datosRow[2].replace(/(\$)|(,)/g,'')) : $(this).val(totConv)
     }
   }
   $('input#valCobro').each(function(){
@@ -228,15 +228,15 @@ function showDatosObtenidos(){
  {
    if(datos[i][3] == 'MXN')
    {
-     var Balance = parseFloat(datos[i][2]);
-     var tot = parseFloat(datos[i][1]);
+     var Balance = parseFloat(datos[i][2].replace(/(\$)|(,)/g,''));
+     var tot = parseFloat(datos[i][1].replace(/(\$)|(,)/g,''));
      total = total + Balance;
    }
    if(datos[i][3] == 'USD')
    {
      var tipoCambio = $('input[name="TipoCambioPago"]').val();
-     var Balance = parseFloat(datos[i][2] * tipoCambio);
-     var tot = parseFloat(datos[i][1]);
+     var Balance = parseFloat(datos[i][2].replace(/(\$)|(,)/g,'') * tipoCambio);
+     var tot = parseFloat(datos[i][1].replace(/(\$)|(,)/g,''));
      totConv = Balance;
       // datos[i].push(tot);
       total = total + Balance;
@@ -267,7 +267,7 @@ function showDatosObtenidos(){
     "className": "dt-head-center dt-body-right",
     "targets": 4,
     "mRender": function (data, type, full) {
-     return (full[3] === 'MXN' ? `$ <input class="col-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2]}">` : '$ <input type="number" class="col-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'">');
+     return (full[3] === 'MXN' ? `$ <input class="col-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}">` : '$ <input type="number" class="col-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'">');
    }
  },
 
