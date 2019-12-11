@@ -24,24 +24,20 @@ def GetContadores():
 
 
 def GetPendientesByFilters(request):
-	FechaDescargaDesde = request.GET["FechaDescargaDesde"]
-	FechaDescargaHasta = request.GET["FechaDescargaHasta"]
 	Proveedor = json.loads(request.GET["Proveedor"])
 	Status = json.loads(request.GET["Status"])
 	Moneda = request.GET["Moneda"]
-	if not Status:
-		QueryStatus = ""
+	if "Year" in request.GET:
+		arrMonth = json.loads(request.GET["arrMonth"])
+		Year = request.GET["Year"]
+		PendingToSend = View_PendientesEnviarCxP.objects.filter(FechaDescarga__month__in = arrMonth, FechaDescarga__year = Year)
 	else:
-		QueryStatus = "Status IN ({}) AND ".format(','.join(['%s' for _ in range(len(Status))]))
-	if not Proveedor:
-		QueryClientes = ""
-	else:
-		QueryClientes = "NombreProveedor IN ({}) AND ".format(','.join(['%s' for _ in range(len(Proveedor))]))
-	QueryFecha = "FechaDescarga BETWEEN %s AND %s AND "
-	QueryMoneda = "Moneda = %s "
-	FinalQuery = "SELECT * FROM View_PendientesEnviarCxP WHERE " + QueryStatus + QueryClientes + QueryFecha + QueryMoneda + "AND IsFacturaProveedor = 0"
-	params = Status + Proveedor + [FechaDescargaDesde, FechaDescargaHasta] + [Moneda]
-	PendingToSend = View_PendientesEnviarCxP.objects.raw(FinalQuery,params)
+		PendingToSend = PendingToSend.objects.filter(FechaDescarga__range = [datetime.datetime.strptime(request.GET["FechaDescargaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaDescargaHasta"],'%m/%d/%Y')])
+	if Status:
+		PendingToSend = PendingToSend.filter(Status__in = Status)
+	if Proveedor:
+		PendingToSend = PendingToSend.filter(NombreProveedor__in = Proveedor)
+	PendingToSend = PendingToSend.filter(Moneda = Moneda)
 	htmlRes = render_to_string('TablaPendientes.html', {'pendientes':PendingToSend}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
 

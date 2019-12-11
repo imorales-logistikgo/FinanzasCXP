@@ -30,25 +30,30 @@ def ReporteFacturas(request):
 
 
 def GetFacturasByFilters(request):
-	FechaFacturaDesde = request.GET["FechaFacturaDesde"]
-	FechaFacturaHasta = request.GET["FechaFacturaHasta"]
 	Proveedores = json.loads(request.GET["Proveedor"])
 	Moneda = json.loads(request.GET["Moneda"])
-	if not Proveedores:
-		Facturas = FacturasxProveedor.objects.all()
+	if "Year" in request.GET:
+		arrMonth = json.loads(request.GET["arrMonth"])
+		Year = request.GET["Year"]
+		Facturas = FacturasxProveedor.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year)
 	else:
-		Facturas = FacturasxProveedor.objects.filter(NombreCortoProveedor__in = Proveedores)
+		Facturas = FacturasxProveedor.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')])
+	if Proveedores:
+		Facturas = Facturas.filter(NombreCortoProveedor__in = Proveedores)
 	if Moneda:
 		Facturas = Facturas.filter(Moneda__in = Moneda)
-	Facturas = Facturas.filter(FechaFactura__range = [datetime.datetime.strptime(FechaFacturaDesde,'%m/%d/%Y'), datetime.datetime.strptime(FechaFacturaHasta,'%m/%d/%Y')])
 	listFacturas = list()
 	for Fact in Facturas:
 		Factura = {}
 		conFacturaxPartidas= RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = Fact.IDFactura)
 		Factura['Folio'] = Fact.Folio
-		Factura['Cliente'] = Fact.NombreCortoProveedor
+		Factura['Proveedor'] = Fact.NombreCortoProveedor
 		Factura['FechaFactura'] = Fact.FechaFactura
 		Factura['FechaBaja'] = conFacturaxPartidas.first().IDPartida.FechaBaja
+		Factura["Subtotal"] = Fact.Subtotal
+		Factura["IVA"] = Fact.IVA
+		Factura["Retencion"] = Fact.Retencion
+		Factura["Status"] = Fact.Status
 		Factura['Total'] = Fact.Total
 		Factura['Viajes'] = ''
 		for Pendiente in conFacturaxPartidas:

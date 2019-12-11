@@ -103,7 +103,7 @@ $('#modalSubirPagos').on('hidden.bs.modal', function(){
 //muestra los datos para la tabla del modal subir cobros al hacer click en el boton de  subir cobro
 $(document).on('click', '#btnSubirPagos', function() {
   showDatosObtenidos();
-   mostrarTipoCambio();
+  mostrarTipoCambio();
 });
 //validar el total del cobro por cada factura seleccionada -- en el modal subir cobros
 $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
@@ -142,7 +142,7 @@ $(document).on('click', '#btnSavePago', function(){
     {
       alertToastError("El folio y la fecha no pueden ser vacios");
     }
-});
+  });
 
 
 //ocultar o mostrar campos de la tabla
@@ -216,20 +216,20 @@ function Getdatos(){
 function mostrarTipoCambio()
 {
   var found;
-   var datos = Getdatos();
-   for(var i=0; i<datos.length; i++)
-   {
+  var datos = Getdatos();
+  for(var i=0; i<datos.length; i++)
+  {
     // datos[i][3].push(datos[i][3]);
-     found = datos[i][3].includes('USD');
-   }
-   if(found != true)
-   {
-     $('#tipoCambioP').hide();
-   }
-   else
-   {
-     $('#tipoCambioP').show();
-   }
+    found = datos[i][3].includes('USD');
+  }
+  if(found != true)
+  {
+   $('#tipoCambioP').hide();
+ }
+ else
+ {
+   $('#tipoCambioP').show();
+ }
 }
 
 //funcion para obtener los datos de la tabla Estados de cuenta para mostrarlos en la tabla del modal subir pagos
@@ -317,15 +317,26 @@ function ValidacionCheckboxPagos(){
 });
 
 var fnGetFacturas = function () {
-  startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
-  endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
   arrStatus = $('#cboStatus').val();
   arrProveedor = $('#cboCliente').val();
   strMoneda = [];
   $('#rdMXN').is(':checked') ? strMoneda.push('MXN') : null;
   $('#rdUSD').is(':checked') ? strMoneda.push('USD') : null;
   WaitMe_Show('#divTablaFacturas');
-  fetch("/EstadosdeCuenta/FilterBy?FechaFacturaDesde="+ startDate +"&FechaFacturaHasta="+ endDate +"&Status="+ JSON.stringify(arrStatus) +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Moneda="+ JSON.stringify(strMoneda), {
+  if($('#chkMonthYear').is(':checked')){
+    arrMonth = $('#filtroxMes').val();
+    Year = $('#filtroxAno').val();
+    getFacturas("arrMonth="+ JSON.stringify(arrMonth) +"&Year="+ Year +"&Status="+ JSON.stringify(arrStatus) +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Moneda="+ JSON.stringify(strMoneda));
+  }
+  else{
+    startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
+    endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
+    getFacturas("FechaFacturaDesde="+ startDate +"&FechaFacturaHasta="+ endDate +"&Status="+ JSON.stringify(arrStatus) +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Moneda="+ JSON.stringify(strMoneda));
+  }
+}
+
+function getFacturas (params) {
+  fetch("/EstadosdeCuenta/FilterBy?" + params, {
     method: "GET",
     credentials: "same-origin",
     headers: {
@@ -384,10 +395,10 @@ function formatDataTableFacturas(){
     "paging": false,
     "dom": 'Bfrtip',
     "buttons": [
-      {
-        extend: 'excel',
-        text: '<i class="fas fa-file-excel fa-lg"></i>',
-      }
+    {
+      extend: 'excel',
+      text: '<i class="fas fa-file-excel fa-lg"></i>',
+    }
     ],
     columnDefs: [ {
       orderable: false,
