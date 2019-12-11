@@ -8,10 +8,11 @@
 			<th>Fecha Pago</th>
 			<th>Total</th>
 			<th>Folio Factura</th>
-			<th></th>
-			<th></th>
 			<th>XML</th>
 			<th>PDF</th>
+			<th></th>
+			<th></th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -22,10 +23,11 @@
 			<td>{{Pago.FechaPago|date:'Y/m/d'}}</td>
 			<td>${{Pago.Total|floatformat:"2"|intcomma}}</td>
 			<th>{{Folios|index:forloop.counter0}}</th>
-			<td></td>
-			<td></td>
 			<td>{{Pago.RutaXML}}</td>
 			<td>{{Pago.RutaPDF}}</td>
+			<td></td>
+			<td></td>
+			<td></td>
 		</tr>
 		{%endfor%}
 	</tbody>

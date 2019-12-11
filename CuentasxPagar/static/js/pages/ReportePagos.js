@@ -37,28 +37,37 @@ $(document).ready(function(){
       "width": "9%",
       "className": "dt-head-center dt-body-right"
     },
-
     {
-      "targets": 5,
+      "targets": [5,6],
+      "visible": false
+    },
+    {
+      "targets": 7,
       "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {
-        return  `<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-vercomplementoxml="${full[7]}" data-vercomplementopdf="${full[8]}" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`;
+        return  (full[5]!= "" && full[6]!= "" ? `<a href="${full[5]}" target="_blank" class="btn btn-primary btn-elevate btn-pill btn-sm"><i class="flaticon2-file"></i></a>`:'');
+      }
+    },
+    {
+      "targets": 8,
+      "width": "2%",
+      "className": "dt-head-center dt-body-center",
+      "mRender": function (data, type, full) {
+        return  `<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-vercomplementoxml="${full[5]}" data-vercomplementopdf="${full[6]}" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`;
       }
     },
 
     {
-        "targets": 6,
+        "targets": 9,
         "width": "2%",
         "className": "dt-head-center dt-body-center",
         "mRender": function (data, type, full) {
           return  '<button type ="button" class="btnEliminarPago btn btn-danger btn-elevate btn-pill btn-sm"><i class="flaticon-delete"></i></button>';
         }
     },
-    {
-      "targets": [7,8],
-      "visible": false
-    }
+
+
     ]
   });
 

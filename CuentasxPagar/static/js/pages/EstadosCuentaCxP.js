@@ -89,8 +89,10 @@ $('#modalSubirPagos').on('hidden.bs.modal', function(){
 
 
 //muestra los datos para la tabla del modal subir cobros al hacer click en el boton de  subir cobro
-$(document).on('click', '#btnSubirPagos',showDatosObtenidos);
-
+$(document).on('click', '#btnSubirPagos', function() {
+  showDatosObtenidos();
+   mostrarTipoCambio();
+});
 //validar el total del cobro por cada factura seleccionada -- en el modal subir cobros
 $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
   var table1 = $('#tableAddPago').DataTable();
@@ -119,7 +121,7 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
 
 //validacion si tienes los archivos pdf y xml
 $(document).on('click', '#btnSavePago', function(){
-    WaitMe_Show('#waitModalSubirPagos');
+    //WaitMe_Show('#waitModalSubirPagos');
     if($('input[name="FolioPago"]').val() != "" && $('#FechaPago').val() != "")
     {
       savePagoxProveedor();
@@ -159,7 +161,16 @@ KTUtil.ready(function() {
 
 
 $('input[name="TipoCambioPago"]').on('keyup change', function(){
-  showDatosObtenidos();
+  if($('input[name="TipoCambioPago"]').val() >=1)
+  {
+    showDatosObtenidos();
+  }
+  else
+  {
+    alertToastError("El tipo de cambio debe ser mayor a 0");
+    $('input[name="TipoCambioPago"]').val(1);
+  }
+
 });
 
 
@@ -188,6 +199,26 @@ function Getdatos(){
   return arrSelect;
 }
 
+
+//funcion para mostrar u ocultar el input del timpo de cambio
+function mostrarTipoCambio()
+{
+  var found;
+   var datos = Getdatos();
+   for(var i=0; i<datos.length; i++)
+   {
+    // datos[i][3].push(datos[i][3]);
+     found = datos[i][3].includes('USD');
+   }
+   if(found != true)
+   {
+     $('#tipoCambioP').hide();
+   }
+   else
+   {
+     $('#tipoCambioP').show();
+   }
+}
 
 //funcion para obtener los datos de la tabla Estados de cuenta para mostrarlos en la tabla del modal subir pagos
 function showDatosObtenidos(){
@@ -346,8 +377,6 @@ function formatDataTableFacturas(){
         text: '<i class="fas fa-file-excel fa-lg"></i>',
       }
     ],
-
-
     columnDefs: [ {
       orderable: false,
       targets:   0,
@@ -432,6 +461,7 @@ function getDetalleFactura()
 }
 
 function savePagoxProveedor()  {
+  WaitMe_Show('#waitModalSubirPagos');
   jParams = {
     Folio: $('#FolioPago').val(),
     Total:$('#AddCosto').val(),
