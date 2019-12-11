@@ -59,9 +59,38 @@ kt-menu__item--active
 															</div>
 															<div class="container" id="filtroxMesyAno">
 																<div class="row form-group">
-																	<div class="col-md-12">
-																		<label><strong>Mes y año:</strong></label>
-																		<input type="month" name="filtroxAnoyMes" id="filtroxAno" class="form-control">
+																	<div class="col-md-6">
+																		<label><strong>Mes:</strong></label>
+																		<div id="divMes" class="btn-group">
+																				<button id="btn-gpomeses" type="button" class="select-round btn-xs btn dropdown-toggle" data-toggle="dropdown">
+																					 Mes
+																				</button>
+																			<div class="dropdown-menu" role="menu">
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="1" />Enero<br />
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="2" />Febrero<br />
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="3" />Marzo<br />
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="4" />Abril<br />
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="5" />Mayo<br />
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="6" />Junio<br />
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="7" />Julio<br />
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="8" />Agosto<br />
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="9" />Septiembre<br />
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="10" />Octubre<br />
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="11" />Noviembre<br />
+																				<input class="form-control icheck" type="checkbox" name="chkMes" value="12" />Diciembre<br />
+																			</div>
+																		</div>
+
+																	</div>
+																	<div class="col-md-6">
+																		<label><strong>Año:</strong></label>
+																		<select class="select-round btn-xs btn" id="cboTipoViaje">
+																			<option value="2020">2020</option>
+																			<option value="2019">2019</option>
+																			<option value="2018">2018</option>
+																			<option value="2017">2017</option>
+																			<option value="2016">2016</option>
+																		</select>
 																	</div>
 																</div>
 															</div>
