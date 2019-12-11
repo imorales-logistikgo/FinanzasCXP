@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 {% load Tags_EstadosCuenta %}
 <div class="kt-subheader   kt-grid__item" id="kt_subheader">
 	<div class="kt-container  kt-container--fluid ">
@@ -43,11 +44,11 @@
 						<td style="font-weight: bold;">{{Factura.Folio}}</td>
 						<td>{{Factura.Proveedor}}</td>
 						<td>{{Factura.FechaFactura|date:'Y/m/d'}}</td>
-						<td>{{Factura.Subtotal|floatformat:"2"}}</td>
-						<td>{{Factura.IVA|floatformat:"2"}}</td>
-						<td>{{Factura.Retencion|floatformat:"2"}}</td>
-						<td>{{Factura.Total|floatformat:"2"}}</td>
-						<td>{{Factura.Saldo|floatformat:"2"}}</td>
+						<td>${{Factura.Subtotal|floatformat:"2"|intcomma}}</td>
+						<td>${{Factura.IVA|floatformat:"2"|intcomma}}</td>
+						<td>${{Factura.Retencion|floatformat:"2"|intcomma}}</td>
+						<td>${{Factura.Total|floatformat:"2"|intcomma}}</td>
+						<td>${{Factura.Saldo|floatformat:"2"|intcomma}}</td>
 						<td>{{Factura.Moneda}}</td>
 						<td>{{Factura.Status}}</td>
 						<td>{{Folios|index:forloop.counter0}}</td>
