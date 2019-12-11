@@ -192,11 +192,13 @@ $('input[name="TipoCambioPago"]').on('keyup change', function(){
 function CleanModal()
 {
  $('input[name="FolioPago"]').val('');
- $('.uploaded-files ol').remove();
+ $('.uploaded-files-pagos ol').remove();
  $('#comentariosEC').val('');
  $('#TipoCambioPago').val(1);
  calculo = 0;
  totConv = 0;
+ $('#ComplementosPagos').data("rutaarchivoXML", "");
+ $('#ComplementosPagos').data("rutaarchivoPDF", "");
 }
 
 
@@ -480,8 +482,8 @@ function savePagoxProveedor()  {
     FechaPago: $('#FechaPago').val(),
     TipoCambio: $('#TipoCambioPago').val(),
     Comentarios: $('#comentariosEC').val(),
-    RutaXML: $('#RutaXML').attr('href'),
-    RutaPDF: $('#RutaPDF').attr('href'),
+    RutaXML: $('#ComplementosPagos').data("rutaarchivoXML"),
+    RutaPDF: $('#ComplementosPagos').data("rutaarchivoPDF"),
     Proveedor: proveedor,
   }
 

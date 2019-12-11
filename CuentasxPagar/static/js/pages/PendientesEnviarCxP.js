@@ -48,7 +48,7 @@ $(document).on('click', '#btnSubirFacturaPendientesEnviar',getDatos);
 $('#btnAplicarFiltro').on('click', fnGetPendientesEnviar);
 
 $('#btnGuardarFactura').on('click', function(){
-  if($('#kt_uppy_1').data("rutaarchivoPDF") != undefined && $('#kt_uppy_1').data("rutaarchivoXML") != undefined)
+  if($('#kt_uppy_1').data("rutaarchivoPDF") != undefined && $('#kt_uppy_1').data("rutaarchivoXML") != undefined || $('#kt_uppy_1').data("rutaarchivoPDF") != null && $('#kt_uppy_1').data("rutaarchivoXML") != null)
   {
     if($('#txtFolioFactura').val() != "" && $('#FechaRevision').val() != "" && $('#FechaFactura').val() != "" && $('#FechaVencimiento').val() != "")
     {
@@ -198,8 +198,8 @@ function LimpiarModalSF()
   $('#see').hide();
   $('#seeAlert').hide();
   //ids = [];
-  $('#kt_uppy_1').data("rutaarchivoXML", undefined);
-  $('#kt_uppy_1').data("rutaarchivoPDF", undefined);
+  $('#kt_uppy_1').data("rutaarchivoXML", null);
+  $('#kt_uppy_1').data("rutaarchivoPDF", null);
 }
 
 
