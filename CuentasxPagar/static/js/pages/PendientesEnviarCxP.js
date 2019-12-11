@@ -12,22 +12,22 @@ $(document).ready(function() {
 formatDataTable();
 
 //on click select row checkbox
-        $(document).on( 'change', 'input[name="checkPE"]', function () {
-          var input = 'input[name="checkPE"]';
-          var btnSubir = '#btnSubirFacturaPendientesEnviar';
-          if($(this).is(':checked'))
-          {
-            FiltroCheckboxProveedor();
-            adddatos();
-            ContadorCheck(input, btnSubir);
-          }
-          else
-          {
-            adddatos();
-            ContadorCheck(input, btnSubir);
+$(document).on( 'change', 'input[name="checkPE"]', function () {
+  var input = 'input[name="checkPE"]';
+  var btnSubir = '#btnSubirFacturaPendientesEnviar';
+  if($(this).is(':checked'))
+  {
+    FiltroCheckboxProveedor();
+    adddatos();
+    ContadorCheck(input, btnSubir);
+  }
+  else
+  {
+    adddatos();
+    ContadorCheck(input, btnSubir);
 
-         }
-       });
+  }
+});
 
 //filtro de fecha solo por mes y año
 $(document).on( 'change', 'input[name="fechaxMesyAño"]', function () {
@@ -392,10 +392,10 @@ function getDatos(){
       "language": {
         "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
       },
-     destroy: true,
-     data: h[0],
-     columnDefs: [
-     {
+      destroy: true,
+      data: h[0],
+      columnDefs: [
+      {
        "targets": 0,
        "className": "dt-head-center dt-body-center bold"
      },
@@ -532,13 +532,27 @@ function SavePartidasxFactura(IDFactura) {
 }
 
 var fnGetPendientesEnviar = function () {
-  startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
-  endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
   arrStatus = $('#cboStatus').val();
   arrProveedores = $('#cboProveedor').val();
   strMoneda = $('#rdMXN').is(':checked') ? 'MXN' : 'USD';
   WaitMe_Show('#divTablaPendientesEnviar');
-  fetch("/PendientesEnviar/FilterBy?FechaDescargaDesde="+ startDate +"&FechaDescargaHasta="+ endDate +"&Status="+ JSON.stringify(arrStatus) +"&Proveedor="+ JSON.stringify(arrProveedores) +"&Moneda="+ strMoneda, {
+  if($('#chkMonthYear').is(':checked')){
+    arrMonth = $('#filtroxMes').val();
+    Year = $('#filtroxAno').val();
+    getPendientesEnviar("arrMonth="+ JSON.stringify(arrMonth) +"&Year="+ Year +"&Status="+ JSON.stringify(arrStatus) 
+      +"&Proveedor="+ JSON.stringify(arrProveedores) +"&Moneda="+ strMoneda);
+  }
+  else
+  {
+    startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
+    endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
+    getPendientesEnviar("FechaDescargaDesde="+ startDate +"&FechaDescargaHasta="+ endDate +"&Status="+ JSON.stringify(arrStatus) 
+      +"&Proveedor="+ JSON.stringify(arrProveedores) +"&Moneda="+ strMoneda);
+  }
+}
+
+function getPendientesEnviar(params){
+  fetch("/PendientesEnviar/FilterBy?" + params, {
     method: "GET",
     credentials: "same-origin",
     headers: {
@@ -558,27 +572,27 @@ var fnGetPendientesEnviar = function () {
 
 function formatDataTable() {
   table = $('#TablePendientesEnviar').DataTable( {
- "language": {
-   "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
- },
- "responsive": true,
- "paging": false,
- "dom": 'Bfrtip',
- "buttons": [
+   "language": {
+     "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+   },
+   "responsive": true,
+   "paging": false,
+   "dom": 'Bfrtip',
+   "buttons": [
    {
      extend: 'excel',
      text: '<i class="fas fa-file-excel fa-lg"></i>',
    }
- ],
+   ],
 
- columnDefs: [ {
-   orderable: false,
-   targets:   0,
-   "className": "dt-head-center dt-body-center",
-   "width": "1%",
-   "mRender": function (data, type, full) {
-     EvDigital = $('input[name="isEvicencias"]').data("evidenciadigital");
-     EvFisica = $('input[name="isEvicencias"]').data("evidenciafisica");
+   columnDefs: [ {
+     orderable: false,
+     targets:   0,
+     "className": "dt-head-center dt-body-center",
+     "width": "1%",
+     "mRender": function (data, type, full) {
+       EvDigital = $('input[name="isEvicencias"]').data("evidenciadigital");
+       EvFisica = $('input[name="isEvicencias"]').data("evidenciafisica");
          //idpendienteenviar = $('input[name="isEvicencias"]').data("idpendienteenviar");
          return (EvDigital != 'False' && full[9] == 'Finalizado' && EvFisica != 'False' ? '<input type="checkbox" name="checkPE" id="estiloCheckbox" />': '');
        }
