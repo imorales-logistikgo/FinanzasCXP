@@ -32,6 +32,7 @@ def ReporteFacturas(request):
 def GetFacturasByFilters(request):
 	Proveedores = json.loads(request.GET["Proveedor"])
 	Moneda = json.loads(request.GET["Moneda"])
+	Status = json.loads(request.GET["Status"])
 	if "Year" in request.GET:
 		arrMonth = json.loads(request.GET["arrMonth"])
 		Year = request.GET["Year"]
@@ -42,6 +43,8 @@ def GetFacturasByFilters(request):
 		Facturas = Facturas.filter(NombreCortoProveedor__in = Proveedores)
 	if Moneda:
 		Facturas = Facturas.filter(Moneda__in = Moneda)
+	if Status:
+		Facturas = Facturas.filter(Status__in = Status)
 	listFacturas = list()
 	for Fact in Facturas:
 		Factura = {}

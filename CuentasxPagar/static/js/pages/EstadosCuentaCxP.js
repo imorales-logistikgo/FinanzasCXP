@@ -68,6 +68,8 @@ $('#modalSubirPagos').on('shown.bs.modal', function(){
 
 });
 
+$(document).on('change', '#FolioPago', fnCheckFolio);
+
 //filtro de fecha solo por mes y año
 $(document).on( 'change', 'input[name="fechaxMesyAño"]', function () {
   if($(this).is(':checked')){
@@ -582,6 +584,34 @@ function SavePagoxFactura(IDPago)
       WaitMe_Hide('#waitModalSubirPagos');
     }
 
+  }).catch(function(ex){
+    console.log("no success!");
+  });
+}
+
+var fnCheckFolio = function () {
+  fetch("/EstadosdeCuenta/CheckFolioDuplicado?Folio=" + $('#FolioPago').val(), {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    return response.clone().json();
+  }).then(function(data){
+    if(data.IsDuplicated) {
+      Swal.fire({
+        type: 'error',
+        title: 'El folio indicado ya existe en el sistema',
+        showConfirmButton: false,
+        timer: 2500
+      })
+      $('#btnSavePago').attr('disabled',true);
+    }
+    else {
+      $('#btnSavePago').attr('disabled',false);
+    }
   }).catch(function(ex){
     console.log("no success!");
   });

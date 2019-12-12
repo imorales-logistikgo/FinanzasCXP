@@ -47,6 +47,8 @@ $(document).on('click', '#btnSubirFacturaPendientesEnviar',getDatos);
 
 $('#btnAplicarFiltro').on('click', fnGetPendientesEnviar);
 
+$(document).on('change', '#txtFolioFactura', fnCheckFolio);
+
 $('#btnGuardarFactura').on('click', function(){
   if($('#kt_uppy_1').data("rutaarchivoPDF") != undefined && $('#kt_uppy_1').data("rutaarchivoXML") != undefined || $('#kt_uppy_1').data("rutaarchivoPDF") != null && $('#kt_uppy_1').data("rutaarchivoXML") != null)
   {
@@ -564,6 +566,34 @@ function getPendientesEnviar(params){
   }).then(function(data){
     $('#divTablaPendientesEnviar').html(data.htmlRes);
     formatDataTable();
+  }).catch(function(ex){
+    console.log("no success!");
+  });
+}
+
+var fnCheckFolio = function () {
+  fetch("/PendientesEnviar/CheckFolioDuplicado?Folio=" + $('#txtFolioFactura').val(), {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    return response.clone().json();
+  }).then(function(data){
+    if(data.IsDuplicated) {
+      Swal.fire({
+        type: 'error',
+        title: 'El folio indicado ya existe en el sistema',
+        showConfirmButton: false,
+        timer: 2500
+      })
+      $('#btnGuardarFactura').attr('disabled',true);
+    }
+    else {
+      $('#btnGuardarFactura').attr('disabled',false);
+    }
   }).catch(function(ex){
     console.log("no success!");
   });

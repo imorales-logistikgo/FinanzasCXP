@@ -33,7 +33,7 @@ def GetFacturasByFilters(request):
 		Year = request.GET["Year"]
 		Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year)
 	else:
-		Facturas = Facturas.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')])
+		Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')])
 	if Status:
 		Facturas = Facturas.filter(Status__in = Status)
 	if Proveedores:
@@ -47,7 +47,7 @@ def GetFacturasByFilters(request):
 			FoliosPago += Pago.IDPago.Folio + ", "
 		FoliosPago = FoliosPago[:-2]
 		Folios.append(FoliosPago)
-	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas':Facturas, 'Folios': Folios}, request = request,)
+	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas': Facturas, 'Folios': Folios}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
 
 
@@ -122,3 +122,9 @@ def SavePagoxFactura(request):
 		Factura.save()
 		newRelacionPagoxFactura.save()
 	return HttpResponse("")
+
+
+
+def CheckFolioDuplicado(request):
+	IsDuplicated = PagosxProveedor.objects.filter(Folio = request.GET["Folio"]).exists()
+	return JsonResponse({'IsDuplicated' : IsDuplicated})

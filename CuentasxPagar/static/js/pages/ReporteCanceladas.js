@@ -19,7 +19,7 @@ $(document).ready(function(){
   //rago fecha para el Filtro
   $('input[name="FiltroFechaReporteCanceladas"]').daterangepicker({
    autoUpdateInput: false
-  });
+ });
 
   $('input[name="FiltroFechaReporteCanceladas"]').on('apply.daterangepicker', function(ev, picker) {
     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
@@ -30,12 +30,25 @@ $(document).ready(function(){
 });
 
 function getReportesByFilters() {
-  startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
-  endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
   arrProveedores = $('#cboProveedor').val();
-  strMoneda = $('#rdMXN').is(':checked') ? 'MXN' : 'USD';
-  //WaitMe_Show('#divTablaFacturas');
-  fetch("/ReporteCanceladas/FilterBy?FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Proveedor="+ JSON.stringify(arrProveedores) +"&Moneda="+ strMoneda, {
+  strMoneda = [];
+  $('#rdMXN').is(':checked') ? strMoneda.push('MXN') : null;
+  $('#rdUSD').is(':checked') ? strMoneda.push('USD') : null;
+  //WaitMe_Show('#TbPading');
+  if($('#chkMonthYear').is(':checked')){
+    arrMonth = $('#filtroxMes').val();
+    Year = $('#filtroxAno').val();
+    getReportes("arrMonth="+ JSON.stringify(arrMonth) +"&Year="+ Year +"&Proveedor="+ JSON.stringify(arrProveedores) +"&Moneda="+ JSON.stringify(strMoneda));
+  }
+  else {
+    startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
+    endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
+    getReportes("FechaFacturaDesde="+ startDate +"&FechaFacturaHasta="+ endDate +"&Proveedor="+ JSON.stringify(arrProveedores) +"&Moneda="+ JSON.stringify(strMoneda));
+  }
+}
+
+function getReportes(params) {
+  fetch("/ReporteCanceladas/FilterBy?" + params, {
     method: "GET",
     credentials: "same-origin",
     headers: {
@@ -45,7 +58,7 @@ function getReportesByFilters() {
   }).then(function(response){
     return response.clone().json();
   }).then(function(data){
-    //WaitMe_Hide('#divTablaFacturas');
+    //WaitMe_Hide('#TbPading');
     $('#TbPading').html(data.htmlRes);
     formatDataTableCanceladas();
   }).catch(function(ex){
@@ -62,35 +75,35 @@ function formatDataTableCanceladas() {
     "paging": true,
     "dom": 'Bfrtip',
     "buttons": [
-      {
-        extend: 'excel',
-        text: '<i class="fas fa-file-excel fa-lg"></i>',
+    {
+      extend: 'excel',
+      text: '<i class="fas fa-file-excel fa-lg"></i>',
 
-      }
+    }
     ],
     columnDefs: [
-      {
-          "targets": [0],
-          "width": "10px",
-          "className": "dt-head-center dt-body-center"
-      },
+    {
+      "targets": [0],
+      "width": "10px",
+      "className": "dt-head-center dt-body-center"
+    },
 
-      {
-        "targets": [1,2, 3],
-        "width": "15px",
-        "className": "dt-head-center dt-body-center"
-      },
+    {
+      "targets": [1,2, 3],
+      "width": "15px",
+      "className": "dt-head-center dt-body-center"
+    },
 
-      {
-        "targets": 4,
-        "width": "12px",
-        "className": "dt-head-center dt-body-center"
-      },
-      {
-        "targets": [5,6,7,8,9],
-        "width": "12px",
-        "className": "dt-head-center dt-body-right"
-      },
+    {
+      "targets": 4,
+      "width": "12px",
+      "className": "dt-head-center dt-body-center"
+    },
+    {
+      "targets": [5,6,7,8,9],
+      "width": "12px",
+      "className": "dt-head-center dt-body-right"
+    },
     ]
   });
 }
