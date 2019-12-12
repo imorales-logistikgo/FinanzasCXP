@@ -95,16 +95,17 @@ var idPago;
   });
 
   $('#ModalComplementos').on('hidden.bs.modal', function(){
+   $('.uploaded-files-new ol').remove();
    $('.uploaded-files-pagos ol').remove();
    var id = '#ComplementosPagos';
-   var verComp = '.uploaded-files-pagos';
+   var verComp = '.uploaded-files-new';
    KTUppyEvidencias.init(id, verComp)
   });
 
 
   KTUtil.ready(function() {
     var id = '#ComplementosPagos';
-    var verComp = '.uploaded-files-pagos';
+    var verComp = '.uploaded-files-new';
     KTUppyEvidencias.init(id, verComp);
   });
 

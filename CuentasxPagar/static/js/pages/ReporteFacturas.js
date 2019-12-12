@@ -31,16 +31,17 @@ function getReportesByFilters() {
   strMoneda = [];
   $('#rdMXN').is(':checked') ? strMoneda.push('MXN') : null;
   $('#rdUSD').is(':checked') ? strMoneda.push('USD') : null;
-  //WaitMe_Show('#TbPading');
+  WaitMe_Show('#TbPading');
   if($('#chkMonthYear').is(':checked')){
     arrMonth = $('#filtroxMes').val();
     Year = $('#filtroxAno').val();
     getReportes("arrMonth="+ JSON.stringify(arrMonth) +"&Year="+ Year +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Moneda="+ JSON.stringify(strMoneda));
   }
   else{
-    getReportes("FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Moneda="+ JSON.stringify(strMoneda));
     startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
     endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
+    getReportes("FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Moneda="+ JSON.stringify(strMoneda));
+
   }
 }
 
@@ -56,8 +57,8 @@ function getReportes(params) {
     return response.clone().json();
   }).then(function(data){
     $('#TbPading').html(data.htmlRes);
-    //WaitMe_Hide('#TbPading');
-    formatTableCobros();
+    formatTableReporteFacturas();
+    WaitMe_Hide('#TbPading');
   }).catch(function(ex){
     console.log("no success!");
   });
