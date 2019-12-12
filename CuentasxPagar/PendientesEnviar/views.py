@@ -30,9 +30,9 @@ def GetPendientesByFilters(request):
 	if "Year" in request.GET:
 		arrMonth = json.loads(request.GET["arrMonth"])
 		Year = request.GET["Year"]
-		PendingToSend = View_PendientesEnviarCxP.objects.filter(FechaDescarga__month__in = arrMonth, FechaDescarga__year = Year)
+		PendingToSend = View_PendientesEnviarCxP.objects.filter(FechaDescarga__month__in = arrMonth, FechaDescarga__year = Year, IsFacturaProveedor = False)
 	else:
-		PendingToSend = PendingToSend.objects.filter(FechaDescarga__range = [datetime.datetime.strptime(request.GET["FechaDescargaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaDescargaHasta"],'%m/%d/%Y')])
+		PendingToSend = View_PendientesEnviarCxP.objects.filter(FechaDescarga__range = [datetime.datetime.strptime(request.GET["FechaDescargaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaDescargaHasta"],'%m/%d/%Y')], IsFacturaProveedor = False)
 	if Status:
 		PendingToSend = PendingToSend.filter(Status__in = Status)
 	if Proveedor:
@@ -89,3 +89,9 @@ def SavePartidasxFactura(request):
 	PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0", ['Finalizado'])
 	htmlRes = render_to_string('TablaPendientes.html', {'pendientes':PendingToSend}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
+
+
+
+def CheckFolioDuplicado(request):
+	IsDuplicated = FacturasxProveedor.objects.filter(Folio = request.GET["Folio"]).exists()
+	return JsonResponse({'IsDuplicated' : IsDuplicated})

@@ -29,25 +29,29 @@ def ReporteCanceladas(request):
 
 
 def GetCanceladasByFilters(request):
-	FechaFacturaDesde = request.GET["FechaFacturaDesde"]
-	FechaFacturaHasta = request.GET["FechaFacturaHasta"]
 	Proveedores = json.loads(request.GET["Proveedor"])
 	Moneda = json.loads(request.GET["Moneda"])
-	if not Proveedores:
-		Canceladas = FacturasxProveedor.objects.filter(Status = 'Cancelada')
+	if "Year" in request.GET:
+		arrMonth = json.loads(request.GET["arrMonth"])
+		Year = request.GET["Year"]
+		Canceladas = FacturasxProveedor.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year, Status = "Cancelada")
 	else:
-		Canceladas = FacturasxProveedor.objects.filter(Status = 'Cancelada', NombreCortoProveedor__in = Proveedores)
+		Canceladas = FacturasxProveedor.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')], Status = "Cancelada")
+	if Proveedores:
+		Canceladas = Canceladas.filter(NombreCortoProveedor__in = Proveedores)
 	if Moneda:
 		Canceladas = Canceladas.filter(Moneda__in = Moneda)
-	Canceladas = Canceladas.filter(FechaFactura__range = [datetime.datetime.strptime(FechaFacturaDesde,'%m/%d/%Y'), datetime.datetime.strptime(FechaFacturaHasta,'%m/%d/%Y')])
 	listFacturas = list()
 	for Cancelada in Canceladas:
 		Factura = {}
 		conFacturaxPartidas= RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = Cancelada.IDFactura)
 		Factura['Folio'] = Cancelada.Folio
-		Factura['Cliente'] = Cancelada.NombreCortoProveedor
+		Factura['Proveedor'] = Cancelada.NombreCortoProveedor
 		Factura['FechaFactura'] = Cancelada.FechaFactura
 		Factura['FechaBaja'] = conFacturaxPartidas.first().IDPartida.FechaBaja
+		Factura["Subtotal"] = Cancelada.Subtotal
+		Factura["IVA"] = Cancelada.IVA
+		Factura["Retencion"] = Cancelada.Retencion
 		Factura['Total'] = Cancelada.Total
 		Factura['Viajes'] = ''
 		for Pendiente in conFacturaxPartidas:

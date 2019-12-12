@@ -28,6 +28,7 @@ $('#btnAplicarFiltro').on('click', getReportesByFilters);
 
 function getReportesByFilters() {
   arrProveedor = $('#cboProveedor').val();
+  arrStatus = $('#cboStatus').val();
   strMoneda = [];
   $('#rdMXN').is(':checked') ? strMoneda.push('MXN') : null;
   $('#rdUSD').is(':checked') ? strMoneda.push('USD') : null;
@@ -35,12 +36,12 @@ function getReportesByFilters() {
   if($('#chkMonthYear').is(':checked')){
     arrMonth = $('#filtroxMes').val();
     Year = $('#filtroxAno').val();
-    getReportes("arrMonth="+ JSON.stringify(arrMonth) +"&Year="+ Year +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Moneda="+ JSON.stringify(strMoneda));
+    getReportes("arrMonth="+ JSON.stringify(arrMonth) +"&Year="+ Year +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Status="+ JSON.stringify(arrStatus) +"&Moneda="+ JSON.stringify(strMoneda));
   }
   else{
     startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
     endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
-    getReportes("FechaCobroDesde="+ startDate +"&FechaCobroHasta="+ endDate +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Moneda="+ JSON.stringify(strMoneda));
+    getReportes("FechaFacturaDesde="+ startDate +"&FechaFacturaHasta="+ endDate +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Status="+ JSON.stringify(arrStatus) +"&Moneda="+ JSON.stringify(strMoneda));
 
   }
 }

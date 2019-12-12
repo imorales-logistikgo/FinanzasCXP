@@ -22,6 +22,7 @@ class PagosxProveedor(models.Model):
     Comentarios = models.CharField(max_length=500, default = "")
     TipoCambio = models.DecimalField(default=1, max_digits=10, decimal_places=5)
     NombreCortoProveedor = models.CharField(max_length=100)
+    Status = models.CharField(max_length=15)
 
     class Meta:
         db_table="PagosxProveedor"
