@@ -260,6 +260,9 @@ function showDatosObtenidos(){
 
   var h = [datos];
   $('#tableAddPago').DataTable({
+    "language": {
+      "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+    },
     "paging": false,
     "info":   false,
     destroy: true,

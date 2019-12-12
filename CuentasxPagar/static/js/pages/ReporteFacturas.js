@@ -93,7 +93,7 @@ function formatTableReporteFacturas() {
     },
 
     {
-      "targets": [3,4],
+      "targets": [3,4,5,6],
       "width": "12px",
       "className": "dt-head-center dt-body-right"
     },
