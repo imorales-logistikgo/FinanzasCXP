@@ -43,7 +43,11 @@ $(document).on( 'change', 'input[name="fechaxMesyAño"]', function () {
 });
 
 //on click para el boton del modal subir factura
-$(document).on('click', '#btnSubirFacturaPendientesEnviar',getDatos);
+$(document).on('click', '#btnSubirFacturaPendientesEnviar', function(){
+  getDatos();
+  mostrarTipoCambio();
+});
+
 
 $('#btnAplicarFiltro').on('click', fnGetPendientesEnviar);
 
@@ -155,14 +159,45 @@ $('#kt_modal_2').on('hidden.bs.modal', function(){
   KTUppy.init()
 });
 
-$('input[name="TipoCambio"]').on('keyup', function(){
-  getDatos();
+$('input[name="TipoCambio"]').on('keyup change', function(){
+  if($('input[name="TipoCambio"]').val() >=1)
+  {
+    getDatos();
+  }
+  else
+  {
+    alertToastError("El tipo de cambio debe ser mayor a 0");
+    $('input[name="TipoCambio"]').val(1);
+  }
 });
 
 
 
 
 //FUNCIONES PARA PENDIENTES DE ENVIAR
+
+//funcion para mostrar u ocultar el input del timpo de cambio
+function mostrarTipoCambio()
+{
+  var found;
+  var datos = adddatos();
+  for(var i=0; i<datos.length; i++)
+  {
+    // datos[i][3].push(datos[i][3]);
+    found = datos[i][5].includes('USD');
+  }
+  if(found != true)
+  {
+   $('#inputTipoCambio').hide();
+   $('#labelTipoCambio').hide();
+  }
+ else
+ {
+   $('#inputTipoCambio').show();
+   $('#labelTipoCambio').show();
+ }
+}
+
 
 
 //validacion mismo cliente en los checkbox
@@ -541,14 +576,14 @@ var fnGetPendientesEnviar = function () {
   if($('#chkMonthYear').is(':checked')){
     arrMonth = $('#filtroxMes').val();
     Year = $('#filtroxAno').val();
-    getPendientesEnviar("arrMonth="+ JSON.stringify(arrMonth) +"&Year="+ Year +"&Status="+ JSON.stringify(arrStatus) 
+    getPendientesEnviar("arrMonth="+ JSON.stringify(arrMonth) +"&Year="+ Year +"&Status="+ JSON.stringify(arrStatus)
       +"&Proveedor="+ JSON.stringify(arrProveedores) +"&Moneda="+ strMoneda);
   }
   else
   {
     startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
     endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
-    getPendientesEnviar("FechaDescargaDesde="+ startDate +"&FechaDescargaHasta="+ endDate +"&Status="+ JSON.stringify(arrStatus) 
+    getPendientesEnviar("FechaDescargaDesde="+ startDate +"&FechaDescargaHasta="+ endDate +"&Status="+ JSON.stringify(arrStatus)
       +"&Proveedor="+ JSON.stringify(arrProveedores) +"&Moneda="+ strMoneda);
   }
 }
