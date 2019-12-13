@@ -4597,7 +4597,7 @@ a.close.disabled {
   padding: 1.25rem;
   border-bottom: 3px solid #006ef7; }
   .modal-header .close {
-    padding: 5px;
+  /*  padding: 5px; */
     margin: -1rem -1rem -1rem auto; }
 
 .modal-title {

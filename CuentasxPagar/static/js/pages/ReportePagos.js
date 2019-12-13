@@ -1,81 +1,7 @@
 $(document).ready(function(){
   var idPago;
-  $('#TableReportePagos').DataTable({
-    "scrollX": "100%",
-    "language": {
-      "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
-    },
-    "responsive": true,
-    "paging": true,
-    "dom": 'Bfrtip',
-    "buttons": [
-    {
-      extend: 'excel',
-      text: '<i class="fas fa-file-excel fa-lg"></i>',
-    }
-    ],
-    columnDefs: [
-    {
-      "targets": [0],
-      "width": "10%",
-      "className": "dt-head-center dt-body-center"
-    },
 
-    {
-      "targets": [1,2],
-      "width": "10%",
-      "className": "dt-head-center dt-body-center"
-    },
-
-    {
-      "targets": [3],
-      "width": "5%",
-      "className": "dt-head-center dt-body-right"
-    },
-    {
-      "targets": [4],
-      "width": "9%",
-      "className": "dt-head-center dt-body-right"
-    },
-    {
-      "targets": [5],
-      "width": "9%",
-      "className": "dt-head-center dt-body-center"
-    },
-    {
-      "targets": [6,7],
-      "visible": false
-    },
-    {
-      "targets": 8,
-      "width": "2%",
-      "className": "dt-head-center dt-body-center",
-      "mRender": function (data, type, full) {
-        return  (full[6]!= "" && full[7]!= "" ? `<a href="${full[6]}" target="_blank" class="btn btn-primary btn-elevate btn-pill btn-sm"><i class="flaticon2-file"></i></a>`:'');
-      }
-    },
-    {
-      "targets": 9,
-      "width": "2%",
-      "className": "dt-head-center dt-body-center",
-      "mRender": function (data, type, full) {
-        return  `<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-vercomplementoxml="${full[5]}" data-vercomplementopdf="${full[6]}" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`;
-      }
-    },
-
-    {
-        "targets": 10,
-        "width": "2%",
-        "className": "dt-head-center dt-body-center",
-        "mRender": function (data, type, full) {
-        idPago = $('input[name="IDPago"]').data("pagoid");
-        return  '<button type ="button" class="btnEliminarPago btn btn-danger btn-elevate btn-pill btn-sm" data-idpago="'+idPago+'"><i class="flaticon-delete"></i></button>';
-      }
-    },
-
-
-    ]
-  });
+  formatDataTable();
 
   $('#btnAplicarFiltro').on('click', getPagosByFilters);
 
@@ -118,7 +44,6 @@ $(document).ready(function(){
 
 
   $(document).on('click', '#btnComplementos', function() {
-    console.log($(this).data("vercomplementoxml"));
     if($(this).data("vercomplementoxml") != "" && $(this).data("vercomplementopdf") != "")
     {
       $('#alertaComplementos').hide();
@@ -230,33 +155,33 @@ function formatDataTable() {
       "className": "dt-head-center dt-body-right"
     },
     {
-      "targets": [4],
+      "targets": [4,5],
       "width": "9%",
       "className": "dt-head-center dt-body-right"
     },
     {
-      "targets": [5,6],
+      "targets": [6,7],
       "visible": false
-    },
-    {
-      "targets": 7,
-      "width": "2%",
-      "className": "dt-head-center dt-body-center",
-      "mRender": function (data, type, full) {
-        return  (full[5]!= "" && full[6]!= "" ? `<a href="${full[5]}" target="_blank" class="btn btn-primary btn-elevate btn-pill btn-sm"><i class="flaticon2-file"></i></a>`:'');
-      }
     },
     {
       "targets": 8,
       "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {
-        return  `<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-vercomplementoxml="${full[5]}" data-vercomplementopdf="${full[6]}" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`;
+        return  (full[6]!= "" && full[7]!= "" ? `<a href="${full[6]}" target="_blank" class="btn btn-primary btn-elevate btn-pill btn-sm"><i class="flaticon2-file"></i></a>`:'');
+      }
+    },
+    {
+      "targets": 9,
+      "width": "2%",
+      "className": "dt-head-center dt-body-center",
+      "mRender": function (data, type, full) {
+        return  `<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-vercomplementoxml="${full[6]}" data-vercomplementopdf="${full[7]}" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`;
       }
     },
 
     {
-      "targets": 9,
+      "targets": 10,
       "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {
