@@ -14,7 +14,7 @@ def ReportePagosCancelados(request):
 			FoliosFactura += Factura.IDFactura.Folio + ", "
 		FoliosFactura = FoliosFactura[:-2]
 		Folios.append(FoliosFactura)
-	return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios});
+	return render(request, 'PagosCancelados.html', {"Pagos": Pagos, "Folios" : Folios});
 
 
 
