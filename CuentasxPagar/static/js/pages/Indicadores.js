@@ -1,13 +1,15 @@
 $(document).ready(function(){
 
+    WaitMe_Show('#waitIndicadores');
     google.charts.load('current', {'packages':['table']});
 		google.charts.setOnLoadCallback(drawTable);
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawChart);
     google.charts.setOnLoadCallback(withoutEvidencias);
-
+    WaitMe_Hide('#waitIndicadores');
 
 		function drawTable() {
+      WaitMe_Show('#waitIndicadoresTable');
 		  var data = new google.visualization.DataTable();
 		  data.addColumn('string', 'Folio');
 		  data.addColumn('string', 'Cliente');
@@ -24,11 +26,12 @@ $(document).ready(function(){
 		  var table = new google.visualization.Table(document.getElementById('table_div'));
 
 		  table.draw(data, {showRowNumber: false, width: '100%', height: '100%'});
+      WaitMe_Hide('#waitIndicadoresTable');
 		}
 
 
-
   	function drawChart() {
+      WaitMe_Show('#conEvidencias');
   	  var data = google.visualization.arrayToDataTable([
   		['Viajes', 'Con evidencias'],
   		['Eaton',     10],
@@ -45,6 +48,7 @@ $(document).ready(function(){
   	  var chart = new google.visualization.PieChart(document.getElementById('conEvidencias'));
 
   	  chart.draw(data, options);
+      WaitMe_Hide('#conEvidencias');
   	}
 
 

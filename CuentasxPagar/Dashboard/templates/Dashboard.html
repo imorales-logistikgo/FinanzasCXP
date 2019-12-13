@@ -5,23 +5,23 @@ kt-menu__item--active
 {% endblock %}
 
 {% block Indicadores %}
-<div class="row py-4 m-4">
-  <div class="col-sm-12 col-md-6 col-lg-6">
+<div class="row py-4 m-4" id="waitIndicadores">
+  <div class="col-sm-12 col-md-6 col-lg-6" id="conEvidencias">
     <div class="kt-portlet kt-portlet--tab">
       <div class="kt-portlet__body">
-        <div id="conEvidencias" style="width: 500px; height: 350px;"></div>
+        <div style="width: 500px; height: 350px;"></div>
       </div>
     </div>
   </div>
-  <div class="col-sm-12 col-md-6 col-lg-6">
+  <div class="col-sm-12 col-md-6 col-lg-6" id="sinEvidencias">
     <div class="kt-portlet kt-portlet--tab">
       <div class="kt-portlet__body">
-          <div id="sinEvidencias" style="width: 500px; height: 350px;"></div>
+          <div style="width: 500px; height: 350px;"></div>
       </div>
     </div>
   </div>
 </div>
-<div class="row m-4 py-3">
+<div class="row m-4 py-3" id="waitIndicadoresTable">
   <div class="col-sm-12 col-md-12">
     <div class="kt-portlet kt-portlet--tab">
       <p class="h4 text-left py-2 m-4"><span class="badge badge-primary" id="today">{{today}}</span></p>
