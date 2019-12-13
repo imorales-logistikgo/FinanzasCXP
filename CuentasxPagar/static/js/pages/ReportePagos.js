@@ -64,10 +64,10 @@ $(document).ready(function(){
     },
 
     {
-        "targets": 10,
-        "width": "2%",
-        "className": "dt-head-center dt-body-center",
-        "mRender": function (data, type, full) {
+      "targets": 10,
+      "width": "2%",
+      "className": "dt-head-center dt-body-center",
+      "mRender": function (data, type, full) {
         idPago = $('input[name="IDPago"]').data("pagoid");
         return  '<button type ="button" class="btnEliminarPago btn btn-danger btn-elevate btn-pill btn-sm" data-idpago="'+idPago+'"><i class="flaticon-delete"></i></button>';
       }
@@ -146,7 +146,7 @@ $(document).on( 'click', '.btnEliminarPago', function () {
   confirmButtonText: 'Aceptar'
 }).then((result) => {
   if (result.value) {
-    console.log($(this).data('idpago'));
+    fnCancelarPago($(this).data('idpago'));
     Swal.fire(
       'Eliminado!',
       'Eliminado con exito',
@@ -265,5 +265,33 @@ function formatDataTable() {
       }
     },
     ]
+  });
+}
+
+var fnCancelarPago = function (IDPago) {
+  var res;
+  jParams = {
+    IDPago: IDPago,
+  }
+  fetch("/ReportePagos/CancelarPago", {
+    method: "PATCH",
+    credentials: "same-origin",
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken"),
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(jParams)
+  }).then(function(response){
+    if(response.status == 200)
+    {
+      res = true;
+    }
+    else if(response.status == 500)
+    {
+      res = false;
+    }
+  }).catch(function(ex){
+    res = false;
   });
 }
