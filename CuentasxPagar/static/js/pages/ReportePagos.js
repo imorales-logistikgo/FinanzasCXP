@@ -71,7 +71,7 @@ $(document).on( 'click', '.btnEliminarPago', function () {
   confirmButtonText: 'Aceptar'
 }).then((result) => {
   if (result.value) {
-    console.log($(this).data('idpago'));
+    fnCancelarPago($(this).data('idpago'));
     Swal.fire(
       'Eliminado!',
       'Eliminado con exito',
@@ -190,5 +190,33 @@ function formatDataTable() {
       }
     },
     ]
+  });
+}
+
+var fnCancelarPago = function (IDPago) {
+  var res;
+  jParams = {
+    IDPago: IDPago,
+  }
+  fetch("/ReportePagos/CancelarPago", {
+    method: "PATCH",
+    credentials: "same-origin",
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken"),
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(jParams)
+  }).then(function(response){
+    if(response.status == 200)
+    {
+      res = true;
+    }
+    else if(response.status == 500)
+    {
+      res = false;
+    }
+  }).catch(function(ex){
+    res = false;
   });
 }

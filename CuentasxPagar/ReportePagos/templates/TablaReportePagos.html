@@ -18,7 +18,7 @@
 	</thead>
 	<tbody>
 		{% for Pago in Pagos %}
-		<tr>
+		<tr data-idpago="{{Pago.IDPago}}">
 			<td>{{Pago.Folio}}</td>
 			<td>{{Pago.NombreCortoProveedor}}</td>
 			<td>{{Pago.FechaPago|date:'Y/m/d'}}</td>
