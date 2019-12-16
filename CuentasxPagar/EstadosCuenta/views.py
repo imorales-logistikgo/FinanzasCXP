@@ -116,7 +116,7 @@ def SavePagoxFactura(request):
 		newRelacionPagoxFactura.IDUsuarioAlta = 1
 		newRelacionPagoxFactura.IDProveedor = 1
 		if Factura.Saldo == 0:
-			Factura.Status = "Cobrada"
+			Factura.Status = "Pagada"
 		else:
 			Factura.Status = "Abonada"
 		Factura.save()

@@ -55,6 +55,7 @@ $(document).ready(function(){
   $(document).on('click', '#btnComplementos', function() {
     if($(this).data("vercomplementoxml") != "" && $(this).data("vercomplementopdf") != "")
     {
+
       $('#alertaComplementos').hide();
       document.querySelector('.uploaded-files-pagos').innerHTML +=
       `<ol><li id="listaArchivos"><a href="${$(this).data("vercomplementoxml")}" target="_blank" name="url" id="RutaXML">XML</a></li></ol>`

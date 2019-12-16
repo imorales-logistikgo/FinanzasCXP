@@ -490,7 +490,7 @@ function getDetalleFactura()
     WaitMe_Hide('#detallesFactura');
     $('#divTableDetalles').html(data.htmlRes);
   }).catch(function(ex){
-    console.log("no success!");
+    console.log(ex);
   });
 }
 
