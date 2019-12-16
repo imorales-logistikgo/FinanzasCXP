@@ -5,34 +5,50 @@ class PendientesEnviar(models.Model):
     Folio = models.CharField(max_length=10, unique=True)
     NombreCortoCliente = models.CharField(max_length=100)
     NombreCortoProveedor = models.CharField(max_length=100)
-    FechaDescarga = models.CharField(max_length=100, null=True)
+    FechaDescarga = models.DateTimeField()
     Moneda = models.CharField(max_length=10)
     #Costo = models.FloatField(default=0)
-    CostoSubtotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
-    CostoIVA = models.DecimalField(default=0, max_digits=30, decimal_places=5)
-    CostoRetencion = models.DecimalField(default=0, max_digits=30, decimal_places=5)
-    CostoTotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     #Precio = models.FloatField(default=0)
-    PrecioSubtotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
-    PrecioIVA = models.DecimalField(default=0, max_digits=30, decimal_places=5)
-    PrecioRetencion = models.DecimalField(default=0, max_digits=30, decimal_places=5)
-    PrecioTotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     Status = models.CharField(max_length=15)
-    IsFacturaCliente = models.BooleanField()
-    IsFacturaProveedor = models.BooleanField()
     IsEvidenciaFisica = models.BooleanField()
     IsEvidenciaDigital = models.BooleanField()
+    Proyecto = models.CharField(max_length=30)
 
     def __str__(self):
         return str(self.IDPendienteEnviar)
-
     class Meta:
         db_table="PendientesEnviar"
         managed= False
 
 
+class Ext_PendienteEnviar_Costo(models.Model):
+    IDPendienteEnviar = models.OneToOneField(PendientesEnviar, on_delete=models.CASCADE, db_column = 'IDPendienteEnviar', primary_key=True)
+    CostoSubtotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    CostoIVA = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    CostoRetencion = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    CostoTotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    IsFacturaProveedor = models.BooleanField(default=False)
+    class Meta:
+        db_table="Ext_PendienteEnviar_Costo"
+        managed= False
+
+
+class Ext_PendienteEnviar_Precio(models.Model):
+    IDPendienteEnviar = models.OneToOneField(PendientesEnviar, on_delete=models.CASCADE, db_column = 'IDPendienteEnviar', primary_key=True)
+    PrecioSubtotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    PrecioIVA = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    PrecioRetencion = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    PrecioTotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    PrecioServicios = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    IsFacturaCliente = models.BooleanField(default=False)
+    class Meta:
+        db_table="Ext_PendienteEnviar_Precio"
+        managed= False
+        
+
+
 class RelacionConceptoxProyecto(models.Model):
-    RelacionIDConceptoxProyecto = models.AutoField(primary_key=True)
+    IDRelacionConceptoxProyecto = models.AutoField(primary_key=True)
     IDPendienteEnviar = models.ForeignKey(PendientesEnviar, on_delete=models.CASCADE, db_column = 'IDPendienteEnviar')
     IDConcepto = models.IntegerField(default=0)
     IDCliente = models.IntegerField(default=0)
@@ -51,16 +67,15 @@ class View_PendientesEnviarCxP(models.Model):
     IDProveedor = models.IntegerField(default=0)
     NombreProveedor = models.CharField(max_length=100)
     FechaDescarga = models.DateTimeField()
-    CostoSubtotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
-    CostoIVA = models.DecimalField(default=0, max_digits=30, decimal_places=5)
-    CostoRetencion = models.DecimalField(default=0, max_digits=30, decimal_places=5)
-    CostoTotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    Subtotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    IVA = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    Retencion = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    Total = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     Moneda = models.CharField(max_length=10)
     Status = models.CharField(max_length=15)
     IsEvidenciaDigital = models.BooleanField()
     IsEvidenciaFisica = models.BooleanField()
     Proyecto = models.CharField(max_length=30)
-    IsFacturaCliente = models.BooleanField()
     IsFacturaProveedor = models.BooleanField()
 
     class Meta:
