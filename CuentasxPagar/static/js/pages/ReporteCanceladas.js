@@ -48,6 +48,7 @@ function getReportesByFilters() {
 }
 
 function getReportes(params) {
+  WaitMe_Show('#TbPading');
   fetch("/ReporteCanceladas/FilterBy?" + params, {
     method: "GET",
     credentials: "same-origin",
@@ -58,7 +59,7 @@ function getReportes(params) {
   }).then(function(response){
     return response.clone().json();
   }).then(function(data){
-    //WaitMe_Hide('#TbPading');
+    WaitMe_Hide('#TbPading');
     $('#TbPading').html(data.htmlRes);
     formatDataTableCanceladas();
   }).catch(function(ex){
