@@ -262,9 +262,11 @@ function showDatosObtenidos(){
 
   var h = [datos];
   $('#tableAddPago').DataTable({
+    "scrollX": "100%",
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
+    //"responsive": true,
     "paging": false,
     "info":   false,
     destroy: true,
@@ -286,7 +288,7 @@ function showDatosObtenidos(){
     "className": "dt-head-center dt-body-right",
     "targets": 4,
     "mRender": function (data, type, full) {
-     return (full[3] === 'MXN' ? `$ <input class="col-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}">` : '$ <input type="number" class="col-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'">');
+     return (full[3] === 'MXN' ? `$ <input class="col-md-6 col-sm-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}">` : '$ <input type="number" class=""col-md-6 col-sm-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'">');
    }
  },
 
