@@ -36,5 +36,5 @@ def GetPagosByFilters(request):
 			FoliosFactura += Factura.IDFactura.Folio + ", "
 		FoliosFactura = FoliosFactura[:-2]
 		Folios.append(FoliosFactura)
-	htmlRes = render_to_string('TablaReportePagos.html', {'Pagos':Pagos, 'Folios' : Folios}, request = request,)
+	htmlRes = render_to_string('TablaReportePagosCancelados.html', {'Pagos':Pagos, 'Folios' : Folios}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})

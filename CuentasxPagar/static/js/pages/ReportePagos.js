@@ -1,6 +1,7 @@
 $(document).ready(function(){
   var idPago;
 
+
   formatDataTable();
 
   $('#btnAplicarFiltro').on('click', getPagosByFilters);
@@ -35,6 +36,12 @@ $(document).ready(function(){
    var id = '#ComplementosPagos';
    var verComp = '.uploaded-files-new';
    KTUppyEvidencias.init(id, verComp)
+   SaveComplementosPago();
+ });
+
+ $('#ModalComplementos').on('shown.bs.modal', function(){
+   $('#ComplementosPagos').data("rutaarchivoPDF", "");
+   $('#ComplementosPagos').data("rutaarchivoXML", "");
  });
 
 
@@ -61,6 +68,8 @@ $(document).ready(function(){
     }
   });
 
+
+
 //eliminar row de la tabla estados de cuenta
 $(document).on( 'click', '.btnEliminarPago', function () {
  Swal.fire({
@@ -74,6 +83,8 @@ $(document).on( 'click', '.btnEliminarPago', function () {
 }).then((result) => {
   if (result.value) {
     fnCancelarPago($(this).data('idpago'));
+    var table = $('#TableReportePagos').DataTable();
+    table.row($(this).parents('tr')).remove().draw();
     Swal.fire(
       'Eliminado!',
       'Eliminado con exito',
@@ -85,6 +96,18 @@ $(document).on( 'click', '.btnEliminarPago', function () {
 })
 });
 });
+
+function SaveComplementosPago()
+{
+  if($('#ComplementosPagos').data("rutaarchivoPDF") != "" && $('#ComplementosPagos').data("rutaarchivoXML") != "")
+  {
+    alert("It's correct");
+  }
+  else
+  {
+    alert("There is a error");
+  }
+}
 
 function getPagosByFilters() {
   arrProveedor = $('#cboProveedor').val();
@@ -124,8 +147,8 @@ function getPagos(params) {
 }
 
 function formatDataTable() {
-  $('#TableReportePagos').DataTable({
-    "scrollX": true,
+$('#TableReportePagos').DataTable({
+    "scrollX": '100%',
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
