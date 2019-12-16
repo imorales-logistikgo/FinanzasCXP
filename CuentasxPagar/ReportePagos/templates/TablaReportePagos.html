@@ -19,7 +19,7 @@
 	<tbody>
 		{% for Pago in Pagos %}
 		<tr data-idpago="{{Pago.IDPago}}">
-			<td>{{Pago.Folio}}</td>
+			<td style="font-weight: bold;" class=" text-center bold"><a data-toggle="modal" href="#detallesPago" class="btnDetallePago" data-backdrop="static">{{Pago.Folio}}</a></td>
 			<td>{{Pago.NombreCortoProveedor}}</td>
 			<td>{{Pago.FechaPago|date:'Y/m/d'}}</td>
 			<td>${{Pago.Total|floatformat:"2"|intcomma}}</td>

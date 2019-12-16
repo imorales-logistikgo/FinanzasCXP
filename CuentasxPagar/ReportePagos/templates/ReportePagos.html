@@ -147,61 +147,84 @@ kt-menu__item--active
 
 <!-- Modal Evidencias-->
 <div class="modal fade" id="ModalComplementos" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Complementos</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="staticBackdropLabel">Complementos</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
 
-						<div class="container">
-							<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-								<div class="col-lg-12">
-									<div class="kt-portlet kt-portlet--height-fluid">
-										<div class="container" id="alertaComplementos">
+				<div class="container">
+					<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+						<div class="col-lg-12">
+							<div class="kt-portlet kt-portlet--height-fluid">
+								<div class="container" id="alertaComplementos">
 
-										</div>
-										<div class="kt-portlet__head">
-											<div class="kt-portlet__head-label">
-												<h3 class="kt-portlet__head-title">
-													PDF y XML
-												</h3>
-											</div>
-										</div>
-										<div class="kt-portlet__body">
-											<div class="kt-uppy" id="ComplementosPagos" data-rutaarchivoPDF="" data-rutaarchivoXML="">
-												<div  class="kt-uppy__dashboard"></div>
-												<div class="kt-uppy__progress"></div>
-											</div>
-										</div>
+								</div>
+								<div class="kt-portlet__head">
+									<div class="kt-portlet__head-label">
+										<h3 class="kt-portlet__head-title">
+											PDF y XML
+										</h3>
+									</div>
+								</div>
+								<div class="kt-portlet__body">
+									<div class="kt-uppy" id="ComplementosPagos" data-rutaarchivoPDF="" data-rutaarchivoXML="">
+										<div  class="kt-uppy__dashboard"></div>
+										<div class="kt-uppy__progress"></div>
 									</div>
 								</div>
 							</div>
-							<!--ver archivos subidos (PDF y XML)-->
-
-								<div class="row justify-content-around">
-									<div class="uploaded-files-pagos">
-										<h5>Archivos Subidos:</h5>
-										<ol></ol>
-									</div>
-									<div class="uploaded-files-new">
-										<h5>Archivos nuevos subidos:</h5>
-										<ol></ol>
-									</div>
-								</div>
-
 						</div>
+					</div>
+					<!--ver archivos subidos (PDF y XML)-->
 
-      </div>
-      <div class="modal-footer">
+					<div class="row justify-content-around">
+						<div class="uploaded-files-pagos">
+							<h5>Archivos Subidos:</h5>
+							<ol></ol>
+						</div>
+						<div class="uploaded-files-new">
+							<h5>Archivos nuevos subidos:</h5>
+							<ol></ol>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+			<div class="modal-footer">
 				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
+			</div>
+		</div>
+	</div>
 </div>
+
+{% block DetallesPago %}
+<!-- Modal ver detalles de la factura(viajes en esa factura) -->
+<div class="modal fade" id="detallesPago" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title text-dark">Detalles del pago</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" id="divTableDetallesPago">
+				{% include "TablaDetallesPago.html" %}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
 {% endblock %}
 
 {% block scripts %}

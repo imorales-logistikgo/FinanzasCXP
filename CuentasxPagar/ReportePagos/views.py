@@ -54,3 +54,18 @@ def CancelarPago(request):
 	Pago.Status = "Cancelada"
 	Pago.save()
 	return HttpResponse('')
+
+
+
+def GetDetallesPago(request):
+	IDPago = request.GET["IDPago"]
+	FacturasxPago = RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago)
+	Facturas = list()
+	for Factura in FacturasxPago:
+		Pago = {}
+		Pago["FolioFactura"] = Factura.IDFactura.Folio
+		Pago["FechaFactura"] = Factura.IDFactura.FechaFactura
+		Pago["Total"] = Factura.IDPagoxFactura.Total
+		Facturas.append(Pago)
+	htmlRes = render_to_string('TablaDetallesPago.html', {'Facturas':Facturas}, request = request,)
+	return JsonResponse({'htmlRes' : htmlRes})
