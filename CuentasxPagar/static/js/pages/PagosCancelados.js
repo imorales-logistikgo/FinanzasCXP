@@ -1,44 +1,5 @@
 $(document).ready(function(){
-  $('#TableReportePagosCancelados').DataTable({
-    "scrollX": "100%",
-    "language": {
-      "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
-    },
-    "responsive": true,
-    "paging": true,
-    "dom": 'Bfrtip',
-    "buttons": [
-      {
-        extend: 'excel',
-        text: '<i class="fas fa-file-excel fa-lg"></i>',
-
-      }
-    ],
-    columnDefs: [
-      {
-          "targets": [0],
-          "width": "10%",
-          "className": "dt-head-center dt-body-center"
-      },
-
-      {
-        "targets": [1,2,3],
-        "width": "15%",
-        "className": "dt-head-center dt-body-center"
-      },
-
-      {
-        "targets": 4,
-        "width": "12px",
-        "className": "dt-head-center dt-body-center"
-      },
-      {
-        "targets": [5,6,7,8,9],
-        "width": "12px",
-        "className": "dt-head-center dt-body-right"
-      },
-    ]
-  });
+  formatDataTable();
 
   $('#btnAplicarFiltro').on('click', getPagosByFilters);
 
@@ -53,6 +14,15 @@ $(document).ready(function(){
       $('#filtroxMesyAno').css("display", "none");
       $('#fechaRango').show();
     }
+  });
+
+
+  $('input[name="FiltroFechaReportePagosCancelados"]').daterangepicker({
+   autoUpdateInput: false
+ });
+
+  $('input[name="FiltroFechaReportePagosCancelados"]').on('apply.daterangepicker', function(ev, picker) {
+    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
 });
@@ -88,7 +58,7 @@ function getPagos(params) {
     return response.clone().json();
   }).then(function(data){
     $('#TbPading').html(data.htmlRes);
-    formatDataTable()
+    formatDataTable();
     WaitMe_Hide('#TbPading');
   }).catch(function(ex){
     console.log("no success!");
