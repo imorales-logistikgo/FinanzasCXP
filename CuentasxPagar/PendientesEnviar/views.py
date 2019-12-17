@@ -1,6 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from PendientesEnviar.models import View_PendientesEnviarCxP, FacturasxProveedor, PartidaProveedor, RelacionFacturaProveedorxPartidas, PendientesEnviar
+from PendientesEnviar.models import View_PendientesEnviarCxP, FacturasxProveedor, PartidaProveedor, RelacionFacturaProveedorxPartidas, PendientesEnviar, Ext_PendienteEnviar_Costo
 from django.core import serializers
 from django.template.loader import render_to_string
 import json, datetime
@@ -72,10 +72,10 @@ def SavePartidasxFactura(request):
 		Viaje = View_PendientesEnviarCxP.objects.get(IDConcepto = IDConcepto)
 		newPartida = PartidaProveedor()
 		newPartida.FechaAlta = datetime.datetime.now()
-		newPartida.Subtotal = Viaje.CostoSubtotal
-		newPartida.IVA = Viaje.CostoIVA
-		newPartida.Retencion = Viaje.CostoRetencion
-		newPartida.Total = Viaje.CostoTotal
+		newPartida.Subtotal = Viaje.Subtotal
+		newPartida.IVA = Viaje.IVA
+		newPartida.Retencion = Viaje.Retencion
+		newPartida.Total = Viaje.Total
 		newPartida.save()
 		newRelacionFacturaxPartida = RelacionFacturaProveedorxPartidas()
 		newRelacionFacturaxPartida.IDFacturaxProveedor = FacturasxProveedor.objects.get(IDFactura = jParams["IDFactura"])
@@ -84,7 +84,9 @@ def SavePartidasxFactura(request):
 		newRelacionFacturaxPartida.IDUsuarioAlta = 1
 		newRelacionFacturaxPartida.IDUsuarioBaja = 1
 		newRelacionFacturaxPartida.save()
-		Viaje.IDPendienteEnviar.IsFacturaProveedor = True
+		Ext_Costo = Ext_PendienteEnviar_Costo.objects.get(IDPendienteEnviar = Viaje.IDPendienteEnviar)
+		Ext_Costo.IsFacturaProveedor = True
+		Ext_Costo.save()
 		Viaje.IDPendienteEnviar.save()
 	PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0", ['Finalizado'])
 	htmlRes = render_to_string('TablaPendientes.html', {'pendientes':PendingToSend}, request = request,)

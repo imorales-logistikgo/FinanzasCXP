@@ -53,7 +53,6 @@ class RelacionConceptoxProyecto(models.Model):
     IDConcepto = models.IntegerField(default=0)
     IDCliente = models.IntegerField(default=0)
     IDProveedor = models.IntegerField(default=0)
-    Proyecto = models.CharField(max_length=30)
 
     class Meta:
         db_table="RelacionConceptoxProyecto"
