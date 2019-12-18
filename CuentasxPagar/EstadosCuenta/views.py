@@ -20,7 +20,9 @@ def EstadosdeCuenta(request):
 		Folios.append(FoliosPago)
 	ContadoresPendientes = len(list(FacturasPendiente))
 	ContadoresAbonadas = len(list(FacturasAbonada))
-	return render(request, 'EstadosdeCuenta.html', {'Facturas': result, 'Folios': Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas})
+	ContadoresPagadas = len(list(View_FacturasxProveedor.objects.filter(Status = "Pagada")))
+	ContadoresCanceladas = len(list(View_FacturasxProveedor.objects.filter(Status = "Cancelada")))
+	return render(request, 'EstadosdeCuenta.html', {'Facturas': result, 'Folios': Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas})
 
 
 
