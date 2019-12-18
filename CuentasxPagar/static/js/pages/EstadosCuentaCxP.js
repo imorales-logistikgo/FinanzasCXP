@@ -577,7 +577,7 @@ function SavePagoxFactura(IDPago)
       WaitMe_Hide('#waitModalSubirPagos');
       var table = $('#TableEstadosdeCuenta').DataTable();
       $("#TableEstadosdeCuenta input[name=checkEC]:checked").each(function () {
-        table.row($(this).parents('tr')).remove().draw();
+        //table.row($(this).parents('tr')).remove().draw();
       });
     }
     else if(response.status == 500)
