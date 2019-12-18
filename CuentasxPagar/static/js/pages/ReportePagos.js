@@ -31,12 +31,12 @@ $(document).ready(function(){
   });
 
   $('#ModalComplementos').on('hidden.bs.modal', function(){
+    SaveComplementosPago();
    $('.uploaded-files-new ol').remove();
    $('.uploaded-files-pagos ol').remove();
    var id = '#ComplementosPagos';
    var verComp = '.uploaded-files-new';
    KTUppyEvidencias.init(id, verComp)
-   SaveComplementosPago();
  });
 
  $('#ModalComplementos').on('shown.bs.modal', function(){
