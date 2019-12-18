@@ -77,7 +77,16 @@ def GetDetallesFactura(request):
 	conRelacionFacturaProveedorxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = IDFactura)
 	if conRelacionFacturaProveedorxPartidas:
 		for Partida in conRelacionFacturaProveedorxPartidas:
-			ListaViajes.append(RelacionConceptoxProyecto.objects.get(IDConcepto = Partida.IDConcepto))
+			Viaje = {}
+			Pending = RelacionConceptoxProyecto.objects.get(IDConcepto = Partida.IDConcepto)
+			Viaje["Folio"] = Pending.IDPendienteEnviar.Folio
+			Viaje["FechaDescarga"] = Pending.IDPendienteEnviar.FechaDescarga
+			Ext_Costo = Ext_PendienteEnviar_Costo.objects.get(IDPendienteEnviar = Pending.IDPendienteEnviar)
+			Viaje["Subtotal"] = Ext_Costo.CostoSubtotal
+			Viaje["IVA"] = Ext_Costo.CostoIVA
+			Viaje["Retencion"] = Ext_Costo.CostoRetencion
+			Viaje["Total"] = Ext_Costo.CostoTotal
+			ListaViajes.append(Viaje)
 	htmlRes = render_to_string('TablaDetallesFactura.html', {'Pendientes':ListaViajes}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
 

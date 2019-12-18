@@ -3,6 +3,8 @@ $(document).ready(function(){
 
   $('#btnAplicarFiltro').on('click', getPagosByFilters);
 
+   $(document).on('click', '.btnDetallePago', fnGetDetallePago);
+
   //filtro de fecha solo por mes y año
   $(document).on( 'change', 'input[name="fechaxMesyAño"]', function () {
     if($(this).is(':checked')){
@@ -105,5 +107,26 @@ function formatDataTable() {
         "className": "dt-head-center dt-body-right"
       },
     ]
+  });
+}
+
+var fnGetDetallePago = function () {
+  var IDPago = $(this).parents('tr').data('idpago');
+  WaitMe_Show('#divTableDetallesPago');
+
+  fetch("/ReportePagos/GetDetallesPago?IDPago=" + IDPago, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    return response.clone().json();
+  }).then(function(data){
+    WaitMe_Hide('#divTableDetallesPago');
+    $('#divTableDetallesPago').html(data.htmlRes);
+  }).catch(function(ex){
+    console.log("no success!");
   });
 }
