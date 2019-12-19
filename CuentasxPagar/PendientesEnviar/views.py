@@ -38,7 +38,24 @@ def GetPendientesByFilters(request):
 	if Proveedor:
 		PendingToSend = PendingToSend.filter(NombreProveedor__in = Proveedor)
 	PendingToSend = PendingToSend.filter(Moneda = Moneda)
-	htmlRes = render_to_string('TablaPendientes.html', {'pendientes':PendingToSend}, request = request,)
+	Prueba = list()
+	for Pend in PendingToSend:
+		Viaje = {}
+		Viaje["Folio"] = Pend.Folio
+		Viaje["NombreProveedor"] = Pend.NombreProveedor
+		Viaje["FechaDescarga"] = Pend.FechaDescarga
+		Viaje["Subtotal"] = Pend.Subtotal
+		Viaje["IVA"] = Pend.IVA
+		Viaje["Retencion"] = Pend.Retencion
+		Viaje["Total"] = Pend.Total
+		Viaje["Moneda"] = Pend.Moneda
+		Viaje["Status"] = Pend.Status
+		Viaje["IDConcepto"] = Pend.IDConcepto
+		Viaje["IDPendienteEnviar"] = Pend.IDPendienteEnviar
+		Viaje["IsEvidenciaFisica"] = Pend.IsEvidenciaFisica
+		Viaje["IsEvidenciaDigital"] = Pend.IsEvidenciaDigital
+		Prueba.append(Viaje)
+	htmlRes = render_to_string('TablaPendientes.html', {'pendientes':Prueba}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
 
 
