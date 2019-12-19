@@ -518,16 +518,16 @@ function getDatos(){
 }
 
 function SavePartidasxFactura(IDFactura) {
-  var arrConceptos = [];
-  var currentIDConcepto = 0;
+  var arrPendientes = [];
+  var currentIDPending = 0;
   $("#TablePendientesEnviar input[name=checkPE]:checked").each(function () {
-    currentIDConcepto = $($(this).parents('tr')[0]).data('idconcepto');
-    if(!arrConceptos.includes(currentIDConcepto))
-      arrConceptos.push(currentIDConcepto);
+    currentIDPending = $($(this).parents('tr')[0]).data('idpendienteenviar');
+    if(!arrPendientes.includes(currentIDPending))
+      arrPendientes.push(currentIDPending);
   });
   jParams = {
     IDFactura: IDFactura,
-    arrConceptos: arrConceptos,
+    arrPendientes: arrPendientes,
   }
 
   fetch("/PendientesEnviar/SavePartidasxFactura", {

@@ -63,7 +63,7 @@ def CancelarFactura(request):
 		for Partida in conRelacionFacturaProveedorxPartidas:
 			Partida.IDPartida.IsActiva = False
 			Partida.IDPartida.FechaBaja = datetime.datetime.now()
-			conPendienteEnviar = RelacionConceptoxProyecto.objects.get(IDConcepto = Partida.IDConcepto)
+			conPendienteEnviar = RelacionConceptoxProyecto.objects.get(IDPendienteEnviar = Partida.IDPendienteEnviar)
 			Ext_Costo = Ext_PendienteEnviar_Costo.objects.get(IDPendienteEnviar = conPendienteEnviar.IDPendienteEnviar.IDPendienteEnviar)
 			Ext_Costo.IsFacturaProveedor = False
 			Ext_Costo.save()
