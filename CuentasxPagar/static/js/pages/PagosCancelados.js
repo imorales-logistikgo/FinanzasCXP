@@ -91,18 +91,23 @@ function formatDataTable() {
       },
 
       {
-        "targets": [1,2,3],
+        "targets": [1,2,3,4],
         "width": "15%",
         "className": "dt-head-center dt-body-center"
       },
+      {
+        "targets": 5,
+        "width": "10%",
+        "className": "dt-head-center dt-body-right"
+      },
 
       {
-        "targets": 4,
+        "targets": 6,
         "width": "12px",
         "className": "dt-head-center dt-body-center"
       },
       {
-        "targets": [5,6,7,8,9],
+        "targets": [7,8,9],
         "width": "12px",
         "className": "dt-head-center dt-body-right"
       },
