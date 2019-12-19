@@ -94,7 +94,7 @@ function formatTableReporteFacturas() {
     },
 
     {
-      "targets": [3,4,5,6,8],
+      "targets": [3,4,5,6],
       "width": "12px",
       "className": "dt-head-center dt-body-right"
     },
@@ -102,6 +102,11 @@ function formatTableReporteFacturas() {
       "targets": [7],
       "width": "12px",
       "className": "dt-head-center dt-body-center"
+    },
+    {
+      "targets": [8,9],
+      "width": "10%",
+      "className": "dt-head-center dt-body-left"
     },
     ]
   });
