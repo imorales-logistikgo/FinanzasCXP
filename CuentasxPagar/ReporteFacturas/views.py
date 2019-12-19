@@ -25,8 +25,15 @@ def ReporteFacturas(request):
 			Factura['Viajes'] += RelacionConceptoxProyecto.objects.get(IDConcepto = Pendiente.IDConcepto).IDPendienteEnviar.Folio + ", "
 		Factura['Viajes'] = Factura['Viajes'][:-2]
 		listFacturas.append(Factura)
-	return render(request, 'ReporteFacturas.html', {'Facturas': listFacturas})
+		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
+	return render(request, 'ReporteFacturas.html', {'Facturas': listFacturas, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas})
 
+def GetContadores():
+	ContadorPendientes = len(list(FacturasxProveedor.objects.raw("SELECT * FROM FacturasxProveedor WHERE Status = %s", ['Pendiente'])))
+	ContadorPagadas = len(list(FacturasxProveedor.objects.raw("SELECT * FROM FacturasxProveedor WHERE Status = %s", ['Pagada'])))
+	ContadorAbonadas = len(list(FacturasxProveedor.objects.raw("SELECT * FROM FacturasxProveedor WHERE Status = %s", ['Abonada'])))
+	ContadorCanceladas = len(list(FacturasxProveedor.objects.raw("SELECT * FROM FacturasxProveedor WHERE Status = %s", ['Cancelada'])))
+	return ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas
 
 
 def GetFacturasByFilters(request):

@@ -262,11 +262,10 @@ function showDatosObtenidos(){
 
   var h = [datos];
   $('#tableAddPago').DataTable({
-    "scrollX": "100%",
+  "responsive": false,
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
-    //"responsive": true,
     "paging": false,
     "info":   false,
     destroy: true,
