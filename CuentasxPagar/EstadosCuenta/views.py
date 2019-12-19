@@ -80,7 +80,7 @@ def GetDetallesFactura(request):
 	if conRelacionFacturaProveedorxPartidas:
 		for Partida in conRelacionFacturaProveedorxPartidas:
 			Viaje = {}
-			Pending = RelacionConceptoxProyecto.objects.get(IDConcepto = Partida.IDConcepto)
+			Pending = RelacionConceptoxProyecto.objects.get(IDPendienteEnviar = Partida.IDPendienteEnviar)
 			Viaje["Folio"] = Pending.IDPendienteEnviar.Folio
 			Viaje["FechaDescarga"] = Pending.IDPendienteEnviar.FechaDescarga
 			Ext_Costo = Ext_PendienteEnviar_Costo.objects.get(IDPendienteEnviar = Pending.IDPendienteEnviar)
