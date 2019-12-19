@@ -7,6 +7,13 @@ import json, datetime
 
 def ReporteFacturas(request):
 	Facturas = FacturasxProveedor.objects.all()
+	listFacturas = FacturasToList(Facturas)
+	ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
+	return render(request, 'ReporteFacturas.html', {'Facturas': listFacturas, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas})
+
+
+
+def FacturasToList(Facturas):
 	listFacturas = list()
 	for Fact in Facturas:
 		Factura = {}
@@ -25,8 +32,9 @@ def ReporteFacturas(request):
 			Factura['Viajes'] += RelacionConceptoxProyecto.objects.get(IDPendienteEnviar = Pendiente.IDPendienteEnviar).IDPendienteEnviar.Folio + ", "
 		Factura['Viajes'] = Factura['Viajes'][:-2]
 		listFacturas.append(Factura)
-		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
-	return render(request, 'ReporteFacturas.html', {'Facturas': listFacturas, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas})
+	return listFacturas
+
+
 
 def GetContadores():
 	ContadorPendientes = len(list(FacturasxProveedor.objects.raw("SELECT * FROM FacturasxProveedor WHERE Status = %s", ['Pendiente'])))
@@ -52,23 +60,6 @@ def GetFacturasByFilters(request):
 		Facturas = Facturas.filter(Moneda__in = Moneda)
 	if Status:
 		Facturas = Facturas.filter(Status__in = Status)
-	listFacturas = list()
-	for Fact in Facturas:
-		Factura = {}
-		conFacturaxPartidas= RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = Fact.IDFactura)
-		Factura['Folio'] = Fact.Folio
-		Factura['Proveedor'] = Fact.NombreCortoProveedor
-		Factura['FechaFactura'] = Fact.FechaFactura
-		Factura['FechaBaja'] = conFacturaxPartidas.first().IDPartida.FechaBaja
-		Factura["Subtotal"] = Fact.Subtotal
-		Factura["IVA"] = Fact.IVA
-		Factura["Retencion"] = Fact.Retencion
-		Factura["Status"] = Fact.Status
-		Factura['Total'] = Fact.Total
-		Factura['Viajes'] = ''
-		for Pendiente in conFacturaxPartidas:
-			Factura['Viajes'] += RelacionConceptoxProyecto.objects.get(IDConcepto = Pendiente.IDConcepto).IDPendienteEnviar.Folio + ", "
-		Factura['Viajes'] = Factura['Viajes'][:-2]
-		listFacturas.append(Factura)
+	listFacturas = FacturasToList(Facturas)
 	htmlRes = render_to_string('TablaReporteFacturas.html', {'Facturas':listFacturas}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})

@@ -10,7 +10,30 @@ import json, datetime
 def GetPendientesEnviar(request):
 	PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0 AND Moneda = %s", ['Finalizado', 'MXN'])
 	ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
-	return render(request, 'PendienteEnviar.html', {'pendientes':PendingToSend, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias})
+	ListPendientes = PendientesToList(PendingToSend)
+	return render(request, 'PendienteEnviar.html', {'pendientes':ListPendientes, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias})
+
+
+
+def PendientesToList(PendingToSend):
+	ListPendientes = list()
+	for Pend in PendingToSend:
+		Viaje = {}
+		Viaje["Folio"] = Pend.Folio
+		Viaje["NombreProveedor"] = Pend.NombreProveedor
+		Viaje["FechaDescarga"] = Pend.FechaDescarga
+		Viaje["Subtotal"] = Pend.Subtotal
+		Viaje["IVA"] = Pend.IVA
+		Viaje["Retencion"] = Pend.Retencion
+		Viaje["Total"] = Pend.Total
+		Viaje["Moneda"] = Pend.Moneda
+		Viaje["Status"] = Pend.Status
+		Viaje["IDConcepto"] = Pend.IDConcepto
+		Viaje["IDPendienteEnviar"] = Pend.IDPendienteEnviar
+		Viaje["IsEvidenciaFisica"] = Pend.IsEvidenciaFisica
+		Viaje["IsEvidenciaDigital"] = Pend.IsEvidenciaDigital
+		ListPendientes.append(Viaje)
+	return ListPendientes
 
 
 
@@ -38,24 +61,8 @@ def GetPendientesByFilters(request):
 	if Proveedor:
 		PendingToSend = PendingToSend.filter(NombreProveedor__in = Proveedor)
 	PendingToSend = PendingToSend.filter(Moneda = Moneda)
-	Prueba = list()
-	for Pend in PendingToSend:
-		Viaje = {}
-		Viaje["Folio"] = Pend.Folio
-		Viaje["NombreProveedor"] = Pend.NombreProveedor
-		Viaje["FechaDescarga"] = Pend.FechaDescarga
-		Viaje["Subtotal"] = Pend.Subtotal
-		Viaje["IVA"] = Pend.IVA
-		Viaje["Retencion"] = Pend.Retencion
-		Viaje["Total"] = Pend.Total
-		Viaje["Moneda"] = Pend.Moneda
-		Viaje["Status"] = Pend.Status
-		Viaje["IDConcepto"] = Pend.IDConcepto
-		Viaje["IDPendienteEnviar"] = Pend.IDPendienteEnviar
-		Viaje["IsEvidenciaFisica"] = Pend.IsEvidenciaFisica
-		Viaje["IsEvidenciaDigital"] = Pend.IsEvidenciaDigital
-		Prueba.append(Viaje)
-	htmlRes = render_to_string('TablaPendientes.html', {'pendientes':Prueba}, request = request,)
+	ListPendientes = PendientesToList(PendingToSend)
+	htmlRes = render_to_string('TablaPendientes.html', {'pendientes':ListPendientes}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
 
 

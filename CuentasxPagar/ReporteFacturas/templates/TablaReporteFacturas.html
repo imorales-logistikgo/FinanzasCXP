@@ -17,15 +17,15 @@
 	<tbody>
 		{% for Factura in Facturas %}
 		<tr>
-			<td style="font-weight: bold;">{{Factura.Folio}}</td>
-			<td>{{Factura.Proveedor}}</td>
-			<td>{{Factura.FechaFactura|date:'Y/m/d'}}</td>
-			<td>${{Factura.Subtotal|floatformat:"2"|intcomma}}</td>
-			<td>${{Factura.IVA|floatformat:"2"|intcomma}}</td>
-			<td>${{Factura.Retencion|floatformat:"2"|intcomma}}</td>
-			<td>${{Factura.Total|floatformat:"2"|intcomma}}</td>
-			<td>{{Factura.Status}}</td>
-			<td>{{Factura.Viajes}}</td>
+			<td style="font-weight: bold;">{{Factura.Folio|safe}}</td>
+			<td>{{Factura.Proveedor|safe}}</td>
+			<td>{{Factura.FechaFactura|date:'Y/m/d'|safe}}</td>
+			<td>${{Factura.Subtotal|floatformat:"2"|intcomma|safe}}</td>
+			<td>${{Factura.IVA|floatformat:"2"|intcomma|safe}}</td>
+			<td>${{Factura.Retencion|floatformat:"2"|intcomma|safe}}</td>
+			<td>${{Factura.Total|floatformat:"2"|intcomma|safe}}</td>
+			<td>{{Factura.Status|safe}}</td>
+			<td>{{Factura.Viajes|safe}}</td>
 			<td></td>
 		</tr>
 		{%endfor%}
