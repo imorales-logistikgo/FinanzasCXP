@@ -106,6 +106,10 @@ function formatDataTableCanceladas() {
       "width": "12px",
       "className": "dt-head-center dt-body-right"
     },
+    {
+      "targets": [9,10],
+      "className": "dt-head-center dt-body-right"
+    },
     ]
   });
 

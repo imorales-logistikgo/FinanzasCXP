@@ -105,7 +105,6 @@ function formatTableReporteFacturas() {
     },
     {
       "targets": [8,9],
-      "width": "10%",
       "className": "dt-head-center dt-body-left"
     },
     ]
