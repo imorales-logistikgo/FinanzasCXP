@@ -21,7 +21,7 @@ def ReporteCanceladas(request):
 		Factura['Total'] = Cancelada.Total
 		Factura['Viajes'] = ''
 		for Pendiente in conFacturaxPartidas:
-			Factura['Viajes'] += RelacionConceptoxProyecto.objects.get(IDConcepto = Pendiente.IDConcepto).IDPendienteEnviar.Folio + ", "
+			Factura['Viajes'] += RelacionConceptoxProyecto.objects.get(IDPendienteEnviar = Pendiente.IDPendienteEnviar).IDPendienteEnviar.Folio + ", "
 		Factura['Viajes'] = Factura['Viajes'][:-2]
 		listFacturas.append(Factura)
 	return render(request, 'ReporteCanceladas.html', {'Facturas': listFacturas})
