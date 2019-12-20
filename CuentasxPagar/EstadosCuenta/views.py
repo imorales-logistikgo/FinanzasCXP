@@ -11,10 +11,11 @@ def EstadosdeCuenta(request):
 	FacturasPendiente = View_FacturasxProveedor.objects.filter(Status = "Pendiente")
 	FacturasAbonada = View_FacturasxProveedor.objects.filter(Status = "Abonada")
 	result = FacturasPendiente | FacturasAbonada
+	ListaFacturas = FacturasToList(result)
 	Folios = list()
-	for Factura in result:
+	for Factura in ListaFacturas:
 		FoliosPago= ""
-		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura.IDFactura):
+		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura["IDFactura"]):
 			FoliosPago += Pago.IDPago.Folio + ", "
 		FoliosPago = FoliosPago[:-2]
 		Folios.append(FoliosPago)
@@ -22,7 +23,7 @@ def EstadosdeCuenta(request):
 	ContadoresAbonadas = len(list(FacturasAbonada))
 	ContadoresPagadas = len(list(View_FacturasxProveedor.objects.filter(Status = "Pagada")))
 	ContadoresCanceladas = len(list(View_FacturasxProveedor.objects.filter(Status = "Cancelada")))
-	return render(request, 'EstadosdeCuenta.html', {'Facturas': result, 'Folios': Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas})
+	return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Folios': Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas})
 
 
 
@@ -42,15 +43,37 @@ def GetFacturasByFilters(request):
 		Facturas = Facturas.filter(Proveedor__in = Proveedores)
 	if Moneda:
 		Facturas = Facturas.filter(Moneda__in = Moneda)
+	ListaFacturas = FacturasToList(Facturas)
 	Folios = list()
-	for Factura in Facturas:
+	for Factura in ListaFacturas:
 		FoliosPago= ""
-		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura.IDFactura):
+		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura["IDFactura"]):
 			FoliosPago += Pago.IDPago.Folio + ", "
 		FoliosPago = FoliosPago[:-2]
 		Folios.append(FoliosPago)
-	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas': Facturas, 'Folios': Folios}, request = request,)
+	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas': ListaFacturas, 'Folios': Folios}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
+
+
+
+def FacturasToList(Facturas):
+	ListaFacturas = list()
+	for Factura in Facturas:
+		NuevaFactura = {}
+		NuevaFactura["IDFactura"] = Factura.IDFactura
+		NuevaFactura["Folio"] = Factura.Folio
+		NuevaFactura["Proveedor"] = Factura.Proveedor
+		NuevaFactura["FechaFactura"] = Factura.FechaFactura
+		NuevaFactura["IVA"] = Factura.IVA
+		NuevaFactura["Retencion"] = Factura.Retencion
+		NuevaFactura["Total"] = Factura.Total
+		NuevaFactura["Saldo"] = Factura.Saldo
+		NuevaFactura["FechaFactura"] = Factura.FechaFactura
+		NuevaFactura["Moneda"] = Factura.Moneda
+		NuevaFactura["Status"] = Factura.Status
+		NuevaFactura["RutaXML"] = Factura.RutaXML
+		ListaFacturas.append(NuevaFactura)
+	return ListaFacturas
 
 
 

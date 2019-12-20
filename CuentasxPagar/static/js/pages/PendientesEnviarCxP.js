@@ -10,6 +10,7 @@ var subtotal = 0, Tiva=0, TRetencion=0, total=0;
 $(document).ready(function() {
 //Tabla Pendientes de enviar
 formatDataTable();
+$('#TablePendientesEnviar').css("display", "block");
 
 //on click select row checkbox
 $(document).on( 'change', 'input[name="checkPE"]', function () {
@@ -601,6 +602,7 @@ function getPendientesEnviar(params){
   }).then(function(data){
     $('#divTablaPendientesEnviar').html(data.htmlRes);
     formatDataTable();
+    $('#TablePendientesEnviar').css("display", "block");
   }).catch(function(ex){
     console.log("no success!");
   });

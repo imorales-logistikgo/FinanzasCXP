@@ -39,9 +39,9 @@ def PendientesToList(PendingToSend):
 
 def GetContadores():
 	ContadorTodos = len(list(View_PendientesEnviarCxP.objects.filter(IsFacturaProveedor = False)))
-	ContadorPendientes = len(list(View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s", ['Pendiente'])))
-	ContadorFinalizados = len(list(View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s", ['Finalizado'])))
-	ContadorConEvidencias = len(list(View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1")))
+	ContadorPendientes = len(list(PendientesEnviar.objects.filter(Status ="Pendiente")))
+	ContadorFinalizados = len(list(PendientesEnviar.objects.filter(Status ="Finalizado")))
+	ContadorConEvidencias = len(list(PendientesEnviar.objects.filter(IsEvidenciaDigital = True, IsEvidenciaFisica = True)))
 	ContadorSinEvidencias = ContadorTodos - ContadorConEvidencias
 	return ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias
 
@@ -111,7 +111,6 @@ def SavePartidasxFactura(request):
 		Ext_Costo = Ext_PendienteEnviar_Costo.objects.get(IDPendienteEnviar = Viaje.IDPendienteEnviar)
 		Ext_Costo.IsFacturaProveedor = True
 		Ext_Costo.save()
-		Viaje.IDPendienteEnviar.save()
 	PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0", ['Finalizado'])
 	htmlRes = render_to_string('TablaPendientes.html', {'pendientes':PendingToSend}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})

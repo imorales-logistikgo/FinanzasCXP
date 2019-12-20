@@ -60,7 +60,7 @@ class RelacionConceptoxProyecto(models.Model):
 
 
 class View_PendientesEnviarCxP(models.Model):
-    IDPendienteEnviar = models.OneToOneField(PendientesEnviar, on_delete=models.DO_NOTHING, db_column = 'IDPendienteEnviar', primary_key=True)
+    IDPendienteEnviar = models.IntegerField(primary_key=True)
     IDConcepto = models.IntegerField(default=0)
     Folio = models.CharField(max_length=10, unique=True)
     IDProveedor = models.IntegerField(default=0)

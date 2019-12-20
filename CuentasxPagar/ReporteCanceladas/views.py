@@ -30,6 +30,7 @@ def CanceladasToList(Canceladas):
 			Factura['Viajes'] += RelacionConceptoxProyecto.objects.get(IDPendienteEnviar = Pendiente.IDPendienteEnviar).IDPendienteEnviar.Folio + ", "
 		Factura['Viajes'] = Factura['Viajes'][:-2]
 		listFacturas.append(Factura)
+	return listFacturas
 
 
 

@@ -8,6 +8,7 @@ $(document).ready(function()
   var totConv=0;
 //tabla estados de cuenta
 formatDataTableFacturas();
+$('#TableEstadosdeCuenta').css("display", "block");
 //ejecuta varias funciones cada que el checkbox es seleccionado en la tabla estados de cuenta
 $(document).on( 'change', 'input[name="checkEC"]', function () {
   var input = 'input[name="checkEC"]';
@@ -357,6 +358,7 @@ function getFacturas (params) {
     WaitMe_Hide('#divTablaFacturas');
     $('#divTablaFacturas').html(data.htmlRes);
     formatDataTableFacturas();
+    $('#TableEstadosdeCuenta').css("display", "block");
   }).catch(function(ex){
     console.log("no success!");
   });
