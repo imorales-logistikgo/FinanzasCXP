@@ -42,7 +42,6 @@ function getReportesByFilters() {
     startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
     endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
     getReportes("FechaFacturaDesde="+ startDate +"&FechaFacturaHasta="+ endDate +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Status="+ JSON.stringify(arrStatus) +"&Moneda="+ JSON.stringify(strMoneda));
-
   }
 }
 
@@ -67,11 +66,11 @@ function getReportes(params) {
 
 function formatTableReporteFacturas() {
   $("#TableReporteFacturas").DataTable({
-    "scrollX": true,
+    "scrollX": "100%",
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
-    "responsive": true,
+    "responsive": false,
     "paging": true,
     "dom": 'Bfrtip',
     "buttons": [
@@ -102,10 +101,6 @@ function formatTableReporteFacturas() {
       "targets": [7],
       "width": "12px",
       "className": "dt-head-center dt-body-center"
-    },
-    {
-      "targets": [8,9],
-      "className": "dt-head-center dt-body-left"
     },
     ]
   });

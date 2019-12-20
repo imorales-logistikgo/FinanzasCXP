@@ -83,6 +83,10 @@ function formatDataTable() {
 
       }
     ],
+    fixedHeader: true,
+    fixedColumns:   {
+    leftColumns: 1
+  },
     columnDefs: [
       {
           "targets": [0],
@@ -109,7 +113,7 @@ function formatDataTable() {
       {
         "targets": [7,8,9],
       //  "width": "12px",
-        "className": "dt-head-center dt-body-left"
+        "className": "dt-head-center dt-body-right"
       },
     ]
   });

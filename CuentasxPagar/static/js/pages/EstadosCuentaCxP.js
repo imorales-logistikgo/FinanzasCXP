@@ -409,6 +409,9 @@ function formatDataTableFacturas(){
       text: '<i class="fas fa-file-excel fa-lg"></i>',
     }
     ],
+    fixedColumns:   {
+    leftColumns: 1
+    },
 
     columnDefs: [ {
       orderable: false,
@@ -573,11 +576,12 @@ function SavePagoxFactura(IDPago)
         timer: 2500
       })
       $('#modalSubirPagos').modal('hide');
-      WaitMe_Hide('#waitModalSubirPagos');
+
       var table = $('#TableEstadosdeCuenta').DataTable();
-      $("#TableEstadosdeCuenta input[name=checkEC]:checked").each(function () {
+      $("input[name=checkEC]:checked").each(function () {
         table.row($(this).parents('tr')).remove().draw();
       });
+      WaitMe_Hide('#waitModalSubirPagos');
     }
     else if(response.status == 500)
     {

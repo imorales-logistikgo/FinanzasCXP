@@ -83,9 +83,11 @@ $(document).on( 'click', '.btnEliminarPago', function () {
   confirmButtonText: 'Aceptar'
 }).then((result) => {
   if (result.value) {
+    WaitMe_Show('#TbPading');
     fnCancelarPago($(this).data('idpago'));
     var table = $('#TableReportePagos').DataTable();
     table.row($(this).parents('tr')).remove().draw();
+    WaitMe_Hide('#TbPading');
     Swal.fire(
       'Eliminado!',
       'Eliminado con exito',
