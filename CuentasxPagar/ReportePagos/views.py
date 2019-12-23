@@ -1,6 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from EstadosCuenta.models import RelacionPagosFacturasxProveedor, PagosxProveedor
+from EstadosCuenta.models import RelacionPagosFacturasxProveedor, PagosxProveedor, View_FacturasxProveedor, PagosxFacturas
 from django.template.loader import render_to_string
 import json, datetime
 
@@ -11,7 +11,7 @@ def ReportePagos(request):
 	for Pago in Pagos:
 		FoliosFactura = ""
 		for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago):
-			FoliosFactura += Factura.IDFactura.Folio + ", "
+			FoliosFactura += View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura).Folio + ", "
 		FoliosFactura = FoliosFactura[:-2]
 		Folios.append(FoliosFactura)
 	return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios});
@@ -33,7 +33,7 @@ def GetPagosByFilters(request):
 	for Pago in Pagos:
 		FoliosFactura = ""
 		for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago):
-			FoliosFactura += Factura.IDFactura.Folio + ", "
+			FoliosFactura += View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura).Folio + ", "
 		FoliosFactura = FoliosFactura[:-2]
 		Folios.append(FoliosFactura)
 	htmlRes = render_to_string('TablaReportePagos.html', {'Pagos':Pagos, 'Folios' : Folios}, request = request,)
@@ -46,9 +46,9 @@ def CancelarPago(request):
 	for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago):
 		Factura.IDFactura.Saldo += Factura.IDPagoxFactura.Total
 		if Factura.IDFactura.Saldo == Factura.IDFactura.Total:
-			Factura.IDFactura.Status = "Pendiente"
+			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura).Status = "Pendiente"
 		else:
-			Factura.IDFactura.Status = "Abonada"
+			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura).Status = "Abonada"
 		Factura.IDFactura.save()
 	Pago = PagosxProveedor.objects.get(IDPago = IDPago)
 	Pago.Status = "Cancelada"
@@ -61,11 +61,12 @@ def GetDetallesPago(request):
 	IDPago = request.GET["IDPago"]
 	FacturasxPago = RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago)
 	Facturas = list()
-	for Factura in FacturasxPago:
+	for FacturasxPago in FacturasxPago:
 		Pago = {}
-		Pago["FolioFactura"] = Factura.IDFactura.Folio
-		Pago["FechaFactura"] = Factura.IDFactura.FechaFactura
-		Pago["Total"] = Factura.IDPagoxFactura.Total
+		Factura = View_FacturasxProveedor.objects.get(IDFactura = FacturasxPago.IDFactura)
+		Pago["FolioFactura"] = Factura.Folio
+		Pago["FechaFactura"] = Factura.FechaFactura
+		Pago["Total"] = PagosxFacturas.objects.get(IDPagoxFactura = FacturasxPago.IDPagoxFactura).Total
 		Facturas.append(Pago)
 	htmlRes = render_to_string('TablaDetallesPago.html', {'Facturas':Facturas}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})

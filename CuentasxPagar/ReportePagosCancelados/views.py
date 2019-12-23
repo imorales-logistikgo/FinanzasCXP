@@ -1,6 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from EstadosCuenta.models import RelacionPagosFacturasxProveedor, PagosxProveedor
+from EstadosCuenta.models import RelacionPagosFacturasxProveedor, PagosxProveedor, View_FacturasxProveedor
 from django.template.loader import render_to_string
 import json, datetime
 
@@ -11,7 +11,7 @@ def ReportePagosCancelados(request):
 	for Pago in Pagos:
 		FoliosFactura = ""
 		for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago):
-			FoliosFactura += Factura.IDFactura.Folio + ", "
+			FoliosFactura += View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura).Folio + ", "
 		FoliosFactura = FoliosFactura[:-2]
 		Folios.append(FoliosFactura)
 	return render(request, 'PagosCancelados.html', {"Pagos": Pagos, "Folios" : Folios});
@@ -33,7 +33,7 @@ def GetPagosByFilters(request):
 	for Pago in Pagos:
 		FoliosFactura = ""
 		for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago):
-			FoliosFactura += Factura.IDFactura.Folio + ", "
+			FoliosFactura += View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura).Folio + ", "
 		FoliosFactura = FoliosFactura[:-2]
 		Folios.append(FoliosFactura)
 	htmlRes = render_to_string('TablaReportePagosCancelados.html', {'Pagos':Pagos, 'Folios' : Folios}, request = request,)

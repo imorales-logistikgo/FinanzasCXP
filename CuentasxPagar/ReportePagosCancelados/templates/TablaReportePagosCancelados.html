@@ -21,9 +21,9 @@
 		<tr data-idpago="{{Pago.IDPago}}">
 			<td style="font-weight: bold;" class=" text-center bold"><a data-toggle="modal" href="#detallesPago" class="btnDetallePago" data-backdrop="static">{{Pago.Folio}}</a></td>
 			<td>{{Pago.NombreCortoProveedor}}</td>
-			<td></td>
+			<td>Jesus</td>
 			<td>{{Pago.FechaPago|date:'Y/m/d'}}</td>
-			<td></td>
+			<td>{{Pago.FechaBaja}}</td>
 			<td>${{Pago.Total|floatformat:"2"|intcomma}}</td>
 			<th>{{Folios|index:forloop.counter0}}</th>
 			<th>{{Pago.Comentarios}}</th>

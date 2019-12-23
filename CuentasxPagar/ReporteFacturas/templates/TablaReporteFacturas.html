@@ -11,7 +11,7 @@
 			<th>Total</th>
 			<th>Status</th>
 			<th>Folio viaje</th>
-			<th>Folio Pago</th>
+			<!-- <th>Folio Pago</th> -->
 		</tr>
 	</thead>
 	<tbody>
@@ -26,7 +26,7 @@
 			<td>${{Factura.Total|floatformat:"2"|intcomma|safe}}</td>
 			<td>{{Factura.Status|safe}}</td>
 			<td>{{Factura.Viajes|safe}}</td>
-			<td></td>
+			<!-- <td></td> -->
 		</tr>
 		{%endfor%}
 	</tbody>

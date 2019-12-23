@@ -12,7 +12,7 @@
 			<th>Retencion</th>
 			<th>Total</th>
 			<th>Folio viaje</th>
-			<th>Folio Pago</th>
+			<!-- <th>Folio Pago</th> -->
 		</tr>
 	</thead>
 	<tbody>
@@ -20,7 +20,7 @@
 		<tr>
 			<td style="font-weight: bold;">{{Factura.Folio|safe}}</td>
 			<td>{{Factura.Proveedor|safe}}</td>
-			<td></td>
+			<td>Jesus</td>
 			<td>{{Factura.FechaFactura|date:'Y/m/d'|safe}}</td>
 			<td>{{Factura.FechaBaja|date:'Y/m/d'|safe}}</td>
 			<td>${{Factura.Subtotal|floatformat:"2"|intcomma|safe}}</td>
@@ -28,7 +28,7 @@
 			<td>${{Factura.Retencion|floatformat:"2"|intcomma|safe}}</td>
 			<td>${{Factura.Total|floatformat:"2"|intcomma|safe}}</td>
 			<td>{{Factura.Viajes|safe}}</td>
-			<td></td>
+			<!-- <td></td> -->
 		</tr>
 		{%endfor%}
 	</tbody>

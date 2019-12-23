@@ -16,7 +16,7 @@ def EstadosdeCuenta(request):
 	for Factura in ListaFacturas:
 		FoliosPago= ""
 		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura["IDFactura"]):
-			FoliosPago += Pago.IDPago.Folio + ", "
+			FoliosPago += PagosxProveedor.objects.get(IDPago = Pago.IDPago).Folio + ", "
 		FoliosPago = FoliosPago[:-2]
 		Folios.append(FoliosPago)
 	ContadoresPendientes = len(list(FacturasPendiente))
@@ -145,11 +145,11 @@ def SavePagoxFactura(request):
 		newPagoxFactura.FechaAlta = datetime.datetime.now()
 		newPagoxFactura.save()
 		newRelacionPagoxFactura = RelacionPagosFacturasxProveedor()
-		newRelacionPagoxFactura.IDPago = PagosxProveedor.objects.get(IDPago = jParams["IDPago"])
-		newRelacionPagoxFactura.IDPagoxFactura = PagosxFacturas.objects.get(IDPagoxFactura = newPagoxFactura.IDPagoxFactura)
+		newRelacionPagoxFactura.IDPago = jParams["IDPago"]
+		newRelacionPagoxFactura.IDPagoxFactura = newPagoxFactura.IDPagoxFactura
 		Factura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
 		Factura.Saldo -= Decimal(Pago["Total"])
-		newRelacionPagoxFactura.IDFactura = Factura
+		newRelacionPagoxFactura.IDFactura = Pago["IDFactura"]
 		newRelacionPagoxFactura.IDUsuarioAlta = 1
 		newRelacionPagoxFactura.IDProveedor = 1
 		if Factura.Saldo == 0:

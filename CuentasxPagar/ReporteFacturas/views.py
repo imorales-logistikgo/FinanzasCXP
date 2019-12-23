@@ -14,14 +14,13 @@ def ReporteFacturas(request):
 
 
 def FacturasToList(Facturas):
-	listFacturas = list()
+	listFacturas = list()                   
 	for Fact in Facturas:
 		Factura = {}
 		conFacturaxPartidas= RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = Fact.IDFactura)
 		Factura['Folio'] = Fact.Folio
 		Factura['Proveedor'] = Fact.NombreCortoProveedor
 		Factura['FechaFactura'] = Fact.FechaFactura
-		Factura['FechaBaja'] = conFacturaxPartidas.first().IDPartida.FechaBaja
 		Factura["Subtotal"] = Fact.Subtotal
 		Factura["IVA"] = Fact.IVA
 		Factura["Retencion"] = Fact.Retencion

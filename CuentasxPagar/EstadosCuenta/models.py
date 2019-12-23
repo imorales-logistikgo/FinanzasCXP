@@ -31,9 +31,9 @@ class PagosxProveedor(models.Model):
 
 class RelacionPagosFacturasxProveedor(models.Model):
     IDRelacionPagoFacturasxProveedor = models.AutoField(primary_key=True)
-    IDPago = models.ForeignKey(PagosxProveedor, on_delete=models.CASCADE, db_column = 'IDPago')
-    IDPagoxFactura = models.ForeignKey(PagosxFacturas, on_delete=models.CASCADE, db_column = 'IDPagoxFactura')
-    IDFactura = models.ForeignKey(FacturasxProveedor, on_delete=models.CASCADE, db_column = 'IDFactura')
+    IDPago = models.IntegerField(default=0)
+    IDPagoxFactura = models.IntegerField(default=0)
+    IDFactura = models.IntegerField(default=0)
     IDUsuarioAlta = models.IntegerField(default=0)
     IDProveedor = models.IntegerField(default=0)
 
