@@ -74,7 +74,7 @@ function formatDataTable() {
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
-    "scrollX": "100%",
+    "scrollX": true,
     "responsive": false,
     "paging": true,
     "dom": 'Bfrtip',
@@ -112,9 +112,9 @@ function formatDataTable() {
         "className": "dt-head-center dt-body-center"
       },
       {
-        "targets": [7,8,9],
-      //  "width": "12px",
-        "className": "dt-head-center dt-body-right"
+        "targets": [7],
+      "width": "25%",
+        "className": "dt-head-center dt-body-left"
       },
       {
         "targets": 8,
