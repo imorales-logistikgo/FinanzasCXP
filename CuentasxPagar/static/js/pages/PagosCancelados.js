@@ -83,7 +83,6 @@ function formatDataTable() {
 
       }
     ],
-    fixedHeader: true,
     fixedColumns:   {
     leftColumns: 1
   },

@@ -64,6 +64,7 @@ def FacturasToList(Facturas):
 		NuevaFactura["Folio"] = Factura.Folio
 		NuevaFactura["Proveedor"] = Factura.Proveedor
 		NuevaFactura["FechaFactura"] = Factura.FechaFactura
+		NuevaFactura["Subtotal"] = Factura.Subtotal
 		NuevaFactura["IVA"] = Factura.IVA
 		NuevaFactura["Retencion"] = Factura.Retencion
 		NuevaFactura["Total"] = Factura.Total

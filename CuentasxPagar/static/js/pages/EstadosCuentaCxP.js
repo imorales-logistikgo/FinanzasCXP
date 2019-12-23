@@ -398,7 +398,8 @@ var fnCancelarFactura = async function (IDFactura) {
 function formatDataTableFacturas(){
   table = $('#TableEstadosdeCuenta').DataTable({
     "scrollX": "100%",
-    "scrollCollapse": true,
+    "scrollY": "200px",
+    //"scrollCollapse": true,
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
@@ -411,9 +412,9 @@ function formatDataTableFacturas(){
       text: '<i class="fas fa-file-excel fa-lg"></i>',
     }
     ],
-    fixedColumns:   {
-    leftColumns: 1
-    },
+  //  fixedColumns:   {
+    //leftColumns: 1
+    //},
 
     columnDefs: [ {
       orderable: false,
