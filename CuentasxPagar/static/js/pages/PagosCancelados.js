@@ -1,3 +1,5 @@
+var xml;
+var pdf;
 $(document).ready(function(){
   formatDataTable();
 
@@ -114,6 +116,26 @@ function formatDataTable() {
       //  "width": "12px",
         "className": "dt-head-center dt-body-right"
       },
+      {
+        "targets": 8,
+        "width": "2%",
+        "className": "dt-head-center dt-body-center",
+        "mRender": function (data, type, full) {
+          xml = $('input[name="IDPago"]').data("xmlarchivo");
+          return  (xml != "" ? '<a href="'+xml+'" target="_blank" class="btnEliminarPago btn btn-primary btn-elevate btn-pill btn-sm"><i class="fas fa-file-excel fa-lg"></i></a>':'');
+        }
+
+      },
+      {
+        "targets": 9,
+        "width": "2%",
+        "className": "dt-head-center dt-body-center",
+        "mRender": function (data, type, full) {
+          pdf = $('input[name="IDPago"]').data("pdfarchivo");
+          return  (pdf != "" ? '<a href="'+pdf+'" target="_blank" class="btnEliminarPago btn btn-primary btn-elevate btn-pill btn-sm"><i class="fas fa-file-pdf fa-lg"></i></a>':'');
+        }
+
+      }
     ]
   });
 }
