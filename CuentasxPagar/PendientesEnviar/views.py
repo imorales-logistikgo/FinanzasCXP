@@ -38,10 +38,10 @@ def PendientesToList(PendingToSend):
 
 
 def GetContadores():
-	ContadorTodos = len(list(View_PendientesEnviarCxP.objects.filter(IsFacturaProveedor = False)))
-	ContadorPendientes = len(list(PendientesEnviar.objects.filter(Status ="Pendiente")))
-	ContadorFinalizados = len(list(PendientesEnviar.objects.filter(Status ="Finalizado")))
-	ContadorConEvidencias = len(list(PendientesEnviar.objects.filter(IsEvidenciaDigital = True, IsEvidenciaFisica = True)))
+	ContadorTodos = View_PendientesEnviarCxP.objects.filter(IsFacturaProveedor = False).count()
+	ContadorPendientes = View_PendientesEnviarCxP.objects.filter(Status ="Pendiente").count()
+	ContadorFinalizados = View_PendientesEnviarCxP.objects.filter(Status ="Finalizado").count()
+	ContadorConEvidencias = View_PendientesEnviarCxP.objects.filter(IsEvidenciaDigital = True, IsEvidenciaFisica = True).count()
 	ContadorSinEvidencias = ContadorTodos - ContadorConEvidencias
 	return ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias
 
@@ -57,7 +57,12 @@ def GetPendientesByFilters(request):
 	else:
 		PendingToSend = View_PendientesEnviarCxP.objects.filter(FechaDescarga__range = [datetime.datetime.strptime(request.GET["FechaDescargaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaDescargaHasta"],'%m/%d/%Y')], IsFacturaProveedor = False)
 	if Status:
-		PendingToSend = PendingToSend.filter(Status__in = Status)
+		if "Con evidencias" in Status:
+			PendingToSend = PendingToSend.filter(IsEvidenciaDigital = True, IsEvidenciaFisica = True)
+			if len(Status) > 1:
+				PendingToSend = PendingToSend.filter(Status__in = Status)
+		else:
+			PendingToSend = PendingToSend.filter(Status__in = Status)
 	if Proveedor:
 		PendingToSend = PendingToSend.filter(NombreProveedor__in = Proveedor)
 	PendingToSend = PendingToSend.filter(Moneda = Moneda)
