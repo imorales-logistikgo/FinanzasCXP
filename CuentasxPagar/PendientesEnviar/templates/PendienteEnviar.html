@@ -4,6 +4,83 @@
 kt-menu__item--active
 {% endblock %}
 {% block ContadoresPendientesEnviar %}
+
+<!--bloque para usuarios de transportistas-->
+<div class="container py-4">
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+		<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+			<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+				<div>
+					<label>Folio: </label>
+				</div>
+					<div class="input-group mb-3">
+					  <input type="text" class="form-control" placeholder="Buscar..." id="inputBuscarFolioProveedor">
+					  <div class="input-group-append">
+					    <button class="btn btn-outline-primary" type="button" id="buscarFolioProveedor">Buscar</button>
+					  </div>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="container" id="contenedorSubirArchivosproveedor">
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+		<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+			<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+				<div class="container">
+					<div class="row">
+							<div class="col-sm-12 col-md-4">
+								<label>Folio: </label>
+							</div>
+							<div class="col-sm-12 col-md-4">
+								<label>Proveedor: </label>
+							</div>
+							<div class="col-sm-12 col-md-4">
+								<label>Fecha: </label>
+							</div>
+					</div>
+
+					<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid py-4">
+						<div class="col-sm-12 col-lg-12">
+							<div class="kt-portlet kt-portlet--height-fluid">
+								<div class="kt-portlet__head" id="headUppyTitulo">
+									<div class="kt-portlet__head-label">
+										<h3 class="kt-portlet__head-title">
+											PDF y XML
+										</h3>
+									</div>
+								</div>
+								<div class="kt-portlet__body">
+									<div class="kt-uppy" id="archivosproveedor">
+										<div  class="kt-uppy__dashboard"></div>
+										<div class="kt-uppy__progress"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!--ver archivos subidos (PDF y XML)-->
+				<div class="container">
+					<div class="uploaded-files-proveedor">
+						<h5>Archivos Subidos:</h5>
+						<ol></ol>
+					</div>
+				 </div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--Fin bloque para usuarios de transportistas-->
+
+
+
+<!-- bloque para usuarios de logistik-->
+
 <div class="kt-subheader kt-grid__item" id="kt_subheader">
 	<div class="kt-container  kt-container--fluid ">
 
@@ -406,6 +483,8 @@ kt-menu__item--active
 										</div>
 
 									<!-- end modal ver evidencias -->
+
+<!-- Fin bloque para usuarios de logistik-->
 
 									{% endblock %}
 

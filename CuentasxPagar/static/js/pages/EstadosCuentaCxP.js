@@ -59,6 +59,13 @@ $(document).on( 'click', '.btnEliminarFactura', function () {
 })
 });
 
+
+//Aprobar factura subida por el proveedor
+$(document).on('click', '.btnAprobarFactura',function(){
+  alert("hi");
+});
+
+
 //elementos a mostrar al abrirse el modeal de subir cobros
 $('#modalSubirPagos').on('shown.bs.modal', function(){
   $('#FechaPago').datepicker({
@@ -323,6 +330,11 @@ function ValidacionCheckboxPagos(){
 });
 }
 
+$('#tablaDetalles').DataTable({
+  "responsive": true
+});
+
+
 });
 
 var fnGetFacturas = function () {
@@ -398,7 +410,7 @@ var fnCancelarFactura = async function (IDFactura) {
 function formatDataTableFacturas(){
   table = $('#TableEstadosdeCuenta').DataTable({
     "scrollX": true,
-    //"scrollY": "200px",
+    //"scrollY": "500px",
     "scrollCollapse": true,
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
@@ -412,9 +424,9 @@ function formatDataTableFacturas(){
       text: '<i class="fas fa-file-excel fa-lg"></i>',
     }
     ],
-    fixedColumns:   {
+  /*  fixedColumns:   {
       leftColumns: 1
-    },
+    },*/
 
     columnDefs: [ {
       orderable: false,
@@ -466,6 +478,14 @@ function formatDataTableFacturas(){
       "width": "3%",
       "className": "text-center",
       "targets": 13,
+      "mRender": function (data, type, full) {
+       return ( full[10] === 'Pendiente' ? '<button type ="button" title="Aprobar" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'');
+     }
+    },
+    {
+      "width": "3%",
+      "className": "text-center",
+      "targets": 14,
       "mRender": function (data, type, full) {
        return ( full[10] === 'Pendiente' ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon-delete"></i></button>':'');
      }

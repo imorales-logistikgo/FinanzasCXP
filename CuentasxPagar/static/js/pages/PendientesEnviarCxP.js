@@ -76,6 +76,21 @@ $('#btnGuardarFactura').on('click', function(){
 });
 
 
+//buscador para el proveedor
+$('#buscarFolioProveedor').on('click', function(){
+  if($('#inputBuscarFolioProveedor').val() != "")
+  {
+    $('#inputBuscarFolioProveedor').prop("disabled", true);
+    $('#buscarFolioProveedor').prop("disabled", true);
+    $('#contenedorSubirArchivosproveedor').css("display", "block");
+    archivosproveedor();
+  }
+  else
+  {
+    alertToastError("Por favor ingrese un folio");
+  }
+});
+
 //ocultar columnas tabla pendientes enviar
 $('input[name="Fecha Descarga"]').on('change', function(e){
  e.preventDefault();
@@ -694,4 +709,139 @@ function formatDataTable() {
       }
     }]
   } );
+}
+
+function archivosproveedor()
+{
+  // plugin para subir los archivos del proveedor
+  "use strict";
+
+  		// Class definition
+  		var KTUppy = function () {
+  			const Tus = Uppy.Tus;
+  			const ProgressBar = Uppy.ProgressBar;
+  			const StatusBar = Uppy.StatusBar;
+  			const FileInput = Uppy.FileInput;
+  			const Informer = Uppy.Informer;
+  			const XHRUpload = Uppy.XHRUpload;
+
+
+  			// to get uppy companions working, please refer to the official documentation here: https://uppy.io/docs/companion/
+  			const Dashboard = Uppy.Dashboard;
+  			const GoogleDrive = Uppy.GoogleDrive;
+        const Webcam = Uppy.Webcam;
+
+  			// Private functions
+  			var initUppy1 = function(){
+  				var id = '#archivosproveedor';
+
+  				var options = {
+  					proudlyDisplayPoweredByUppy: false,
+  					target: id,
+  					inline: true,
+  					height: 260,
+  					replaceTargetContent: true,
+  					showProgressDetails: true,
+  					note: 'Logisti-k',
+             browserBackButtonClose: true,
+
+           }
+
+           var uppyDashboard = Uppy.Core({
+             autoProceed: false,
+             restrictions: {
+  						maxFileSize: 5000000, // 5mb
+  						maxNumberOfFiles: 2,
+  						minNumberOfFiles: 2,
+             allowedFileTypes:['.pdf', '.xml']
+           },
+           locale: Uppy.locales.es_ES,
+           onBeforeFileAdded: (currentFile, file) => {
+             if(Object.values(file)[0] === undefined)
+             {
+               console.log("+1")
+             }
+             else
+             {
+               if((currentFile.type === Object.values(file)[0].meta.type))
+               {
+                 uppyDashboard.info(`Los archivos deben ser diferentes`, 'error', 500)
+                 return false
+               }
+               else
+               {
+                 console.log("ok")
+               }
+             }
+
+           }
+         });
+
+
+           uppyDashboard.use(Dashboard, options);
+           uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bkg-test.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
+  				//uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
+          uppyDashboard.use(Webcam, {target: Dashboard});
+          uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
+          uppyDashboard.on('upload-success', (file, response) => {
+            const fileName = file.name
+            if (file.extension === 'pdf')
+            {
+             const urlPDF = response.body
+             $('#archivosproveedor').data("rutaarchivoPDF", urlPDF)
+             document.querySelector('.uploaded-files-proveedor').innerHTML +=
+             `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaPDF">${fileName}</a></li></ol>`
+
+                 }
+                 else
+                 {
+                   const urlXMLCheck = response.body
+                   var to = leerXMLTransportista(urlXMLCheck)
+                   if(to <= total)
+                   {
+                     alertToastError("El total de la factura no coincide con el total calculado del sistema")
+                      //uppyDashboard.reset()
+                      uppyDashboard.cancelAll()
+                    }
+                    else
+                    {
+                     const urlPDF = response.body
+                     $('#archivosproveedor').data("rutaarchivoXML", urlPDF)
+                     document.querySelector('.uploaded-files-proveedor').innerHTML +=
+                     `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
+                   }
+                  }
+                   if($('#archivosproveedor').data("rutaarchivoXML") != null && $('#archivosproveedor').data("rutaarchivoPDF") != null || $('#archivosproveedor').data("rutaarchivoXML") != undefined && $('#archivosproveedor').data("rutaarchivoPDF") != undefined)
+                   {
+                     console.log("yes");
+                     uppyDashboard.close();
+                     uppyDashboard.reset();
+                     $('#archivosproveedor').data("rutaarchivoXML", null);
+                     $('#archivosproveedor').data("rutaarchivoPDF", null);
+                     $('#contenedorSubirArchivosproveedor').css("display", "none");
+                     $('#inputBuscarFolioProveedor').prop("disabled", false);
+                     $('#buscarFolioProveedor').prop("disabled", false);
+                   }
+                   else
+                   {
+                     alertToastError("Ocurrio un error");
+                   }
+   });
+
+        }
+        return {
+  				// public functions
+  				init: function() {
+  					initUppy1();
+
+  				}
+  			};
+  		}();
+
+  		KTUtil.ready(function() {
+  			KTUppy.init();
+  		});
+
+
+
 }

@@ -221,3 +221,23 @@ function fechaVencimineto(fecha)
   }
   return newDate;
 }
+
+function leerXMLTransportista(xml)
+{
+    var rest;
+    var req = new XMLHttpRequest();
+       req.open('GET', xml, false);
+       req.send(null);
+       if (req.status == 200)
+       {
+           var resp = req.responseXML;
+           var obNodos = resp.children[0].attributes;
+           var total = obNodos.Total;
+           (total != undefined) ? rest = total.nodeValue : rest = 0;
+       }
+       else
+       {
+           rest = 0;
+       }
+    return rest;
+}
