@@ -93,6 +93,7 @@ footer{
 }
 }
 
+
 #filtroxMesyAno
 {
   display: none;
@@ -125,25 +126,12 @@ footer{
   overflow: hidden;
 }
 
-@media only screen and (min-width: 1366px) {
-  .uppy-size--md .uppy-Dashboard-inner
-  {
-    left: 5px !important;
-  }
-}
-
-@media only screen and (max-width: 1365px) {
-  .uppy-size--md .uppy-Dashboard-inner
-  {
-    left: 5px;
-  }
-}
-.uppy-size--md .uppy-Dashboard-inner
-{
-  left: 100px;
-}
-
 #contenedorSubirArchivosproveedor
 {
   display: none;
+}
+
+.uppy-size--md .uppy-Dashboard-inner
+{
+  margin: auto;
 }
