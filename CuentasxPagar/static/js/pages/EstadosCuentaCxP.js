@@ -62,7 +62,24 @@ $(document).on( 'click', '.btnEliminarFactura', function () {
 
 //Aprobar factura subida por el proveedor
 $(document).on('click', '.btnAprobarFactura',function(){
-  alert("hi");
+  Swal.fire({
+   title: '¿Estas Seguro?',
+   text: "Validaras una factura importante",
+   type: 'warning',
+   showCancelButton: true,
+   confirmButtonColor: '#5cb85c',
+   cancelButtonColor: '#d33',
+   confirmButtonText: 'Validar'
+ }).then((result) => {
+  if (result.value) {
+    console.log($(this).data('idfact'));
+    Swal.fire(
+      'Aprovado!',
+      'La factura fue aprovada',
+      'success'
+    )
+  }
+})
 });
 
 
