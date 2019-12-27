@@ -126,3 +126,13 @@ def SavePartidasxFactura(request):
 def CheckFolioDuplicado(request):
 	IsDuplicated = FacturasxProveedor.objects.filter(Folio = request.GET["Folio"]).exists()
 	return JsonResponse({'IsDuplicated' : IsDuplicated})
+
+
+
+def FindFolioProveedor(request):
+	Folio = request.GET["Folio"]
+	try:
+		PendienteEnviar = View_PendientesEnviarCxP.objects.get(Folio = Folio)
+		return JsonResponse({'Found' : True, 'Folio' : PendienteEnviar.Folio, 'Proveedor' : PendienteEnviar.NombreProveedor, 'FechaDescarga' : PendienteEnviar.FechaDescarga, 'IDPendienteEnviar' : PendienteEnviar.IDPendienteEnviar, 'Total' : PendienteEnviar.Total})
+	except:
+		return JsonResponse({'Found' : False})

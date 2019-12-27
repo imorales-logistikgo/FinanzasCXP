@@ -54,6 +54,8 @@ $('#btnAplicarFiltro').on('click', fnGetPendientesEnviar);
 
 $(document).on('change', '#txtFolioFactura', fnCheckFolio);
 
+//$(document).on('click', '#buscarFolioProveedor', BuscarFolioProveedor);
+
 $('#btnGuardarFactura').on('click', function(){
   if($('#kt_uppy_1').data("rutaarchivoPDF") != undefined && $('#kt_uppy_1').data("rutaarchivoXML") != undefined || $('#kt_uppy_1').data("rutaarchivoPDF") != null && $('#kt_uppy_1').data("rutaarchivoXML") != null)
   {
@@ -80,10 +82,9 @@ $('#btnGuardarFactura').on('click', function(){
 $('#buscarFolioProveedor').on('click', function(){
   if($('#inputBuscarFolioProveedor').val() != "")
   {
-    $('#inputBuscarFolioProveedor').prop("disabled", true);
-    $('#buscarFolioProveedor').prop("disabled", true);
-    $('#contenedorSubirArchivosproveedor').css("display", "block");
-    archivosproveedor();
+    //$('#inputBuscarFolioProveedor').prop("disabled", true);
+    //$('#buscarFolioProveedor').prop("disabled", true);
+    BuscarFolioProveedor();
   }
   else
   {
@@ -206,7 +207,7 @@ function mostrarTipoCambio()
   {
    $('#inputTipoCambio').hide();
    $('#labelTipoCambio').hide();
-  }
+ }
  else
  {
    $('#inputTipoCambio').show();
@@ -651,6 +652,40 @@ var fnCheckFolio = function () {
   });
 }
 
+function BuscarFolioProveedor() {
+  fetch("/PendientesEnviar/FindFolioProveedor?Folio=" + $('#inputBuscarFolioProveedor').val(), {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    return response.clone().json();
+  }).then(function(data){
+    if(!data.Found) {
+      Swal.fire({
+        type: 'error',
+        title: 'El folio indicado no existe en el sistema',
+        showConfirmButton: false,
+        timer: 2500
+      })
+      $('#contenedorSubirArchivosproveedor').css("display", "none");
+    }
+    else {
+      //data.IDPendienteEnviar}
+      //data.Total
+      $('#FolioConcepto').html(data.Folio);
+      $('#ProveedorConcepto').html(data.Proveedor);
+      $('#FechaConcepto').html(data.FechaDescarga);
+      $('#contenedorSubirArchivosproveedor').css("display", "block");
+      archivosproveedor();
+    }
+  }).catch(function(ex){
+    $('#contenedorSubirArchivosproveedor').css("display", "none");
+  });
+}
+
 
 function formatDataTable() {
   table = $('#TablePendientesEnviar').DataTable( {
@@ -743,13 +778,13 @@ function archivosproveedor()
   					replaceTargetContent: true,
   					showProgressDetails: true,
   					note: 'Logisti-k',
-             browserBackButtonClose: true,
+           browserBackButtonClose: true,
 
-           }
+         }
 
-           var uppyDashboard = Uppy.Core({
-             autoProceed: false,
-             restrictions: {
+         var uppyDashboard = Uppy.Core({
+           autoProceed: false,
+           restrictions: {
   						maxFileSize: 5000000, // 5mb
   						maxNumberOfFiles: 2,
   						minNumberOfFiles: 2,
@@ -778,8 +813,8 @@ function archivosproveedor()
          });
 
 
-           uppyDashboard.use(Dashboard, options);
-           uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bkg-test.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
+         uppyDashboard.use(Dashboard, options);
+         uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bkg-test.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
   				//uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
           uppyDashboard.use(Webcam, {target: Dashboard});
           uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
@@ -792,14 +827,14 @@ function archivosproveedor()
              document.querySelector('.uploaded-files-proveedor').innerHTML +=
              `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaPDF">${fileName}</a></li></ol>`
 
-                 }
-                 else
-                 {
-                   const urlXMLCheck = response.body
-                   var to = leerXMLTransportista(urlXMLCheck)
-                   if(to <= total)
-                   {
-                     alertToastError("El total de la factura no coincide con el total calculado del sistema")
+           }
+           else
+           {
+             const urlXMLCheck = response.body
+             var to = leerXMLTransportista(urlXMLCheck)
+             if(to <= total)
+             {
+               alertToastError("El total de la factura no coincide con el total calculado del sistema")
                       //uppyDashboard.reset()
                       uppyDashboard.cancelAll()
                     }
@@ -810,23 +845,23 @@ function archivosproveedor()
                      document.querySelector('.uploaded-files-proveedor').innerHTML +=
                      `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
                    }
-                  }
-                   if($('#archivosproveedor').data("rutaarchivoXML") != null && $('#archivosproveedor').data("rutaarchivoPDF") != null || $('#archivosproveedor').data("rutaarchivoXML") != undefined && $('#archivosproveedor').data("rutaarchivoPDF") != undefined)
-                   {
-                     console.log("yes");
-                     uppyDashboard.close();
-                     uppyDashboard.reset();
-                     $('#archivosproveedor').data("rutaarchivoXML", null);
-                     $('#archivosproveedor').data("rutaarchivoPDF", null);
-                     $('#contenedorSubirArchivosproveedor').css("display", "none");
-                     $('#inputBuscarFolioProveedor').prop("disabled", false);
-                     $('#buscarFolioProveedor').prop("disabled", false);
-                   }
-                   else
-                   {
-                     alertToastError("Ocurrio un error");
-                   }
-   });
+                 }
+                 if($('#archivosproveedor').data("rutaarchivoXML") != null && $('#archivosproveedor').data("rutaarchivoPDF") != null || $('#archivosproveedor').data("rutaarchivoXML") != undefined && $('#archivosproveedor').data("rutaarchivoPDF") != undefined)
+                 {
+                   console.log("yes");
+                   uppyDashboard.close();
+                   uppyDashboard.reset();
+                   $('#archivosproveedor').data("rutaarchivoXML", null);
+                   $('#archivosproveedor').data("rutaarchivoPDF", null);
+                   $('#contenedorSubirArchivosproveedor').css("display", "none");
+                   $('#inputBuscarFolioProveedor').prop("disabled", false);
+                   $('#buscarFolioProveedor').prop("disabled", false);
+                 }
+                 else
+                 {
+                   alertToastError("Ocurrio un error");
+                 }
+               });
 
         }
         return {
@@ -844,4 +879,4 @@ function archivosproveedor()
 
 
 
-}
+    }
