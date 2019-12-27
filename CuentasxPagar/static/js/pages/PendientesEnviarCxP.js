@@ -797,7 +797,7 @@ function archivosproveedor()
                  {
                    const urlXMLCheck = response.body
                    var to = leerXMLTransportista(urlXMLCheck)
-                   if(to <= total)
+                   if(to > total)
                    {
                      alertToastError("El total de la factura no coincide con el total calculado del sistema")
                       //uppyDashboard.reset()
@@ -813,19 +813,20 @@ function archivosproveedor()
                   }
                    if($('#archivosproveedor').data("rutaarchivoXML") != null && $('#archivosproveedor').data("rutaarchivoPDF") != null || $('#archivosproveedor').data("rutaarchivoXML") != undefined && $('#archivosproveedor').data("rutaarchivoPDF") != undefined)
                    {
-                     console.log("yes");
+                     var pdfPE = $('#archivosproveedor').data("rutaarchivoPDF");
+                     var xmlPE = $('#archivosproveedor').data("rutaarchivoXML");
+                     guardarFacturaProveedor(pdfPE, xmlPE);
                      uppyDashboard.close();
                      uppyDashboard.reset();
                      $('#archivosproveedor').data("rutaarchivoXML", null);
                      $('#archivosproveedor').data("rutaarchivoPDF", null);
+                     $('.uploaded-files-proveedor ol').remove();
                      $('#contenedorSubirArchivosproveedor').css("display", "none");
                      $('#inputBuscarFolioProveedor').prop("disabled", false);
                      $('#buscarFolioProveedor').prop("disabled", false);
+                     $('#inputBuscarFolioProveedor').val('');
                    }
-                   else
-                   {
-                     alertToastError("Ocurrio un error");
-                   }
+
    });
 
         }
@@ -844,4 +845,9 @@ function archivosproveedor()
 
 
 
+}
+
+function guardarFacturaProveedor(pdfPE, xmlPE)
+{
+console.log(xmlPE);
 }
