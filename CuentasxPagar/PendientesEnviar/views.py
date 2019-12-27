@@ -38,10 +38,11 @@ def PendientesToList(PendingToSend):
 
 
 def GetContadores():
-	ContadorTodos = View_PendientesEnviarCxP.objects.filter(IsFacturaProveedor = False).count()
-	ContadorPendientes = View_PendientesEnviarCxP.objects.filter(Status ="Pendiente").count()
-	ContadorFinalizados = View_PendientesEnviarCxP.objects.filter(Status ="Finalizado").count()
-	ContadorConEvidencias = View_PendientesEnviarCxP.objects.filter(IsEvidenciaDigital = True, IsEvidenciaFisica = True).count()
+	AllPending = list(View_PendientesEnviarCxP.objects.values("IsFacturaProveedor", "Status", "IsEvidenciaDigital", "IsEvidenciaFisica").all())
+	ContadorTodos = len(list(filter(lambda x: x["IsFacturaProveedor"] == False, AllPending)))
+	ContadorPendientes = len(list(filter(lambda x: x["Status"] == "Pendiente", AllPending)))
+	ContadorFinalizados = len(list(filter(lambda x: x["Status"] == "Finalizado", AllPending)))
+	ContadorConEvidencias = len(list(filter(lambda x: x["IsEvidenciaFisica"] == True and x["IsEvidenciaDigital"] == True, AllPending)))
 	ContadorSinEvidencias = ContadorTodos - ContadorConEvidencias
 	return ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias
 
