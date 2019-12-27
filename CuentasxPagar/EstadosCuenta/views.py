@@ -4,14 +4,12 @@ from PendientesEnviar.models import RelacionFacturaProveedorxPartidas, Facturasx
 from EstadosCuenta.models import  View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor
 from django.template.loader import render_to_string
 from decimal import Decimal
+from django.db.models import Q
 import json, datetime
 
 
 def EstadosdeCuenta(request):
-	AllFacturas = View_FacturasxProveedor.objects.all()
-	FacturasPendiente = AllFacturas.filter(Status = "Pendiente")
-	FacturasAbonada = AllFacturas.filter(Status = "Abonada")
-	result = FacturasPendiente | FacturasAbonada
+	result = View_FacturasxProveedor.objects.filter(Q(Status = "Pendiente") | Q(Status = "Abonada"))
 	ListaFacturas = FacturasToList(result)
 	Folios = list()
 	for Factura in ListaFacturas:
@@ -20,11 +18,18 @@ def EstadosdeCuenta(request):
 			FoliosPago += Pago.IDPago.Folio + ", "
 		FoliosPago = FoliosPago[:-2]
 		Folios.append(FoliosPago)
-	ContadoresPendientes = FacturasPendiente.count()
-	ContadoresAbonadas = FacturasAbonada.count()
-	ContadoresPagadas = AllFacturas.filter(Status = "Pagada").count()
-	ContadoresCanceladas = AllFacturas.filter(Status = "Cancelada").count()
+	ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas = GetContadores()
 	return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Folios': Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas})
+
+
+
+def GetContadores():
+	AllFacturas = list(View_FacturasxProveedor.objects.values('Status').all())
+	ContadoresPendientes = len(list(filter(lambda x: x["Status"] == "Pendiente", AllFacturas)))
+	ContadoresAbonadas = len(list(filter(lambda x: x["Status"] == "Abonada", AllFacturas)))
+	ContadoresPagadas = len(list(filter(lambda x: x["Status"] == "Pagada", AllFacturas)))
+	ContadoresCanceladas = len(list(filter(lambda x: x["Status"] == "Cancelada", AllFacturas)))
+	return ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas
 
 
 

@@ -14,10 +14,10 @@ def ReporteFacturas(request):
 
 
 def FacturasToList(Facturas):
-	listFacturas = list()                   
+	listFacturas = list()
 	for Fact in Facturas:
 		Factura = {}
-		conFacturaxPartidas= RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = Fact.IDFactura)
+		conFacturaxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = Fact.IDFactura).select_related('IDPendienteEnviar')
 		Factura['Folio'] = Fact.Folio
 		Factura['Proveedor'] = Fact.NombreCortoProveedor
 		Factura['FechaFactura'] = Fact.FechaFactura
@@ -28,7 +28,7 @@ def FacturasToList(Facturas):
 		Factura['Total'] = Fact.Total
 		Factura['Viajes'] = ''
 		for Pendiente in conFacturaxPartidas:
-			Factura['Viajes'] += RelacionConceptoxProyecto.objects.get(IDPendienteEnviar = Pendiente.IDPendienteEnviar).IDPendienteEnviar.Folio + ", "
+			Factura['Viajes'] += Pendiente.IDPendienteEnviar.Folio + ", "
 		Factura['Viajes'] = Factura['Viajes'][:-2]
 		listFacturas.append(Factura)
 	return listFacturas
@@ -36,10 +36,11 @@ def FacturasToList(Facturas):
 
 
 def GetContadores():
-	ContadorPendientes = len(list(FacturasxProveedor.objects.raw("SELECT * FROM FacturasxProveedor WHERE Status = %s", ['Pendiente'])))
-	ContadorPagadas = len(list(FacturasxProveedor.objects.raw("SELECT * FROM FacturasxProveedor WHERE Status = %s", ['Pagada'])))
-	ContadorAbonadas = len(list(FacturasxProveedor.objects.raw("SELECT * FROM FacturasxProveedor WHERE Status = %s", ['Abonada'])))
-	ContadorCanceladas = len(list(FacturasxProveedor.objects.raw("SELECT * FROM FacturasxProveedor WHERE Status = %s", ['Cancelada'])))
+	AllFacturas = list(FacturasxProveedor.objects.values("Status").all())
+	ContadorPendientes = len(list(filter(lambda x: x["Status"] == "Pendiente", AllFacturas)))
+	ContadorPagadas = len(list(filter(lambda x: x["Status"] == "Pagada", AllFacturas)))
+	ContadorAbonadas = len(list(filter(lambda x: x["Status"] == "Abonada", AllFacturas)))
+	ContadorCanceladas = len(list(filter(lambda x: x["Status"] == "Cancelada", AllFacturas)))
 	return ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas
 
 

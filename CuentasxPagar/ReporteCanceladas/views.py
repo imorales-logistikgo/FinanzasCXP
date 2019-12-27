@@ -16,18 +16,18 @@ def CanceladasToList(Canceladas):
 	listFacturas = list()
 	for Cancelada in Canceladas:
 		Factura = {}
-		conFacturaxPartidas= RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = Cancelada.IDFactura)
+		conFacturaxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = Cancelada.IDFactura).select_related('IDPendienteEnviar').select_related('IDPartida')
 		Factura['Folio'] = Cancelada.Folio
 		Factura['Proveedor'] = Cancelada.NombreCortoProveedor
 		Factura['FechaFactura'] = Cancelada.FechaFactura
-		Factura['FechaBaja'] = conFacturaxPartidas.first().IDPartida.FechaBaja
+		Factura['FechaBaja'] = list(conFacturaxPartidas)[0].IDPartida.FechaBaja
 		Factura["Subtotal"] = Cancelada.Subtotal
 		Factura["IVA"] = Cancelada.IVA
 		Factura["Retencion"] = Cancelada.Retencion
 		Factura['Total'] = Cancelada.Total
 		Factura['Viajes'] = ''
 		for Pendiente in conFacturaxPartidas:
-			Factura['Viajes'] += RelacionConceptoxProyecto.objects.get(IDPendienteEnviar = Pendiente.IDPendienteEnviar).IDPendienteEnviar.Folio + ", "
+			Factura['Viajes'] += Pendiente.IDPendienteEnviar.Folio + ", "
 		Factura['Viajes'] = Factura['Viajes'][:-2]
 		listFacturas.append(Factura)
 	return listFacturas
