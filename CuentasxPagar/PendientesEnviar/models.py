@@ -125,7 +125,7 @@ class PartidaProveedor(models.Model):
 
 class RelacionFacturaProveedorxPartidas(models.Model):
     IDRelacionFacturaxPartidas = models.AutoField(primary_key=True)
-    IDFacturaxProveedor = models.ForeignKey(FacturasxProveedor, on_delete=models.CASCADE, db_column = 'IDFacturaxProveedor')
+    IDFacturaxProveedor = models.ForeignKey(FacturasxProveedor, on_delete=models.CASCADE, db_column = 'IDFacturaxProveedor', related_name='FacturaxPartidas')
     IDPartida = models.ForeignKey(PartidaProveedor, on_delete=models.CASCADE, db_column = 'IDPartida')
     IDPendienteEnviar = models.ForeignKey(PendientesEnviar, on_delete=models.CASCADE, db_column = 'IDPendienteEnviar')
     IDUsuarioAlta = models.IntegerField(default=0)

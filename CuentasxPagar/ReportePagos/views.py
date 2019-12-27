@@ -10,8 +10,8 @@ def ReportePagos(request):
 	Folios = list()
 	for Pago in Pagos:
 		FoliosFactura = ""
-		for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago):
-			FoliosFactura += View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura).Folio + ", "
+		for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago).select_related('IDFactura'):
+			FoliosFactura += Factura.IDFactura.Folio + ", "
 		FoliosFactura = FoliosFactura[:-2]
 		Folios.append(FoliosFactura)
 	return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios});
@@ -32,8 +32,8 @@ def GetPagosByFilters(request):
 	Folios = list()
 	for Pago in Pagos:
 		FoliosFactura = ""
-		for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago):
-			FoliosFactura += View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura).Folio + ", "
+		for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago).select_related('IDFactura'):
+			FoliosFactura += Factura.IDFactura.Folio + ", "
 		FoliosFactura = FoliosFactura[:-2]
 		Folios.append(FoliosFactura)
 	htmlRes = render_to_string('TablaReportePagos.html', {'Pagos':Pagos, 'Folios' : Folios}, request = request,)
