@@ -7,6 +7,8 @@ var EvFisica;
 //var idpendienteenviar;
 var table;
 var subtotal = 0, Tiva=0, TRetencion=0, total=0;
+var totalViaje = 0;
+var idPend;
 $(document).ready(function() {
 //Tabla Pendientes de enviar
 formatDataTable();
@@ -82,8 +84,8 @@ $('#btnGuardarFactura').on('click', function(){
 $('#buscarFolioProveedor').on('click', function(){
   if($('#inputBuscarFolioProveedor').val() != "")
   {
-    //$('#inputBuscarFolioProveedor').prop("disabled", true);
-    //$('#buscarFolioProveedor').prop("disabled", true);
+    $('#inputBuscarFolioProveedor').prop("disabled", true);
+    $('#buscarFolioProveedor').prop("disabled", true);
     BuscarFolioProveedor();
   }
   else
@@ -671,10 +673,12 @@ function BuscarFolioProveedor() {
         timer: 2500
       })
       $('#contenedorSubirArchivosproveedor').css("display", "none");
+      $('#inputBuscarFolioProveedor').prop("disabled", false);
+      $('#buscarFolioProveedor').prop("disabled", false);
     }
     else {
-      //data.IDPendienteEnviar}
-      //data.Total
+      idPend = data.IDPendienteEnviar;
+      totalViaje = data.Total;
       $('#FolioConcepto').html(data.Folio);
       $('#ProveedorConcepto').html(data.Proveedor);
       $('#FechaConcepto').html(data.FechaDescarga);
@@ -832,7 +836,7 @@ function archivosproveedor()
                  {
                    const urlXMLCheck = response.body
                    var to = leerXMLTransportista(urlXMLCheck)
-                   if(to > total)
+                   if(to > totalViaje)
                    {
                      alertToastError("El total de la factura no coincide con el total calculado del sistema")
                       //uppyDashboard.reset()
@@ -850,7 +854,7 @@ function archivosproveedor()
                    {
                      var pdfPE = $('#archivosproveedor').data("rutaarchivoPDF");
                      var xmlPE = $('#archivosproveedor').data("rutaarchivoXML");
-                     guardarFacturaProveedor(pdfPE, xmlPE);
+                     guardarFacturaProveedor(pdfPE, xmlPE, idPend);
                      uppyDashboard.close();
                      uppyDashboard.reset();
                      $('#archivosproveedor').data("rutaarchivoXML", null);
@@ -882,7 +886,7 @@ function archivosproveedor()
 
 }
 
-function guardarFacturaProveedor(pdfPE, xmlPE)
+function guardarFacturaProveedor(pdfPE, xmlPE, id)
 {
 console.log(xmlPE);
 }
