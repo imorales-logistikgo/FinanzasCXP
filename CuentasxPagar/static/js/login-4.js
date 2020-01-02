@@ -13,7 +13,7 @@ var jsonForgetForm = {
 
     messages: {
         txtUsuarioContrasena: {
-            required: "Email or user is required."
+            required: "Email requerido"
         }
     },
 
@@ -259,7 +259,7 @@ var Login = function () {
             handleForgetPassword();
             handleRegister();
 
-            $('#txtUsuario').focus();
+            $('#id_username').focus();
 
             // init background slide images
             $.backstretch([
@@ -283,4 +283,13 @@ var Login = function () {
 
 jQuery(document).ready(function () {
     Login.init();
+});
+
+
+$('#btnLogin').on('click', function(){
+  if($('#id_username').val()!= "" && $('#id_password').val() != "")
+  {
+    WaitMe_Show('#divLogin');
+  }
+
 });

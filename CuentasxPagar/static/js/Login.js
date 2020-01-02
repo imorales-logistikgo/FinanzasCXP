@@ -214,8 +214,8 @@ function submitUsuario() {
     };
 
     var jParams = {
-        strUsuario: $("#txtUsuario").val(),
-        strContrasena: $("#txtContrasena").val()
+        strUsuario: $("#id_username").val(),
+        strContrasena: $("#id_password").val()
     };
 
     var fnBeforeSend = () => {
