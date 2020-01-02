@@ -123,11 +123,11 @@ function getPagos(params) {
 
 function formatDataTable() {
 $('#TableReportePagos').DataTable({
-    "scrollX": '100%',
+    "scrollX": true,
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
-    "responsive": true,
+    //"responsive": true,
     "paging": true,
     "dom": 'Bfrtip',
     "buttons": [

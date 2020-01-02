@@ -447,9 +447,9 @@ function formatDataTableFacturas(){
       text: '<i class="fas fa-file-excel fa-lg"></i>',
     }
     ],
-  /*  fixedColumns:   {
+    fixedColumns:   {
       leftColumns: 1
-    },*/
+    },
 
     columnDefs: [ {
       orderable: false,
