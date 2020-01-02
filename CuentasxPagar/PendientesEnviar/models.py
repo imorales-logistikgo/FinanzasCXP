@@ -2,7 +2,7 @@ from django.db import models
 
 class PendientesEnviar(models.Model):
     IDPendienteEnviar = models.AutoField(primary_key=True)
-    Folio = models.CharField(max_length=10, unique=True)
+    Folio = models.CharField(max_length=50, unique=True)
     NombreCortoCliente = models.CharField(max_length=100)
     NombreCortoProveedor = models.CharField(max_length=100)
     FechaDescarga = models.DateTimeField()
