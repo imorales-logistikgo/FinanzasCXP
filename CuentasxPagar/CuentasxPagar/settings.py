@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'ReportePagos',
     'ReporteCanceladas',
     'ReportePagosCancelados',
-    'Usuario',
+    'users',
+    'usersadmon',
 ]
 
 MIDDLEWARE = [
@@ -102,8 +103,25 @@ DATABASES = {
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
         }
+    },
+    'users': {
+        'ENGINE': "sql_server.pyodbc",
+        'NAME': "LogistikGo_Admon",
+        'HOST': "104.210.157.194",
+        'USER': "sa",
+        'PASSWORD': "iLs8iC9S69",
+        'PORT': "1433",
+        'OPTIONS': {
+            'driver': "ODBC Driver 17 for SQL Server",
+        },
     }
 }
+
+DATABASE_ROUTERS = ['users.router.AuthRouter',]
+
+AUTHENTICATION_BACKENDS = (
+    'users.backends.EmailBackend',
+    )
 
 
 # Password validation
@@ -145,3 +163,7 @@ INTERNAL_IPS= ['127.0.0.1',]
 STATIC_URL = '/static/'
 
 STATIC_ROOT = "/StaticFinal/"
+
+AUTH_USER_MODEL = 'users.User'
+LOGIN_REDIRECT_URL = '/PendientesEnviar/'
+SESSION_COOKIE_AGE = 21600

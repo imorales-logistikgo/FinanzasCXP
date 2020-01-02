@@ -25,7 +25,7 @@ urlpatterns = [
     path('ReportePagos/', include('ReportePagos.urls')),
     path('ReporteCanceladas/', include('ReporteCanceladas.urls')),
     path('ReportePagosCancelados/', include('ReportePagosCancelados.urls')),
-    path('Usuario/', include('Usuario.urls')),
+    path('Usuario/', include('users.urls')),
 
 ]
 
