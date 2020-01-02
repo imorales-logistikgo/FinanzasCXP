@@ -5,7 +5,7 @@
 .dataTables_scrollHeadInner
 {
   box-sizing: content-box !important;
-  width: 100% !important;
+  width: max-content !important;
   padding-right: 0px !important;
 }
 
