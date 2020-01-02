@@ -54,7 +54,7 @@ def GetFacturasByFilters(request):
 	for Factura in ListaFacturas:
 		FoliosPago= ""
 		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura["IDFactura"]).select_related('IDPago'):
-			FoliosPago += Pago.IDPago.Folio + ", " 
+			FoliosPago += Pago.IDPago.Folio + ", "
 		FoliosPago = FoliosPago[:-2]
 		Folios.append(FoliosPago)
 	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas': ListaFacturas, 'Folios': Folios}, request = request,)
@@ -100,6 +100,7 @@ def CancelarFactura(request):
 			conPendienteEnviar.IDPendienteEnviar.save()
 			Partida.IDPartida.save()
 	return HttpResponse("")
+
 
 
 

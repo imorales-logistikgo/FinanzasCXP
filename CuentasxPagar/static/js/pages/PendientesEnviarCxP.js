@@ -331,7 +331,7 @@ function LimpiarModalSF()
 
 
          uppyDashboard.use(Dashboard, options);
-         uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bkg-test.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
+         uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
 				//uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
 				uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
         uppyDashboard.on('upload-success', (file, response) => {
@@ -655,6 +655,7 @@ var fnCheckFolio = function () {
 }
 
 function BuscarFolioProveedor() {
+  WaitMe_Show('#TbPading');
   fetch("/PendientesEnviar/FindFolioProveedor?Folio=" + $('#inputBuscarFolioProveedor').val(), {
     method: "GET",
     credentials: "same-origin",
@@ -675,6 +676,7 @@ function BuscarFolioProveedor() {
       $('#contenedorSubirArchivosproveedor').css("display", "none");
       $('#inputBuscarFolioProveedor').prop("disabled", false);
       $('#buscarFolioProveedor').prop("disabled", false);
+      WaitMe_Hide('#TbPading');
     }
     else {
       idPend = data.IDPendienteEnviar;
@@ -684,9 +686,11 @@ function BuscarFolioProveedor() {
       $('#FechaConcepto').html(data.FechaDescarga);
       $('#contenedorSubirArchivosproveedor').css("display", "block");
       archivosproveedor();
+      WaitMe_Hide('#TbPading');
     }
   }).catch(function(ex){
     $('#contenedorSubirArchivosproveedor').css("display", "none");
+    WaitMe_Hide('#TbPading');
   });
 }
 
@@ -818,7 +822,7 @@ function archivosproveedor()
 
 
          uppyDashboard.use(Dashboard, options);
-         uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bkg-test.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
+         uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
   				//uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
           uppyDashboard.use(Webcam, {target: Dashboard});
           uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
@@ -841,6 +845,7 @@ function archivosproveedor()
                      alertToastError("El total de la factura no coincide con el total calculado del sistema")
                       //uppyDashboard.reset()
                       uppyDashboard.cancelAll()
+                      $('.uploaded-files-proveedor ol').remove();
                     }
                     else
                     {
@@ -881,12 +886,9 @@ function archivosproveedor()
   		KTUtil.ready(function() {
   			KTUppy.init();
   		});
-
-
-
 }
 
 function guardarFacturaProveedor(pdfPE, xmlPE, id)
 {
-console.log(xmlPE);
+  console.log(id);
 }

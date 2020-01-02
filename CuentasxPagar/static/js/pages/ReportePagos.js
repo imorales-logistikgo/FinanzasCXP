@@ -30,12 +30,8 @@ $(document).ready(function(){
   });
 
   $('#ModalComplementos').on('hidden.bs.modal', function(){
-  //  SaveComplementosPago();
    $('.uploaded-files-ComplemetoPagos ol').remove();
    $('.uploaded-files-ComplemetoPagos ol').remove();
-   /*var id = '#ComplementosPagos';
-   var verComp = '.uploaded-files-new';
-   KTUppyEvidencias.init(id, verComp)*/
  });
 
  $('#ModalComplementos').on('shown.bs.modal', function(){
@@ -43,34 +39,14 @@ $(document).ready(function(){
    $('#ComplementosPagos').data("rutaarchivoXML", null);
  });
 
-/*
-  KTUtil.ready(function() {
-    var id = '#ComplementosPagos';
-    var verComp = '.uploaded-files-new';
-    KTUppyEvidencias.init(id, verComp);
-  });
-*/
 
   $(document).on('click', '#btnComplementos', function() {
     var totalPago = $(this).data('totalpago').replace(/(\$)|(,)/g,'');
-    console.log(totalPago);
-    subirComplementoPagoProveedor(totalPago);
-    /*if($(this).data("vercomplementoxml") != "" && $(this).data("vercomplementopdf") != "")
-    {
+    var idP =  $(this).data('idpagocomplementos');
+    console.log(idP);
+    subirComplementoPagoProveedor(totalPago, idP);
 
-      $('#alertaComplementos').hide();
-      document.querySelector('.uploaded-files-pagos').innerHTML +=
-      `<ol><li id="listaArchivos"><a href="${$(this).data("vercomplementoxml")}" target="_blank" name="url" id="RutaXML">XML</a></li></ol>`
-      document.querySelector('.uploaded-files-pagos').innerHTML +=
-      `<ol><li id="listaArchivos"><a href="${$(this).data("vercomplementopdf")}" target="_blank" name="url" id="RutaPDF">PDF</a></li></ol>`
-    }
-    else
-    {
-      $('#alertaComplementos').show();
-      $('#alertaComplementos').html('<strong class="alert alert-warning">Este pago no tiene complementos</strong>');
-    }*/
   });
-
 
 
 //eliminar row de la tabla estados de cuenta
@@ -102,8 +78,9 @@ $(document).on( 'click', '.btnEliminarPago', function () {
 });
 });
 
-function SaveComplementosPago(pdf, xml)
+function SaveComplementosPago(pdf, xml, idPa)
 {
+  $('#ModalComplementos').modal('hide');
   console.log(pdf);
 }
 
@@ -199,7 +176,8 @@ $('#TableReportePagos').DataTable({
       "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {
-        return  `<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-totalpago="${full[3]}" data-vercomplementoxml="${full[6]}" data-vercomplementopdf="${full[7]}" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`;
+        idPago = $('input[name="IDPago"]').data("pagoid");
+        return (full[6] != "" ? '':`<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-totalpago="${full[3]}" data-vercomplementoxml="${full[6]}" data-vercomplementopdf="${full[7]}" data-idpagocomplementos="`+idPago+`" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`);
       }
     },
 
@@ -265,7 +243,7 @@ var fnGetDetallePago = function () {
   });
 }
 
-function subirComplementoPagoProveedor(totalPago)
+function subirComplementoPagoProveedor(totalPago, id)
 {
   // plugin para subir los archivos del proveedor
   "use strict";
@@ -333,7 +311,7 @@ function subirComplementoPagoProveedor(totalPago)
 
 
            uppyDashboard.use(Dashboard, options);
-           uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bkg-test.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
+           uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
           //uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
           uppyDashboard.use(Webcam, {target: Dashboard});
           uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
@@ -368,9 +346,10 @@ function subirComplementoPagoProveedor(totalPago)
                   }
                   if($('#ComplementosPagos').data("rutaarchivoXML") != null && $('#ComplementosPagos').data("rutaarchivoPDF") != null || $('#ComplementosPagos').data("rutaarchivoXML") != undefined && $('#ComplementosPagos').data("rutaarchivoPDF") != undefined)
                   {
+                    var idPagoArchivos = id;
                     var pdf = $('#ComplementosPagos').data("rutaarchivoPDF");
                     var xml = $('#ComplementosPagos').data("rutaarchivoXML");
-                     SaveComplementosPago(pdf, xml);
+                    SaveComplementosPago(pdf, xml, idPagoArchivos);
                   }
 
 
@@ -380,7 +359,6 @@ function subirComplementoPagoProveedor(totalPago)
           // public functions
           init: function() {
             initUppy1();
-
           }
         };
       }();

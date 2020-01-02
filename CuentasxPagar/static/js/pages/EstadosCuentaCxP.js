@@ -7,8 +7,11 @@ $(document).ready(function()
   var idfac;
   var totConv=0;
 //tabla estados de cuenta
+
 formatDataTableFacturas();
+
 $('#TableEstadosdeCuenta').css("display", "block");
+// table.columns.adjust().draw();
 //ejecuta varias funciones cada que el checkbox es seleccionado en la tabla estados de cuenta
 $(document).on( 'change', 'input[name="checkEC"]', function () {
   var input = 'input[name="checkEC"]';
@@ -30,6 +33,7 @@ $('#btnAplicarFiltro').on('click', fnGetFacturas);
 
 $(document).on('click', '.btnDetalleFactura',getDetalleFactura);
 
+$(document).on('click', '.btnDetallePago',getDetallePago);
 
 //eliminar row de la tabla estados de cuenta
 $(document).on( 'click', '.btnEliminarFactura', function () {
@@ -72,7 +76,9 @@ $(document).on('click', '.btnAprobarFactura',function(){
    confirmButtonText: 'Validar'
  }).then((result) => {
   if (result.value) {
-    console.log($(this).data('idfact'));
+    var idFac = $(this).data('idfact');
+    console.log(idFac);
+  //  validarFactura(idFac);
     Swal.fire(
       'Aprovado!',
       'La factura fue aprovada',
@@ -457,7 +463,7 @@ function formatDataTableFacturas(){
     },
     {
       "name": "Status",
-      "width": "5%",
+      "width": "10%",
       "className": "text-center bold",
       "targets": 1,
       "mRender": function (data, type, full) {
@@ -483,12 +489,22 @@ function formatDataTableFacturas(){
       "targets": [4,5,6,7,8]
     },
     {
+      "name": "Status",
+      //"width": "5%",
+      "className": "text-center bold",
+      "targets": 11,
+      "mRender": function (data, type, full) {
+        idfac = $('input[name="EvidenciaXML"]').data("facturaid");
+        return `<a  href="#detallesPago" class="btnDetallePago" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-folio="${full[11]}" id="foliopagos">${full[11]}</a>`;
+      }
+    },
+    {
       "width": "3%",
       "className": "text-center",
       "targets": 12,
       "mRender": function (data, type, full) {
         evXML = $('input[name="EvidenciaXML"]').data("evidenciaxml");
-        return '<a href="'+evXML+'" target="_blank" class="BtnVerXML btn btn-primary btn-elevate btn-pill btn-sm"><i class="flaticon2-file"></i></a>';
+        return '<a href="'+evXML+'" target="_blank" class="BtnVerXML btn btn-primary btn-elevate btn-pill btn-sm"><i class="flaticon2-file" title="XML"></i></a>';
       }
     },
     {
@@ -504,7 +520,7 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 14,
       "mRender": function (data, type, full) {
-       return ( full[10] === 'Pendiente' ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon-delete"></i></button>':'');
+       return ( full[10] === 'Pendiente' ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" title="Eliminar"><i class="flaticon-delete"></i></button>':'');
      }
    }
    ]
@@ -535,6 +551,15 @@ function getDetalleFactura()
     console.log(ex);
   });
 }
+
+function getDetallePago()
+{
+  $('#verArchivoPDFPAgo').prop("href", "http://lgklataforma.blob.core.windows.net/evidencias/f8e459bb-6da8-4fa9-a9db-8f9292585939.pdf");
+  $('#imgArchivoPDF').prop("src", "../static/img/pdf-2.png");
+  $('#verArchivoXMLPAgo').prop("href", "http://lgklataforma.blob.core.windows.net/evidencias/0a2228ec-ffe0-4808-957f-df08dc5b4107.xml");
+  $('#imgArchivoXML').prop("src", "../static/img/xml-logo.png");
+}
+
 
 function savePagoxProveedor()  {
   WaitMe_Show('#waitModalSubirPagos');

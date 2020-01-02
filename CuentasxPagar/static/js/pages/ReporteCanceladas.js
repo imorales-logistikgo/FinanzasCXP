@@ -2,7 +2,6 @@ $(document).ready(function(){
 
   formatDataTableCanceladas();
 
-
   //filtro de fecha solo por mes y año
   $(document).on( 'change', 'input[name="fechaxMesyAño"]', function () {
     if($(this).is(':checked')){
@@ -69,18 +68,17 @@ function getReportes(params) {
 
 function formatDataTableCanceladas() {
   $("#TableReporteCanceladas").DataTable({
-    "scrollX": '100%',
+    "scrollX": true,
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
-    "responsive": true,
+    "responsive": false,
     "paging": true,
     "dom": 'Bfrtip',
     "buttons": [
     {
       extend: 'excel',
       text: '<i class="fas fa-file-excel fa-lg"></i>',
-
     }
     ],
     columnDefs: [
@@ -91,7 +89,7 @@ function formatDataTableCanceladas() {
     },
 
     {
-      "targets": [1,2, 3],
+      "targets": [1,2,3],
       "width": "15px",
       "className": "dt-head-center dt-body-center"
     },
@@ -107,7 +105,7 @@ function formatDataTableCanceladas() {
       "className": "dt-head-center dt-body-right"
     },
     {
-      "targets": [9,10],
+      "targets": [9/*,10*/],
       "className": "dt-head-center dt-body-left"
     },
     ]
