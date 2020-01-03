@@ -87,6 +87,7 @@ $('#btnGuardarFacturaP').on('click', function(){
     if($('#txtFolioFacturaP').val() != "" && $('#FechaRevisionP').val() != "" && $('#FechaFacturaP').val() != "" && $('#FechaVencimientoP').val() != "")
     {
       WaitMe_Show('#WaitModalPEProveedor');
+      saveFacturaP();
       //pon aqui tu funcion xD
     }
     {
@@ -511,23 +512,22 @@ function getDatos(){
     $('#verTotalPE').html('<strong>$'+total+'</strong>');
   }
 
-
-  function saveFactura() {
+  function saveFacturaP() {
     jParams = {
-      FolioFactura: $('#txtFolioFactura').val(),
+      FolioFactura: $('#txtFolioFacturaP').val(),
       Proveedor: proveedor,
-      FechaFactura: $('#FechaFactura').val(),
-      FechaRevision: $('#FechaRevision').val(),
-      FechaVencimiento: $('#FechaVencimiento').val(),
+      FechaFactura: $('#FechaFacturaP').val(),
+      FechaRevision: $('#FechaRevisionP').val(),
+      FechaVencimiento: $('#FechaVencimientoP').val(),
       Moneda: moneda,
       SubTotal: subtotal,
       IVA: Tiva,
       Retencion: TRetencion,
       Total: total,
-      RutaXML: $('#kt_uppy_1').data("rutaarchivoXML"),
-      RutaPDF: $('#kt_uppy_1').data("rutaarchivoPDF"),
-      TipoCambio: $('#txtTipoCambio').val(),
-      Comentarios: $('#txtComentarios').val(),
+      RutaXML: $('#archivosProveedor').data("rutaarchivoXML"),
+      RutaPDF: $('#archivosProveedor').data("rutaarchivoPDF"),
+      TipoCambio: 1,
+      Comentarios: $('#txtComentariosP').val(),
     }
 
     fetch("/PendientesEnviar/SaveFactura", {
@@ -544,6 +544,102 @@ function getDatos(){
       if(response.status == 200)
       {
         $('#btnSubirFacturaPendientesEnviar').prop("disabled", true);
+    //  console.log(ids);
+    return response.clone().json();
+  }
+  else if(response.status == 500)
+  {
+    Swal.fire({
+      type: 'error',
+      title: 'El folio indicado ya existe en el sistema',
+      showConfirmButton: false,
+      timer: 2500
+    })
+    WaitMe_Hide('#WaitModalPE');
+      //console.log("El folio indicado ya existe en el sistema");
+    }
+
+  }).then(function(IDFactura){
+    SavePartidasxFacturaP(IDFactura);
+  }).catch(function(ex){
+    console.log("no success!");
+  });
+}
+
+function SavePartidasxFacturaP(IDFactura) {
+  var arrPendientes = [];
+  arrPendientes.push(idPend);
+  jParams = {
+    IDFactura: IDFactura,
+    arrPendientes: arrPendientes,
+  }
+
+  fetch("/PendientesEnviar/SavePartidasxFactura", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken"),
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(jParams)
+  }).then(function(response){
+    if(response.status == 200)
+    {
+      WaitMe_Hide('#WaitModalPEProveedor');
+      $('#contenedorSubirArchivosproveedor').css("display", "none");
+      $('#inputBuscarFolioProveedor').prop("disabled", false);
+      $('#buscarFolioProveedor').prop("disabled", false);
+      Swal.fire({
+        type: 'success',
+        title: 'Factura guardada correctamente',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    }
+    else if(response.status == 500)
+    {
+      alertToastError("Error al guardar la partida");
+      //console.log("Error al guardar la partida");
+    }
+  }).catch(function(ex){
+    console.log("no success!");
+  });
+}
+
+
+function saveFactura() {
+  jParams = {
+    FolioFactura: $('#txtFolioFactura').val(),
+    Proveedor: proveedor,
+    FechaFactura: $('#FechaFactura').val(),
+    FechaRevision: $('#FechaRevision').val(),
+    FechaVencimiento: $('#FechaVencimiento').val(),
+    Moneda: moneda,
+    SubTotal: subtotal,
+    IVA: Tiva,
+    Retencion: TRetencion,
+    Total: total,
+    RutaXML: $('#kt_uppy_1').data("rutaarchivoXML"),
+    RutaPDF: $('#kt_uppy_1').data("rutaarchivoPDF"),
+    TipoCambio: $('#txtTipoCambio').val(),
+    Comentarios: $('#txtComentarios').val(),
+  }
+
+  fetch("/PendientesEnviar/SaveFactura", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken"),
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(jParams)
+  }).then(function(response){
+
+    if(response.status == 200)
+    {
+      $('#btnSubirFacturaPendientesEnviar').prop("disabled", true);
     //  console.log(ids);
     return response.clone().json();
   }
@@ -709,8 +805,14 @@ function BuscarFolioProveedor() {
       WaitMe_Hide('#TbPading');
     }
     else {
+      moneda = "MXN"
+      subtotal = data.Subtotal;
+      Tiva = data.IVA;
+      TRetencion = data.Retencion;
+      total = data.Total;
       idPend = data.IDPendienteEnviar;
       totalViaje = data.Total;
+      proveedor = data.Proveedor;
       $('#FolioConcepto').html(data.Folio);
       $('#ProveedorConcepto').html(data.Proveedor);
       $('#FechaConcepto').html(data.FechaDescarga);
@@ -725,7 +827,7 @@ function BuscarFolioProveedor() {
         todayHighlight: true,
       });
       $("#FechaRevisionP").datepicker('setDate', 'today' );
-$('#FechaVencimientoP').prop('disabled', true);
+      $('#FechaVencimientoP').prop('disabled', true);
       $('#FechaVencimientoP').datepicker({
        format: 'yyyy/mm/dd',
        todayHighlight: true,
@@ -885,14 +987,14 @@ function archivosproveedor()
              document.querySelector('.uploaded-files-proveedor').innerHTML +=
              `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaPDF">${fileName}</a></li></ol>`
 
-                 }
-                 else
-                 {
-                   const urlXMLCheck = response.body
-                   var to = leerXMLTransportista(urlXMLCheck)
-                   if(to > totalViaje)
-                   {
-                     alertToastError("El total de la factura no coincide con el total calculado del sistema")
+           }
+           else
+           {
+             const urlXMLCheck = response.body
+             var to = leerXMLTransportista(urlXMLCheck)
+             if(to > totalViaje)
+             {
+               alertToastError("El total de la factura no coincide con el total calculado del sistema")
                       //uppyDashboard.reset()
                       uppyDashboard.cancelAll()
                       $('.uploaded-files-proveedor ol').remove();
@@ -904,7 +1006,7 @@ function archivosproveedor()
                      document.querySelector('.uploaded-files-proveedor').innerHTML +=
                      `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
                    }
-                  }
+                 }
                   /*
                    if($('#archivosproveedor').data("rutaarchivoXML") != null && $('#archivosproveedor').data("rutaarchivoPDF") != null || $('#archivosproveedor').data("rutaarchivoXML") != undefined && $('#archivosproveedor').data("rutaarchivoPDF") != undefined)
                    {
@@ -922,7 +1024,7 @@ function archivosproveedor()
                      $('#inputBuscarFolioProveedor').val('');
                    }*/
 
-   });
+                 });
 
         }
         return {
@@ -937,22 +1039,22 @@ function archivosproveedor()
   		KTUtil.ready(function() {
   			KTUppy.init();
   		});
-}
+    }
 
-function guardarFacturaProveedor(pdfPE, xmlPE, id)
-{
-  console.log(id);
-}
+    function guardarFacturaProveedor(pdfPE, xmlPE, id)
+    {
+      console.log(id);
+    }
 
-function limpiarDivProveedor()
-{
-  $('#archivosProveedor').data("rutaarchivoXML", null);
-  $('#archivosProveedor').data("rutaarchivoPDF", null);
-  $('.uploaded-files-proveedor ol').remove();
-  $('#contenedorSubirArchivosproveedor').css("display", "none");
-  $('#inputBuscarFolioProveedor').prop("disabled", false);
-  $('#buscarFolioProveedor').prop("disabled", false);
-  $('#inputBuscarFolioProveedor').val('');
-  $('#txtFolioFacturaP').val('');
-  $('#txtComentariosP').val('');
-}
+    function limpiarDivProveedor()
+    {
+      $('#archivosProveedor').data("rutaarchivoXML", null);
+      $('#archivosProveedor').data("rutaarchivoPDF", null);
+      $('.uploaded-files-proveedor ol').remove();
+      $('#contenedorSubirArchivosproveedor').css("display", "none");
+      $('#inputBuscarFolioProveedor').prop("disabled", false);
+      $('#buscarFolioProveedor').prop("disabled", false);
+      $('#inputBuscarFolioProveedor').val('');
+      $('#txtFolioFacturaP').val('');
+      $('#txtComentariosP').val('');
+    }
