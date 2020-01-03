@@ -928,4 +928,6 @@ function limpiarDivProveedor()
   $('#inputBuscarFolioProveedor').prop("disabled", false);
   $('#buscarFolioProveedor').prop("disabled", false);
   $('#inputBuscarFolioProveedor').val('');
+  $('#txtFolioFactura').va('');
+  $('#txtComentarios').va('');
 }
