@@ -94,6 +94,10 @@ $('#buscarFolioProveedor').on('click', function(){
   }
 });
 
+$(document).on('click', '#btnCerrarDivproveedor', function(){
+  limpiarDivProveedor();
+});
+
 //ocultar columnas tabla pendientes enviar
 $('input[name="Fecha Descarga"]').on('change', function(e){
  e.preventDefault();
@@ -574,6 +578,7 @@ function SavePartidasxFactura(IDFactura) {
         showConfirmButton: false,
         timer: 1500
       })
+      limpiarDivProveedor();
       $('#divTablaPendientesEnviar').html(data.htmlRes)
       formatDataTable();
     }
@@ -685,6 +690,24 @@ function BuscarFolioProveedor() {
       $('#ProveedorConcepto').html(data.Proveedor);
       $('#FechaConcepto').html(data.FechaDescarga);
       $('#contenedorSubirArchivosproveedor').css("display", "block");
+      $('#FechaFactura').datepicker({
+        format: 'yyyy/mm/dd',
+        todayHighlight: true
+      });
+      $("#FechaFactura").datepicker('setDate', 'today' );
+      $('#FechaRevision').datepicker({
+        format: 'yyyy/mm/dd',
+        todayHighlight: true,
+      });
+      $("#FechaRevision").datepicker('setDate', 'today' );
+
+      $('#FechaVencimiento').datepicker({
+       format: 'yyyy/mm/dd',
+       todayHighlight: true,
+       changeMonth: true,
+       changeYear: true
+     });
+     $('#FechaVencimiento').prop('disabled', true);
       archivosproveedor();
       WaitMe_Hide('#TbPading');
     }
@@ -778,7 +801,7 @@ function archivosproveedor()
 
   			// Private functions
   			var initUppy1 = function(){
-  				var id = '#archivosproveedor';
+  				var id = '#kt_uppy_1';
 
   				var options = {
   					proudlyDisplayPoweredByUppy: false,
@@ -833,7 +856,7 @@ function archivosproveedor()
             if (file.extension === 'pdf')
             {
              const urlPDF = response.body
-             $('#archivosproveedor').data("rutaarchivoPDF", urlPDF)
+             $('#kt_uppy_1').data("rutaarchivoPDF", urlPDF)
              document.querySelector('.uploaded-files-proveedor').innerHTML +=
              `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaPDF">${fileName}</a></li></ol>`
 
@@ -852,11 +875,12 @@ function archivosproveedor()
                     else
                     {
                      const urlPDF = response.body
-                     $('#archivosproveedor').data("rutaarchivoXML", urlPDF)
+                     $('#kt_uppy_1').data("rutaarchivoXML", urlPDF)
                      document.querySelector('.uploaded-files-proveedor').innerHTML +=
                      `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
                    }
                   }
+                  /*
                    if($('#archivosproveedor').data("rutaarchivoXML") != null && $('#archivosproveedor').data("rutaarchivoPDF") != null || $('#archivosproveedor').data("rutaarchivoXML") != undefined && $('#archivosproveedor').data("rutaarchivoPDF") != undefined)
                    {
                      var pdfPE = $('#archivosproveedor').data("rutaarchivoPDF");
@@ -871,7 +895,7 @@ function archivosproveedor()
                      $('#inputBuscarFolioProveedor').prop("disabled", false);
                      $('#buscarFolioProveedor').prop("disabled", false);
                      $('#inputBuscarFolioProveedor').val('');
-                   }
+                   }*/
 
    });
 
@@ -893,4 +917,15 @@ function archivosproveedor()
 function guardarFacturaProveedor(pdfPE, xmlPE, id)
 {
   console.log(id);
+}
+
+function limpiarDivProveedor()
+{
+  $('#archivosproveedor').data("rutaarchivoXML", null);
+  $('#archivosproveedor').data("rutaarchivoPDF", null);
+  $('.uploaded-files-proveedor ol').remove();
+  $('#contenedorSubirArchivosproveedor').css("display", "none");
+  $('#inputBuscarFolioProveedor').prop("disabled", false);
+  $('#buscarFolioProveedor').prop("disabled", false);
+  $('#inputBuscarFolioProveedor').val('');
 }
