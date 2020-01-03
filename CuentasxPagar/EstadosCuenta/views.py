@@ -153,11 +153,11 @@ def SavePagoxFactura(request):
 		newPagoxFactura.FechaAlta = datetime.datetime.now()
 		newPagoxFactura.save()
 		newRelacionPagoxFactura = RelacionPagosFacturasxProveedor()
-		newRelacionPagoxFactura.IDPago = jParams["IDPago"]
+		newRelacionPagoxFactura.IDPago = PagosxProveedor.objects.get(IDPago = jParams["IDPago"])
 		newRelacionPagoxFactura.IDPagoxFactura = newPagoxFactura.IDPagoxFactura
 		Factura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
 		Factura.Saldo -= Decimal(Pago["Total"])
-		newRelacionPagoxFactura.IDFactura = Pago["IDFactura"]
+		newRelacionPagoxFactura.IDFactura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
 		newRelacionPagoxFactura.IDUsuarioAlta = 1
 		newRelacionPagoxFactura.IDProveedor = 1
 		if Factura.Saldo == 0:
