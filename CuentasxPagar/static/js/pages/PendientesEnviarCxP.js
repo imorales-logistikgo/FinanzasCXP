@@ -378,7 +378,7 @@ function LimpiarModalSF()
                {
                  const urlXMLCheck = response.body
                  var to = leerxml(urlXMLCheck)
-                 if(to != total)
+                 if(to > total)
                  {
                    $("#btnGuardarFactura").prop("disabled", true)
                    alertToastError("El total de la factura no coincide con el total calculado del sistema")
@@ -946,8 +946,8 @@ function guardarFacturaProveedor(pdfPE, xmlPE, id)
 
 function limpiarDivProveedor()
 {
-  $('#archivosproveedor').data("rutaarchivoXML", null);
-  $('#archivosproveedor').data("rutaarchivoPDF", null);
+  $('#archivosProveedor').data("rutaarchivoXML", null);
+  $('#archivosProveedor').data("rutaarchivoPDF", null);
   $('.uploaded-files-proveedor ol').remove();
   $('#contenedorSubirArchivosproveedor').css("display", "none");
   $('#inputBuscarFolioProveedor').prop("disabled", false);
