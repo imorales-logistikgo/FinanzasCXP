@@ -6,7 +6,8 @@ from django.template.loader import render_to_string
 from decimal import Decimal
 from django.db.models import Q
 import json, datetime
-
+from django.contrib.auth.decorators import login_required
+@login_required
 
 def EstadosdeCuenta(request):
 	result = View_FacturasxProveedor.objects.filter(Q(Status = "Pendiente") | Q(Status = "Abonada"))

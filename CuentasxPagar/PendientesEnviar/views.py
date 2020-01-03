@@ -4,8 +4,8 @@ from PendientesEnviar.models import View_PendientesEnviarCxP, FacturasxProveedor
 from django.core import serializers
 from django.template.loader import render_to_string
 import json, datetime
-
-
+from django.contrib.auth.decorators import login_required
+@login_required
 
 def GetPendientesEnviar(request):
 	if request.user.is_authenticated:

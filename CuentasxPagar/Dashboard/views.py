@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from datetime import date
-# Create your views here.
+from django.contrib.auth.decorators import login_required
+@login_required
 
 def Indicadores(request):
 	today = date.today()

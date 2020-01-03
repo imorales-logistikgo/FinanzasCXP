@@ -3,7 +3,8 @@ from django.shortcuts import render
 from EstadosCuenta.models import RelacionPagosFacturasxProveedor, PagosxProveedor, View_FacturasxProveedor, PagosxFacturas
 from django.template.loader import render_to_string
 import json, datetime
-
+from django.contrib.auth.decorators import login_required
+@login_required
 
 def ReportePagos(request):
 	Pagos = PagosxProveedor.objects.exclude(Status = "Cancelada")

@@ -163,7 +163,7 @@ INTERNAL_IPS= ['127.0.0.1',]
 STATIC_URL = '/static/'
 
 STATIC_ROOT = "/StaticFinal/"
-
+LOGIN_URL = "/Usuario/Login/"
 AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = '/PendientesEnviar/'
 SESSION_COOKIE_AGE = 21600

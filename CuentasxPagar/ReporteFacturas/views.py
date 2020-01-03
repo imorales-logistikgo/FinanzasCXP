@@ -3,7 +3,8 @@ from django.shortcuts import render
 from PendientesEnviar.models import FacturasxProveedor, RelacionFacturaProveedorxPartidas, RelacionConceptoxProyecto
 from django.template.loader import render_to_string
 import json, datetime
-
+from django.contrib.auth.decorators import login_required
+@login_required
 
 def ReporteFacturas(request):
 	Facturas = FacturasxProveedor.objects.all()
