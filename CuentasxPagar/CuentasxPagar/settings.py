@@ -72,7 +72,7 @@ ROOT_URLCONF = 'CuentasxPagar.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR + 'templates'],
+        'DIRS': [BASE_DIR + '/templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -167,3 +167,5 @@ LOGIN_URL = "/Usuario/Login/"
 AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = '/PendientesEnviar/'
 SESSION_COOKIE_AGE = 21600
+
+#LOGOUT_REDIRECT_URL = "/Usuario/Login/"

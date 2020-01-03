@@ -29,7 +29,7 @@ kt-menu__item--active
 	<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 		<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
 			<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
-				<div class="container">
+				<div class="container" id="WaitModalPE">
 					<div class="row">
 							<div class="col-sm-12 col-md-4">
 								<strong>Folio: </strong> <label id="FolioConcepto"></label>
@@ -42,6 +42,60 @@ kt-menu__item--active
 							</div>
 					</div>
 
+					<div class="row py-4">
+						<div class="col col-md-4">
+							<label for="Folio">Folio Factura:</label>
+							<input type="text" class="form-control" id="txtFolioFactura" name="FolioFactura" required>
+						</div>
+						<div class="col">
+							<label for="Comentarios">Comentarios:</label>
+							<input type="text" class="form-control" id="txtComentarios" name="Comentarios">
+						</div>
+					</div>
+
+					<div class="form-inline py-4">
+						<div class="col">
+							<label for="FechaFactura">Fecha Factura:</label>
+						</div>
+						<div class="col">
+							<label for="FechaRevision">Fecha Revisi&oacute;n:</label>
+						</div>
+						<div class="col">
+							<label for="FechaVencimiento">Fecha Vencimiento:</label>
+						</div>
+
+					</div>
+
+						<div class="row">
+							<div class="input-group date col col-4">
+								<input type="text" class="form-control" name="FechaFactura" id="FechaFactura" autocomplete="off">
+								<div class="input-group-append">
+									<span class="input-group-text">
+										<i class="la la-calendar"></i>
+									</span>
+								</div>
+							</div>
+
+							<div class="input-group date col col-4">
+								<input type="text" class="form-control" name="FechaRevision" id="FechaRevision" autocomplete="off">
+								<div class="input-group-append">
+									<span class="input-group-text">
+										<i class="la la-calendar"></i>
+									</span>
+								</div>
+							</div>
+
+							<div class="input-group date col col-4">
+								<input type="text" class="form-control" name="FechaVencimiento" id="FechaVencimiento" autocomplete="off">
+								<div class="input-group-append">
+									<span class="input-group-text">
+										<i class="la la-calendar"></i>
+									</span>
+								</div>
+							</div>
+
+						</div>
+
 					<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid py-4">
 						<div class="col-sm-12 col-lg-12">
 							<div class="kt-portlet kt-portlet--height-fluid">
@@ -53,7 +107,7 @@ kt-menu__item--active
 									</div>
 								</div>
 								<div class="kt-portlet__body">
-									<div class="kt-uppy" id="archivosproveedor">
+									<div class="kt-uppy" id="kt_uppy_1">
 										<div  class="kt-uppy__dashboard"></div>
 										<div class="kt-uppy__progress"></div>
 									</div>
@@ -69,7 +123,10 @@ kt-menu__item--active
 						<ol></ol>
 					</div>
 				 </div>
-
+				 <div class="text-right">
+					 <button type="button" name="button" class="btn btn-success" id="btnGuardarFactura">Guardar</button>
+					 <button type="button" name="button" class="btn btn-danger" id="btnCerrarDivproveedor">Cancelar</button>
+				 </div>
 				</div>
 			</div>
 		</div>
@@ -90,18 +147,6 @@ kt-menu__item--active
 		<!--	<span class="badge badge-pill badge-success"> Con evidencias <span class="badge badge-pill badge-secondary"><strong>12</strong></span></span>
 			<span class="badge badge-pill badge-danger"> Sin evidencias <span class="badge badge-pill badge-secondary"><strong>12</strong></span></span>-->
 		</div>
-									<!--
-										<div class="form-inline">
-											<label class="col-3 col-form-label">Info</label>
-													<div class="col-3">
-														<span class="kt-switch kt-switch--info">
-															<label>
-																<input type="checkbox"  name="">
-																<span></span>
-															</label>
-														</span>
-													</div>
-												</div> -->
 
 												<div class="kt-header__topbar-item kt-header__topbar-item--quick-panel" data-toggle="kt-tooltip" title="Filtros" data-placement="right">
 													<span class="kt-header__topbar-icon" id="kt_quick_panel_toggler_btn">
