@@ -80,6 +80,25 @@ $('#btnGuardarFactura').on('click', function(){
 });
 
 
+//btn guardar archivos proveedor
+$('#btnGuardarFacturaP').on('click', function(){
+  if($('#archivosProveedor').data("rutaarchivoPDF") != undefined && $('#archivosProveedor').data("rutaarchivoXML") != undefined || $('#archivosProveedor').data("rutaarchivoPDF") != null && $('#archivosProveedor').data("rutaarchivoXML") != null)
+  {
+    if($('#txtFolioFacturaP').val() != "" && $('#FechaRevisionP').val() != "" && $('#FechaFacturaP').val() != "" && $('#FechaVencimientoP').val() != "")
+    {
+      WaitMe_Show('#WaitModalPEProveedor');
+      //pon aqui tu funcion xD
+    }
+    {
+      alertToastError("El folio y las fechas no pueden estar vacias");
+    }
+  }
+  else
+  {
+    alertToastError("Son necesarios los complementos PDF y XML");
+  }
+});
+
 //buscador para el proveedor
 $('#buscarFolioProveedor').on('click', function(){
   if($('#inputBuscarFolioProveedor').val() != "")
@@ -173,6 +192,13 @@ $('#FechaRevision').on('change', function(){
     format: 'yyyy/mm/dd',
   });
   $("#FechaVencimiento").datepicker('setDate', fechaVencimineto("#FechaRevision"));
+});
+
+$('#FechaRevisionP').on('change', function(){
+  $('#FechaVencimientoP').datepicker({
+    format: 'yyyy/mm/dd',
+  });
+  $("#FechaVencimientoP").datepicker('setDate', fechaVencimineto("#FechaRevisionP"));
 });
 
 
@@ -352,7 +378,7 @@ function LimpiarModalSF()
                {
                  const urlXMLCheck = response.body
                  var to = leerxml(urlXMLCheck)
-                 if(to != total)
+                 if(to > total)
                  {
                    $("#btnGuardarFactura").prop("disabled", true)
                    alertToastError("El total de la factura no coincide con el total calculado del sistema")
@@ -578,7 +604,6 @@ function SavePartidasxFactura(IDFactura) {
         showConfirmButton: false,
         timer: 1500
       })
-      limpiarDivProveedor();
       $('#divTablaPendientesEnviar').html(data.htmlRes)
       formatDataTable();
     }
@@ -690,24 +715,24 @@ function BuscarFolioProveedor() {
       $('#ProveedorConcepto').html(data.Proveedor);
       $('#FechaConcepto').html(data.FechaDescarga);
       $('#contenedorSubirArchivosproveedor').css("display", "block");
-      $('#FechaFactura').datepicker({
+      $('#FechaFacturaP').datepicker({
         format: 'yyyy/mm/dd',
         todayHighlight: true
       });
-      $("#FechaFactura").datepicker('setDate', 'today' );
-      $('#FechaRevision').datepicker({
+      $("#FechaFacturaP").datepicker('setDate', 'today' );
+      $('#FechaRevisionP').datepicker({
         format: 'yyyy/mm/dd',
         todayHighlight: true,
       });
-      $("#FechaRevision").datepicker('setDate', 'today' );
-
-      $('#FechaVencimiento').datepicker({
+      $("#FechaRevisionP").datepicker('setDate', 'today' );
+$('#FechaVencimientoP').prop('disabled', true);
+      $('#FechaVencimientoP').datepicker({
        format: 'yyyy/mm/dd',
        todayHighlight: true,
        changeMonth: true,
        changeYear: true
      });
-     $('#FechaVencimiento').prop('disabled', true);
+
       archivosproveedor();
       WaitMe_Hide('#TbPading');
     }
@@ -801,7 +826,7 @@ function archivosproveedor()
 
   			// Private functions
   			var initUppy1 = function(){
-  				var id = '#kt_uppy_1';
+  				var id = '#archivosProveedor';
 
   				var options = {
   					proudlyDisplayPoweredByUppy: false,
@@ -856,7 +881,7 @@ function archivosproveedor()
             if (file.extension === 'pdf')
             {
              const urlPDF = response.body
-             $('#kt_uppy_1').data("rutaarchivoPDF", urlPDF)
+             $('#archivosProveedor').data("rutaarchivoPDF", urlPDF)
              document.querySelector('.uploaded-files-proveedor').innerHTML +=
              `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaPDF">${fileName}</a></li></ol>`
 
@@ -875,7 +900,7 @@ function archivosproveedor()
                     else
                     {
                      const urlPDF = response.body
-                     $('#kt_uppy_1').data("rutaarchivoXML", urlPDF)
+                     $('#archivosProveedor').data("rutaarchivoXML", urlPDF)
                      document.querySelector('.uploaded-files-proveedor').innerHTML +=
                      `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
                    }
@@ -921,13 +946,13 @@ function guardarFacturaProveedor(pdfPE, xmlPE, id)
 
 function limpiarDivProveedor()
 {
-  $('#archivosproveedor').data("rutaarchivoXML", null);
-  $('#archivosproveedor').data("rutaarchivoPDF", null);
+  $('#archivosProveedor').data("rutaarchivoXML", null);
+  $('#archivosProveedor').data("rutaarchivoPDF", null);
   $('.uploaded-files-proveedor ol').remove();
   $('#contenedorSubirArchivosproveedor').css("display", "none");
   $('#inputBuscarFolioProveedor').prop("disabled", false);
   $('#buscarFolioProveedor').prop("disabled", false);
   $('#inputBuscarFolioProveedor').val('');
-  $('#txtFolioFactura').va('');
-  $('#txtComentarios').va('');
+  $('#txtFolioFacturaP').val('');
+  $('#txtComentariosP').val('');
 }

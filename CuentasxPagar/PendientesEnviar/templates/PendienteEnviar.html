@@ -29,7 +29,7 @@ kt-menu__item--active
 	<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 		<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
 			<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
-				<div class="container" id="WaitModalPE">
+				<div class="container" id="WaitModalPEProveedor">
 					<div class="row">
 							<div class="col-sm-12 col-md-4">
 								<strong>Folio: </strong> <label id="FolioConcepto"></label>
@@ -45,11 +45,11 @@ kt-menu__item--active
 					<div class="row py-4">
 						<div class="col col-md-4">
 							<label for="Folio">Folio Factura:</label>
-							<input type="text" class="form-control" id="txtFolioFactura" name="FolioFactura" required>
+							<input type="text" class="form-control" id="txtFolioFacturaP" name="FolioFactura" required>
 						</div>
 						<div class="col">
 							<label for="Comentarios">Comentarios:</label>
-							<input type="text" class="form-control" id="txtComentarios" name="Comentarios">
+							<input type="text" class="form-control" id="txtComentariosP" name="Comentarios">
 						</div>
 					</div>
 
@@ -68,7 +68,7 @@ kt-menu__item--active
 
 						<div class="row">
 							<div class="input-group date col col-4">
-								<input type="text" class="form-control" name="FechaFactura" id="FechaFactura" autocomplete="off">
+								<input type="text" class="form-control" name="FechaFactura" id="FechaFacturaP" autocomplete="off">
 								<div class="input-group-append">
 									<span class="input-group-text">
 										<i class="la la-calendar"></i>
@@ -77,7 +77,7 @@ kt-menu__item--active
 							</div>
 
 							<div class="input-group date col col-4">
-								<input type="text" class="form-control" name="FechaRevision" id="FechaRevision" autocomplete="off">
+								<input type="text" class="form-control" name="FechaRevision" id="FechaRevisionP" autocomplete="off">
 								<div class="input-group-append">
 									<span class="input-group-text">
 										<i class="la la-calendar"></i>
@@ -86,7 +86,7 @@ kt-menu__item--active
 							</div>
 
 							<div class="input-group date col col-4">
-								<input type="text" class="form-control" name="FechaVencimiento" id="FechaVencimiento" autocomplete="off">
+								<input type="text" class="form-control" name="FechaVencimiento" id="FechaVencimientoP" autocomplete="off">
 								<div class="input-group-append">
 									<span class="input-group-text">
 										<i class="la la-calendar"></i>
@@ -107,7 +107,7 @@ kt-menu__item--active
 									</div>
 								</div>
 								<div class="kt-portlet__body">
-									<div class="kt-uppy" id="kt_uppy_1">
+									<div class="kt-uppy" id="archivosProveedor">
 										<div  class="kt-uppy__dashboard"></div>
 										<div class="kt-uppy__progress"></div>
 									</div>
@@ -124,7 +124,7 @@ kt-menu__item--active
 					</div>
 				 </div>
 				 <div class="text-right">
-					 <button type="button" name="button" class="btn btn-success" id="btnGuardarFactura">Guardar</button>
+					 <button type="button" name="button" class="btn btn-success" id="btnGuardarFacturaP">Guardar</button>
 					 <button type="button" name="button" class="btn btn-danger" id="btnCerrarDivproveedor">Cancelar</button>
 				 </div>
 				</div>
