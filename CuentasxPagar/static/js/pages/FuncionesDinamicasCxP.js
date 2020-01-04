@@ -127,20 +127,22 @@ return cont;
 
 function leerxml(xml)
 {
+    const proxyURL = "https://cors-anywhere.herokuapp.com/";
+    var newXML = proxyURL + xml;
     var rest;
     var req = new XMLHttpRequest();
-       req.open('GET', xml, false);
+       req.open('GET', newXML, false);
        req.send(null);
        if (req.status == 200)
        {
            var resp = req.responseXML;
            var obNodos = resp.children[0].attributes;
            var total = obNodos.Total;
-           (total != undefined) ? rest = total.nodeValue : rest = 0;
+           (total != undefined) ? rest = total.nodeValue : rest = null;
        }
        else
        {
-           rest = 0;
+           rest = null;
        }
     return rest;
 }
@@ -237,7 +239,7 @@ function leerXMLTransportista(xml)
        }
        else
        {
-           rest = 0;
+           rest = null;
        }
     return rest;
 }
