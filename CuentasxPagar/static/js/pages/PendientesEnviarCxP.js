@@ -88,8 +88,8 @@ $('#btnGuardarFacturaP').on('click', function(){
     {
       WaitMe_Show('#WaitModalPEProveedor');
       saveFacturaP();
-      //pon aqui tu funcion xD
     }
+    else
     {
       alertToastError("El folio y las fechas no pueden estar vacias");
     }
@@ -379,7 +379,7 @@ function LimpiarModalSF()
                {
                  const urlXMLCheck = response.body
                  var to = leerxml(urlXMLCheck)
-                 if(to > total)
+                 if(to > total || to == null)
                  {
                    $("#btnGuardarFactura").prop("disabled", true)
                    alertToastError("El total de la factura no coincide con el total calculado del sistema")
@@ -555,7 +555,7 @@ function getDatos(){
       showConfirmButton: false,
       timer: 2500
     })
-    WaitMe_Hide('#WaitModalPE');
+    WaitMe_Hide('#WaitModalPEProveedor');
       //console.log("El folio indicado ya existe en el sistema");
     }
 
@@ -596,6 +596,7 @@ function SavePartidasxFacturaP(IDFactura) {
         showConfirmButton: false,
         timer: 1500
       })
+      limpiarDivProveedor();
     }
     else if(response.status == 500)
     {
@@ -1041,10 +1042,6 @@ function archivosproveedor()
   		});
     }
 
-    function guardarFacturaProveedor(pdfPE, xmlPE, id)
-    {
-      console.log(id);
-    }
 
     function limpiarDivProveedor()
     {
