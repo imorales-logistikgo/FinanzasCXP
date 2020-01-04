@@ -55,9 +55,9 @@ return cont;
            autoProceed: false,
            restrictions: {
 						maxFileSize: 5000000, // 5mb
-						maxNumberOfFiles: 2,
-						minNumberOfFiles: 2,
-           allowedFileTypes:['.pdf', '.xml']
+						maxNumberOfFiles: 1,
+						minNumberOfFiles: 1,
+           allowedFileTypes:['.pdf', '.xml', 'image/*']
          },
          locale: Uppy.locales.es_ES,
          onBeforeFileAdded: (currentFile, file) => {

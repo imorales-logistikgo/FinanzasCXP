@@ -204,7 +204,6 @@ KTUtil.ready(function() {
   KTUppyEvidencias.init(id, verComp);
 });
 
-
 $('input[name="TipoCambioPago"]').on('keyup change', function(){
   if($('input[name="TipoCambioPago"]').val() >=1)
   {
