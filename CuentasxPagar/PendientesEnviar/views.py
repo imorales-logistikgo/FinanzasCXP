@@ -1,6 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from PendientesEnviar.models import View_PendientesEnviarCxP, FacturasxProveedor, PartidaProveedor, RelacionFacturaProveedorxPartidas, PendientesEnviar, Ext_PendienteEnviar_Costo
+from usersadmon.models import Proveedor
 from django.core import serializers
 from django.template.loader import render_to_string
 import json, datetime
@@ -10,8 +11,9 @@ from django.contrib.auth.decorators import login_required
 def GetPendientesEnviar(request):
 	PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0 AND Moneda = %s", ['Finalizado', 'MXN'])
 	ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
+	Proveedores = Proveedor.objects.all()
 	ListPendientes = PendientesToList(PendingToSend)
-	return render(request, 'PendienteEnviar.html', {'pendientes':ListPendientes, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias})
+	return render(request, 'PendienteEnviar.html', {'pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias})
 
 
 

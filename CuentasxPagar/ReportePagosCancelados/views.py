@@ -1,6 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from EstadosCuenta.models import RelacionPagosFacturasxProveedor, PagosxProveedor, View_FacturasxProveedor
+from usersadmon.models import Proveedor
 from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
@@ -15,7 +16,8 @@ def ReportePagosCancelados(request):
 			FoliosFactura += Factura.IDFactura.Folio + ", "
 		FoliosFactura = FoliosFactura[:-2]
 		Folios.append(FoliosFactura)
-	return render(request, 'PagosCancelados.html', {"Pagos": Pagos, "Folios" : Folios});
+	Proveedores = Proveedor.objects.all()
+	return render(request, 'PagosCancelados.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores});
 
 
 
