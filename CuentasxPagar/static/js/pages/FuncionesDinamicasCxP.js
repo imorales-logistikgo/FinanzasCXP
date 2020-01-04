@@ -226,9 +226,11 @@ function fechaVencimineto(fecha)
 
 function leerXMLTransportista(xml)
 {
+    const proxyURL = "https://cors-anywhere.herokuapp.com/";
+    var newXML = proxyURL + xml;
     var rest;
     var req = new XMLHttpRequest();
-       req.open('GET', xml, false);
+       req.open('GET', newXML, false);
        req.send(null);
        if (req.status == 200)
        {
@@ -239,7 +241,7 @@ function leerXMLTransportista(xml)
        }
        else
        {
-           rest = null;
+           rest = 0;
        }
     return rest;
 }

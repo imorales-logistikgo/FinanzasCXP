@@ -474,7 +474,7 @@ function formatDataTableFacturas(){
       "width": "1%",
       "mRender": function (data, type, full) {
         idfac = $('input[name="EvidenciaXML"]').data("facturaid");
-        return (full[10] != 'Cobrada' && full[10] != 'Cancelada' ? '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'"/>': '');
+        return (full[10] != 'Cobrada' && full[10] != 'Cancelada' && full[10] != 'Pagada'? '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'"/>': '');
       }
     },
     {
