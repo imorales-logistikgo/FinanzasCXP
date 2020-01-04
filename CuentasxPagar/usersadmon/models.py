@@ -19,3 +19,12 @@ class AdmonUsuarios(models.Model):
     class Meta:
         managed = False
         db_table = 'AdmonUsuarios'
+
+
+
+class Proveedor(models.Model):
+    IDTransportista = models.AutoField(primary_key=True)
+    NombreComercial = models.CharField(max_length=200)
+    class Meta:
+        managed = False
+        db_table = 'AdmonTransportistas'

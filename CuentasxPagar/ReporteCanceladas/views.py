@@ -1,6 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from PendientesEnviar.models import FacturasxProveedor, RelacionFacturaProveedorxPartidas, RelacionConceptoxProyecto
+from usersadmon.models import Proveedor
 from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
@@ -9,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 def ReporteCanceladas(request):
 	Canceladas = FacturasxProveedor.objects.filter(Status = 'Cancelada')
 	listFacturas = CanceladasToList(Canceladas)
-	return render(request, 'ReporteCanceladas.html', {'Facturas': listFacturas})
+	Proveedores = Proveedor.objects.all()
+	return render(request, 'ReporteCanceladas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores})
 
 
 
