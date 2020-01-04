@@ -138,22 +138,39 @@ $(document).on('click', '#btnSubirPagos', function() {
   showDatosObtenidos();
   mostrarTipoCambio();
 });
+
 //validar el total del cobro por cada factura seleccionada -- en el modal subir cobros
 $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
   var table1 = $('#tableAddPago').DataTable();
   var datosRow = table1.row($(this).parents('tr')).data();
   if(datosRow[3] === 'MXN')
   {
+    if(parseFloat($(this).val()) >= 0)
+    {
     if(parseFloat($(this).val()) >= datosRow[2].replace(/(\$)|(,)/g,''))
     {
       (datosRow[3] === 'MXN') ?  $(this).val(datosRow[2].replace(/(\$)|(,)/g,'')) : $(this).val(totConv)
     }
+    }
+    else
+    {
+      alertToastError("No se aceptan numero negativos o caracteres");
+    $(this).val(datosRow[2].replace(/(\$)|(,)/g,''));
+    }
   }
   else
   {
+    if(parseFloat($(this).val()) >= 0)
+    {
     if(parseFloat($(this).val()) >= totConv)
     {
       (datosRow[3] === 'MXN') ?  $(this).val(datosRow[2].replace(/(\$)|(,)/g,'')) : $(this).val(totConv)
+    }
+    }
+    else
+    {
+      alertToastError("No se aceptan numero negativos o caracteres");
+      $(this).val(totConv);
     }
   }
   $('input#valCobro').each(function(){
@@ -317,7 +334,7 @@ function showDatosObtenidos(){
     "className": "dt-head-center dt-body-right",
     "targets": 4,
     "mRender": function (data, type, full) {
-     return (full[3] === 'MXN' ? `$ <input class="col-md-6 col-sm-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}">` : '$ <input type="number" class=""col-md-6 col-sm-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'">');
+     return (full[3] === 'MXN' ? `$ <input class="col-md-6 col-sm-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}" min="0" pattern="^[0-9]+">` : '$ <input type="number" class=""col-md-6 col-sm-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'" min="0" pattern="^[0-9]+">');
    }
  },
 
