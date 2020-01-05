@@ -101,13 +101,20 @@ return cont;
            `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaPDF">${fileName}</a></li></ol>`
                  //  console.log($('#kt_uppy_1').data("rutaarchivoPDF"))
                }
-               else
+               else if(file.extension === 'xml')
                {
                  const urlPDF = response.body
                  $(idP).data("rutaarchivoXML", urlPDF)
                  document.querySelector(ver).innerHTML +=
                  `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
                    //console.log($('#kt_uppy_1').data("rutaarchivoXML"))
+                 }
+                 else
+                 {
+                   const urlPDF = response.body
+                   $(idP).data("rutaarchivoIMG", urlPDF)
+                   document.querySelector(ver).innerHTML +=
+                   `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
                  }
                  //const url = response.body
    // `<embed src="${url}">`
