@@ -20,6 +20,7 @@ class PagosxProveedor(models.Model):
     Folio = models.CharField(max_length=50, unique=True)
     RutaPDF = models.CharField(max_length=300)
     RutaXML = models.CharField(max_length=300)
+    RutaComprobante = models.CharField(max_length=300)
     FechaPago = models.DateTimeField()
     Comentarios = models.CharField(max_length=500, default = "")
     TipoCambio = models.DecimalField(default=1, max_digits=10, decimal_places=5)

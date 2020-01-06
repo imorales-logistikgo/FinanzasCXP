@@ -17,7 +17,7 @@ def ReportePagos(request):
 		FoliosFactura = FoliosFactura[:-2]
 		Folios.append(FoliosFactura)
 	Proveedores = Proveedor.objects.all()
-	return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores});
+	return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores, 'Rol': request.user.roles});
 
 
 
@@ -64,14 +64,14 @@ def CancelarPago(request):
 
 def GetDetallesPago(request):
 	IDPago = request.GET["IDPago"]
-	FacturasxPago = RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago).select_related('IDFactura')
+	FacturasxPago = RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago).select_related('IDFactura').select_related('IDPagoxFactura')
 	Facturas = list()
 	for FacturasxPago in FacturasxPago:
 		Pago = {}
-		Factura = View_FacturasxProveedor.objects.get(IDFactura = FacturasxPago.IDFactura.IDFactura)
-		Pago["FolioFactura"] = Factura.Folio
-		Pago["FechaFactura"] = Factura.FechaFactura
-		Pago["Total"] = PagosxFacturas.objects.get(IDPagoxFactura = FacturasxPago.IDPagoxFactura).Total
+		#Factura = View_FacturasxProveedor.objects.get(IDFactura = FacturasxPago.IDFactura.IDFactura)
+		Pago["FolioFactura"] = FacturasxPago.IDFactura.Folio
+		Pago["FechaFactura"] = FacturasxPago.IDFactura.FechaFactura
+		Pago["Total"] = FacturasxPago.IDPagoxFactura.Total
 		Facturas.append(Pago)
 	htmlRes = render_to_string('TablaDetallesPago.html', {'Facturas':Facturas}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})

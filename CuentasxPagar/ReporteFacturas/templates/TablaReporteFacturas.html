@@ -5,10 +5,12 @@
 			<th>Folio Factura</th>
 			<th>Proveedor</th>
 			<th>Fecha Factura</th>
+			{% if Rol != "Proveedor" %}
 			<th>Subtotal</th>
 			<th>IVA</th>
 			<th>Retencion</th>
 			<th>Total</th>
+			{% endif %}
 			<th>Status</th>
 			<th>Folio viaje</th>
 			<!-- <th>Folio Pago</th> -->
@@ -20,10 +22,12 @@
 			<td style="font-weight: bold;">{{Factura.Folio|safe}}</td>
 			<td>{{Factura.Proveedor|safe}}</td>
 			<td>{{Factura.FechaFactura|date:'Y/m/d'|safe}}</td>
+			{% if Rol != "Proveedor" %}
 			<td>${{Factura.Subtotal|floatformat:"2"|intcomma|safe}}</td>
 			<td>${{Factura.IVA|floatformat:"2"|intcomma|safe}}</td>
 			<td>${{Factura.Retencion|floatformat:"2"|intcomma|safe}}</td>
 			<td>${{Factura.Total|floatformat:"2"|intcomma|safe}}</td>
+			{% endif %}
 			<td>{{Factura.Status|safe}}</td>
 			<td>{{Factura.Viajes|safe}}</td>
 			<!-- <td></td> -->

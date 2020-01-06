@@ -60,7 +60,9 @@ end:: Header Mobile -->
 			<div class="kt-aside-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_aside_menu_wrapper">
 				<div id="kt_aside_menu" class="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1" data-ktmenu-dropdown-timeout="500">
 					<ul class="kt-menu__nav ">
+						{% if Rol != "Proveedor" %}
 						<li class="kt-menu__item {% block activateIndicadores %} {% endblock %}" aria-haspopup="true"><a href="{% url 'Indicadores' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon2-architecture-and-city"></i><span class="kt-menu__link-text">Indicadores</span></a></li>
+						{% endif %}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Facturas</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
@@ -68,11 +70,13 @@ end:: Header Mobile -->
 						<li class="kt-menu__item {% block activatePendientesEnviar %} {% endblock %}" aria-haspopup="true"><a href="{% url 'PendienteEnviar' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-file-invoice"></i><span class="kt-menu__link-text">Pendientes de enviar</span></a></li>
 
 
+						{% if Rol != "Proveedor" %}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Pagos</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
 						<li class="kt-menu__item {% block activateEstadosCuenta %} {% endblock %}" aria-haspopup="true"><a href="{% url 'EstadosCuenta' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-money-bill-wave"></i><span class="kt-menu__link-text">Estados de cuenta</span></a></li>
+						{% endif %}
 
 
 						<li class="kt-menu__section ">
@@ -81,8 +85,10 @@ end:: Header Mobile -->
 						</li>
 						<li class="kt-menu__item {% block activateReporteFacturas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteFacturas' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-file-invoice-dollar"></i><span class="kt-menu__link-text">Facturas</span></a></li>
 						<li class="kt-menu__item {% block activateReportePagos %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagos' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon2-checkmark"></i><span class="kt-menu__link-text">Pagos</span></a></li>
+						{% if Rol != "Proveedor" %}
 						<li class="kt-menu__item {% block activateReporteCanceladas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteCanceladas' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Facturas canceladas</span></a></li>
 						<li class="kt-menu__item {% block activateReportePagosCancelados %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagosCancelados' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Pagos cancelados</span></a></li>
+						{% endif %}
 
 					</ul>
 				</div>
@@ -264,6 +270,7 @@ end:: Header Mobile -->
 </script>
 
 <script type="text/javascript">
+	window.UserRol = "{{Rol}}";
 	function getCookie(cname) {
 		var name = cname + "=";
 		var decodedCookie = decodeURIComponent(document.cookie);

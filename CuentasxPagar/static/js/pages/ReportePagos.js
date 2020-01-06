@@ -180,14 +180,16 @@ $('#TableReportePagos').DataTable({
         return (full[6] != "" ? '':`<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-totalpago="${full[3]}" data-vercomplementoxml="${full[6]}" data-vercomplementopdf="${full[7]}" data-idpagocomplementos="`+idPago+`" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`);
       }
     },
-
     {
       "targets": 10,
       "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {
         idPago = $('input[name="IDPago"]').data("pagoid");
-        return  '<button type ="button" class="btnEliminarPago btn btn-danger btn-elevate btn-pill btn-sm" data-idpago="'+idPago+'"><i class="flaticon-delete"></i></button>';
+        if(UserRol != "Proveedor")
+          return  '<button type ="button" class="btnEliminarPago btn btn-danger btn-elevate btn-pill btn-sm" data-idpago="'+idPago+'"><i class="flaticon-delete"></i></button>';
+        else
+          return '';
       }
     },
     ]

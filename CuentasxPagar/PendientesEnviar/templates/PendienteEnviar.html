@@ -25,6 +25,7 @@ kt-menu__item--active
 </div>
 
 
+{% if Rol == "Proveedor" %}
 <div class="container" id="contenedorSubirArchivosproveedor">
 	<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 		<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
@@ -129,11 +130,12 @@ kt-menu__item--active
 	</div>
 </div>
 <!--Fin bloque para usuarios de transportistas-->
+{% endif %}
 
 
 
 <!-- bloque para usuarios de logistik-->
-
+{% if Rol != "Proveedor" %}
 <div class="kt-subheader kt-grid__item" id="kt_subheader">
 	<div class="kt-container  kt-container--fluid ">
 
@@ -152,9 +154,11 @@ kt-menu__item--active
 
 											</div>
 										</div>
+										{% endif %}
 										{% endblock %}
 
 										{% block FiltrosPendientesEnviar %}
+										{% if Rol != "Proveedor" %}
 										<div id="kt_quick_panel" class="kt-quick-panel">
 											<!--<a href="#" class="kt-quick-panel__close" id="kt_quick_panel_close_btn"><i class="flaticon2-delete"></i></a>-->
 
@@ -297,12 +301,15 @@ kt-menu__item--active
 												</div>
 											</div>
 										</div>
+										{% endif %}
 										{% endblock %}
 
 										{% block PendientesEnviar %}
-										<div id="divTablaPendientesEnviar">
-											{% include "TablaPendientes.html" %}
-										</div>
+											{% if Rol != "Proveedor" %}
+												<div id="divTablaPendientesEnviar">
+													{% include "TablaPendientes.html" %}
+												</div>
+											{% endif %}
 										{% endblock %}
 
 										{% block SubirFactura %}

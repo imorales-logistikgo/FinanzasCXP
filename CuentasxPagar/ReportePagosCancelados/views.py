@@ -17,7 +17,7 @@ def ReportePagosCancelados(request):
 		FoliosFactura = FoliosFactura[:-2]
 		Folios.append(FoliosFactura)
 	Proveedores = Proveedor.objects.all()
-	return render(request, 'PagosCancelados.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores});
+	return render(request, 'PagosCancelados.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores, 'Rol': request.user.roles});
 
 
 

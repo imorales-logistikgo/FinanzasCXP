@@ -6,15 +6,14 @@ from django.core import serializers
 from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
-@login_required
 
+@login_required
 def GetPendientesEnviar(request):
 	PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0 AND Moneda = %s", ['Finalizado', 'MXN'])
 	ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
 	Proveedores = Proveedor.objects.all()
 	ListPendientes = PendientesToList(PendingToSend)
-	return render(request, 'PendienteEnviar.html', {'pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias})
-
+	return render(request, 'PendienteEnviar.html', {'pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles})
 
 
 def PendientesToList(PendingToSend):
@@ -72,7 +71,6 @@ def GetPendientesByFilters(request):
 	ListPendientes = PendientesToList(PendingToSend)
 	htmlRes = render_to_string('TablaPendientes.html', {'pendientes':ListPendientes}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
-
 
 
 def SaveFacturaxProveedor(request):

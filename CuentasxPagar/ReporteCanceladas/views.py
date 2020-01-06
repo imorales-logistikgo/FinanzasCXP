@@ -11,7 +11,7 @@ def ReporteCanceladas(request):
 	Canceladas = FacturasxProveedor.objects.filter(Status = 'Cancelada')
 	listFacturas = CanceladasToList(Canceladas)
 	Proveedores = Proveedor.objects.all()
-	return render(request, 'ReporteCanceladas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores})
+	return render(request, 'ReporteCanceladas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores, 'Rol': request.user.roles})
 
 
 

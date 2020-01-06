@@ -3,13 +3,14 @@ from django.shortcuts import render
 from PendientesEnviar.models import RelacionFacturaProveedorxPartidas, FacturasxProveedor, PendientesEnviar, RelacionConceptoxProyecto, Ext_PendienteEnviar_Costo
 from EstadosCuenta.models import  View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor
 from usersadmon.models import Proveedor
+from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
 from decimal import Decimal
 from django.db.models import Q
 import json, datetime
 from django.contrib.auth.decorators import login_required
-@login_required
 
+@login_required
 def EstadosdeCuenta(request):
 	result = View_FacturasxProveedor.objects.filter(Q(Status = "Pendiente") | Q(Status = "Abonada"))
 	ListaFacturas = FacturasToList(result)
@@ -22,7 +23,7 @@ def EstadosdeCuenta(request):
 		Folios.append(FoliosPago)
 	ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas = GetContadores()
 	Proveedores = Proveedor.objects.all()
-	return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Proveedores': Proveedores, 'Folios': Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas})
+	return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Proveedores': Proveedores, 'Folios': Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas, 'Rol': request.user.roles})
 
 
 
@@ -173,3 +174,24 @@ def SavePagoxFactura(request):
 def CheckFolioDuplicado(request):
 	IsDuplicated = PagosxProveedor.objects.filter(Folio = request.GET["Folio"]).exists()
 	return JsonResponse({'IsDuplicated' : IsDuplicated})
+
+
+
+
+def EnviarCorreoProveedor(request):
+	nombre=request.user.name
+	context={
+		'news': 'correo para'+str(nombre)
+
+	}
+	template_name='email.html'
+	text="Debes ingresar para subir tus complementos"#html_content=render_to_string(template_name, context)
+	subject='correo prueba'+str(test)
+	from_email='pricing@logisti-k.com.mx'
+	to='dtorres@logisti-k.com.mx'
+
+	msg = EmailMessage(subject, html_content, from_email, [to])
+	msg.content_subtype = "text"  # Main content is now text/html
+	msg.send()
+
+	return HttpResponse('Mail successfully sent')

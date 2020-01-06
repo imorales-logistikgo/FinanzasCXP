@@ -5,6 +5,7 @@ kt-menu__item--active
 {% endblock %}
 
 {% block ContadoresReporteFacturas %}
+{% if Rol != "Proveedor" %}
 <div class="kt-subheader kt-grid__item">
 	<div class="kt-container  kt-container--fluid ">
 		<div>
@@ -19,6 +20,7 @@ kt-menu__item--active
 		</div>
 	</div>
 </div>
+{% endif %}
 {% endblock %}
 
 
