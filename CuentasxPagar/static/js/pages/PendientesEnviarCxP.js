@@ -84,7 +84,7 @@ $('#btnGuardarFactura').on('click', function(){
 $('#btnGuardarFacturaP').on('click', function(){
   if($('#archivosProveedor').data("rutaarchivoPDF") != undefined && $('#archivosProveedor').data("rutaarchivoXML") != undefined || $('#archivosProveedor').data("rutaarchivoPDF") != null && $('#archivosProveedor').data("rutaarchivoXML") != null)
   {
-    if($('#txtFolioFacturaP').val() != "" && $('#FechaRevisionP').val() != "" && $('#FechaFacturaP').val() != "" && $('#FechaVencimientoP').val() != "")
+    if($('#txtFolioFacturaP').val() != "" && $('#FechaRevisionP').val() != "" && $('#FechaFacturaP').val() != "" && $('#FechaVencimientoP').val() != "" && $('input[name="TipoCambio"]').val() != "")
     {
       WaitMe_Show('#WaitModalPEProveedor');
       saveFacturaP();
@@ -217,7 +217,7 @@ $('input[name="TipoCambio"]').on('keyup change', function(){
   else
   {
     alertToastError("El tipo de cambio debe ser mayor a 0");
-    $('input[name="TipoCambio"]').val(1);
+    $('input[name="TipoCambio"]').val('');
   }
 });
 
