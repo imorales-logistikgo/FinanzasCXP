@@ -185,8 +185,7 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
 //validacion si tienes los archivos pdf y xml
 $(document).on('click', '#btnSavePago', function(){
     //WaitMe_Show('#waitModalSubirPagos');
-    console.log($('input[name="totalPago"]').val());
-    if($('input[name="FolioPago"]').val() != "" && $('#FechaPago').val() != "" && $('input[name="totalPago"]').val() != "")
+    if($('input[name="FolioPago"]').val() != "" && $('#FechaPago').val() != "" && $('input[name="totalPago"]').val() != "" && $('input[name="TipoCambioPago"]').val() != "")
     {
       savePagoxProveedor();
     }
@@ -231,7 +230,7 @@ $('input[name="TipoCambioPago"]').on('keyup change', function(){
   else
   {
     alertToastError("El tipo de cambio debe ser mayor a 0");
-    $('input[name="TipoCambioPago"]').val(1);
+    $('input[name="TipoCambioPago"]').val('');
   }
 
 });
