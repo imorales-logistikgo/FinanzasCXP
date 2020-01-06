@@ -85,9 +85,9 @@ function formatDataTable() {
 
       }
     ],
-    fixedColumns:   {
+  /*  fixedColumns:   {
     leftColumns: 1
-  },
+  },*/
     columnDefs: [
       {
           "targets": [0],
