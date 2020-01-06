@@ -156,7 +156,7 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
     {
       alertToastError("No se aceptan numero negativos o caracteres");
       //$('#btnSavePago').prop('disabled', true);
-      $(this).val(datosRow[2].replace(/(\$)|(,)/g,''));
+      $(this).val('');
     }
   }
   else
@@ -171,7 +171,7 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
     else
     {
       alertToastError("No se aceptan numero negativos o caracteres");
-      $(this).val(totConv);
+      $(this).val('');
     }
   }
   $('input#valCobro').each(function(){
@@ -185,13 +185,14 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
 //validacion si tienes los archivos pdf y xml
 $(document).on('click', '#btnSavePago', function(){
     //WaitMe_Show('#waitModalSubirPagos');
-    if($('input[name="FolioPago"]').val() != "" && $('#FechaPago').val() != "")
+    console.log($('input[name="totalPago"]').val());
+    if($('input[name="FolioPago"]').val() != "" && $('#FechaPago').val() != "" && $('input[name="totalPago"]').val() != "")
     {
       savePagoxProveedor();
     }
     else
     {
-      alertToastError("El folio y la fecha no pueden ser vacios");
+      alertToastError("El folio, la fecha y el pago no pueden ser vacios");
     }
   });
 
@@ -335,7 +336,7 @@ function showDatosObtenidos(){
     "className": "dt-head-center dt-body-right",
     "targets": 4,
     "mRender": function (data, type, full) {
-     return (full[3] === 'MXN' ? `$ <input class="col-md-6 col-sm-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}" min="0" pattern="^[0-9]+">` : '$ <input type="number" class=""col-md-6 col-sm-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'" min="0" pattern="^[0-9]+">');
+     return (full[3] === 'MXN' ? `$ <input class="col-md-6 col-sm-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}" min="0" pattern="^[0-9]+" required>` : '$ <input type="number" class=""col-md-6 col-sm-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'" min="0" pattern="^[0-9]+">');
    }
  },
 
