@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 
 def ReportePagosCancelados(request):
-	Pagos = PagosxProveedor.objects.filter(Status = "Cancelada")
+	Pagos = PagosxProveedor.objects.defer("IDUsuarioAlta").filter(Status = "Cancelada").select_related('IDUsuarioBaja')
 	Folios = list()
 	for Pago in Pagos:
 		FoliosFactura = ""
