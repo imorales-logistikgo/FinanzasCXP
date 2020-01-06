@@ -142,14 +142,19 @@ footer{
   width: auto;
 }
 
+/*
 .dropdown-menu.show {
 
     transform: translate3d(0px, 0px, 0px) !important;
 }
-/*
+
 .dropdown-menu.inner.show
 {
   margin-top: 27px !important;
   margin-bottom: 26866px !important;
 }
 */
+.dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-xl.show
+{
+  transform: translate3d(933px, 50px, 0px) !important;
+}

@@ -98,7 +98,7 @@ kt-menu__item--active
 						<div>
 							<select class="selectpicker" id="cboProveedor" multiple name="Proveedor" title="Selecciona un proveedor" data-width="100%" data-live-search="true">
 								{% for Proveedor in Proveedores %}
-									<option value="{{Proveedor.NombreComercial}}">{{Proveedor.NombreComercial}}</option>
+									<option style="width: 270px;" value="{{Proveedor.NombreComercial}}">{{Proveedor.NombreComercial}}</option>
 								{%endfor%}
 							</select>
 						</div>
