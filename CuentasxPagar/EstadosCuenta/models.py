@@ -23,6 +23,9 @@ class PagosxProveedor(models.Model):
     TipoCambio = models.DecimalField(default=1, max_digits=10, decimal_places=5)
     NombreCortoProveedor = models.CharField(max_length=100)
     Status = models.CharField(max_length=15)
+    IDUsuarioAlta = models.IntegerField(default=0)
+    IDUsuarioBaja = models.IntegerField(default=0, null = True)
+    IDProveedor = models.IntegerField(default=0)
 
     class Meta:
         db_table="PagosxProveedor"
@@ -34,8 +37,6 @@ class RelacionPagosFacturasxProveedor(models.Model):
     IDPago = models.ForeignKey(PagosxProveedor, on_delete=models.CASCADE, db_column = 'IDPago')
     IDPagoxFactura = models.IntegerField(default=0)
     IDFactura = models.ForeignKey(FacturasxProveedor, on_delete=models.CASCADE, db_column = 'IDFactura')
-    IDUsuarioAlta = models.IntegerField(default=0)
-    IDProveedor = models.IntegerField(default=0)
 
     class Meta:
         db_table="RelacionPagosFacturasxProveedor"

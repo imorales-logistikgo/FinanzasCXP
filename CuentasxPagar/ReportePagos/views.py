@@ -46,15 +46,16 @@ def GetPagosByFilters(request):
 
 def CancelarPago(request):
 	IDPago = json.loads(request.body.decode('utf-8'))["IDPago"]
-	for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago):
+	for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago).select_related('IDFactura'):
 		Factura.IDFactura.Saldo += Factura.IDPagoxFactura.Total
 		if Factura.IDFactura.Saldo == Factura.IDFactura.Total:
-			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura).Status = "Pendiente"
+			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura.IDFactura).Status = "Pendiente"
 		else:
-			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura).Status = "Abonada"
+			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura.IDFactura).Status = "Abonada"
 		Factura.IDFactura.save()
 	Pago = PagosxProveedor.objects.get(IDPago = IDPago)
 	Pago.Status = "Cancelada"
+	Pago.IDUsuarioBaja = request.user.idusuario
 	Pago.save()
 	return HttpResponse('')
 
@@ -62,11 +63,11 @@ def CancelarPago(request):
 
 def GetDetallesPago(request):
 	IDPago = request.GET["IDPago"]
-	FacturasxPago = RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago)
+	FacturasxPago = RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago).select_related('IDFactura')
 	Facturas = list()
 	for FacturasxPago in FacturasxPago:
 		Pago = {}
-		Factura = View_FacturasxProveedor.objects.get(IDFactura = FacturasxPago.IDFactura)
+		Factura = View_FacturasxProveedor.objects.get(IDFactura = FacturasxPago.IDFactura.IDFactura)
 		Pago["FolioFactura"] = Factura.Folio
 		Pago["FechaFactura"] = Factura.FechaFactura
 		Pago["Total"] = PagosxFacturas.objects.get(IDPagoxFactura = FacturasxPago.IDPagoxFactura).Total

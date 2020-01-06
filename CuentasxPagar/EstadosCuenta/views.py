@@ -142,6 +142,8 @@ def SavePagoxProveedor(request):
 	newPago.Comentarios = jParams["Comentarios"]
 	newPago.TipoCambio = jParams["TipoCambio"]
 	newPago.NombreCortoProveedor = jParams["Proveedor"]
+	newPago.IDUsuarioAlta = request.user.idusuario
+	newPago.IDProveedor = Proveedor.objects.get(NombreComercial = jParams["Proveedor"]).IDTransportista
 	newPago.save()
 	return HttpResponse(newPago.IDPago)
 
@@ -160,8 +162,6 @@ def SavePagoxFactura(request):
 		Factura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
 		Factura.Saldo -= Decimal(Pago["Total"])
 		newRelacionPagoxFactura.IDFactura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
-		newRelacionPagoxFactura.IDUsuarioAlta = 1
-		newRelacionPagoxFactura.IDProveedor = 1
 		if Factura.Saldo == 0:
 			Factura.Status = "Pagada"
 		else:
