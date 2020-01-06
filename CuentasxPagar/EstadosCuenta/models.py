@@ -1,5 +1,6 @@
 from django.db import models
 from PendientesEnviar.models import FacturasxProveedor
+from users.models import User
 
 class PagosxFacturas(models.Model):
     IDPagoxFactura = models.AutoField(primary_key=True)
@@ -14,6 +15,7 @@ class PagosxFacturas(models.Model):
 class PagosxProveedor(models.Model):
     IDPago = models.AutoField(primary_key=True)
     FechaAlta = models.DateTimeField()
+    FechaBaja = models.DateTimeField(null = True)
     Total = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     Folio = models.CharField(max_length=50, unique=True)
     RutaPDF = models.CharField(max_length=300)
@@ -23,9 +25,10 @@ class PagosxProveedor(models.Model):
     TipoCambio = models.DecimalField(default=1, max_digits=10, decimal_places=5)
     NombreCortoProveedor = models.CharField(max_length=100)
     Status = models.CharField(max_length=15)
-    IDUsuarioAlta = models.IntegerField(default=0)
-    IDUsuarioBaja = models.IntegerField(default=0, null = True)
+    IDUsuarioAlta = models.ForeignKey(User, on_delete=models.CASCADE, db_column = 'IDUsuarioAlta', related_name = "IDUsuarioAlta")
+    IDUsuarioBaja = models.ForeignKey(User, on_delete=models.CASCADE, db_column = 'IDUsuarioBaja', related_name = "IDUsuarioBaja", null=True)
     IDProveedor = models.IntegerField(default=0)
+    ComentarioBaja = models.CharField(max_length=500, default = "")
 
     class Meta:
         db_table="PagosxProveedor"
@@ -35,7 +38,7 @@ class PagosxProveedor(models.Model):
 class RelacionPagosFacturasxProveedor(models.Model):
     IDRelacionPagoFacturasxProveedor = models.AutoField(primary_key=True)
     IDPago = models.ForeignKey(PagosxProveedor, on_delete=models.CASCADE, db_column = 'IDPago')
-    IDPagoxFactura = models.IntegerField(default=0)
+    IDPagoxFactura = models.ForeignKey(PagosxFacturas, on_delete=models.CASCADE, db_column = 'IDPagoxFactura')
     IDFactura = models.ForeignKey(FacturasxProveedor, on_delete=models.CASCADE, db_column = 'IDFactura')
 
     class Meta:

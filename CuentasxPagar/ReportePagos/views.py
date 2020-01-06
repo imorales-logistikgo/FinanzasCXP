@@ -55,7 +55,8 @@ def CancelarPago(request):
 		Factura.IDFactura.save()
 	Pago = PagosxProveedor.objects.get(IDPago = IDPago)
 	Pago.Status = "Cancelada"
-	Pago.IDUsuarioBaja = request.user.idusuario
+	Pago.IDUsuarioBaja = request.user
+	Pago.FechaBaja = datetime.datetime.now()
 	Pago.save()
 	return HttpResponse('')
 

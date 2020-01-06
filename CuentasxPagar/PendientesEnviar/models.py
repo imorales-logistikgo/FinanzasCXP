@@ -106,8 +106,8 @@ class FacturasxProveedor(models.Model):
     TotalConvertido = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     Status = models.CharField(max_length=15, default="Pendiente")
 
-    def __str__(self):
-        return str(self.IDFactura)
+    # def __str__(self):
+    #     return str(self.IDFactura)
     class Meta:
         db_table = "FacturasxProveedor"
 
