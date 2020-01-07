@@ -65,7 +65,6 @@ $(document).on( 'click', '.btnEliminarPago', function () {
     fnCancelarPago($(this).data('idpago'));
     var table = $('#TableReportePagos').DataTable();
     table.row($(this).parents('tr')).remove().draw();
-    WaitMe_Hide('#TbPading');
     Swal.fire(
       'Eliminado!',
       'Eliminado con exito',
@@ -214,13 +213,16 @@ var fnCancelarPago = function (IDPago) {
     if(response.status == 200)
     {
       res = true;
+      WaitMe_Hide('#TbPading');
     }
     else if(response.status == 500)
     {
       res = false;
+      WaitMe_Hide('#TbPading');
     }
   }).catch(function(ex){
     res = false;
+    WaitMe_Hide('#TbPading');
   });
 }
 

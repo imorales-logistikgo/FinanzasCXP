@@ -53,7 +53,7 @@
 						<td>{{Factura.Moneda|safe}}</td>
 						<td>{{Factura.Status|safe}}</td>
 						<td>{{Folios|index:forloop.counter0|safe}}</td>
-						<td><input name="EvidenciaXML" type="hidden" data-facturaid="{{Factura.IDFactura|safe}}"  data-evidenciaxml="{{Factura.RutaXML|safe}}"></td>
+						<td><input name="EvidenciaXML" type="hidden" data-facturaid="{{Factura.IDFactura|safe}}"  data-evidenciaxml="{{Factura.RutaXML|safe}}" data-isautorizada = "{{Factura.IsAutorizada}}"></td>
 						<td></td>
 						<td></td>
 					</tr>
