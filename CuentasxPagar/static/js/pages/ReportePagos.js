@@ -1,6 +1,7 @@
+var idPag;
+var btn;
 $(document).ready(function(){
   var idPago;
-
   formatDataTable();
 
   $('#btnAplicarFiltro').on('click', getPagosByFilters);
@@ -41,11 +42,10 @@ $(document).ready(function(){
 
 
   $(document).on('click', '#btnComplementos', function() {
+    btn = $(this);
     var totalPago = $(this).data('totalpago').replace(/(\$)|(,)/g,'');
-    var idP =  $(this).data('idpagocomplementos');
-    console.log(idP);
-    subirComplementoPagoProveedor(totalPago, idP);
-
+    idPag =  $(this).data('idpagocomplementos');
+    subirComplementoPagoProveedor(totalPago);
   });
 
 
@@ -77,11 +77,52 @@ $(document).on( 'click', '.btnEliminarPago', function () {
 });
 });
 
-function SaveComplementosPago(pdf, xml, idPa)
+function SaveComplementosPago(pdf, xml)
 {
-  $('#ModalComplementos').modal('hide');
-  console.log(pdf);
+  jParams = {
+    IDPago: idPag,
+    RutaPDF: pdf,
+    RutaXML: xml,
+  }
+  fetch("/ReportePagos/SaveComplementosPago", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken"),
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(jParams)
+  }).then(function(response){
+    if(response.status == 200)
+    {
+      Swal.fire({
+        type: 'success',
+        title: 'Los complementos del pago fueron guardados correctamente',
+        showConfirmButton: false,
+        timer: 2500
+      })
+      var table = $('#TableReportePagos').DataTable();
+      table.row($(btn).parents('tr')).remove().draw();
+      $('#ModalComplementos').modal('hide');
+      WaitMe_Hide('#waitModalPago');
+    }
+    else if(response.status == 500)
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'Ocurrio un error, por favor intenta de nuevo',
+        showConfirmButton: false,
+        timer: 2500
+      })
+      $('#ModalComplementos').modal('hide');
+      WaitMe_Hide('#waitModalPago');
+    }
+  }).catch(function(ex){
+    console.log(ex);
+  });
 }
+
 
 function getPagosByFilters() {
   arrProveedor = $('#cboProveedor').val();
@@ -247,7 +288,7 @@ var fnGetDetallePago = function () {
   });
 }
 
-function subirComplementoPagoProveedor(totalPago, id)
+function subirComplementoPagoProveedor(totalPago)
 {
   // plugin para subir los archivos del proveedor
   "use strict";
@@ -350,10 +391,10 @@ function subirComplementoPagoProveedor(totalPago, id)
                   }
                   if($('#ComplementosPagos').data("rutaarchivoXML") != null && $('#ComplementosPagos').data("rutaarchivoPDF") != null || $('#ComplementosPagos').data("rutaarchivoXML") != undefined && $('#ComplementosPagos').data("rutaarchivoPDF") != undefined)
                   {
-                    var idPagoArchivos = id;
                     var pdf = $('#ComplementosPagos').data("rutaarchivoPDF");
                     var xml = $('#ComplementosPagos').data("rutaarchivoXML");
-                    SaveComplementosPago(pdf, xml, idPagoArchivos);
+                    WaitMe_Show('#waitModalPago');
+                    SaveComplementosPago(pdf, xml);
                   }
 
 

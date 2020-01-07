@@ -182,7 +182,6 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
 
 //validacion si tienes los archivos pdf y xml
 $(document).on('click', '#btnSavePago', function(){
-    //WaitMe_Show('#waitModalSubirPagos');
     if($('input[name="FolioPago"]').val() != "" && $('#FechaPago').val() != "" && $('input[name="totalPago"]').val() != "" && $('input[name="TipoCambioPago"]').val() != "")
     {
       savePagoxProveedor();
