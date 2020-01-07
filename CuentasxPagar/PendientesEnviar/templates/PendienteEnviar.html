@@ -6,6 +6,7 @@ kt-menu__item--active
 {% block ContadoresPendientesEnviar %}
 
 <!--bloque para usuarios de proveedores-->
+{% if Rol == "Proveedor" %}
 <div class="container py-4">
 	<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 		<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
@@ -25,7 +26,7 @@ kt-menu__item--active
 </div>
 
 
-{% if Rol == "Proveedor" %}
+
 <div class="container" id="contenedorSubirArchivosproveedor">
 	<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 		<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
