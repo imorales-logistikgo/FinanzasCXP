@@ -78,13 +78,13 @@ $(document).on('click', '.btnAprobarFactura',function(){
  }).then((result) => {
   if (result.value) {
     var idFac = $(this).data('idfact');
-    console.log(idFac);
+    ValidarFactura(idFac);
   //  validarFactura(idFac);
-    Swal.fire(
+    /*Swal.fire(
       'Aprovado!',
       'La factura fue aprovada',
       'success'
-    )
+    )*/
   }
 })
 });
@@ -619,6 +619,46 @@ function savePagoxProveedor()  {
 
   }).then(function(IDPago){
     SavePagoxFactura(IDPago);
+  }).catch(function(ex){
+    console.log("no success!");
+  });
+}
+
+function ValidarFactura(IDFactura) {
+  jParams = {
+    IDFactura: IDFactura,
+  }
+
+  fetch("/EstadosdeCuenta/ValidarFactura", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken"),
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(jParams)
+  }).then(function(response){
+
+    if(response.status == 200)
+    {
+      Swal.fire({
+        type: 'success',
+        title: 'La factura ha sido validada correctamente',
+        showConfirmButton: false,
+        timer: 2500
+      })
+    }
+    else if(response.status == 500)
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'Hubo un error validando la factura',
+        showConfirmButton: false,
+        timer: 2500
+      })
+    }
+
   }).catch(function(ex){
     console.log("no success!");
   });

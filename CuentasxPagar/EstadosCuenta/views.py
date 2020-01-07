@@ -83,6 +83,7 @@ def FacturasToList(Facturas):
 		NuevaFactura["Moneda"] = Factura.Moneda
 		NuevaFactura["Status"] = Factura.Status
 		NuevaFactura["RutaXML"] = Factura.RutaXML
+		NuevaFactura["IsAutorizada"] = Factura.IsAutorizada
 		ListaFacturas.append(NuevaFactura)
 	return ListaFacturas
 
@@ -165,6 +166,16 @@ def SavePagoxFactura(request):
 			Factura.Status = "Abonada"
 		Factura.save()
 		newRelacionPagoxFactura.save()
+	return HttpResponse("")
+
+
+
+def ValidarFactura(request):
+	IDFactura = json.loads(request.body.decode('utf-8'))["IDFactura"]
+	Factura = FacturasxProveedor.objects.get(IDFactura = IDFactura)
+	if Factura:
+		Factura.IsAutorizada = True
+		Factura.save()
 	return HttpResponse("")
 
 

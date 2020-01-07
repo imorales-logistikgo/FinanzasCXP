@@ -8,5 +8,6 @@ urlpatterns = [
     path('SavePagoxProveedor', views.SavePagoxProveedor, name='SavePagoxProveedor'),
     path('SavePagoxFactura', views.SavePagoxFactura, name='SavePagoxFactura'),
     path('CheckFolioDuplicado', views.CheckFolioDuplicado, name='CheckFolioDuplicado'),
+    path('ValidarFactura', views.ValidarFactura, name='ValidarFactura'),
     path('EnviarCorreoProveedor', views.EnviarCorreoProveedor, name='EnviarCorreoProveedor'),
 ]

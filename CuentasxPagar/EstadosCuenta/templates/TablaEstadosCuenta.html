@@ -40,7 +40,7 @@
 				</thead>
 				<tbody>
 					{% for Factura in Facturas %}
-					<tr data-IDFactura="{{Factura.IDFactura|safe}}">
+					<tr data-IDFactura="{{Factura.IDFactura|safe}}" data-isautorizada = "{{Factura.IsAutorizada}}">
 						<td></td>
 						<td style="font-weight: bold;">{{Factura.Folio|safe}}</td>
 						<td>{{Factura.Proveedor|safe}}</td>
