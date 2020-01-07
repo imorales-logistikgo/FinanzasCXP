@@ -10,9 +10,11 @@ kt-menu__item--active
 		<div>
 		</div>
 		<div class="kt-header__topbar-item kt-header__topbar-item--quick-panel" data-toggle="kt-tooltip" title="Filtros" data-placement="right">
+{% if Rol != "Proveedor" %}
 			<span class="kt-header__topbar-icon" id="kt_quick_panel_toggler_btn">
 				<button type="button" class="btn btn-brand btn-elevate btn-pill btn-elevate-air btn-md" id="BtnOpenFiltros">Filtros</button>
 			</span>
+{% endif %}
 		</div>
 	</div>
 </div>
@@ -20,6 +22,7 @@ kt-menu__item--active
 
 
 {% block FiltrosReportePagos %}
+{% if Rol != "Proveedor" %}
 <div id="kt_quick_panel" class="kt-quick-panel">
 	<div class="kt-quick-panel__content">
 		<div class="tab-content">
@@ -124,6 +127,7 @@ kt-menu__item--active
 		</div>
 	</div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block ReportePagos %}
