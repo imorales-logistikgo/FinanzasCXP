@@ -7,6 +7,7 @@ $(document).ready(function()
   var evXML;
   var idfac;
   var totConv=0;
+  var isAuth;
 //tabla estados de cuenta
 
 formatDataTableFacturas();
@@ -77,14 +78,10 @@ $(document).on('click', '.btnAprobarFactura',function(){
    confirmButtonText: 'Validar'
  }).then((result) => {
   if (result.value) {
+  var btn = $(this);
+    WaitMe_Show('#TbPading');
     var idFac = $(this).data('idfact');
-    ValidarFactura(idFac);
-  //  validarFactura(idFac);
-    /*Swal.fire(
-      'Aprovado!',
-      'La factura fue aprovada',
-      'success'
-    )*/
+    ValidarFactura(idFac, btn);
   }
 })
 });
@@ -475,6 +472,7 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "width": "1%",
       "mRender": function (data, type, full) {
+        isAuth = $('input[name="EvidenciaXML"]').data("isautorizada");
         idfac = $('input[name="EvidenciaXML"]').data("facturaid");
         return (full[10] != 'Cobrada' && full[10] != 'Cancelada' && full[10] != 'Pagada'? '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'"/>': '');
       }
@@ -530,7 +528,7 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 13,
       "mRender": function (data, type, full) {
-       return ( full[10] === 'Pendiente' ? '<button type ="button" title="Aprobar" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'');
+       return ( full[10] == 'Pendiente' && isAuth != 'True' ? '<button type ="button" title="Aprobar" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'');
      }
     },
     {
@@ -624,7 +622,7 @@ function savePagoxProveedor()  {
   });
 }
 
-function ValidarFactura(IDFactura) {
+function ValidarFactura(IDFactura, btn) {
   jParams = {
     IDFactura: IDFactura,
   }
@@ -648,6 +646,8 @@ function ValidarFactura(IDFactura) {
         showConfirmButton: false,
         timer: 2500
       })
+      $(btn).remove();
+      WaitMe_Hide('#TbPading');
     }
     else if(response.status == 500)
     {
@@ -657,6 +657,7 @@ function ValidarFactura(IDFactura) {
         showConfirmButton: false,
         timer: 2500
       })
+      WaitMe_Hide('#TbPading');
     }
 
   }).catch(function(ex){
