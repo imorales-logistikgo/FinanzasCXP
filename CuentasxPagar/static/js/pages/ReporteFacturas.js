@@ -65,6 +65,8 @@ function getReportes(params) {
 }
 
 function formatTableReporteFacturas() {
+if (UserRol != 'Proveedor')
+{
   $("#TableReporteFacturas").DataTable({
     "scrollX": true,
     "language": {
@@ -104,5 +106,44 @@ function formatTableReporteFacturas() {
     },
     ]
   });
+}
+else
+{
+  $("#TableReporteFacturas").DataTable({
+    "scrollX": true,
+    "language": {
+      "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+    },
+    "responsive": false,
+    "paging": true,
+    "dom": 'Bfrtip',
+    "buttons": [
+    {
+      extend: 'excel',
+      text: '<i class="fas fa-file-excel fa-lg"></i>',
+    }
+    ],
+    columnDefs: [
+    {
+      "targets": [0],
+      "width": "10px",
+      "className": "dt-head-center dt-body-center"
+    },
+
+    {
+      "targets": [1,2,3],
+      "width": "15px",
+      "className": "dt-head-center dt-body-center"
+    },
+
+    {
+      "targets": [4],
+      "width": "12px",
+      "className": "dt-head-center dt-body-left"
+    },
+    ]
+  });
+}
+
 }
 });
