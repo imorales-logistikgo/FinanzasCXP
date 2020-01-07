@@ -134,14 +134,12 @@ def SavePagoxProveedor(request):
 	newPago.Folio = jParams["Folio"]
 	newPago.Total = jParams["Total"]
 	newPago.FechaPago = datetime.datetime.strptime(jParams["FechaPago"],'%Y/%m/%d')
-	if "RutaXML" in jParams:
-		newPago.RutaXML = jParams["RutaXML"]
-	if "RutaPDF" in jParams:
-		newPago.RutaPDF = jParams["RutaPDF"]
+	if "RutaComprobante" in jParams:
+		newPago.RutaComprobante = jParams["RutaComprobante"]
 	newPago.Comentarios = jParams["Comentarios"]
 	newPago.TipoCambio = jParams["TipoCambio"]
 	newPago.NombreCortoProveedor = jParams["Proveedor"]
-	newPago.IDUsuarioAlta = request.user.idusuario
+	newPago.IDUsuarioAlta = request.user
 	newPago.IDProveedor = Proveedor.objects.get(NombreComercial = jParams["Proveedor"]).IDTransportista
 	newPago.save()
 	return HttpResponse(newPago.IDPago)
@@ -157,7 +155,7 @@ def SavePagoxFactura(request):
 		newPagoxFactura.save()
 		newRelacionPagoxFactura = RelacionPagosFacturasxProveedor()
 		newRelacionPagoxFactura.IDPago = PagosxProveedor.objects.get(IDPago = jParams["IDPago"])
-		newRelacionPagoxFactura.IDPagoxFactura = newPagoxFactura.IDPagoxFactura
+		newRelacionPagoxFactura.IDPagoxFactura = newPagoxFactura
 		Factura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
 		Factura.Saldo -= Decimal(Pago["Total"])
 		newRelacionPagoxFactura.IDFactura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
