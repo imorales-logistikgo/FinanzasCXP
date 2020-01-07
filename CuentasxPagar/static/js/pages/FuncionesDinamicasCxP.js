@@ -116,6 +116,7 @@ return cont;
                    document.querySelector(ver).innerHTML +=
                    `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
                  }
+                 rutaComprobante = response.body
                  //const url = response.body
    // `<embed src="${url}">`
  });

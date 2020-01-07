@@ -1,5 +1,6 @@
 var table;
 var proveedor;
+var rutaComprobante;
 $(document).ready(function()
 {
   var calculo =0;
@@ -586,8 +587,7 @@ function savePagoxProveedor()  {
     FechaPago: $('#FechaPago').val(),
     TipoCambio: $('#TipoCambioPago').val(),
     Comentarios: $('#comentariosEC').val(),
-    RutaXML: $('#ComplementosPagos').data("rutaarchivoXML"),
-    RutaPDF: $('#ComplementosPagos').data("rutaarchivoPDF"),
+    RutaComprobante: rutaComprobante,
     Proveedor: proveedor,
   }
 
