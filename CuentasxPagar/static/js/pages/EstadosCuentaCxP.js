@@ -496,7 +496,6 @@ function formatDataTableFacturas(){
       "width": "5%",
       "className": "text-center",
       "targets": [9, 10]
-
     },
     {
       "className": "text-right",
@@ -536,8 +535,8 @@ function formatDataTableFacturas(){
       "targets": 14,
       "mRender": function (data, type, full) {
        return ( full[10] === 'pendiente'.toUpperCase() ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" title="Eliminar"><i class="flaticon-delete"></i></button>':'');
-     }
-   }
+      }
+    }
    ]
  });
 }
