@@ -7,7 +7,7 @@ from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
 from decimal import Decimal
 from django.db.models import Q
-import json, datetime
+import json, datetime, math
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -141,9 +141,21 @@ def SavePagoxProveedor(request):
 	newPago.TipoCambio = jParams["TipoCambio"]
 	newPago.NombreCortoProveedor = jParams["Proveedor"]
 	newPago.IDUsuarioAlta = request.user
-	newPago.IDProveedor = Proveedor.objects.get(NombreComercial = jParams["Proveedor"]).IDTransportista
+	try:
+		Transportista = Proveedor.objects.get(NombreComercial = jParams["Proveedor"])
+		newPago.IDProveedor = Transportista.IDTransportista
+	except Proveedor.DoesNotExist:
+		pass
+	else:
+		newPago.IDProveedor = 0
 	newPago.save()
 	return HttpResponse(newPago.IDPago)
+
+
+
+def truncate(number, digits) -> Decimal:
+    stepper = 10.0 ** digits
+    return math.trunc(stepper * number) / stepper
 
 
 
@@ -160,7 +172,7 @@ def SavePagoxFactura(request):
 		Factura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
 		Factura.Saldo -= Decimal(Pago["Total"])
 		newRelacionPagoxFactura.IDFactura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
-		if Factura.Saldo == 0:
+		if truncate(float(Factura.Saldo), 2) == 0:
 			Factura.Status = "Pagada"
 		else:
 			Factura.Status = "Abonada"
