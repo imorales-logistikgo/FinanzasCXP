@@ -35,7 +35,7 @@ $('#btnAplicarFiltro').on('click', fnGetFacturas);
 
 $(document).on('click', '.btnDetalleFactura',getDetalleFactura);
 
-$(document).on('click', '.btnDetallePago',getDetallePago);
+//$(document).on('click', '.btnDetallePago',getDetallePago);
 
 //eliminar row de la tabla estados de cuenta
 $(document).on( 'click', '.btnEliminarFactura', function () {
@@ -566,7 +566,7 @@ function getDetalleFactura()
     console.log(ex);
   });
 }
-
+/*
 function getDetallePago()
 {
   $('#verArchivoPDFPAgo').prop("href", "http://lgklataforma.blob.core.windows.net/evidencias/f8e459bb-6da8-4fa9-a9db-8f9292585939.pdf");
@@ -574,7 +574,7 @@ function getDetallePago()
   $('#verArchivoXMLPAgo').prop("href", "http://lgklataforma.blob.core.windows.net/evidencias/0a2228ec-ffe0-4808-957f-df08dc5b4107.xml");
   $('#imgArchivoXML').prop("src", "../static/img/xml-logo.png");
 }
-
+*/
 
 function savePagoxProveedor()  {
   WaitMe_Show('#waitModalSubirPagos');
