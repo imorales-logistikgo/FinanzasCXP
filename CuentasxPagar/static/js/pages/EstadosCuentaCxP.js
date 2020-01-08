@@ -35,7 +35,7 @@ $('#btnAplicarFiltro').on('click', fnGetFacturas);
 
 $(document).on('click', '.btnDetalleFactura',getDetalleFactura);
 
-$(document).on('click', '.btnDetallePago',getDetallePago);
+//$(document).on('click', '.btnDetallePago',getDetallePago);
 
 //eliminar row de la tabla estados de cuenta
 $(document).on( 'click', '.btnEliminarFactura', function () {
@@ -473,7 +473,7 @@ function formatDataTableFacturas(){
       "mRender": function (data, type, full) {
         isAuth = $('input[name="EvidenciaXML"]').data("isautorizada");
         idfac = $('input[name="EvidenciaXML"]').data("facturaid");
-        return (full[10] != 'Cobrada' && full[10] != 'Cancelada' && full[10] != 'Pagada'? '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'"/>': '');
+        return (full[10] != 'cancelada'.toUpperCase() && full[10] != 'pagada'.toUpperCase() ? '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'"/>': '');
       }
     },
     {
@@ -496,7 +496,6 @@ function formatDataTableFacturas(){
       "width": "5%",
       "className": "text-center",
       "targets": [9, 10]
-
     },
     {
       "className": "text-right",
@@ -527,7 +526,7 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 13,
       "mRender": function (data, type, full) {
-       return ( full[10] == 'Pendiente' && isAuth != 'True' ? '<button type ="button" title="Aprobar" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'');
+       return ( full[10] == 'pendiente'.toUpperCase() && isAuth != 'True' ? '<button type ="button" title="Aprobar" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'');
      }
     },
     {
@@ -535,9 +534,9 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 14,
       "mRender": function (data, type, full) {
-       return ( full[10] === 'Pendiente' ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" title="Eliminar"><i class="flaticon-delete"></i></button>':'');
-     }
-   }
+       return ( full[10] === 'pendiente'.toUpperCase() ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" title="Eliminar"><i class="flaticon-delete"></i></button>':'');
+      }
+    }
    ]
  });
 }
@@ -566,7 +565,7 @@ function getDetalleFactura()
     console.log(ex);
   });
 }
-
+/*
 function getDetallePago()
 {
   $('#verArchivoPDFPAgo').prop("href", "http://lgklataforma.blob.core.windows.net/evidencias/f8e459bb-6da8-4fa9-a9db-8f9292585939.pdf");
@@ -574,7 +573,7 @@ function getDetallePago()
   $('#verArchivoXMLPAgo').prop("href", "http://lgklataforma.blob.core.windows.net/evidencias/0a2228ec-ffe0-4808-957f-df08dc5b4107.xml");
   $('#imgArchivoXML').prop("src", "../static/img/xml-logo.png");
 }
-
+*/
 
 function savePagoxProveedor()  {
   WaitMe_Show('#waitModalSubirPagos');
@@ -612,7 +611,7 @@ function savePagoxProveedor()  {
         timer: 2500
       })
       WaitMe_Hide('#waitModalSubirPagos');
-    }
+     }
 
   }).then(function(IDPago){
     SavePagoxFactura(IDPago);
