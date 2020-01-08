@@ -886,12 +886,6 @@ function formatDataTable() {
       "targets": [2,3]
     },
     {
-      "width": "5%",
-      "className": "dt-head-center dt-body-center",
-      "targets": [8,9]
-
-    },
-    {
       "className": "dt-head-center dt-body-right",
       'width' : '5%',
       "targets": [4,5,6,7]
@@ -899,9 +893,16 @@ function formatDataTable() {
     {
       "width": "5%",
       "className": "dt-head-center dt-body-center",
+      "targets": [8,9]
+
+    },
+
+    {
+      "width": "5%",
+      "className": "dt-head-center dt-body-center",
       "targets": 10,
       "mRender": function (data, type, full) {
-        return (EvDigital != 'False' && full[9] == 'Finalizado' && EvFisica != 'False' ? '<a class="kt-badge kt-badge--info kt-badge--inline text-white" data-toggle="modal" data-target="#ModalVerEvidencias" data-backdrop="static" data-keyboard="false"><i class="flaticon2-image-file"></i></a>':'');
+        return (EvDigital != 'False' && full[9] == 'Finalizado'  && EvFisica != 'False' ? '<a class="kt-badge kt-badge--info kt-badge--inline text-white" data-toggle="modal" data-target="#ModalVerEvidencias" data-backdrop="static" data-keyboard="false"><i class="flaticon2-image-file"></i></a>':'');
       }
     }]
   } );
