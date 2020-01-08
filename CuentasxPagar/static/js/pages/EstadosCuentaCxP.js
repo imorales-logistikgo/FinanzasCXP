@@ -702,6 +702,7 @@ function SavePagoxFactura(IDPago)
       $("input[name=checkEC]:checked").each(function () {
         table.row($(this).parents('tr')).remove().draw();
       });
+      $('#btnSubirPagos').prop('disabled', true);
       WaitMe_Hide('#waitModalSubirPagos');
     }
     else if(response.status == 500)
