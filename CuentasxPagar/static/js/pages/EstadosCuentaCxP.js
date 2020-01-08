@@ -611,7 +611,7 @@ function savePagoxProveedor()  {
         timer: 2500
       })
       WaitMe_Hide('#waitModalSubirPagos');
-    }
+     }
 
   }).then(function(IDPago){
     SavePagoxFactura(IDPago);
