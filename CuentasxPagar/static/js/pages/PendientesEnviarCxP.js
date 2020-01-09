@@ -848,12 +848,12 @@ function BuscarFolioProveedor() {
 
 function formatDataTable() {
   table = $('#TablePendientesEnviar').DataTable( {
-   //"scrollY": "500px",
+   "scrollX": "100%",
    //"scrollCollapse": true,
    "language": {
      "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
    },
-   "responsive": true,
+   "responsive": false,
    "paging": false,
    "dom": 'Bfrtip',
    "buttons": [
