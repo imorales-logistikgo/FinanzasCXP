@@ -49,9 +49,9 @@ def CancelarPago(request):
 	for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago).select_related('IDFactura'):
 		Factura.IDFactura.Saldo += Factura.IDPagoxFactura.Total
 		if Factura.IDFactura.Saldo == Factura.IDFactura.Total:
-			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura.IDFactura).Status = "PENDIENTE"
+			Factura.IDFactura.Status = "PENDIENTE"
 		else:
-			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura.IDFactura).Status = "ABONADA"
+			Factura.IDFactura.Status = "ABONADA"
 		Factura.IDFactura.save()
 	Pago = PagosxProveedor.objects.get(IDPago = IDPago)
 	Pago.Status = "CANCELADA"
