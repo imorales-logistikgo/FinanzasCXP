@@ -65,11 +65,6 @@ $(document).on( 'click', '.btnEliminarPago', function () {
     fnCancelarPago($(this).data('idpago'));
     var table = $('#TableReportePagos').DataTable();
     table.row($(this).parents('tr')).remove().draw();
-    Swal.fire(
-      'Eliminado!',
-      'Eliminado con exito',
-      'success'
-      )
   }
   //else
   //  alertToastError("Error al eliminar la factura");
@@ -255,6 +250,11 @@ var fnCancelarPago = function (IDPago) {
     {
       res = true;
       WaitMe_Hide('#TbPading');
+      Swal.fire(
+      'Eliminado!',
+      'Eliminado con exito',
+      'success'
+      )
     }
     else if(response.status == 500)
     {

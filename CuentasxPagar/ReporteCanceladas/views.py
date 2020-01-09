@@ -23,7 +23,10 @@ def CanceladasToList(Canceladas):
 		Factura['Folio'] = CANCELADA.Folio
 		Factura['Proveedor'] = CANCELADA.NombreCortoProveedor
 		Factura['FechaFactura'] = CANCELADA.FechaFactura
-		Factura['FechaBaja'] = list(conFacturaxPartidas)[0].IDPartida.FechaBaja
+		try:
+			Factura['FechaBaja'] = list(conFacturaxPartidas)[0].IDPartida.FechaBaja
+		except:
+			Factura['FechaBaja'] = ""
 		Factura["Subtotal"] = CANCELADA.Subtotal
 		Factura["IVA"] = CANCELADA.IVA
 		Factura["Retencion"] = CANCELADA.Retencion

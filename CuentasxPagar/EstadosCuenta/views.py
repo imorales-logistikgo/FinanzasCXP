@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from PendientesEnviar.models import RelacionFacturaProveedorxPartidas, FacturasxProveedor, PendientesEnviar, RelacionConceptoxProyecto, Ext_PendienteEnviar_Costo
 from EstadosCuenta.models import  View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor
-from usersadmon.models import Proveedor
+from usersadmon.models import Proveedor, AdmonUsuarios
 from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
 from decimal import Decimal
@@ -140,7 +140,7 @@ def SavePagoxProveedor(request):
 	newPago.Comentarios = jParams["Comentarios"]
 	newPago.TipoCambio = jParams["TipoCambio"]
 	newPago.NombreCortoProveedor = jParams["Proveedor"]
-	newPago.IDUsuarioAlta = request.user
+	newPago.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
 	try:
 		Transportista = Proveedor.objects.get(NombreComercial = jParams["Proveedor"])
 		newPago.IDProveedor = Transportista.IDTransportista

@@ -1,7 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from EstadosCuenta.models import RelacionPagosFacturasxProveedor, PagosxProveedor, View_FacturasxProveedor, PagosxFacturas
-from usersadmon.models import Proveedor
+from usersadmon.models import Proveedor, AdmonUsuarios
 from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
@@ -54,8 +54,8 @@ def CancelarPago(request):
 			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura.IDFactura).Status = "ABONADA"
 		Factura.IDFactura.save()
 	Pago = PagosxProveedor.objects.get(IDPago = IDPago)
-	Pago.Status = "CanceladaS"
-	Pago.IDUsuarioBaja = request.user
+	Pago.Status = "CANCELADA"
+	Pago.IDUsuarioBaja = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
 	Pago.FechaBaja = datetime.datetime.now()
 	Pago.save()
 	return HttpResponse('')
