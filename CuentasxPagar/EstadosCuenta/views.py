@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def EstadosdeCuenta(request):
-	result = View_FacturasxProveedor.objects.filter(Q(Status = "Pendiente") | Q(Status = "Abonada"))
+	result = View_FacturasxProveedor.objects.filter(Q(Status = "PENDIENTE") | Q(Status = "ABONADA"))
 	ListaFacturas = FacturasToList(result)
 	Folios = list()
 	for Factura in ListaFacturas:
@@ -29,10 +29,10 @@ def EstadosdeCuenta(request):
 
 def GetContadores():
 	AllFacturas = list(View_FacturasxProveedor.objects.values('Status').all())
-	ContadoresPendientes = len(list(filter(lambda x: x["Status"] == "Pendiente", AllFacturas)))
-	ContadoresAbonadas = len(list(filter(lambda x: x["Status"] == "Abonada", AllFacturas)))
-	ContadoresPagadas = len(list(filter(lambda x: x["Status"] == "Pagada", AllFacturas)))
-	ContadoresCanceladas = len(list(filter(lambda x: x["Status"] == "Cancelada", AllFacturas)))
+	ContadoresPendientes = len(list(filter(lambda x: x["Status"] == "PENDIENTE", AllFacturas)))
+	ContadoresAbonadas = len(list(filter(lambda x: x["Status"] == "ABONADA", AllFacturas)))
+	ContadoresPagadas = len(list(filter(lambda x: x["Status"] == "PAGADA", AllFacturas)))
+	ContadoresCanceladas = len(list(filter(lambda x: x["Status"] == "CANCELADA", AllFacturas)))
 	return ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas
 
 
@@ -93,7 +93,7 @@ def CancelarFactura(request):
 	IDFactura = json.loads(request.body.decode('utf-8'))["IDFactura"]
 	conRelacionFacturaProveedorxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = IDFactura)
 	if conRelacionFacturaProveedorxPartidas:
-		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.Status = 'Cancelada'
+		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.Status = 'CANCELADA'
 		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.save()
 		for Partida in conRelacionFacturaProveedorxPartidas:
 			Partida.IDPartida.IsActiva = False
@@ -173,9 +173,9 @@ def SavePagoxFactura(request):
 		Factura.Saldo -= Decimal(Pago["Total"])
 		newRelacionPagoxFactura.IDFactura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
 		if truncate(float(Factura.Saldo), 2) == 0:
-			Factura.Status = "Pagada"
+			Factura.Status = "PAGADA"
 		else:
-			Factura.Status = "Abonada"
+			Factura.Status = "ABONADA"
 		Factura.save()
 		newRelacionPagoxFactura.save()
 	return HttpResponse("")

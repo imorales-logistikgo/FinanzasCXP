@@ -4,7 +4,7 @@ var moneda;
 var Ev;
 var EvDigital;
 var EvFisica;
-//var idpendienteenviar;
+//var idPendienteenviar;
 var table;
 var subtotal = 0, Tiva=0, TRetencion=0, total=0;
 var totalViaje = 0;
@@ -118,7 +118,7 @@ $(document).on('click', '#btnCerrarDivproveedor', function(){
   limpiarDivProveedor();
 });
 
-//ocultar columnas tabla pendientes enviar
+//ocultar columnas tabla Pendientes enviar
 $('input[name="Fecha Descarga"]').on('change', function(e){
  e.preventDefault();
  var column = table.column(3);
@@ -224,7 +224,7 @@ $('input[name="TipoCambio"]').on('keyup change', function(){
 
 
 
-//FUNCIONES PARA PENDIENTES DE ENVIAR
+//FUNCIONES PARA PendienteS DE ENVIAR
 
 //funcion para mostrar u ocultar el input del timpo de cambio
 function mostrarTipoCambio()
@@ -274,7 +274,7 @@ function FiltroCheckboxProveedor(){
 });
 }
 
-//funcion limpiar modal subir facturas de pendientes de enviar
+//funcion limpiar modal subir facturas de Pendientes de enviar
 function LimpiarModalSF()
 {
   $('input[name="FolioFactura"]').val("");
@@ -420,7 +420,7 @@ function LimpiarModalSF()
   });
 
 
-//funcion para obtener los datos de cada checkbox seleccionado en la tabla pendientes de enviar
+//funcion para obtener los datos de cada checkbox seleccionado en la tabla Pendientes de enviar
 function adddatos(){
   var arrSelect=[];
   $("input[name=checkPE]:checked").each(function () {
@@ -432,7 +432,7 @@ function adddatos(){
 }
 
 
-//funcion para obtener los datos de la tabla pendiente de enviar para mostrarlos en la tabla del modal subir facturas
+//funcion para obtener los datos de la tabla PENDIENTE de enviar para mostrarlos en la tabla del modal subir facturas
 function getDatos(){
  var datos = adddatos();
  var newData = [];
@@ -667,7 +667,7 @@ function SavePartidasxFactura(IDFactura) {
   var arrPendientes = [];
   var currentIDPending = 0;
   $("#TablePendientesEnviar input[name=checkPE]:checked").each(function () {
-    currentIDPending = $($(this).parents('tr')[0]).data('idpendienteenviar');
+    currentIDPending = $($(this).parents('tr')[0]).data('idPendienteenviar');
     if(!arrPendientes.includes(currentIDPending))
       arrPendientes.push(currentIDPending);
   });
@@ -871,7 +871,7 @@ function formatDataTable() {
      "mRender": function (data, type, full) {
        EvDigital = $('input[name="isEvicencias"]').data("evidenciadigital");
        EvFisica = $('input[name="isEvicencias"]').data("evidenciafisica");
-         //idpendienteenviar = $('input[name="isEvicencias"]').data("idpendienteenviar");
+         //idPendienteenviar = $('input[name="isEvicencias"]').data("idPendienteenviar");
          return (EvDigital != 'False' && full[9] == 'finalizado'.toUpperCase() && EvFisica != 'False' ? '<input type="checkbox" name="checkPE" id="estiloCheckbox" />': '');
        }
      },

@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 
 def ReportePagosCancelados(request):
-	Pagos = PagosxProveedor.objects.defer("IDUsuarioAlta").filter(Status = "Cancelada").select_related('IDUsuarioBaja')
+	Pagos = PagosxProveedor.objects.defer("IDUsuarioAlta").filter(Status = "CANCELADA").select_related('IDUsuarioBaja')
 	Folios = list()
 	for Pago in Pagos:
 		FoliosFactura = ""
@@ -27,9 +27,9 @@ def GetPagosByFilters(request):
 	if "Year" in request.GET:
 		arrMonth = json.loads(request.GET["arrMonth"])
 		Year = request.GET["Year"]
-		Pagos = PagosxProveedor.objects.filter(FechaPago__month__in = arrMonth, FechaPago__year = Year, Status = "Cancelada")
+		Pagos = PagosxProveedor.objects.filter(FechaPago__month__in = arrMonth, FechaPago__year = Year, Status = "CANCELADA")
 	else:
-		Pagos = PagosxProveedor.objects.filter(FechaPago__range = [datetime.datetime.strptime(request.GET["FechaPagoDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaPagoHasta"],'%m/%d/%Y')], Status = "Cancelada")
+		Pagos = PagosxProveedor.objects.filter(FechaPago__range = [datetime.datetime.strptime(request.GET["FechaPagoDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaPagoHasta"],'%m/%d/%Y')], Status = "CANCELADA")
 	if Proveedores:
 		Pagos = Pagos.filter(NombreCortoProveedor__in = Proveedores)
 	Folios = list()

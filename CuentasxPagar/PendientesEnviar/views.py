@@ -9,11 +9,11 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def GetPendientesEnviar(request):
-	PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0 AND Moneda = %s", ['Finalizado', 'MXN'])
+	PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0 AND Moneda = %s", ['FINALIZADO', 'MXN'])
 	ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
 	Proveedores = Proveedor.objects.all()
 	ListPendientes = PendientesToList(PendingToSend)
-	return render(request, 'PendienteEnviar.html', {'pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles})
+	return render(request, 'PendienteEnviar.html', {'Pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles})
 
 
 def PendientesToList(PendingToSend):
@@ -41,8 +41,8 @@ def PendientesToList(PendingToSend):
 def GetContadores():
 	AllPending = list(View_PendientesEnviarCxP.objects.values("IsFacturaProveedor", "Status", "IsEvidenciaDigital", "IsEvidenciaFisica").all())
 	ContadorTodos = len(list(filter(lambda x: x["IsFacturaProveedor"] == False, AllPending)))
-	ContadorPendientes = len(list(filter(lambda x: x["Status"] == "Pendiente", AllPending)))
-	ContadorFinalizados = len(list(filter(lambda x: x["Status"] == "Finalizado", AllPending)))
+	ContadorPendientes = len(list(filter(lambda x: x["Status"] == "PENDIENTE", AllPending)))
+	ContadorFinalizados = len(list(filter(lambda x: x["Status"] == "FINALIZADO", AllPending)))
 	ContadorConEvidencias = len(list(filter(lambda x: x["IsEvidenciaFisica"] == True and x["IsEvidenciaDigital"] == True, AllPending)))
 	ContadorSinEvidencias = ContadorTodos - ContadorConEvidencias
 	return ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias
@@ -69,7 +69,7 @@ def GetPendientesByFilters(request):
 		PendingToSend = PendingToSend.filter(NombreProveedor__in = Proveedor)
 	PendingToSend = PendingToSend.filter(Moneda = Moneda)
 	ListPendientes = PendientesToList(PendingToSend)
-	htmlRes = render_to_string('TablaPendientes.html', {'pendientes':ListPendientes}, request = request,)
+	htmlRes = render_to_string('TablaPendientes.html', {'Pendientes':ListPendientes}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
 
 
@@ -117,8 +117,8 @@ def SavePartidasxFactura(request):
 		Ext_Costo = Ext_PendienteEnviar_Costo.objects.get(IDPendienteEnviar = Viaje.IDPendienteEnviar)
 		Ext_Costo.IsFacturaProveedor = True
 		Ext_Costo.save()
-	PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0", ['Finalizado'])
-	htmlRes = render_to_string('TablaPendientes.html', {'pendientes':PendingToSend}, request = request,)
+	PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0", ['FINALIZADO'])
+	htmlRes = render_to_string('TablaPendientes.html', {'Pendientes':PendingToSend}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
 
 

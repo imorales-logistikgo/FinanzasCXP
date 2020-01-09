@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class ReportecanceladasConfig(AppConfig):
+class ReporteCanceladasConfig(AppConfig):
     name = 'ReporteCanceladas'

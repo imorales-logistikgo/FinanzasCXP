@@ -30,8 +30,8 @@ def FacturasToList(Facturas):
 		Factura["Status"] = Fact.Status
 		Factura['Total'] = Fact.Total
 		Factura['Viajes'] = ''
-		for Pendiente in conFacturaxPartidas:
-			Factura['Viajes'] += Pendiente.IDPendienteEnviar.Folio + ", "
+		for PENDIENTE in conFacturaxPartidas:
+			Factura['Viajes'] += PENDIENTE.IDPendienteEnviar.Folio + ", "
 		Factura['Viajes'] = Factura['Viajes'][:-2]
 		listFacturas.append(Factura)
 	return listFacturas
@@ -40,10 +40,10 @@ def FacturasToList(Facturas):
 
 def GetContadores():
 	AllFacturas = list(FacturasxProveedor.objects.values("Status").all())
-	ContadorPendientes = len(list(filter(lambda x: x["Status"] == "Pendiente", AllFacturas)))
-	ContadorPagadas = len(list(filter(lambda x: x["Status"] == "Pagada", AllFacturas)))
-	ContadorAbonadas = len(list(filter(lambda x: x["Status"] == "Abonada", AllFacturas)))
-	ContadorCanceladas = len(list(filter(lambda x: x["Status"] == "Cancelada", AllFacturas)))
+	ContadorPendientes = len(list(filter(lambda x: x["Status"] == "PENDIENTE", AllFacturas)))
+	ContadorPagadas = len(list(filter(lambda x: x["Status"] == "PAGADA", AllFacturas)))
+	ContadorAbonadas = len(list(filter(lambda x: x["Status"] == "ABONADA", AllFacturas)))
+	ContadorCanceladas = len(list(filter(lambda x: x["Status"] == "CANCELADA", AllFacturas)))
 	return ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas
 
 

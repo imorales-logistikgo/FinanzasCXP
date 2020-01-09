@@ -473,7 +473,7 @@ function formatDataTableFacturas(){
       "mRender": function (data, type, full) {
         isAuth = $('input[name="EvidenciaXML"]').data("isautorizada");
         idfac = $('input[name="EvidenciaXML"]').data("facturaid");
-        return (full[10] != 'cancelada'.toUpperCase() && full[10] != 'pagada'.toUpperCase() ? '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'"/>': '');
+        return (full[10] != 'CANCELADA'.toUpperCase() && full[10] != 'PAGADA'.toUpperCase() ? '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'"/>': '');
       }
     },
     {
@@ -526,7 +526,7 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 13,
       "mRender": function (data, type, full) {
-       return ( full[10] == 'pendiente'.toUpperCase() && isAuth != 'True' ? '<button type ="button" title="Aprobar" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'');
+       return ( full[10] == 'PENDIENTE'.toUpperCase() && isAuth != 'True' ? '<button type ="button" title="Aprobar" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'');
      }
     },
     {
@@ -534,7 +534,7 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 14,
       "mRender": function (data, type, full) {
-       return ( full[10] === 'pendiente'.toUpperCase() ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" title="Eliminar"><i class="flaticon-delete"></i></button>':'');
+       return ( full[10] === 'PENDIENTE'.toUpperCase() ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" title="Eliminar"><i class="flaticon-delete"></i></button>':'');
       }
     }
    ]

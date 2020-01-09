@@ -1,6 +1,6 @@
 from django.db import models
 from PendientesEnviar.models import FacturasxProveedor
-from users.models import User
+from usersadmon.models import AdmonUsuarios
 
 class PagosxFacturas(models.Model):
     IDPagoxFactura = models.AutoField(primary_key=True)
@@ -26,8 +26,8 @@ class PagosxProveedor(models.Model):
     TipoCambio = models.DecimalField(default=1, max_digits=10, decimal_places=5)
     NombreCortoProveedor = models.CharField(max_length=100)
     Status = models.CharField(max_length=15)
-    IDUsuarioAlta = models.ForeignKey(User, on_delete=models.CASCADE, db_column = 'IDUsuarioAlta', related_name = "IDUsuarioAlta")
-    IDUsuarioBaja = models.ForeignKey(User, on_delete=models.CASCADE, db_column = 'IDUsuarioBaja', related_name = "IDUsuarioBaja", null=True)
+    IDUsuarioAlta = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column = 'IDUsuarioAlta', related_name = "IDUsuarioAlta")
+    IDUsuarioBaja = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column = 'IDUsuarioBaja', related_name = "IDUsuarioBaja", null=True)
     IDProveedor = models.IntegerField(default=0)
     ComentarioBaja = models.CharField(max_length=500, default = "")
 

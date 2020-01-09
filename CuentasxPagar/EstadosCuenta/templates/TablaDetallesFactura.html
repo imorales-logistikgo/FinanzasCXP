@@ -12,14 +12,14 @@
    <th>Total</th>
  </thead>
  <tbody>
-  {% for Pendiente in Pendientes %}
+  {% for PENDIENTE in Pendientes %}
   <tr>
-   <td>{{Pendiente.Folio|safe}}</td>
-   <td>{{Pendiente.FechaDescarga|date:'Y/m/d'|safe}}</td>
-   <td>${{Pendiente.Subtotal|floatformat:"2"|intcomma|safe}}</td>
-   <td>${{Pendiente.IVA|floatformat:"2"|intcomma|safe}}</td>
-   <td>${{Pendiente.Retencion|floatformat:"2"|intcomma|safe}}</td>
-   <td>${{Pendiente.Total|floatformat:"2"|intcomma|safe}}</td>
+   <td>{{PENDIENTE.Folio|safe}}</td>
+   <td>{{PENDIENTE.FechaDescarga|date:'Y/m/d'|safe}}</td>
+   <td>${{PENDIENTE.Subtotal|floatformat:"2"|intcomma|safe}}</td>
+   <td>${{PENDIENTE.IVA|floatformat:"2"|intcomma|safe}}</td>
+   <td>${{PENDIENTE.Retencion|floatformat:"2"|intcomma|safe}}</td>
+   <td>${{PENDIENTE.Total|floatformat:"2"|intcomma|safe}}</td>
  </tr>
  {%endfor%}
 </tbody>

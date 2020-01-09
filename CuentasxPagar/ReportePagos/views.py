@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 
 def ReportePagos(request):
-	Pagos = PagosxProveedor.objects.exclude(Status = "Cancelada")
+	Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA")
 	Folios = list()
 	for Pago in Pagos:
 		FoliosFactura = ""
@@ -27,9 +27,9 @@ def GetPagosByFilters(request):
 	if "Year" in request.GET:
 		arrMonth = json.loads(request.GET["arrMonth"])
 		Year = request.GET["Year"]
-		Pagos = PagosxProveedor.objects.filter(FechaPago__month__in = arrMonth, FechaPago__year = Year).exclude(Status = "Cancelada")
+		Pagos = PagosxProveedor.objects.filter(FechaPago__month__in = arrMonth, FechaPago__year = Year).exclude(Status = "CANCELADA")
 	else:
-		Pagos = PagosxProveedor.objects.filter(FechaPago__range = [datetime.datetime.strptime(request.GET["FechaPagoDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaPagoHasta"],'%m/%d/%Y')]).exclude(Status = "Cancelada")
+		Pagos = PagosxProveedor.objects.filter(FechaPago__range = [datetime.datetime.strptime(request.GET["FechaPagoDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaPagoHasta"],'%m/%d/%Y')]).exclude(Status = "CANCELADA")
 	if Proveedores:
 		Pagos = Pagos.filter(NombreCortoProveedor__in = Proveedores)
 	Folios = list()
@@ -49,12 +49,12 @@ def CancelarPago(request):
 	for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago).select_related('IDFactura'):
 		Factura.IDFactura.Saldo += Factura.IDPagoxFactura.Total
 		if Factura.IDFactura.Saldo == Factura.IDFactura.Total:
-			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura.IDFactura).Status = "Pendiente"
+			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura.IDFactura).Status = "PENDIENTE"
 		else:
-			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura.IDFactura).Status = "Abonada"
+			View_FacturasxProveedor.objects.get(IDFactura = Factura.IDFactura.IDFactura).Status = "ABONADA"
 		Factura.IDFactura.save()
 	Pago = PagosxProveedor.objects.get(IDPago = IDPago)
-	Pago.Status = "CANCELADAS"
+	Pago.Status = "CanceladaS"
 	Pago.IDUsuarioBaja = request.user
 	Pago.FechaBaja = datetime.datetime.now()
 	Pago.save()
