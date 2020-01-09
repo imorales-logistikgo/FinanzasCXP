@@ -667,7 +667,7 @@ function SavePartidasxFactura(IDFactura) {
   var arrPendientes = [];
   var currentIDPending = 0;
   $("#TablePendientesEnviar input[name=checkPE]:checked").each(function () {
-    currentIDPending = $($(this).parents('tr')[0]).data('idPendienteenviar');
+    currentIDPending = $($(this).parents('tr')[0]).data('idpendienteenviar');
     if(!arrPendientes.includes(currentIDPending))
       arrPendientes.push(currentIDPending);
   });
