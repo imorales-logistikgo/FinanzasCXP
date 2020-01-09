@@ -1,4 +1,5 @@
 from django.db import models
+from usersadmon.models import AdmonUsuarios
 
 class PendientesEnviar(models.Model):
     IDPendienteEnviar = models.AutoField(primary_key=True)
@@ -105,6 +106,8 @@ class FacturasxProveedor(models.Model):
     Comentarios = models.CharField(max_length=500)
     TotalConvertido = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     Status = models.CharField(max_length=15, default="PENDIENTE")
+    IDUsuarioAlta = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column = 'IDUsuarioAlta', related_name = "IDUsuarioAltaFactura")
+    IDUsuarioBaja = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column = 'IDUsuarioBaja', related_name = "IDUsuarioBajaFactura", null=True)
 
     # def __str__(self):
     #     return str(self.IDFactura)
@@ -131,8 +134,6 @@ class RelacionFacturaProveedorxPartidas(models.Model):
     IDFacturaxProveedor = models.ForeignKey(FacturasxProveedor, on_delete=models.CASCADE, db_column = 'IDFacturaxProveedor', related_name='FacturaxPartidas')
     IDPartida = models.ForeignKey(PartidaProveedor, on_delete=models.CASCADE, db_column = 'IDPartida')
     IDPendienteEnviar = models.ForeignKey(PendientesEnviar, on_delete=models.CASCADE, db_column = 'IDPendienteEnviar')
-    IDUsuarioAlta = models.IntegerField(default=0)
-    IDUsuarioBaja = models.IntegerField(default=0)
 
     class Meta:
         db_table = "RelacionFacturaProveedorxPartidas"

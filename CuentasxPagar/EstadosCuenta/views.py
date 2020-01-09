@@ -94,6 +94,7 @@ def CancelarFactura(request):
 	conRelacionFacturaProveedorxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = IDFactura)
 	if conRelacionFacturaProveedorxPartidas:
 		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.Status = 'CANCELADA'
+		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.IDUsuarioBaja = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
 		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.save()
 		for Partida in conRelacionFacturaProveedorxPartidas:
 			Partida.IDPartida.IsActiva = False
