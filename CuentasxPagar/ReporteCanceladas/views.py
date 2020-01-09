@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 
 def ReporteCanceladas(request):
-	Canceladas = FacturasxProveedor.objects.filter(Status = 'CANCELADA')
+	Canceladas = FacturasxProveedor.objects.defer("IDUsuarioAlta").filter(Status = 'CANCELADA').select_related('IDUsuarioBaja')
 	listFacturas = CanceladasToList(Canceladas)
 	Proveedores = Proveedor.objects.all()
 	return render(request, 'ReporteCanceladas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores, 'Rol': request.user.roles})
@@ -31,6 +31,7 @@ def CanceladasToList(Canceladas):
 		Factura["IVA"] = CANCELADA.IVA
 		Factura["Retencion"] = CANCELADA.Retencion
 		Factura['Total'] = CANCELADA.Total
+		Factura['IDUsuarioBaja'] = CANCELADA.IDUsuarioBaja.nombre
 		Factura['Viajes'] = ''
 		for PENDIENTE in conFacturaxPartidas:
 			Factura['Viajes'] += PENDIENTE.IDPendienteEnviar.Folio + ", "

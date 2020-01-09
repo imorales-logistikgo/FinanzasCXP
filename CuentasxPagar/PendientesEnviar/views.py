@@ -1,7 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from PendientesEnviar.models import View_PendientesEnviarCxP, FacturasxProveedor, PartidaProveedor, RelacionFacturaProveedorxPartidas, PendientesEnviar, Ext_PendienteEnviar_Costo
-from usersadmon.models import Proveedor
+from usersadmon.models import Proveedor, AdmonUsuarios
 from django.core import serializers
 from django.template.loader import render_to_string
 import json, datetime
@@ -91,6 +91,7 @@ def SaveFacturaxProveedor(request):
 	newFactura.Comentarios = jParams["Comentarios"]
 	newFactura.RutaXML = jParams["RutaXML"]
 	newFactura.RutaPDF = jParams["RutaPDF"]
+	newFactura.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
 	newFactura.save()
 	return HttpResponse(newFactura.IDFactura)
 
