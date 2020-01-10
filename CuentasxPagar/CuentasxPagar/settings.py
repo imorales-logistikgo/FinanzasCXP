@@ -171,7 +171,7 @@ SESSION_COOKIE_AGE = 21600
 #LOGOUT_REDIRECT_URL = "/Usuario/Login/"
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = '****'
-EMAIL_HOST_PASSWORD = '****'
+EMAIL_HOST_USER = 'noreply@logistikgo.com'
+EMAIL_HOST_PASSWORD = 's]82w\s.P>Rg'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

@@ -201,19 +201,17 @@ def CheckFolioDuplicado(request):
 
 
 def EnviarCorreoProveedor(request):
-	nombre=request.user.name
 	context={
-		'news': 'correo para'+str(nombre)
-
+		'nombre': request.user.name
 	}
 	template_name='email.html'
-	text="Debes ingresar para subir tus complementos"#html_content=render_to_string(template_name, context)
-	subject='correo prueba'+str(test)
-	from_email='pricing@logisti-k.com.mx'
+	html_content=render_to_string("CorreoProveedor.html", context)
+	subject='Subir complementos de pago'
+	from_email='noreply@logisti-k.com.mx'
 	to='dtorres@logisti-k.com.mx'
 
 	msg = EmailMessage(subject, html_content, from_email, [to])
-	msg.content_subtype = "text"  # Main content is now text/html
+	msg.content_subtype = "html"  # Main content is now text/html
 	msg.send()
 
 	return HttpResponse('Mail successfully sent')

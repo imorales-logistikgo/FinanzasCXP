@@ -748,3 +748,39 @@ var fnCheckFolio = function () {
     console.log("no success!");
   });
 }
+
+function EnviarCorreoProveedor() {
+  jParams = {};
+  fetch("/EstadosdeCuenta/EnviarCorreoProveedor", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken"),
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(jParams)
+  }).then(function(response){
+
+    if(response.status == 200)
+    {
+      Swal.fire({
+        type: 'success',
+        title: 'Se ha enviado un correo al proveedor',
+        showConfirmButton: false,
+        timer: 2500
+      })
+    }
+    else if(response.status == 500)
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'No pudo enviarse correo al proveedor',
+        showConfirmButton: false,
+        timer: 2500
+      })
+    }
+  }).catch(function(ex){
+    console.log("no success!");
+  });
+}
