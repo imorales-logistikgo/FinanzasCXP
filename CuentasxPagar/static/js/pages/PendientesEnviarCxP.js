@@ -28,7 +28,6 @@ $(document).on( 'change', 'input[name="checkPE"]', function () {
   {
     adddatos();
     ContadorCheck(input, btnSubir);
-
   }
 });
 
