@@ -22,7 +22,34 @@ $(document).ready(function(){
 
 
   $('input[name="FiltroFechaReportePagosCancelados"]').daterangepicker({
-   autoUpdateInput: false
+   autoUpdateInput: false,
+   showDropdowns:true,
+   autoApply:true,
+   locale: {
+       daysOfWeek: [
+           "Do",
+           "Lu",
+           "Ma",
+           "Mi",
+           "Ju",
+           "Vi",
+           "Sa"
+       ],
+       monthNames: [
+           "Enero",
+           "Febrero",
+           "Marzo",
+           "Abril",
+           "Mayo",
+           "Junio",
+           "Julio",
+           "Agosto",
+           "Septiembre",
+           "Octubre",
+           "Noviembre",
+           "Diciembre"
+       ],
+   }
  });
 
   $('input[name="FiltroFechaReportePagosCancelados"]').on('apply.daterangepicker', function(ev, picker) {

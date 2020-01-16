@@ -149,6 +149,33 @@ $('input[name="Total"]').on('change', function(e){
 //Filtro Rango fecha
 $('input[name="FiltroFecha"]').daterangepicker({
  autoUpdateInput: false,
+ showDropdowns:true,
+ autoApply:true,
+ locale: {
+       daysOfWeek: [
+           "Do",
+           "Lu",
+           "Ma",
+           "Mi",
+           "Ju",
+           "Vi",
+           "Sa"
+       ],
+       monthNames: [
+           "Enero",
+           "Febrero",
+           "Marzo",
+           "Abril",
+           "Mayo",
+           "Junio",
+           "Julio",
+           "Agosto",
+           "Septiembre",
+           "Octubre",
+           "Noviembre",
+           "Diciembre"
+       ],
+   }
 });
 
 $('input[name="FiltroFecha"]').on('apply.daterangepicker', function(ev, picker) {
@@ -159,7 +186,6 @@ $('input[name="FiltroFecha"]').on('apply.daterangepicker', function(ev, picker) 
 $("#kt_select2_3").select2({
   placeholder: "Proveedor"
 });
-
 
 //Fechas modal
 $('#kt_modal_2').on('shown.bs.modal', function(){
@@ -184,9 +210,9 @@ $('#kt_modal_2').on('shown.bs.modal', function(){
 //var FechaVen = fechaVencimineto("#FechaRevision");
 //  $("#FechaVencimiento").datepicker('setDate', FechaVen);
 
-  //$('#FechaVencimiento').prop('disabled', true);
-				//KTUppy.init()
-      });
+//$('#FechaVencimiento').prop('disabled', true);
+//KTUppy.init()
+});
 
 $('#FechaRevision').on('change', function(){
   if($("#FechaRevision").val() < $("#FechaFactura").val())
