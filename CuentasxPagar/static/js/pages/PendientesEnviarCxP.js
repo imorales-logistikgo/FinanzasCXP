@@ -28,7 +28,6 @@ $(document).on( 'change', 'input[name="checkPE"]', function () {
   {
     adddatos();
     ContadorCheck(input, btnSubir);
-
   }
 });
 
@@ -166,7 +165,8 @@ $("#kt_select2_3").select2({
 $('#kt_modal_2').on('shown.bs.modal', function(){
   $('#FechaFactura').datepicker({
     format: 'yyyy/mm/dd',
-    todayHighlight: true
+    todayHighlight: true,
+    endDate: '+0d',
   });
   $("#FechaFactura").datepicker('setDate', 'today' );
   $('#FechaRevision').datepicker({
@@ -189,6 +189,11 @@ $('#kt_modal_2').on('shown.bs.modal', function(){
       });
 
 $('#FechaRevision').on('change', function(){
+  if($("#FechaRevision").val() < $("#FechaFactura").val())
+  {
+    alertToastError("La fecha de revision no puede ser antes que la fecha de factura");
+    $("#FechaRevision").datepicker('setDate', $("#FechaFactura").val() )
+  }
   $('#FechaVencimiento').datepicker({
     format: 'yyyy/mm/dd',
   });
