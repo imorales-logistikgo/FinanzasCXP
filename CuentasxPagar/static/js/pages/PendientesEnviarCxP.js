@@ -193,19 +193,22 @@ $('#kt_modal_2').on('shown.bs.modal', function(){
     format: 'yyyy/mm/dd',
     todayHighlight: true,
     endDate: '+0d',
+    language: 'es'
   });
   $("#FechaFactura").datepicker('setDate', 'today' );
   $('#FechaRevision').datepicker({
     format: 'yyyy/mm/dd',
     todayHighlight: true,
+    language: 'es'
   });
   $("#FechaRevision").datepicker('setDate', 'today' );
 
   $('#FechaVencimiento').datepicker({
    format: 'yyyy/mm/dd',
    todayHighlight: true,
+   language: 'es',
    changeMonth: true,
-   changeYear: true
+   changeYear: true,
  });
 //var FechaVen = fechaVencimineto("#FechaRevision");
 //  $("#FechaVencimiento").datepicker('setDate', FechaVen);
@@ -222,6 +225,7 @@ $('#FechaRevision').on('change', function(){
   }
   $('#FechaVencimiento').datepicker({
     format: 'yyyy/mm/dd',
+    language: 'es'
   });
   $("#FechaVencimiento").datepicker('setDate', fechaVencimineto("#FechaRevision"));
 });
@@ -851,13 +855,17 @@ function BuscarFolioProveedor() {
       $('#contenedorSubirArchivosproveedor').css("display", "block");
       $('#FechaFacturaP').datepicker({
         format: 'yyyy/mm/dd',
-        todayHighlight: true
+        todayHighlight: true,
+        language:'es'
       });
+
       $("#FechaFacturaP").datepicker('setDate', 'today' );
       $('#FechaRevisionP').datepicker({
         format: 'yyyy/mm/dd',
         todayHighlight: true,
+        language: 'es'
       });
+
       $("#FechaRevisionP").datepicker('setDate', 'today' );
       $('#FechaVencimientoP').prop('disabled', true);
       $('#FechaVencimientoP').datepicker({

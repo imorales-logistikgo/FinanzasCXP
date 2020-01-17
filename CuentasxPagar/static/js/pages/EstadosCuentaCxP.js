@@ -91,7 +91,8 @@ $(document).on('click', '.btnAprobarFactura',function(){
 $('#modalSubirPagos').on('shown.bs.modal', function(){
   $('#FechaPago').datepicker({
     format: 'yyyy/mm/dd',
-    todayHighlight: true
+    todayHighlight: true,
+    language: 'es'
   });
   $("#FechaPago").datepicker('setDate', 'today' );
 
@@ -520,14 +521,14 @@ function formatDataTableFacturas(){
       "targets": [2,3]
     },
     {
-      "width": "5%",
-      "className": "text-center",
-      "targets": [9, 10]
-    },
-    {
       "className": "text-right",
       'width' : '5%',
       "targets": [4,5,6,7,8]
+    },
+    {
+      "width": "5%",
+      "className": "text-center",
+      "targets": [9, 10]
     },
     {
       "name": "Status",
