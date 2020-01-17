@@ -595,6 +595,8 @@ function getDetalleFactura()
 
 function getDetallePago()
 {
+  $('#totalPago').html('12,000.00');
+  $('#fechaPago').html('today');
   $('#verArchivoPDFPAgo').prop("href", "http://lgklataforma.blob.core.windows.net/evidencias/f8e459bb-6da8-4fa9-a9db-8f9292585939.pdf");
   $('#imgArchivoPDF').prop("src", "../static/img/pdf-2.png");
   $('#verArchivoXMLPAgo').prop("href", "http://lgklataforma.blob.core.windows.net/evidencias/0a2228ec-ffe0-4808-957f-df08dc5b4107.xml");
