@@ -354,7 +354,7 @@ function subirComplementoPagoProveedor(totalPago)
            var uppyDashboard = Uppy.Core({
              autoProceed: false,
              restrictions: {
-              maxFileSize: 5000000, // 5mb
+              maxFileSize: 4200000, // 5mb
               maxNumberOfFiles: 2,
               minNumberOfFiles: 2,
              allowedFileTypes:['.pdf', '.xml']

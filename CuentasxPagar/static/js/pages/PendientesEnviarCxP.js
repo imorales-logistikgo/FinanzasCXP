@@ -367,7 +367,7 @@ function LimpiarModalSF()
          var uppyDashboard = Uppy.Core({
            autoProceed: false,
            restrictions: {
-						maxFileSize: 5000000, // 5mb
+						maxFileSize: 4200000, // 5mb
 						maxNumberOfFiles: 2,
 						minNumberOfFiles: 2,
            allowedFileTypes:['.pdf', '.xml']
@@ -921,7 +921,7 @@ function formatDataTable() {
       "targets": 1
     },
     {
-      "width": "10%",
+      //"width": "20%",
       "className": "dt-head-center dt-body-center",
       "targets": [2,3]
     },
@@ -987,7 +987,7 @@ function archivosproveedor()
          var uppyDashboard = Uppy.Core({
            autoProceed: false,
            restrictions: {
-  						maxFileSize: 5000000, // 5mb
+  						maxFileSize: 4200000, // 5mb
   						maxNumberOfFiles: 2,
   						minNumberOfFiles: 2,
              allowedFileTypes:['.pdf', '.xml']

@@ -54,7 +54,7 @@ return cont;
          var uppyDashboard1 = Uppy.Core({
            autoProceed: false,
            restrictions: {
-						maxFileSize: 5000000, // 5mb
+						maxFileSize: 4200000, // 5mb
 						maxNumberOfFiles: 1,
 						minNumberOfFiles: 1,
            allowedFileTypes:['.pdf', '.xml', 'image/*']
