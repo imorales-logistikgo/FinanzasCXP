@@ -18,7 +18,8 @@ def EstadosdeCuenta(request):
 	for Factura in ListaFacturas:
 		FoliosPago = ""
 		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura["IDFactura"]).select_related('IDPago'):
-			FoliosPago += Pago.IDPago.Folio + ", "
+			if Pago.IDPago.Status != "CANCELADA":
+				FoliosPago += Pago.IDPago.Folio + ", "
 		FoliosPago = FoliosPago[:-2]
 		Folios.append(FoliosPago)
 	ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas = GetContadores()
