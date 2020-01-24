@@ -73,7 +73,7 @@ def GetDetallesPago(request):
 		Pago["FechaFactura"] = FacturaxPago.IDFactura.FechaFactura
 		Pago["Total"] = FacturaxPago.IDPagoxFactura.Total
 		Facturas.append(Pago)
-	htmlRes = render_to_string('TablaDetallesPago.html', {'Facturas':Facturas}, request = request,)
+	htmlRes = render_to_string('TablaDetallesReportePago.html', {'Facturas':Facturas}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
 
 def SaveComplementosPago(request):
