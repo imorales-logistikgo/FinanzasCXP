@@ -10,4 +10,5 @@ urlpatterns = [
     path('CheckFolioDuplicado', views.CheckFolioDuplicado, name='CheckFolioDuplicado'),
     path('ValidarFactura', views.ValidarFactura, name='ValidarFactura'),
     path('EnviarCorreoProveedor', views.EnviarCorreoProveedor, name='EnviarCorreoProveedor'),
+    path('GetDetallesPago', views.GetDetallesPago, name='GetDetallesPago'),
 ]

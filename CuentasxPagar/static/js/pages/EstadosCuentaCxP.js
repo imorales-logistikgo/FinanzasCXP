@@ -13,6 +13,8 @@ $(document).ready(function()
 formatDataTableFacturas();
 
 $('#TableEstadosdeCuenta').css("display", "block");
+
+$(document).on('click', '.btnDetallePago', fnGetDetallePago);
 // table.columns.adjust().draw();
 //ejecuta varias funciones cada que el checkbox es seleccionado en la tabla estados de cuenta
 $(document).on( 'change', 'input[name="checkEC"]', function () {
@@ -810,6 +812,27 @@ function EnviarCorreoProveedor() {
         timer: 2500
       })
     }
+  }).catch(function(ex){
+    console.log("no success!");
+  });
+}
+
+var fnGetDetallePago = function () {
+  var IDFactura = $(this).parents('tr').data('idfactura');
+  WaitMe_Show('#divTableDetallesPago');
+
+  fetch("/EstadosdeCuenta/GetDetallesPago?IDFactura=" + IDFactura, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    return response.clone().json();
+  }).then(function(data){
+    WaitMe_Hide('#divTableDetallesPago');
+    $('#divTableDetallesPago').html(data.htmlRes);
   }).catch(function(ex){
     console.log("no success!");
   });

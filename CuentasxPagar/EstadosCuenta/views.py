@@ -216,3 +216,18 @@ def EnviarCorreoProveedor(request):
 	msg.send()
 
 	return HttpResponse('Mail successfully sent')
+
+
+
+def GetDetallesPago(request):
+	IDFactura = request.GET["IDFactura"]
+	FacturasxPago = RelacionPagosFacturasxProveedor.objects.filter(IDFactura = IDFactura).select_related('IDPago').select_related('IDPagoxFactura')
+	Facturas = list()
+	for FacturaxPago in FacturasxPago:
+		Pago = {}
+		Pago["FolioPago"] = FacturaxPago.IDPago.Folio
+		Pago["FechaFactura"] = FacturaxPago.IDFactura.FechaFactura
+		Pago["Total"] = FacturaxPago.IDPagoxFactura.Total
+		Facturas.append(Pago)
+	htmlRes = render_to_string('TablaDetallesPago.html', {'Facturas':Facturas}, request = request,)
+	return JsonResponse({'htmlRes' : htmlRes})
