@@ -226,7 +226,7 @@ def GetDetallesPago(request):
 	for FacturaxPago in FacturasxPago:
 		Pago = {}
 		Pago["FolioPago"] = FacturaxPago.IDPago.Folio
-		Pago["FechaFactura"] = FacturaxPago.IDFactura.FechaFactura
+		Pago["FechaPago"] = FacturaxPago.IDPago.FechaPago
 		Pago["Total"] = FacturaxPago.IDPagoxFactura.Total
 		Facturas.append(Pago)
 	htmlRes = render_to_string('TablaDetallesPago.html', {'Facturas':Facturas}, request = request,)
