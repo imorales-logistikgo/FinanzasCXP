@@ -8,11 +8,18 @@ from django.contrib.auth.decorators import login_required
 @login_required
 
 def ReporteFacturas(request):
-	Facturas = FacturasxProveedor.objects.all()
-	listFacturas = FacturasToList(Facturas)
-	ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
-	Proveedores = Proveedor.objects.all()
-	return render(request, 'ReporteFacturas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'Rol': request.user.roles})
+	if request.user.roles == 'Proveedor':
+		Facturas = FacturasxProveedor.objects.filter(IDProveedor = request.user.idusuario)
+		listFacturas = FacturasToList(Facturas)
+		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
+		Proveedores = Proveedor.objects.all()
+		return render(request, 'ReporteFacturas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'Rol': request.user.roles})
+	else:
+		Facturas = FacturasxProveedor.objects.all()
+		listFacturas = FacturasToList(Facturas)
+		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
+		Proveedores = Proveedor.objects.all()
+		return render(request, 'ReporteFacturas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'Rol': request.user.roles})
 
 
 

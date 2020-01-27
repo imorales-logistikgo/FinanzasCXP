@@ -12,19 +12,22 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def EstadosdeCuenta(request):
-	result = View_FacturasxProveedor.objects.filter(Q(Status = "PENDIENTE") | Q(Status = "ABONADA"))
-	ListaFacturas = FacturasToList(result)
-	Folios = list()
-	for Factura in ListaFacturas:
-		FoliosPago = ""
-		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura["IDFactura"]).select_related('IDPago'):
-			if Pago.IDPago.Status != "CANCELADA":
-				FoliosPago += Pago.IDPago.Folio + ", "
-		FoliosPago = FoliosPago[:-2]
-		Folios.append(FoliosPago)
-	ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas = GetContadores()
-	Proveedores = Proveedor.objects.all()
-	return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Proveedores': Proveedores, 'Folios': Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas, 'Rol': request.user.roles})
+	if request.user.roles == 'Proveedor':
+		 return render(request, '404.html')
+	else:
+		result = View_FacturasxProveedor.objects.filter(Q(Status = "PENDIENTE") | Q(Status = "ABONADA"))
+		ListaFacturas = FacturasToList(result)
+		Folios = list()
+		for Factura in ListaFacturas:
+			FoliosPago = ""
+			for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura["IDFactura"]).select_related('IDPago'):
+				if Pago.IDPago.Status != "CANCELADA":
+					FoliosPago += Pago.IDPago.Folio + ", "
+			FoliosPago = FoliosPago[:-2]
+			Folios.append(FoliosPago)
+		ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas = GetContadores()
+		Proveedores = Proveedor.objects.all()
+		return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Proveedores': Proveedores, 'Folios': Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas, 'Rol': request.user.roles})
 
 
 
