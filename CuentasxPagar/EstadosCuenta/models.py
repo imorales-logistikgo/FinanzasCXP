@@ -51,6 +51,7 @@ class View_FacturasxProveedor(models.Model):
     IDFactura = models.IntegerField(primary_key=True)
     Folio = models.CharField(max_length=50)
     Proveedor = models.CharField(max_length=100)
+    IDProveedor = models.IntegerField(default=0)
     FechaFactura = models.DateTimeField()
     Subtotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     IVA = models.DecimalField(default=0, max_digits=30, decimal_places=5)

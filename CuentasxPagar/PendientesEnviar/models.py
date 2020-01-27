@@ -90,6 +90,7 @@ class FacturasxProveedor(models.Model):
     IDFactura = models.AutoField(primary_key=True)
     Folio = models.CharField(max_length=50, unique=True)
     NombreCortoProveedor = models.CharField(max_length=100)
+    IDProveedor = models.IntegerField(default=0)
     FechaFactura = models.DateTimeField()
     FechaRevision = models.DateTimeField()
     FechaVencimiento = models.DateTimeField()
