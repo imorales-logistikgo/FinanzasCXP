@@ -125,7 +125,7 @@ def SavePartidasxFactura(request):
 
 
 def CheckFolioDuplicado(request):
-	IsDuplicated = FacturasxProveedor.objects.filter(Folio = request.GET["Folio"]).exists()
+	IsDuplicated = FacturasxProveedor.objects.filter(Folio = request.GET["Folio"]).exclude(Status = "CANCELADA").exists()
 	return JsonResponse({'IsDuplicated' : IsDuplicated})
 
 

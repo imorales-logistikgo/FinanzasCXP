@@ -88,7 +88,7 @@ class View_PendientesEnviarCxP(models.Model):
 
 class FacturasxProveedor(models.Model):
     IDFactura = models.AutoField(primary_key=True)
-    Folio = models.CharField(max_length=50, unique=True)
+    Folio = models.CharField(max_length=50)
     NombreCortoProveedor = models.CharField(max_length=100)
     IDProveedor = models.IntegerField(default=0)
     FechaFactura = models.DateTimeField()
