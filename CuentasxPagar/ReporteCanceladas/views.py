@@ -8,10 +8,14 @@ from django.contrib.auth.decorators import login_required
 @login_required
 
 def ReporteCanceladas(request):
-	Canceladas = FacturasxProveedor.objects.defer("IDUsuarioAlta").filter(Status = 'CANCELADA').select_related('IDUsuarioBaja')
-	listFacturas = CanceladasToList(Canceladas)
-	Proveedores = Proveedor.objects.all()
-	return render(request, 'ReporteCanceladas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores, 'Rol': request.user.roles})
+	if request.user.roles == 'Proveedor':
+	    return render(request, '404.html')
+	else:
+		Canceladas = FacturasxProveedor.objects.defer("IDUsuarioAlta").filter(Status = 'CANCELADA').select_related('IDUsuarioBaja')
+		listFacturas = CanceladasToList(Canceladas)
+		Proveedores = Proveedor.objects.all()
+		return render(request, 'ReporteCanceladas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores, 'Rol': request.user.roles})
+
 
 
 

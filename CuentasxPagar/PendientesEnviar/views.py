@@ -133,7 +133,7 @@ def CheckFolioDuplicado(request):
 def FindFolioProveedor(request):
 	Folio = request.GET["Folio"]
 	try:
-		PendienteEnviar = View_PendientesEnviarCxP.objects.get(Folio = Folio, IsFacturaProveedor = False, IDProveedor = request.user.idusuario, Status= 'FINALIZADO')
+		PendienteEnviar = View_PendientesEnviarCxP.objects.get(Folio = Folio, IsFacturaProveedor = False, IsEvidenciaFisica = True, IsEvidenciaDigital = True, IDProveedor = request.user.idusuario, Status= 'FINALIZADO')
 		return JsonResponse({'Found' : True, 'Folio' : PendienteEnviar.Folio, 'Proveedor' : PendienteEnviar.NombreProveedor, 'FechaDescarga' : PendienteEnviar.FechaDescarga, 'IDPendienteEnviar' : PendienteEnviar.IDPendienteEnviar, 'Subtotal': PendienteEnviar.Subtotal, 'IVA': PendienteEnviar.IVA, 'Retencion': PendienteEnviar.Retencion, 'Total' : PendienteEnviar.Total})
 	except:
 		return JsonResponse({'Found' : False})

@@ -8,16 +8,29 @@ from django.contrib.auth.decorators import login_required
 @login_required
 
 def ReportePagos(request):
-	Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA")
-	Folios = list()
-	for Pago in Pagos:
-		FoliosFactura = ""
-		for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago).select_related('IDFactura'):
-			FoliosFactura += Factura.IDFactura.Folio + ", "
-		FoliosFactura = FoliosFactura[:-2]
-		Folios.append(FoliosFactura)
-	Proveedores = Proveedor.objects.all()
-	return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores, 'Rol': request.user.roles});
+	if request.user.roles == 'Proveedor':
+		Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA").filter(IDProveedor = request.user.idusuario)
+		Folios = list()
+		for Pago in Pagos:
+			FoliosFactura = ""
+			for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago).select_related('IDFactura'):
+				FoliosFactura += Factura.IDFactura.Folio + ", "
+			FoliosFactura = FoliosFactura[:-2]
+			Folios.append(FoliosFactura)
+		Proveedores = Proveedor.objects.all()
+		return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores, 'Rol': request.user.roles});
+	else:
+		Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA")
+		Folios = list()
+		for Pago in Pagos:
+			FoliosFactura = ""
+			for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago).select_related('IDFactura'):
+				FoliosFactura += Factura.IDFactura.Folio + ", "
+			FoliosFactura = FoliosFactura[:-2]
+			Folios.append(FoliosFactura)
+		Proveedores = Proveedor.objects.all()
+		return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores, 'Rol': request.user.roles});
+
 
 
 
