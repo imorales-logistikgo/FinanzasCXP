@@ -121,9 +121,14 @@ function formatDataTable() {
           "width": "10%",
           "className": "dt-head-center dt-body-center"
       },
+      {
+        "targets": 1,
+        //"width": "15%",
+        "className": "dt-head-center dt-body-center"
+      },
 
       {
-        "targets": [1,2,3,4],
+        "targets": [2,3,4],
         "width": "15%",
         "className": "dt-head-center dt-body-center"
       },

@@ -1017,7 +1017,7 @@ function archivosproveedor()
 
 
          uppyDashboard.use(Dashboard, options);
-         uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
+         uppyDashboard.use(XHRUpload, { endpoint: 'http://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
   				//uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
           uppyDashboard.use(Webcam, {target: Dashboard});
           uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });

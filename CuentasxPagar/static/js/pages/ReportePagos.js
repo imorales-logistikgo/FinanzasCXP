@@ -204,9 +204,14 @@ $('#TableReportePagos').DataTable({
       "width": "10%",
       "className": "dt-head-center dt-body-center"
     },
+    {
+      "targets": 1,
+    //  "width": "10%",
+      "className": "dt-head-center dt-body-center"
+    },
 
     {
-      "targets": [1,2],
+      "targets": 2,
       "width": "10%",
       "className": "dt-head-center dt-body-center"
     },
