@@ -13,11 +13,11 @@ class UserManager(BaseUserManager):
     user = self.model(
         username=username,
         email=email,
-        is_staff=is_staff, 
+        is_staff=is_staff,
         is_active=True,
-        is_superuser=is_superuser, 
+        is_superuser=is_superuser,
         last_login=now,
-        date_joined=now, 
+        date_joined=now,
         **extra_fields
     )
     if is_superuser:
@@ -45,8 +45,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     roles = models.CharField(max_length=200,null=True, default="users")
-    idusuario= models.IntegerField(blank=True, null=True) 
-    
+    idusuario= models.IntegerField(blank=True, null=True)
+    IDTransportista= models.IntegerField(blank=True, null=True)
+
 
     USERNAME_FIELD = 'username'
     EMAIL_FIELD = 'email'

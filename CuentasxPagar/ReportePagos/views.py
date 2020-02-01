@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 def ReportePagos(request):
 	if request.user.roles == 'Proveedor':
-		Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA").filter(IDProveedor = request.user.idusuario)
+		Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA").filter(IDProveedor = request.user.IDTransportista)
 		Folios = list()
 		for Pago in Pagos:
 			FoliosFactura = ""
