@@ -916,7 +916,7 @@ function formatDataTable() {
        }
      },
      {
-      "width": "5%",
+      //"width": "5%",
       "className": "text-center bold",
       "targets": 1
     },
