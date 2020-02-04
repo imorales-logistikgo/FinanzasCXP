@@ -162,11 +162,16 @@ def CrearUsuariosTranportistas(request):
 			newUser.save()
 			prov.IDUsuarioAcceso = newUser.idusuario
 			prov.save()
-			user = User.User(username=prov.RFC)
-			user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
-			user.email = newUser.correo
-			user.idusuario = newUser.idusuario
-			user.is_staff = True
-			user.roles = "Proveedor"
-			user.IDTransportista = prov.IDTransportista
-			user.save()
+			try:
+				DjangoUser = User.User.objects.get(username=prov.RFC)
+				DjangoUser.IDTransportista = prov.IDTransportista
+				DjangoUser.idusuario = newUser.idusuario
+			except User.User.DoesNotExist:
+				user = User.User(username=prov.RFC)
+				user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
+				user.email = newUser.correo
+				user.idusuario = newUser.idusuario
+				user.is_staff = True
+				user.roles = "Proveedor"
+				user.IDTransportista = prov.IDTransportista
+				user.save()
