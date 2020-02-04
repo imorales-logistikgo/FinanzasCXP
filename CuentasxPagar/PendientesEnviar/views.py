@@ -2,10 +2,12 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from PendientesEnviar.models import View_PendientesEnviarCxP, FacturasxProveedor, PartidaProveedor, RelacionFacturaProveedorxPartidas, PendientesEnviar, Ext_PendienteEnviar_Costo
 from usersadmon.models import Proveedor, AdmonUsuarios
+from users import models as User
 from django.core import serializers
 from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q  
 
 @login_required
 def GetPendientesEnviar(request):
@@ -133,7 +135,38 @@ def CheckFolioDuplicado(request):
 def FindFolioProveedor(request):
 	Folio = request.GET["Folio"]
 	try:
-		PendienteEnviar = View_PendientesEnviarCxP.objects.get(Folio = Folio, IsFacturaProveedor = False, IsEvidenciaFisica = True, IsEvidenciaDigital = True, IDProveedor = request.user.idusuario, Status= 'FINALIZADO')
+		PendienteEnviar = View_PendientesEnviarCxP.objects.get(Folio = Folio, IsFacturaProveedor = False, IsEvidenciaFisica = True, IsEvidenciaDigital = True, IDProveedor = request.user.IDTransportista, Status= 'FINALIZADO')
 		return JsonResponse({'Found' : True, 'Folio' : PendienteEnviar.Folio, 'Proveedor' : PendienteEnviar.NombreProveedor, 'FechaDescarga' : PendienteEnviar.FechaDescarga, 'IDPendienteEnviar' : PendienteEnviar.IDPendienteEnviar, 'Subtotal': PendienteEnviar.Subtotal, 'IVA': PendienteEnviar.IVA, 'Retencion': PendienteEnviar.Retencion, 'Total' : PendienteEnviar.Total})
 	except:
 		return JsonResponse({'Found' : False})
+
+
+
+def CrearUsuariosTranportistas(request):
+	Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
+	for prov in Proveedores:
+		try:
+			oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
+		except AdmonUsuarios.DoesNotExist:
+			newUser = AdmonUsuarios()
+			newUser.nombre = prov.NombreComercial
+			newUser.nombreusuario = prov.RFC
+			newUser.correo = prov.Correo
+			newUser.fechacambiocontrasena = datetime.datetime.now()
+			newUser.hasbytes = 0
+			newUser.saltbytes = 0
+			newUser.periodo = 365
+			newUser.statusreg = "ACTIVO"
+			newUser.apepaterno = ""
+			newUser .apematerno = ""
+			newUser.save()
+			prov.IDUsuarioAcceso = newUser.idusuario
+			prov.save()
+			user = User.User(username=prov.RFC)
+			user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
+			user.email = newUser.correo
+			user.idusuario = newUser.idusuario
+			user.is_staff = True
+			user.roles = "Proveedor"
+			user.IDTransportista = prov.IDTransportista
+			user.save()

@@ -8,4 +8,5 @@ urlpatterns = [
 	path("SavePartidasxFactura", views.SavePartidasxFactura, name='SavePartidasxFactura'),
 	path("CheckFolioDuplicado", views.CheckFolioDuplicado, name='CheckFolioDuplicado'),
 	path("FindFolioProveedor", views.FindFolioProveedor, name='FindFolioProveedor'),
+	path("CrearUsuariosTranportistas", views.CrearUsuariosTranportistas, name='CrearUsuariosTranportistas'),
 ]
