@@ -212,7 +212,7 @@ def EnviarCorreoProveedor(request):
 	html_content=render_to_string("CorreoProveedor.html", context)
 	subject='Subir complementos de pago'
 	from_email='noreply@logisti-k.com.mx'
-	to='dtorres@logisti-k.com.mx'
+	to='jfraga@logisti-k.com.mx'
 
 	msg = EmailMessage(subject, html_content, from_email, [to])
 	msg.content_subtype = "html"  # Main content is now text/html

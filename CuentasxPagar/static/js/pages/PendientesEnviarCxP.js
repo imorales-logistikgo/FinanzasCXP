@@ -900,6 +900,9 @@ function formatDataTable() {
    {
      extend: 'excel',
      text: '<i class="fas fa-file-excel fa-lg"></i>',
+     exportOptions: {
+       columns: [ 0,1,2,3,4,5,6,7,8,9]
+     }
    }
    ],
 
