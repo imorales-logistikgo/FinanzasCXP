@@ -114,9 +114,13 @@ if (UserRol != 'Proveedor')
       "width": "10px",
       "className": "dt-head-center dt-body-center"
     },
-
     {
-      "targets": [1,2],
+      "targets": 1,
+      //"width": "15px",
+      "className": "dt-head-center dt-body-center"
+    },
+    {
+      "targets": 2,
       "width": "15px",
       "className": "dt-head-center dt-body-center"
     },

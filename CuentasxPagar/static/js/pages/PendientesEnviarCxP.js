@@ -916,7 +916,7 @@ function formatDataTable() {
        }
      },
      {
-      "width": "5%",
+      //"width": "5%",
       "className": "text-center bold",
       "targets": 1
     },
@@ -940,7 +940,6 @@ function formatDataTable() {
     {
       "width": "5%",
       "className": "dt-head-center dt-body-center",
-      "visible": false,
       "targets": 10,
       "mRender": function (data, type, full) {
         return (EvDigital != 'False' && full[9] == 'finalizado'.toUpperCase()  && EvFisica != 'False' ? '<a class="kt-badge kt-badge--info kt-badge--inline text-white" data-toggle="modal" data-target="#ModalVerEvidencias" data-backdrop="static" data-keyboard="false"><i class="flaticon2-image-file"></i></a>':'');
@@ -1017,7 +1016,7 @@ function archivosproveedor()
 
 
          uppyDashboard.use(Dashboard, options);
-         uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
+         uppyDashboard.use(XHRUpload, { endpoint: 'http://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
   				//uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
           uppyDashboard.use(Webcam, {target: Dashboard});
           uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });

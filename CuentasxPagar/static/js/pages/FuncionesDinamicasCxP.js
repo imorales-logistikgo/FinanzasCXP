@@ -217,7 +217,7 @@ function fechaVencimineto(fecha)
   var day = $(fecha).datepicker('getDate').getDate();
   var month = $(fecha).datepicker('getDate').getMonth() +1;
   var year = $(fecha).datepicker('getDate').getFullYear();
-
+console.log(day);
   if (month != 12)
   {
     var newMonth =  month + 1;

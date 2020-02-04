@@ -53,7 +53,8 @@ footer{
     width: 38px;
 }
 
-#estiloCheckbox {
+input[name="checkPE"],
+input[name="checkEC"] {
 	display: inline-block;
 	width: 15px;
 	height: 15px;
@@ -61,6 +62,16 @@ footer{
 	vertical-align: middle;
 	background-size: cover;
 	cursor: pointer;
+  transform: scale(1.4);
+-webkit-appearance: none;
+border: 2px solid #888888;
+}
+
+input[name="checkPE"]:checked,
+input[name="checkEC"]:checked
+{
+  background: url('/static/img/palomita2.png');
+  background-size: cover;
 }
 #see
 {

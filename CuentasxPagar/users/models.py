@@ -13,11 +13,11 @@ class UserManager(BaseUserManager):
     user = self.model(
         username=username,
         email=email,
-        is_staff=is_staff, 
+        is_staff=is_staff,
         is_active=True,
-        is_superuser=is_superuser, 
+        is_superuser=is_superuser,
         last_login=now,
-        date_joined=now, 
+        date_joined=now,
         **extra_fields
     )
     if is_superuser:
