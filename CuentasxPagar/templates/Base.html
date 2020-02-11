@@ -88,6 +88,7 @@ end:: Header Mobile -->
 						{% if Rol != "Proveedor" %}
 						<li class="kt-menu__item {% block activateReporteCanceladas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteCanceladas' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Facturas Canceladas</span></a></li>
 						<li class="kt-menu__item {% block activateReportePagosCancelados %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagosCancelados' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Pagos cancelados</span></a></li>
+						<li class="kt-menu__item {% block activateReporteMaster %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagosCancelados' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Pagos cancelados</span></a></li>
 						{% endif %}
 
 					</ul>

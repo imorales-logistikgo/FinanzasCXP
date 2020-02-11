@@ -210,6 +210,22 @@ function truncarDecimales (x, posiciones = 0) {
     }
 }
 
+function truncarDecimalesPE (x, posiciones = 0) {
+  var s = x.toString()
+    var l = s.length
+    var decimalLength = s.indexOf('.') + 1
+    if(decimalLength === 0)
+    {
+         var numStr = s
+         return Number(numStr)
+    }
+  else
+    {
+        var numStr = s.slice(0, decimalLength + posiciones)
+        return numStr;
+    }
+}
+
 
 function fechaVencimineto(fecha)
 {
