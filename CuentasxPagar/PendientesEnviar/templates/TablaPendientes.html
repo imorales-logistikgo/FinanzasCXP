@@ -41,10 +41,10 @@
 						<td style="font-weight: bold;">{{PENDIENTE.Folio|safe}}</td>
 						<td>{{PENDIENTE.NombreProveedor|safe}}</td>
 						<td>{{PENDIENTE.FechaDescarga|date:'Y/m/d'|safe}}</td>
-						<td>${{PENDIENTE.Subtotal|floatformat:"2"|intcomma|safe}}</td>
-						<td>${{PENDIENTE.IVA|floatformat:"2"|intcomma|safe}}</td>
-						<td>${{PENDIENTE.Retencion|floatformat:"2"|intcomma|safe}}</td>
-						<td>${{PENDIENTE.Total|floatformat:"2"|intcomma|safe}}</td>
+						<td>${{PENDIENTE.Subtotal|intcomma|safe}}</td>
+						<td>${{PENDIENTE.IVA|intcomma|safe}}</td>
+						<td>${{PENDIENTE.Retencion|intcomma|safe}}</td>
+						<td>${{PENDIENTE.Total|intcomma|safe}}</td>
 						<td>{{PENDIENTE.Moneda|safe}}</td>
 						<td id="status">{{PENDIENTE.Status|safe}}</td>
 						<!--<td><input id="isEvicencias" name="isEvicencias" type="hidden" value="{{PENDIENTE.IsEvidenciaDigital}}"></td>-->
