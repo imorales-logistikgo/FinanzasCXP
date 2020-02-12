@@ -7,7 +7,7 @@ from django.core import serializers
 from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q  
+from django.db.models import Q
 
 @login_required
 def GetPendientesEnviar(request):
@@ -94,6 +94,7 @@ def SaveFacturaxProveedor(request):
 	newFactura.RutaXML = jParams["RutaXML"]
 	newFactura.RutaPDF = jParams["RutaPDF"]
 	newFactura.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
+	newFactura.IDProveedor =  request.user.IDTransportista
 	newFactura.save()
 	return HttpResponse(newFactura.IDFactura)
 

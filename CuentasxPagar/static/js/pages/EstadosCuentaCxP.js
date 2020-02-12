@@ -525,7 +525,7 @@ function formatDataTableFacturas(){
     {
       "className": "text-right",
       'width' : '5%',
-      "targets": [4,5,6,7,8]z
+      "targets": [4,5,6,7,8]
     },
     {
       "width": "5%",
