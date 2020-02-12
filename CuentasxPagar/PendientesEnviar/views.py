@@ -35,6 +35,7 @@ def PendientesToList(PendingToSend):
 		Viaje["IDPendienteEnviar"] = Pend.IDPendienteEnviar
 		Viaje["IsEvidenciaFisica"] = Pend.IsEvidenciaFisica
 		Viaje["IsEvidenciaDigital"] = Pend.IsEvidenciaDigital
+		Viaje["IDProveedor"] = Pend.IDProveedor
 		ListPendientes.append(Viaje)
 	return ListPendientes
 
@@ -94,7 +95,7 @@ def SaveFacturaxProveedor(request):
 	newFactura.RutaXML = jParams["RutaXML"]
 	newFactura.RutaPDF = jParams["RutaPDF"]
 	newFactura.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
-	newFactura.IDProveedor =  request.user.IDTransportista
+	newFactura.IDProveedor =  jParams["IDProveedor"]
 	newFactura.save()
 	return HttpResponse(newFactura.IDFactura)
 

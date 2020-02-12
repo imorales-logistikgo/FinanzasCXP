@@ -1,6 +1,7 @@
 var table;
 var proveedor;
 var rutaComprobante;
+var idprov;
 $(document).ready(function()
 {
   var calculo =0;
@@ -376,6 +377,7 @@ function showDatosObtenidos(){
 //validacion mismo cliente en los checkbox
 function ValidacionCheckboxPagos(){
   var checked = $("input[name='checkEC']:checked");
+  idprov = $($(checked[0]).parents('tr')[0]).data("idproveedor");
   $("input[name=checkEC]:checked").each(function () {
    var check = table.row($(this).parents('tr')).data();
    if(checked.length > 1)
@@ -617,6 +619,7 @@ function savePagoxProveedor()  {
     Comentarios: $('#comentariosEC').val(),
     RutaComprobante: rutaComprobante,
     Proveedor: proveedor,
+    IDProveedor: idprov,
   }
 
   fetch("/EstadosdeCuenta/SavePagoxProveedor", {

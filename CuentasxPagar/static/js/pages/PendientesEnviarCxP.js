@@ -4,6 +4,7 @@ var moneda;
 var Ev;
 var EvDigital;
 var EvFisica;
+var idprov;
 //var idPendienteenviar;
 var table;
 var subtotal = 0, Tiva=0, TRetencion=0, total=0;
@@ -288,6 +289,7 @@ function mostrarTipoCambio()
 //validacion mismo cliente en los checkbox
 function FiltroCheckboxProveedor(){
   var checked = $("input[name='checkPE']:checked");
+  idprov = $($(checked[0]).parents('tr')[0]).data("idproveedor");
   $("input[name=checkPE]:checked").each(function () {
    var check = table.row($(this).parents('tr')).data();
    if(checked.length > 1)
@@ -563,6 +565,7 @@ function getDatos(){
       RutaPDF: $('#archivosProveedor').data("rutaarchivoPDF"),
       TipoCambio: 1,
       Comentarios: $('#txtComentariosP').val(),
+      IDProveedor: idprov,
     }
 
     fetch("/PendientesEnviar/SaveFactura", {
@@ -660,6 +663,7 @@ function saveFactura() {
     RutaPDF: $('#kt_uppy_1').data("rutaarchivoPDF"),
     TipoCambio: $('#txtTipoCambio').val(),
     Comentarios: $('#txtComentarios').val(),
+    IDProveedor:idprov,
   }
 
   fetch("/PendientesEnviar/SaveFactura", {

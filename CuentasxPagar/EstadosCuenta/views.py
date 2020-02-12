@@ -88,6 +88,7 @@ def FacturasToList(Facturas):
 		NuevaFactura["Status"] = Factura.Status
 		NuevaFactura["RutaXML"] = Factura.RutaXML
 		NuevaFactura["IsAutorizada"] = Factura.IsAutorizada
+		NuevaFactura["IDProveedor"] = Factura.IDProveedor
 		ListaFacturas.append(NuevaFactura)
 	return ListaFacturas
 
@@ -146,13 +147,7 @@ def SavePagoxProveedor(request):
 	newPago.TipoCambio = jParams["TipoCambio"]
 	newPago.NombreCortoProveedor = jParams["Proveedor"]
 	newPago.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
-	try:
-		Transportista = Proveedor.objects.get(NombreComercial = jParams["Proveedor"])
-		newPago.IDProveedor = Transportista.IDTransportista
-	except Proveedor.DoesNotExist:
-		pass
-	else:
-		newPago.IDProveedor = 0
+	newPago.IDProveedor = jParams["IDProveedor"]
 	newPago.save()
 	return HttpResponse(newPago.IDPago)
 
