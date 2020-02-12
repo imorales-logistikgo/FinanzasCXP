@@ -853,6 +853,7 @@ function BuscarFolioProveedor() {
       idPend = data.IDPendienteEnviar;
       totalViaje = data.Total;
       proveedor = data.Proveedor;
+      idprov = data.IDProveedor;
       $('#FolioConcepto').html(data.Folio);
       $('#ProveedorConcepto').html(data.Proveedor);
       $('#FechaConcepto').html(data.FechaDescarga);
@@ -1041,7 +1042,7 @@ function archivosproveedor()
            {
              const urlXMLCheck = response.body
              var to = leerXMLTransportista(urlXMLCheck)
-             if(to > totalViaje)
+             if(to > parseFloat(totalViaje).toFixed(2) || to == null)
              {
                alertToastError("El total de la factura no coincide con el total calculado del sistema")
                       //uppyDashboard.reset()
