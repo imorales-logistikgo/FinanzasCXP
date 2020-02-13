@@ -88,7 +88,7 @@ end:: Header Mobile -->
 						{% if Rol != "Proveedor" %}
 						<li class="kt-menu__item {% block activateReporteCanceladas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteCanceladas' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Facturas Canceladas</span></a></li>
 						<li class="kt-menu__item {% block activateReportePagosCancelados %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagosCancelados' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Pagos cancelados</span></a></li>
-						<li class="kt-menu__item {% block activateReporteMaster %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteMaster' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Pagos Master</span></a></li>
+						<li class="kt-menu__item {% block activateReporteMaster %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteMaster' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas flaticon-list-1"></i><span class="kt-menu__link-text">Master</span></a></li>
 						{% endif %}
 
 					</ul>
@@ -183,6 +183,10 @@ end:: Header Mobile -->
 			{% block ContadoresReportePagosCancelados %}
 			{% endblock %}
 
+			{% block ContadoresReporteMaster %}
+			{% endblock %}
+
+
 			<!-- fin contadores-->
 
 			<!--filtros-->
@@ -203,6 +207,10 @@ end:: Header Mobile -->
 
 			{% block FiltrosReportePagosCancelados %}
 			{% endblock %}
+
+			{% block FiltrosReporteMaster %}
+			{% endblock %}
+
 			<!-- fin filtros-->
 
 			<!-- aqui va el contenido -->
@@ -226,6 +234,10 @@ end:: Header Mobile -->
 
 			{% block ReportePagosCancelados %}
 			{% endblock %}
+
+			{% block ReporteMaster %}
+			{% endblock %}
+
 			<!--end contenido-->
 
 			<!-- Block modales -->

@@ -3,3 +3,179 @@
 {% block activateReporteMaster %}
 kt-menu__item--active
 {% endblock %}
+{% block ContadoresReporteMaster %}
+<div class="kt-subheader kt-grid__item" id="kt_subheader">
+	<div class="kt-container  kt-container--fluid ">
+
+		<div>
+			<span class="badge badge-pill badge-primary">Pendientes<span class="badge badge-pill badge-secondary"><strong>{{contadorPendientes}}</strong></span></span>
+			<span class="badge badge-pill badge-danger"> Finalizados <span class="badge badge-pill badge-secondary"><strong>{{contadorFinalizados}}</strong></span></span>
+		<!--	<span class="badge badge-pill badge-success"> Con evidencias <span class="badge badge-pill badge-secondary"><strong>12</strong></span></span>
+			<span class="badge badge-pill badge-danger"> Sin evidencias <span class="badge badge-pill badge-secondary"><strong>12</strong></span></span>-->
+		</div>
+
+    <div class="kt-header__topbar-item kt-header__topbar-item--quick-panel" data-toggle="kt-tooltip" title="Filtros" data-placement="right">
+      <span class="kt-header__topbar-icon" id="kt_quick_panel_toggler_btn">
+        <button type="button" class="btn btn-brand btn-elevate btn-pill btn-elevate-air btn-sm" id="BtnOpenFiltros">Filtros</button>
+      </span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block FiltrosReporteMaster %}
+<div id="kt_quick_panel" class="kt-quick-panel">
+  <!--<a href="#" class="kt-quick-panel__close" id="kt_quick_panel_close_btn"><i class="flaticon2-delete"></i></a>-->
+
+  <div class="kt-quick-panel__content">
+    <div class="tab-content">
+      <div class="tab-pane fade show kt-scroll active" id="kt_quick_panel_tab_notifications" role="tabpanel">
+        <div class="kt-notification" id="filtroSize">
+          <div class="container">
+            <div class="form-group row">
+              <label class="col-8 col-form-label"><strong>Fecha por mes y año</strong></label>
+              <div class="col-sm-12 col-md-4 col-lg-3">
+                <span class="kt-switch kt-switch--outline kt-switch--icon kt-switch--info">
+                  <label>
+                    <input type="checkbox" id="chkMonthYear" name="fechaxMesyAño">
+                    <span></span>
+                  </label>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="container" id="filtroxMesyAno">
+            <div class="row form-group">
+              <div class="col-md-7">
+                <label><strong>Mes:</strong></label>
+                <select class="selectpicker btn-xs btn" id="filtroxMes" multiple title="Mes" data-width="100%" data-live-search="true">
+                  <option value="1">Enero</option>
+                  <option value="2">Febrero</option>
+                  <option value="3">Marzo</option>
+                  <option value="4">Abril</option>
+                  <option value="5">Mayo</option>
+                  <option value="6">Junio</option>
+                  <option value="7">Julio</option>
+                  <option value="8">Agosto</option>
+                  <option value="9">Septiembre</option>
+                  <option value="10">Octubre</option>
+                  <option value="11">Noviembre</option>
+                  <option value="12">Diciembre</option>
+                </select>
+
+              </div>
+              <div class="col-md-5">
+                <label><strong>Año:</strong></label>
+                <select class="selectpicker btn-xs btn" id="filtroxAno" title="Año" data-width="100%" data-live-search="true">
+                  <option value="2020">2020</option>
+                  <option value="2019">2019</option>
+                  <option value="2018">2018</option>
+                  <option value="2017">2017</option>
+                  <option value="2016">2016</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="kt-subheader__main" id="fechaRango">
+            <label class="col-form-label col-lg-3 col-sm-12"><strong>Fecha: </strong></label>
+            <div class="col-lg-12 col-md-8 col-sm-12">
+              <div class="kt-input-icon pull-right" id='kt_daterangepicker_2_modal'>
+                <input type="text" class="form-control " placeholder="Desde - Hasta" name="FiltroFecha" id="cboFechaDescarga" autocomplete="off">
+                <span class="kt-input-icon__icon kt-input-icon__icon--right" id="iconoFecha"><span><i class="la la-calendar-check-o"></i></span></span>
+              </div>
+            </div>
+          </div>
+          <label class="col-form-label col-lg-3 col-sm-12"><strong>Estatus: </strong></label>
+          <div class="container">
+            <select class="selectpicker" id="cboStatus" multiple name="Status" title="Selecciona un estatus" data-width="100%" data-live-search="true">
+              <option>PENDIENTE</option>
+              <option>FINALIZADO</option>
+              <option>Con evidencias</option>
+            </select>
+          </div></br>
+          <div class="container">
+            <label class="col-form-label col-lg-3 col-sm-12"><strong>Proveedor: </strong></label>
+            <div>
+              <select class="selectpicker" id="cboProveedor" multiple name="Cliente" title="Selecciona un proveedor" data-width="100%" data-live-search="true">
+                {% for Proveedor in Proveedores %}
+                  <option style="width: 270px;" value="{{Proveedor.NombreComercial}}">{{Proveedor.NombreComercial}}</option>
+                {%endfor%}
+              </select>
+            </div>
+          </div></br>
+          <div class="container">
+            <div class="dropdown dropdown-inline" data-toggle="kt-tooltip" data-placement="left">
+              <div class="form-group col-1">
+                <label class="col-form-label col-lg-3 col-sm-12"><strong>Moneda: </strong></label>
+                <label class="kt-radio kt-radio--bold kt-radio--success">
+                  <input type="radio" id="rdMXN" name="radio6" checked> MXN
+                  <span></span>
+                </label>
+                <label class="kt-radio kt-radio--bold kt-radio--brand">
+                  <input type="radio" id="rdUSD" name="radio6"> USD
+                  <span></span>
+                </label>
+              </div>
+            </div>
+          </div></br>
+
+          <div class="container">
+            <div class="form-group">
+              <label>Campos de la tabla</label>
+              <div class="kt-checkbox-list">
+                <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
+                  <input type="checkbox" checked="checked" name="Fecha Descarga"> Fecha Descarga
+                  <span></span>
+                </label>
+                <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
+                  <input type="checkbox" checked="checked" name="Subtotal"> Subtotal
+                  <span></span>
+                </label>
+                <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
+                  <input type="checkbox" checked="checked" name="IVA"> IVA
+                  <span></span>
+                </label>
+                <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
+                  <input type="checkbox" checked="checked" name="Retencion"> Retencion
+                  <span></span>
+                </label>
+                <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
+                  <input type="checkbox" checked="checked" name="Total"> Total
+                  <span></span>
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+
+          <div class="container py-4">
+            <div class="row justify-content-between">
+              <div class="col-4">
+              <button type="Submit" name="button" class="btn btn-brand btn-elevate btn-pill btn-elevate-air btn-sm float-right" id="btnAplicarFiltro">Aplicar</button>
+              </div>
+              <div class="col-4">
+              <button type="button" name="button" class="btn btn-danger btn-elevate btn-pill btn-elevate-air btn-sm" id="kt_quick_panel_close_btn">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane kt-quick-panel__content-padding-x fade kt-scroll" id="kt_quick_panel_tab_settings" role="tabpanel">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block ReporteMaster %}
+<div id="divTablaPendientesEnviar">
+  {% include "TablaReporteMaster.html" %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src='{% static "js/pages/FuncionesDinamicasCxP.js" %}'></script>
+<script src='{% static "js/pages/ReporteMaster.js" %}' type="text/javascript"></script>
+<script src='{% static "js/es_ES.min.js" %}'></script>
+<script src='{% static "js/bootstrap-datepicker.es.js" %}'></script>
+{% endblock %}
