@@ -30,5 +30,5 @@ class View_Master_Proveedor(models.Model):
     IDProveedor = models.IntegerField(default=0)
 
     class Meta:
-        managed = False
         db_table = "View_Master_Proveedor"
+        managed = False
