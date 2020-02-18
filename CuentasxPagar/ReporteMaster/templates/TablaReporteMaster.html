@@ -1,22 +1,5 @@
 {% load humanize %}
-{% load static %}
 
-
-<div class="kt-subheader   kt-grid__item" id="kt_subheader">
-	<div class="kt-container  kt-container--fluid ">
-		<div class="kt-subheader__toolbar">
-			<div class="kt-subheader__wrapper">
-				<h3>Reporte master</h3>
-			</div>
-		</div>
-	</div>
-</div>
-
-
-
-<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-		<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
 			<table class="table table-striped table-bordered" id="TablaReporteMaster">
 				<thead>
 					<tr>
@@ -30,6 +13,8 @@
 						<th>Ev Fisica</th>
 						<th>Proyecto</th>
 						<th>Concepto</th>
+						<th>Tiene factura cliente</th>
+						<th>Factura Cliente</th>
 						<th>Costo Subtotal</th>
 						<th>Costo IVA</th>
 						<th>Costo Retencion</th>
@@ -41,40 +26,35 @@
 						<th>Precio IVA</th>
 						<th>Precio Retencion</th>
 						<th>Precio Total</th>
-						<th>Tiene factura cliente</th>
-						<th>Factura Cliente</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for Master in ReporteMaster %}
 					<tr>
-						<td>Master.Folio</td>
-						<td>Master.NombreCortoCliente</td>
-						<td>Master.NombreCortoProveedor</td>
-						<td>Master.FechaDescarga</td>
-						<td>Master.Moneda</td>
-						<td>Master.Status</td>
-						<td>Master.IsEvidenciaDigital</td>
-						<td>Master.IsEvidenciaFisica</td>
-						<td>Master.Proyecto</td>
-						<td>Master.TipoConcepto</td>
-						<td>Master.CostoSubtotal</td>
-						<td>Master.CostoIVA</td>
-						<td>Master.CostoRetencion</td>
-						<td>Master.CostoTotal</td>
-						<td>Master.IsFacturaProveedor</td>
-						<td>Master.FolioFactProveedor</td>
-						<td>Master.MOP</td>
-						<td>Master.PrecioSubtotal</td>
-						<td>Master.PrecioIVA</td>
-						<td>Master.PrecioRetencion</td>
-						<td>Master.PrecioTotal</td>
-						<td>Master.IsFacturaCliente</td>
-						<td>Master.FolioFactCliente</td>
+						<td>{{Master.Folio|safe}}</td>
+						<td>{{Master.NombreCortoCliente|safe}}</td>
+						<td>{{Master.NombreCortoProveedor|safe}}</td>
+						<td>{{Master.FechaDescarga|date:'Y/m/d'|safe}}</td>
+						<td>{{Master.Moneda|safe}}</td>
+						<td>{{Master.Status|safe}}</td>
+						<td>{{Master.IsEvidenciaDigital|safe}}</td>
+						<td>{{Master.IsEvidenciaFisica|safe}}</td>
+						<td>{{Master.Proyecto|safe}}</td>
+						<td>{{Master.TipoConcepto|safe}}</td>
+						<td>{{Master.IsFacturaCliente|safe}}</td>
+						<td>{{Master.FolioFactCliente|default:""|safe}}</td>
+						<td>${{Master.CostoSubtotal|intcomma|safe}}</td>
+						<td>${{Master.CostoIVA|intcomma|safe}}</td>
+						<td>${{Master.CostoRetencion|intcomma|safe}}</td>
+						<td>${{Master.CostoTotal|intcomma|safe}}</td>
+						<td>{{Master.IsFacturaProveedor|safe}}</td>
+						<td>{{Master.FolioFactProveedor|default:""|safe}}</td>
+						<td>${{Master.MOP|intcomma|safe|safe}}</td>
+						<td>${{Master.PrecioSubtotal|intcomma|safe}}</td>
+						<td>${{Master.PrecioIVA|intcomma|safe}}</td>
+						<td>${{Master.PrecioRetencion|intcomma|safe}}</td>
+						<td>${{Master.PrecioTotal|intcomma|safe}}</td>
 					</tr>
 					{%endfor%}
 				</tbody>
 			</table>
-		</div>
-	</div>
-</div>
