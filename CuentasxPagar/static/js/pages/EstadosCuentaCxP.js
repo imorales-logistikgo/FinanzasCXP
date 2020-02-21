@@ -729,7 +729,7 @@ function SavePagoxFactura(IDPago)
         type: 'success',
         title: 'El pago fue guardado correctamente',
         showConfirmButton: false,
-        timer: 2500
+        timer: 3500
       })
       $('#modalSubirPagos').modal('hide');
 
