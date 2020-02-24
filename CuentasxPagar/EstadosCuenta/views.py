@@ -229,3 +229,13 @@ def GetDetallesPago(request):
 		Facturas.append(Pago)
 	htmlRes = render_to_string('TablaDetallesPago.html', {'Facturas':Facturas}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
+
+
+def FixIDProveedor(request):
+	Facturas = RelacionFacturaProveedorxPartidas.objects.all()
+	for Factura in Facturas:
+		IDProveedor = RelacionConceptoxProyecto.objects.filter(IDPendienteEnviar = Factura.IDPendienteEnviar.IDPendienteEnviar)[0].IDProveedor
+		Fact = FacturasxProveedor.objects.get(IDFactura = Factura.IDFacturaxProveedor.IDFactura)
+		Fact.IDProveedor = IDProveedor
+		Fact.save()
+	return HttpResponse('Done')
