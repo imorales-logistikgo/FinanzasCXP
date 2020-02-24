@@ -8,9 +8,9 @@ kt-menu__item--active
 	<div class="kt-container  kt-container--fluid ">
 
 		<div>
-			<span class="badge badge-pill badge-primary">Pendientes<span class="badge badge-pill badge-secondary"><strong>{{contadorPendientes}}</strong></span></span>
+		<!--	<span class="badge badge-pill badge-primary">Pendientes<span class="badge badge-pill badge-secondary"><strong>{{contadorPendientes}}</strong></span></span>
 			<span class="badge badge-pill badge-danger"> Finalizados <span class="badge badge-pill badge-secondary"><strong>{{contadorFinalizados}}</strong></span></span>
-		<!--	<span class="badge badge-pill badge-success"> Con evidencias <span class="badge badge-pill badge-secondary"><strong>12</strong></span></span>
+			<span class="badge badge-pill badge-success"> Con evidencias <span class="badge badge-pill badge-secondary"><strong>12</strong></span></span>
 			<span class="badge badge-pill badge-danger"> Sin evidencias <span class="badge badge-pill badge-secondary"><strong>12</strong></span></span>-->
 		</div>
 
@@ -90,7 +90,8 @@ kt-menu__item--active
             <select class="selectpicker" id="cboStatus" multiple name="Status" title="Selecciona un estatus" data-width="100%" data-live-search="true">
               <option>PENDIENTE</option>
               <option>FINALIZADO</option>
-              <option>Con evidencias</option>
+              <option>CANCELADO</option>
+							<option>COMPLETO</option>
             </select>
           </div></br>
           <div class="container">
@@ -103,51 +104,39 @@ kt-menu__item--active
               </select>
             </div>
           </div></br>
-          <div class="container">
-            <div class="dropdown dropdown-inline" data-toggle="kt-tooltip" data-placement="left">
-              <div class="form-group col-1">
-                <label class="col-form-label col-lg-3 col-sm-12"><strong>Moneda: </strong></label>
-                <label class="kt-radio kt-radio--bold kt-radio--success">
-                  <input type="radio" id="rdMXN" name="radio6" checked> MXN
-                  <span></span>
-                </label>
-                <label class="kt-radio kt-radio--bold kt-radio--brand">
-                  <input type="radio" id="rdUSD" name="radio6"> USD
-                  <span></span>
-                </label>
-              </div>
-            </div>
-          </div></br>
 
-          <div class="container">
-            <div class="form-group">
-              <label>Campos de la tabla</label>
-              <div class="kt-checkbox-list">
-                <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
-                  <input type="checkbox" checked="checked" name="Fecha Descarga"> Fecha Descarga
-                  <span></span>
-                </label>
-                <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
-                  <input type="checkbox" checked="checked" name="Subtotal"> Subtotal
-                  <span></span>
-                </label>
-                <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
-                  <input type="checkbox" checked="checked" name="IVA"> IVA
-                  <span></span>
-                </label>
-                <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
-                  <input type="checkbox" checked="checked" name="Retencion"> Retencion
-                  <span></span>
-                </label>
-                <label class="kt-checkbox kt-checkbox--bold kt-checkbox--success">
-                  <input type="checkbox" checked="checked" name="Total"> Total
-                  <span></span>
-                </label>
-              </div>
+					<div class="container">
+						<label class="col-form-label col-lg-3 col-sm-12"><strong>Proyecto: </strong></label>
+						<div>
+							<select class="selectpicker" id="cboProyecto" multiple name="Proyecto" title="Selecciona un proyecto" data-width="100%" data-live-search="true">
+									<option style="width: 270px;" value="BKG">BKG</option>
+									<option style="width: 270px;" value="XD">XD</option>
+									<option style="width: 270px;" value="ALM">ALM</option>
+							</select>
+						</div>
+					</div></br>
 
-            </div>
-          </div>
-
+					<div class="container">
+						<div class="dropdown dropdown-inline" data-toggle="kt-tooltip" data-placement="left">
+							<div class="form-group col-1">
+								<div class="row form-group">
+									<label class="col-form-label col-lg-3 col-sm-12"><strong>Moneda: </strong></label>
+									<div class="col-sm-6 col-md-6">
+										<label class="kt-radio kt-radio--bold kt-radio--success">
+											<input type="checkbox" id="rdMXN" name="radio6" checked> MXN
+											<span></span>
+										</label>
+									</div>
+									<div class="col-sm-6 col-md-6">
+										<label class="kt-radio kt-radio--bold kt-radio--brand">
+											<input type="checkbox" id="rdUSD" name="radio6" checked> USD
+											<span></span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div></br>
 
           <div class="container py-4">
             <div class="row justify-content-between">
@@ -168,8 +157,22 @@ kt-menu__item--active
 </div>
 {% endblock %}
 {% block ReporteMaster %}
-<div id="divTablaPendientesEnviar">
-  {% include "TablaReporteMaster.html" %}
+<div class="kt-subheader   kt-grid__item" id="kt_subheader">
+	<div class="kt-container  kt-container--fluid ">
+		<div class="kt-subheader__toolbar">
+			<div class="kt-subheader__wrapper">
+				<h3>Reporte de facturas</h3>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+		<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+			{% include "TablaReporteMaster.html" %}
+		</div>
+	</div>
 </div>
 {% endblock %}
 

@@ -566,7 +566,7 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 14,
       "mRender": function (data, type, full) {
-       return ( full[10] === 'pendiente'.toUpperCase() ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" title="Eliminar"><i class="flaticon-delete"></i></button>':'');
+          return ( full[10] === 'pendiente'.toUpperCase() ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" title="Eliminar"><i class="flaticon-delete"></i></button>':'');
       }
     }
    ]
@@ -729,7 +729,7 @@ function SavePagoxFactura(IDPago)
         type: 'success',
         title: 'El pago fue guardado correctamente',
         showConfirmButton: false,
-        timer: 2500
+        timer: 3500
       })
       $('#modalSubirPagos').modal('hide');
 

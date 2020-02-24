@@ -11,99 +11,125 @@
           ------------------------------------- */
 
           /*All the styling goes here*/
-          .divImgEM
-{
-  background: red;
-  width: 100%;
-  height: 80px;
-  text-align: left;
-/*  padding: 20px;*/
-}
-      /* -------------------------------------
-          PRESERVE THESE STYLES IN THE HEAD
-          ------------------------------------- */
-          @media all {
-            .ExternalClass {
+          p
+          {
+            font-family: Arial;
+          }
+          #py
+         {
+           margin-left: 20px;
+           margin: 20px;
+         }
+         .divImgEM
+           {
+             background: #bd0404;
+             width: 100%;
+             height: 110px;
+             text-align: left;
+           /*  padding: 20px;*/
+           }
+           .footerDiv
+           {
+              background: #bd0404;
               width: 100%;
-            }
-            .ExternalClass,
-            .ExternalClass p,
-            .ExternalClass span,
-            .ExternalClass font,
-            .ExternalClass td,
-            .ExternalClass div {
-              line-height: 100%;
-            }
-            .apple-link a {
-              color: inherit ;
-              font-family: inherit;
-              font-size: inherit ;
-              font-weight: inherit ;
-              line-height: inherit;
-              text-decoration: none ;
-            }
-            #MessageViewBody a {
-              color: inherit;
-              text-decoration: none;
-              font-size: inherit;
-              font-family: inherit;
-              font-weight: inherit;
-              line-height: inherit;
-            }
-            .btn-primary table td:hover {
-              background-color: #34495e !important;
-            }
-            .btn-primary a:hover {
-              background-color: #34495e !important;
-              border-color: #34495e !important;
-            }
+              height: 210px;
+           }
+           .headImg
+           {
+             background-color: #bd0404;
+             width: 100%;
+             height: 210px;
+             text-align: center;
+           }
+           .footerImg
+           {
+             display: flex;
+             width: 100%;
+             height: 210px;
+             text-align: center;
+             padding: 40px;
+           }
+           .bodyDiv
+           {
+             padding: 20px;
+             background-color: rgb(246, 246, 250);
+             width: 100%;
+             height: 810px;
+           }
+          #tableContent
+          {
+           width: 100%;
+           height: 100%;
+           background: rgb(246, 246, 250);
+           padding: 10px;
+          }
 
+          .footer {
+             display: block;
+             position: fixed;
+             left: 0;
+             bottom: 0;
+             width: 100%;
+             background-color: rgba(246, 246, 250, 0.829);
+             text-align: center;
+          }
+          table {
+             width: 100%;
+             border: 1px solid #000;
+          }
+          th, td {
+             width: 25%;
+             text-align: left;
+             vertical-align: top;
+             border: 1px solid #000;
+             border-collapse: collapse;
+             padding: 0.3em;
+             caption-side: bottom;
+          }
+          caption {
+             padding: 0.3em;
+             color: #fff;
+             background: #bd0404;
+             font-family: Arial;
+             font-size: 25px;
+          }
+          th {
+             background: #eee;
           }
         </style>
       </head>
-      <body class="">
-        <!--<span class="preheader">SUBIR COMPLEMENTO DE PAGOS</span>-->
-        <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
-          <tr>
-            <td>&nbsp;</td>
-            <td class="container">
-              <div class="content">
-                <div class="divImgEM">
-                    <img src="https://lh3.googleusercontent.com/proxy/TQQL-G91ZwCryVtqBxsyB_tkbRtj-XmPtLIgjd_St9dzKYBVYiz4gcrFiDS6LNEX85zOoMnJjxxWk2wauMP0rKuEieVT6O-cbLoTPRd0jJD52FLsbpDN" alt="No se puede ver la imagen" height="50" width="100">
-                </div>
-                <!-- START CENTERED WHITE CONTAINER -->
-                <table role="presentation" class="main">
-
-                  <!-- START MAIN CONTENT AREA -->
-                  <tr>
-                    <td class="wrapper">
-                      <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td>
-                            <div>
-                              <span>Hola {{nombre}}, se ha realizado un pago y se necesita que suba sus complementos de pago con el siguiente boton:</span></br>
-                            </div>
-                            <div>
-                              <a href="http://cxp.logistikgo.com/ReportePagos" class="btn">Subir Complementos</a>
-                            </div>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-
-                  <!-- END MAIN CONTENT AREA -->
-                </table>
-                <!-- END CENTERED WHITE CONTAINER -->
-
-                <!-- START FOOTER -->
-
-                <!-- END FOOTER -->
-
-              </div>
-            </td>
-            <td>&nbsp;</td>
-          </tr>
-        </table>
+      <body style="background-color: rgb(246, 246, 250)">
+        <div class="headImg">
+          <img src='http://lgklataforma.blob.core.windows.net/evidencias/dcc84646-813b-452e-bcb8-41e69133a65f.png' alt="No se puede ver la imagen" height="50" width="250">
+        </div>
+        <div class="bodyDiv">
+          <p style="border-bottom: 1px solid; margin-left: 20px">Hola {{nombre}}, se ha realizado un pago y se necesita que suba sus complementos de pago.</p>
+          <table style="margin-left: 20px">
+            <caption>LogistikGo</caption>
+            <thead>
+              <tr>
+                <th>Folio</th>
+                <th>Pago</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid">
+                <td>{{folio}}</td>
+                <td>${{total}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="margin-left: 20px">Da clic en el siguiente enlace para Subir Complementos:</p>
+          <a href="https://cxp.logistikgo.com/ReportePagos" style="margin: 1em;">Subir Complementos</a>
+        </div>
+        <div class="footer" style="border-top: 1px solid; padding: 40px;">
+          <span>
+            ¿Tienes Preguntas? ¡Estamos aquí para ayudarte! Contactanos en cualquier momento
+            | Logistik GO | Eje 122 #380-C, Parque Barmenia. San luis Potosí, S.L.P. C.P.78395
+          </span>
+          <div class="footerImg">
+            <img src='http://lgklataforma.blob.core.windows.net/evidencias/3480b7bf-b6f8-4de0-b72f-2998738d4e93.jfif' alt="No se puede ver la imagen" height="80" width="600">
+          </div>
+        </div>
       </body>
       </html>

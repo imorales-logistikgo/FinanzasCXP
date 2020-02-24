@@ -54,7 +54,10 @@ $(document).on('click', '#btnSubirFacturaPendientesEnviar', function(){
 
 $('#btnAplicarFiltro').on('click', fnGetPendientesEnviar);
 
-$(document).on('change', '#txtFolioFactura', fnCheckFolio);
+$('#txtFolioFactura').on('change', function(){
+  var folioFac = $('#txtFolioFactura').val().replace(/ /g, "").trim();
+  fnCheckFolio(folioFac)
+});
 
 //$(document).on('click', '#buscarFolioProveedor', BuscarFolioProveedor);
 
@@ -540,13 +543,13 @@ function getDatos(){
 
    });
 
-    $('#sub').html('<strong>$'+subtotal+'</strong>');
-    $('#iva').html('<strong>$'+Tiva+'</strong>');
-    $('#retencion').html('<strong>$'+TRetencion+'</strong>');
-    $('#total').html('<strong>$'+total+'</strong>');
+    $('#sub').html('<strong>$'+subtotal.toFixed(2)+'</strong>');
+    $('#iva').html('<strong>$'+Tiva.toFixed(2)+'</strong>');
+    $('#retencion').html('<strong>$'+TRetencion.toFixed(2)+'</strong>');
+    $('#total').html('<strong>$'+total.toFixed(2)+'</strong>');
     $('#Moneda').html('');
     $('#totalCambio').html('<strong>$'+truncarDecimales(totalCambio, 2)+'<strong>');
-    $('#verTotalPE').html('<strong>$'+total+'</strong>');
+    $('#verTotalPE').html('<strong>$'+total.toFixed(2)+'</strong>');
   }
 
   function saveFacturaP() {
@@ -649,7 +652,7 @@ function SavePartidasxFacturaP(IDFactura) {
 
 function saveFactura() {
   jParams = {
-    FolioFactura: $('#txtFolioFactura').val(),
+    FolioFactura: $('#txtFolioFactura').val().replace(/ /g, "").trim(),
     Proveedor: proveedor,
     FechaFactura: $('#FechaFactura').val(),
     FechaRevision: $('#FechaRevision').val(),
@@ -792,8 +795,8 @@ function getPendientesEnviar(params){
   });
 }
 
-var fnCheckFolio = function () {
-  fetch("/PendientesEnviar/CheckFolioDuplicado?Folio=" + $('#txtFolioFactura').val(), {
+var fnCheckFolio = function (folio) {
+  fetch("/PendientesEnviar/CheckFolioDuplicado?Folio=" + folio, {
     method: "GET",
     credentials: "same-origin",
     headers: {

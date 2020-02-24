@@ -3,6 +3,7 @@ from django.shortcuts import render
 from PendientesEnviar.models import RelacionFacturaProveedorxPartidas, FacturasxProveedor, PendientesEnviar, RelacionConceptoxProyecto, Ext_PendienteEnviar_Costo
 from EstadosCuenta.models import  View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor
 from usersadmon.models import Proveedor, AdmonUsuarios
+from users.models import User
 from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
 from decimal import Decimal
@@ -158,7 +159,6 @@ def truncate(number, digits) -> Decimal:
     return math.trunc(stepper * number) / stepper
 
 
-
 def SavePagoxFactura(request):
 	jParams = json.loads(request.body.decode('utf-8'))
 	for Pago in jParams["arrPagos"]:
@@ -178,6 +178,7 @@ def SavePagoxFactura(request):
 			Factura.Status = "ABONADA"
 		Factura.save()
 		newRelacionPagoxFactura.save()
+		EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
 	return HttpResponse("")
 
 
@@ -199,21 +200,29 @@ def CheckFolioDuplicado(request):
 
 
 
-def EnviarCorreoProveedor(request):
-	context={
-		'nombre': request.user.name
-	}
-	template_name='email.html'
-	html_content=render_to_string("CorreoProveedor.html", context)
-	subject='Subir complementos de pago'
-	from_email='noreply@logisti-k.com.mx'
-	to='jfraga@logisti-k.com.mx'
+def EnviarCorreoProveedor(IDPagoEmail):
+	DatosPagoProveedor = PagosxProveedor.objects.get(IDPago = IDPagoEmail)
+	CorreoProveedor = User.objects.get(IDTransportista = DatosPagoProveedor.IDProveedor)
+	if CorreoProveedor.email != "":
+		context={
+			'nombre': DatosPagoProveedor.NombreCortoProveedor,
+			'folio' : DatosPagoProveedor.Folio,
+			'total' : DatosPagoProveedor.Total
+		}
+		template_name='email.html'
+		html_content=render_to_string("CorreoProveedor.html", context)
+		subject='Subir complementos de pago'
+		from_email='noreply@logisti-k.com.mx'
+		to='jfraga@logisti-k.com.mx'
 
-	msg = EmailMessage(subject, html_content, from_email, [to])
-	msg.content_subtype = "html"  # Main content is now text/html
-	msg.send()
+		msg = EmailMessage(subject, html_content, from_email, [to])
+		msg.content_subtype = "html"  # Main content is now text/html
+		msg.send()
 
-	return HttpResponse('Mail successfully sent')
+		return HttpResponse('Mail successfully sent')
+	else:
+		return HttpResponse('Correo no enviado, El Proveedor no tiene correo')
+
 
 
 
