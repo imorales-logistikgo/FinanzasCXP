@@ -11,5 +11,5 @@ urlpatterns = [
     path('ValidarFactura', views.ValidarFactura, name='ValidarFactura'),
     path('EnviarCorreoProveedor', views.EnviarCorreoProveedor, name='EnviarCorreoProveedor'),
     path('GetDetallesPago', views.GetDetallesPago, name='GetDetallesPago'),
-    path('FixIDProveedor', views.FixIDProveedor, name='FixIDProveedor')
+    # path('FixIDProveedor', views.FixIDProveedor, name='FixIDProveedor')
 ]
