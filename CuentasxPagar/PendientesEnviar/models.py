@@ -46,7 +46,7 @@ class Ext_PendienteEnviar_Precio(models.Model):
     class Meta:
         db_table="Ext_PendienteEnviar_Precio"
         managed= False
-        
+
 
 
 class RelacionConceptoxProyecto(models.Model):
@@ -78,7 +78,7 @@ class View_PendientesEnviarCxP(models.Model):
     IsEvidenciaFisica = models.BooleanField()
     Proyecto = models.CharField(max_length=30)
     IsFacturaProveedor = models.BooleanField()
-
+    IsControlDesk = models.BooleanField()
     class Meta:
         managed = False
         db_table = "View_PendientesEnviarCxP"
@@ -138,4 +138,3 @@ class RelacionFacturaProveedorxPartidas(models.Model):
 
     class Meta:
         db_table = "RelacionFacturaProveedorxPartidas"
-

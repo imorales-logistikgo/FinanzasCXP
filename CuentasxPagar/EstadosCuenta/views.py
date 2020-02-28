@@ -189,15 +189,24 @@ def ValidarFactura(request):
 	if Factura:
 		Factura.IsAutorizada = True
 		Factura.save()
-	return HttpResponse("")
+	result = View_FacturasxProveedor.objects.filter(IDFactura = IDFactura)
+	ListaFacturas = FacturasToList(result)
+	Folios = list()
+	for Fact in ListaFacturas:
+		FoliosPago= ""
+		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Fact["IDFactura"]).select_related('IDPago'):
+			FoliosPago += Pago.IDPago.Folio + ", "
+		FoliosPago = FoliosPago[:-2]
+		Folios.append(FoliosPago)
+	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas':ListaFacturas, 'Folios': Folios}, request = request,)
+	print(htmlRes)
+	return JsonResponse({'htmlRes' : htmlRes})
 
 
 
 def CheckFolioDuplicado(request):
 	IsDuplicated = PagosxProveedor.objects.filter(Folio = request.GET["Folio"]).exists()
 	return JsonResponse({'IsDuplicated' : IsDuplicated})
-
-
 
 
 def EnviarCorreoProveedor(IDPagoEmail):

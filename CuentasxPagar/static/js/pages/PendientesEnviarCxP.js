@@ -953,7 +953,7 @@ function formatDataTable() {
       "className": "dt-head-center dt-body-center",
       "targets": 10,
       "mRender": function (data, type, full) {
-        return (EvDigital != 'False' && full[9] == 'finalizado'.toUpperCase()  && EvFisica != 'False' ? '<a class="kt-badge kt-badge--info kt-badge--inline text-white" data-toggle="modal" data-target="#ModalVerEvidencias" data-backdrop="static" data-keyboard="false"><i class="flaticon2-image-file"></i></a>':'');
+        return (EvDigital != 'False' && EvFisica != 'False' ? 'Si':'No');
       }
     }]
   } );

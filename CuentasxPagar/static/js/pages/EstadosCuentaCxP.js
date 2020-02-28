@@ -81,7 +81,7 @@ $(document).on('click', '.btnAprobarFactura',function(){
    confirmButtonText: 'Validar'
  }).then((result) => {
   if (result.value) {
-  var btn = $(this);
+    var btn = $(this);
     WaitMe_Show('#TbPading');
     var idFac = $(this).data('idfact');
     ValidarFactura(idFac, btn);
@@ -505,7 +505,7 @@ function formatDataTableFacturas(){
       "mRender": function (data, type, full) {
         isAuth = $('input[name="EvidenciaXML"]').data("isautorizada");
         idfac = $('input[name="EvidenciaXML"]').data("facturaid");
-        return (full[10] != 'cancelada'.toUpperCase() && full[10] != 'pagada'.toUpperCase() ? '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'"/>': '');
+        return (full[10] != 'cancelada'.toUpperCase() && full[10] != 'pagada'.toUpperCase() && isAuth != 'False' ? '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'"/>': '');
       }
     },
     {
@@ -670,6 +670,23 @@ function ValidarFactura(IDFactura, btn) {
     },
     body: JSON.stringify(jParams)
   }).then(function(response){
+    return response.clone().json();
+  }).then(function(data){
+    Swal.fire({
+      type: 'success',
+      title: 'La factura ha sido validada correctamente',
+      showConfirmButton: false,
+      timer: 2500
+    })
+    $('#divTableDetalles').html(data.htmlRes);
+    var tb = $('#TableEstadosdeCuenta').DataTable();
+    tb.destroy();
+    formatDataTableFacturas();
+    WaitMe_Hide('#TbPading');
+  }).catch(function(ex){
+    console.log(ex);
+  });
+  /*.then(function(response, data){
 
     if(response.status == 200)
     {
@@ -679,7 +696,9 @@ function ValidarFactura(IDFactura, btn) {
         showConfirmButton: false,
         timer: 2500
       })
-      $(btn).remove();
+      $('#divTablaFacturas').html(data.htmlRes);
+      formatDataTableFacturas();
+      //$(btn).remove();
       WaitMe_Hide('#TbPading');
     }
     else if(response.status == 500)
@@ -695,7 +714,7 @@ function ValidarFactura(IDFactura, btn) {
 
   }).catch(function(ex){
     console.log("no success!");
-  });
+  });*/
 }
 
 function SavePagoxFactura(IDPago)
