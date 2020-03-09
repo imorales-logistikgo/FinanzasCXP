@@ -4,19 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
+    initial = True
     dependencies = [
-        ('PendientesEnviar', '0002_auto_20200109_1231'),
+        #('PendientesEnviar', '0002_auto_20200109_1231'),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='facturasxproveedor',
-            name='IDProveedor',
-            field=models.IntegerField(default=0),
-        ),
+        #migrations.AddField(
+        #    model_name='facturasxproveedor',
+        #    name='IDProveedor',
+        #    field=models.IntegerField(default=0),
+        #),
         migrations.AlterField(
-            model_name='facturasxproveedor',
+            model_name='FacturasxProveedor',
             name='Folio',
             field=models.CharField(max_length=50),
         ),

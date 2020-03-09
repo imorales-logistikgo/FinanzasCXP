@@ -85,7 +85,7 @@ $('#btnGuardarFactura').on('click', function(){
 
 //btn guardar archivos proveedor
 $('#btnGuardarFacturaP').on('click', function(){
-  if($('#archivosProveedor').data("rutaarchivoPDF") != undefined && $('#archivosProveedor').data("rutaarchivoXML") != undefined || $('#archivosProveedor').data("rutaarchivoPDF") != null && $('#archivosProveedor').data("rutaarchivoXML") != null)
+  if($('#archivosProveedor').data("rutaarchivoPDF") != undefined /*&& $('#archivosProveedor').data("rutaarchivoXML") != undefined */|| $('#archivosProveedor').data("rutaarchivoPDF") != null /*&& $('#archivosProveedor').data("rutaarchivoXML") != null*/)
   {
     if($('#txtFolioFacturaP').val() != "" && $('#FechaRevisionP').val() != "" && $('#FechaFacturaP').val() != "" && $('#FechaVencimientoP').val() != "" && $('input[name="TipoCambio"]').val() != "")
     {
@@ -564,7 +564,7 @@ function getDatos(){
       IVA: Tiva,
       Retencion: TRetencion,
       Total: total,
-      RutaXML: $('#archivosProveedor').data("rutaarchivoXML"),
+      RutaXML: $('#archivosProveedor').data("rutaarchivoXML") == undefined ? "":$('#archivosProveedor').data("rutaarchivoXML"),
       RutaPDF: $('#archivosProveedor').data("rutaarchivoPDF"),
       TipoCambio: 1,
       Comentarios: $('#txtComentariosP').val(),
@@ -1000,7 +1000,7 @@ function archivosproveedor()
            restrictions: {
   						maxFileSize: 4200000, // 5mb
   						maxNumberOfFiles: 2,
-  						minNumberOfFiles: 2,
+  						minNumberOfFiles: 1,
              allowedFileTypes:['.pdf', '.xml']
            },
            locale: Uppy.locales.es_ES,
@@ -1027,7 +1027,7 @@ function archivosproveedor()
 
 
          uppyDashboard.use(Dashboard, options);
-         uppyDashboard.use(XHRUpload, { endpoint: 'http://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
+         uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
   				//uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
           uppyDashboard.use(Webcam, {target: Dashboard});
           uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });

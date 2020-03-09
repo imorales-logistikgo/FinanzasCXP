@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('PendientesEnviar', '0001_initial'),
+        ('PendientesEnviar', '0003_auto_20200130_0955'),
     ]
 
     operations = [

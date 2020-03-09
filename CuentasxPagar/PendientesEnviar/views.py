@@ -79,6 +79,7 @@ def GetPendientesByFilters(request):
 def SaveFacturaxProveedor(request):
 	jParams = json.loads(request.body.decode('utf-8'))
 	newFactura = FacturasxProveedor()
+	print(FacturasxProveedor())
 	newFactura.Folio = jParams["FolioFactura"]
 	newFactura.NombreCortoProveedor = jParams["Proveedor"]
 	newFactura.FechaFactura = datetime.datetime.strptime(jParams["FechaFactura"],'%Y/%m/%d')

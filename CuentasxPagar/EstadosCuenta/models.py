@@ -11,13 +11,12 @@ class PagosxFacturas(models.Model):
         db_table="PagosxFacturas"
 
 
-
 class PagosxProveedor(models.Model):
     IDPago = models.AutoField(primary_key=True)
     FechaAlta = models.DateTimeField()
     FechaBaja = models.DateTimeField(null = True)
     Total = models.DecimalField(default=0, max_digits=30, decimal_places=5)
-    Folio = models.CharField(max_length=50, unique=True)
+    Folio = models.CharField(max_length=50)
     RutaPDF = models.CharField(max_length=300)
     RutaXML = models.CharField(max_length=300)
     RutaComprobante = models.CharField(max_length=300)

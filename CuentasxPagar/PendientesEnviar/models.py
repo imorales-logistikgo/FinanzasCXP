@@ -88,7 +88,7 @@ class View_PendientesEnviarCxP(models.Model):
 
 class FacturasxProveedor(models.Model):
     IDFactura = models.AutoField(primary_key=True)
-    Folio = models.CharField(max_length=50)
+    Folio = models.CharField(db_column='Folio', max_length=50)
     NombreCortoProveedor = models.CharField(max_length=100)
     IDProveedor = models.IntegerField(default=0)
     FechaFactura = models.DateTimeField()
@@ -114,6 +114,7 @@ class FacturasxProveedor(models.Model):
     #     return str(self.IDFactura)
     class Meta:
         db_table = "FacturasxProveedor"
+        managed = False
 
 
 class PartidaProveedor(models.Model):

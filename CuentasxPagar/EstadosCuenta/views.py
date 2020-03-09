@@ -176,6 +176,7 @@ def SavePagoxFactura(request):
 			Factura.Status = "PAGADA"
 		else:
 			Factura.Status = "ABONADA"
+		print(Factura)
 		Factura.save()
 		newRelacionPagoxFactura.save()
 		EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
@@ -205,7 +206,7 @@ def ValidarFactura(request):
 
 
 def CheckFolioDuplicado(request):
-	IsDuplicated = PagosxProveedor.objects.filter(Folio = request.GET["Folio"]).exists()
+	IsDuplicated = PagosxProveedor.objects.filter(Folio = request.GET["Folio"]).exclude(Status = "CANCELADA").exists()
 	return JsonResponse({'IsDuplicated' : IsDuplicated})
 
 

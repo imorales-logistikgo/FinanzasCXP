@@ -31,17 +31,19 @@ def PEToList(Facturas):
 		Reporte["TipoConcepto"] = Fact.TipoConcepto
 		Reporte["IsFacturaCliente"] = Fact.IsFacturaCliente
 		Reporte["FolioFactCliente"] = Fact.FolioFactCliente
-		Reporte["CostoSubtotal"] = Fact.CostoSubtotal
-		Reporte["CostoIVA"] = Fact.CostoIVA
-		Reporte["CostoRetencion"] = Fact.CostoRetencion
-		Reporte["CostoTotal"] = Fact.CostoTotal
+		Reporte["StatusFacturaCliente"] = Fact.StatusFacturaCliente
+		Reporte["SubtotalC"] = Fact.SubtotalC
+		Reporte["IVAC"] = Fact.IVAC
+		Reporte["RetencionC"] = Fact.RetencionC
+		Reporte["TotalC"] = Fact.TotalC
 		Reporte["IsFacturaProveedor"] = Fact.IsFacturaProveedor
 		Reporte["FolioFactProveedor"] = Fact.FolioFactProveedor
+		Reporte["StatusFacturaProveedor"] = Fact.StatusFacturaProveedor
 		Reporte["MOP"] = Fact.MOP
-		Reporte["PrecioSubtotal"] = Fact.PrecioSubtotal
-		Reporte["PrecioIVA"] = Fact.PrecioIVA
-		Reporte["PrecioRetencion"] = Fact.PrecioRetencion
-		Reporte["PrecioTotal"] = Fact.PrecioTotal
+		Reporte["Subtotal"] = Fact.Subtotal
+		Reporte["IVA"] = Fact.IVA
+		Reporte["Retencion"] = Fact.Retencion
+		Reporte["Total"] = Fact.Total
 		ListData.append(Reporte)
 	return ListData
 
@@ -66,5 +68,4 @@ def GetFacturasByFilters(request):
 		Facturas = Facturas.filter(Proyecto__in = Proyectos)
 	ListData = PEToList(Facturas)
 	htmlRes = render_to_string('TablaReporteMaster.html', {'ReporteMaster':ListData}, request = request,)
-	print(htmlRes)
 	return JsonResponse({'htmlRes' : htmlRes})

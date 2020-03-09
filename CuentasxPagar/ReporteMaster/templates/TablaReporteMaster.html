@@ -15,12 +15,14 @@
 						<th>Concepto</th>
 						<th>Tiene factura cliente</th>
 						<th>Factura Cliente</th>
+						<th>Estatus FacturaC</th>
 						<th>Costo Subtotal</th>
 						<th>Costo IVA</th>
 						<th>Costo Retencion</th>
 						<th>Costo Total</th>
 						<th>Tiene Factura proveedor</th>
 						<th>Factura Proveedor</th>
+						<th>Estatus FacturaP</th>
 						<th>MOP</th>
 						<th>Precio Subtotal</th>
 						<th>Precio IVA</th>
@@ -43,17 +45,19 @@
 						<td>{{Master.TipoConcepto|safe}}</td>
 						<td>{{Master.IsFacturaCliente|safe}}</td>
 						<td>{{Master.FolioFactCliente|default:""|safe}}</td>
-						<td>${{Master.CostoSubtotal|default:0|intcomma|safe}}</td>
-						<td>${{Master.CostoIVA|default:0|intcomma|safe}}</td>
-						<td>${{Master.CostoRetencion|default:0|intcomma|safe}}</td>
-						<td>${{Master.CostoTotal|default:0|intcomma|safe}}</td>
+						<td>{{Master.StatusFacturaCliente|default:""|safe}}</td>
+						<td>${{Master.SubtotalC|default:0|intcomma|safe}}</td>
+						<td>${{Master.IVAC|default:0|intcomma|safe}}</td>
+						<td>${{Master.RetencionC|default:0|intcomma|safe}}</td>
+						<td>${{Master.TotalC|default:0|intcomma|safe}}</td>
 						<td>{{Master.IsFacturaProveedor|safe}}</td>
 						<td>{{Master.FolioFactProveedor|default:""|safe}}</td>
+						<td>{{Master.StatusFacturaProveedor|default:""|safe}}</td>
 						<td>${{Master.MOP|default:0|intcomma|safe|safe}}</td>
-						<td>${{Master.PrecioSubtotal|default:0|intcomma|safe}}</td>
-						<td>${{Master.PrecioIVA|default:0|intcomma|safe}}</td>
-						<td>${{Master.PrecioRetencion|default:0|intcomma|safe}}</td>
-						<td>${{Master.PrecioTotal|default:0|intcomma|safe}}</td>
+						<td>${{Master.Subtotal|default:0|intcomma|safe}}</td>
+						<td>${{Master.IVA|default:0|intcomma|safe}}</td>
+						<td>${{Master.Retencion|default:0|intcomma|safe}}</td>
+						<td>${{Master.Total|default:0|intcomma|safe}}</td>
 					</tr>
 					{%endfor%}
 				</tbody>
