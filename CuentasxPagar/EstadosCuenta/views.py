@@ -190,18 +190,18 @@ def ValidarFactura(request):
 	if Factura:
 		Factura.IsAutorizada = True
 		Factura.save()
-	result = View_FacturasxProveedor.objects.filter(IDFactura = IDFactura)
-	ListaFacturas = FacturasToList(result)
-	Folios = list()
-	for Fact in ListaFacturas:
-		FoliosPago= ""
-		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Fact["IDFactura"]).select_related('IDPago'):
-			FoliosPago += Pago.IDPago.Folio + ", "
-		FoliosPago = FoliosPago[:-2]
-		Folios.append(FoliosPago)
-	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas':ListaFacturas, 'Folios': Folios}, request = request,)
-	print(htmlRes)
-	return JsonResponse({'htmlRes' : htmlRes})
+	#result = View_FacturasxProveedor.objects.filter(IDFactura = IDFactura)
+	#ListaFacturas = FacturasToList(result)
+	#Folios = list()
+	#for Fact in ListaFacturas:
+	#	FoliosPago= ""
+	#	for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Fact["IDFactura"]).select_related('IDPago'):
+	#		FoliosPago += Pago.IDPago.Folio + ", "
+	#	FoliosPago = FoliosPago[:-2]
+	#	Folios.append(FoliosPago)
+	#htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas':ListaFacturas, 'Folios': Folios}, request = request,)
+	#print(htmlRes)
+	return HttpResponse('')
 
 
 
