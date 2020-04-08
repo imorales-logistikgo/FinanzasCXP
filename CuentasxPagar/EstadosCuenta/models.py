@@ -61,7 +61,34 @@ class View_FacturasxProveedor(models.Model):
     Status = models.CharField(max_length=15)
     IsAutorizada = models.BooleanField()
     Moneda = models.CharField(max_length=10)
+    TotalXML = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    #FolioPago = models.CharField(max_length=50)
 
     class Meta:
         db_table = "View_FacturasxProveedor"
         managed= False
+
+
+class HistorialReajusteProveedor(models.Model):
+    IDHistorialReajuste = models.AutoField(primary_key = True)
+    IDPendienteEnviar = models.IntegerField()
+    IDFacturaxProveedor = models.IntegerField()
+    CostoSubtotalAnterior = models.DecimalField(max_digits=30, decimal_places=5,  default =0)
+    CostoIVAAnterior = models.DecimalField(max_digits=30, decimal_places=5, default =0)
+    CostoRetencionAnterior = models.DecimalField(max_digits=30, decimal_places=5, default =0)
+    CostoTotalAnterior = models.DecimalField(max_digits=30, decimal_places=5, default =0)
+    NuevoCosto = models.DecimalField(max_digits=30, decimal_places=5, default =0)
+    NuevoCostoRepartos = models.DecimalField(max_digits=30, decimal_places=5, default =0)
+    NuevoCostoAccesorios = models.DecimalField(max_digits=30, decimal_places=5, default =0)
+    NuevoCostoSubtotal = models.DecimalField(max_digits=30, decimal_places=5, default =0)
+    NuevoCostoIVA = models.DecimalField(max_digits=30, decimal_places=5, default =0)
+    NuevoCostoRetencion = models.DecimalField(max_digits=30, decimal_places=5, default =0)
+    NuevoCostoTotal = models.DecimalField(max_digits=30, decimal_places=5, default =0)
+    FechaAlta = models.DateTimeField()
+    IDUsuarioAlta = models.IntegerField()
+    NuevoCostoRecoleccion = models.DecimalField(max_digits=30, decimal_places=5, default =0)
+    Motivo = models.CharField(max_length=500, default = "")
+
+    class Meta:
+        db_table = "HistorialReajusteProveedor"
+        managed = False

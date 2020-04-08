@@ -10,6 +10,7 @@ var table;
 var subtotal = 0, Tiva=0, TRetencion=0, total=0;
 var totalViaje = 0;
 var idPend;
+var totalXML=0, totalXMLProveedor=0;
 $(document).ready(function() {
 //Tabla Pendientes de enviar
 formatDataTable();
@@ -55,9 +56,14 @@ $(document).on('click', '#btnSubirFacturaPendientesEnviar', function(){
 $('#btnAplicarFiltro').on('click', fnGetPendientesEnviar);
 
 $('#txtFolioFactura').on('change', function(){
-  var folioFac = $('#txtFolioFactura').val().replace(/ /g, "").trim();
+  var folioFac = $('#txtFolioFactura').val().replace(/ /g, "").trim().toUpperCase();
   fnCheckFolio(folioFac)
 });
+
+//$('#txtFolioFacturaP').on('change', function(){
+  //var folioFacP = $('#txtFolioFacturaP').val().replace(/ /g, "").trim().toUpperCase();
+  //fnCheckFolio(folioFacP)
+//});
 
 //$(document).on('click', '#buscarFolioProveedor', BuscarFolioProveedor);
 
@@ -418,12 +424,11 @@ function LimpiarModalSF()
                else
                {
                  const urlXMLCheck = response.body
-                 var to = leerxml(urlXMLCheck)
-                 if(to > total || to == null)
+                 totalXML = leerxml(urlXMLCheck)
+                 if(+totalXML > total.toFixed(2) || +totalXML == null)
                  {
                    $("#btnGuardarFactura").prop("disabled", true)
-                   alertToastError("El total de la factura no coincide con el total calculado del sistema")
-                    //uppyDashboard.reset()
+                   alertToastError(`El total de la factura no coincide con el total calculado del sistema $${total.toFixed(2)}`)
                     uppyDashboard.cancelAll()
 
                   }
@@ -554,7 +559,7 @@ function getDatos(){
 
   function saveFacturaP() {
     jParams = {
-      FolioFactura: $('#txtFolioFacturaP').val(),
+      FolioFactura: $('#txtFolioFacturaP').val().replace(/ /g, "").trim().toUpperCase(),
       Proveedor: proveedor,
       FechaFactura: $('#FechaFacturaP').val(),
       FechaRevision: $('#FechaRevisionP').val(),
@@ -569,6 +574,7 @@ function getDatos(){
       TipoCambio: 1,
       Comentarios: $('#txtComentariosP').val(),
       IDProveedor: idprov,
+      TotalXML: +totalXMLProveedor,
     }
 
     fetch("/PendientesEnviar/SaveFactura", {
@@ -652,7 +658,7 @@ function SavePartidasxFacturaP(IDFactura) {
 
 function saveFactura() {
   jParams = {
-    FolioFactura: $('#txtFolioFactura').val().replace(/ /g, "").trim(),
+    FolioFactura: $('#txtFolioFactura').val().replace(/ /g, "").trim().toUpperCase(),
     Proveedor: proveedor,
     FechaFactura: $('#FechaFactura').val(),
     FechaRevision: $('#FechaRevision').val(),
@@ -667,6 +673,7 @@ function saveFactura() {
     TipoCambio: $('#txtTipoCambio').val(),
     Comentarios: $('#txtComentarios').val(),
     IDProveedor:idprov,
+    TotalXML: +totalXML,
   }
 
   fetch("/PendientesEnviar/SaveFactura", {
@@ -796,6 +803,8 @@ function getPendientesEnviar(params){
 }
 
 var fnCheckFolio = function (folio) {
+  WaitMe_ShowBtn('#btnGuardarFactura');
+  $('#btnGuardarFactura').prop('disabled', true);
   fetch("/PendientesEnviar/CheckFolioDuplicado?Folio=" + folio, {
     method: "GET",
     credentials: "same-origin",
@@ -814,9 +823,11 @@ var fnCheckFolio = function (folio) {
         timer: 2500
       })
       $('#btnGuardarFactura').attr('disabled',true);
+      WaitMe_HideBtn('#btnGuardarFactura');
     }
     else {
       $('#btnGuardarFactura').attr('disabled',false);
+      WaitMe_HideBtn('#btnGuardarFactura');
     }
   }).catch(function(ex){
     console.log("no success!");
@@ -973,16 +984,13 @@ function archivosproveedor()
   			const Informer = Uppy.Informer;
   			const XHRUpload = Uppy.XHRUpload;
 
-
   			// to get uppy companions working, please refer to the official documentation here: https://uppy.io/docs/companion/
   			const Dashboard = Uppy.Dashboard;
   			const GoogleDrive = Uppy.GoogleDrive;
         const Webcam = Uppy.Webcam;
-
   			// Private functions
   			var initUppy1 = function(){
   				var id = '#archivosProveedor';
-
   				var options = {
   					proudlyDisplayPoweredByUppy: false,
   					target: id,
@@ -992,9 +1000,7 @@ function archivosproveedor()
   					showProgressDetails: true,
   					note: 'Logisti-k',
            browserBackButtonClose: true,
-
          }
-
          var uppyDashboard = Uppy.Core({
            autoProceed: false,
            restrictions: {
@@ -1024,8 +1030,6 @@ function archivosproveedor()
 
            }
          });
-
-
          uppyDashboard.use(Dashboard, options);
          uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
   				//uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
@@ -1044,10 +1048,10 @@ function archivosproveedor()
            else
            {
              const urlXMLCheck = response.body
-             var to = leerXMLTransportista(urlXMLCheck)
-             if(to > parseFloat(totalViaje).toFixed(2) || to == null)
+             totalXMLProveedor = leerXMLTransportista(urlXMLCheck)
+             if(+totalXMLProveedor > +totalViaje.toFixed(2) || +totalXMLProveedor == null)
              {
-               alertToastError("El total de la factura no coincide con el total calculado del sistema")
+               alertToastError(`El total de la factura no coincide con el total calculado del sistema $${totalViaje.toFixed(2)}`)
                       //uppyDashboard.reset()
                       uppyDashboard.cancelAll()
                       $('.uploaded-files-proveedor ol').remove();
@@ -1060,23 +1064,6 @@ function archivosproveedor()
                      `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
                    }
                  }
-                  /*
-                   if($('#archivosproveedor').data("rutaarchivoXML") != null && $('#archivosproveedor').data("rutaarchivoPDF") != null || $('#archivosproveedor').data("rutaarchivoXML") != undefined && $('#archivosproveedor').data("rutaarchivoPDF") != undefined)
-                   {
-                     var pdfPE = $('#archivosproveedor').data("rutaarchivoPDF");
-                     var xmlPE = $('#archivosproveedor').data("rutaarchivoXML");
-                     guardarFacturaProveedor(pdfPE, xmlPE, idPend);
-                     uppyDashboard.close();
-                     uppyDashboard.reset();
-                     $('#archivosproveedor').data("rutaarchivoXML", null);
-                     $('#archivosproveedor').data("rutaarchivoPDF", null);
-                     $('.uploaded-files-proveedor ol').remove();
-                     $('#contenedorSubirArchivosproveedor').css("display", "none");
-                     $('#inputBuscarFolioProveedor').prop("disabled", false);
-                     $('#buscarFolioProveedor').prop("disabled", false);
-                     $('#inputBuscarFolioProveedor').val('');
-                   }*/
-
                  });
 
         }

@@ -36,6 +36,8 @@
 						<th></th>
 						<th></th>
 						<th></th>
+						<th></th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -56,6 +58,8 @@
 						<td><input name="EvidenciaXML" type="hidden" data-facturaid="{{Factura.IDFactura|safe}}"  data-evidenciaxml="{{Factura.RutaXML|safe}}" data-isautorizada = "{{Factura.IsAutorizada}}"></td>
 						<td></td>
 						<td></td>
+						<td></td>
+						<td>{{Factura.TotalXML|default:0}}</td>
 					</tr>
 					{%endfor%}
 				</tbody>

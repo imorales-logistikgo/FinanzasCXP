@@ -109,7 +109,7 @@ class FacturasxProveedor(models.Model):
     Status = models.CharField(max_length=15, default="PENDIENTE")
     IDUsuarioAlta = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column = 'IDUsuarioAlta', related_name = "IDUsuarioAltaFactura")
     IDUsuarioBaja = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column = 'IDUsuarioBaja', related_name = "IDUsuarioBajaFactura", null=True)
-
+    TotalXML = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     # def __str__(self):
     #     return str(self.IDFactura)
     class Meta:

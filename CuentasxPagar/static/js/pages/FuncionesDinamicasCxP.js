@@ -141,6 +141,7 @@ function leerxml(xml)
     var req = new XMLHttpRequest();
        req.open('GET', newXML, false);
        req.send(null);
+       console.log(req);
        if (req.status == 200)
        {
            var resp = req.responseXML;
@@ -170,6 +171,24 @@ function WaitMe_Show(idForm) {
 function WaitMe_Hide(idForm) {
         $(idForm).waitMe('hide');
 };
+
+function WaitMe_ShowBtn(idForm) {
+    $(idForm).waitMe({
+        effect: 'ios',
+        //text: 'Por favor espera...',
+        bg: 'rgb(255,255,255)',
+        maxSize : 30,
+        color: '#38227F',
+        sizeW: '',
+        sizeH: '',
+        source: ''
+    });
+};
+
+function WaitMe_HideBtn(idForm) {
+        $(idForm).waitMe('hide');
+};
+
 
 function alertToastError(msj)
 {
@@ -268,4 +287,101 @@ function leerXMLTransportista(xml)
            rest = 0;
        }
     return rest;
+}
+
+function jsonAccesoriosXD ()
+{
+  var allAccesorios = ﻿[
+    {
+      "descripcion": "Almacenaje",
+      "costo": 0,
+      "IsAplicaRetencion": false
+    },
+    {
+      "descripcion": "Demora",
+      "costo": 0,
+      "IsAplicaRetencion": false
+    },
+    {
+      "descripcion": "Estadias",
+      "costo": 0,
+      "IsAplicaRetencion": false
+    },
+    {
+      "descripcion": "Maniobras de carga",
+      "costo": 0,
+      "IsAplicaRetencion": false
+    },
+    {
+      "descripcion": "Maniobras de descarga",
+      "costo": 0,
+      "IsAplicaRetencion": false
+    },
+    {
+      "descripcion": "Peaje",
+      "costo": 0,
+      "IsAplicaRetencion": false
+    },
+    {
+      "descripcion": "Recarga de ajuste de gasolina",
+      "costo": 0,
+      "IsAplicaRetencion": true
+    },
+    {
+      "descripcion": "Retraso",
+      "costo": 0,
+      "IsAplicaRetencion": false
+    },
+    {
+      "descripcion": "Viaje Local",
+      "costo": 0,
+      "IsAplicaRetencion": true
+    },
+    {
+      "descripcion": "Custodias",
+      "costo": 0,
+      "IsAplicaRetencion": false
+    },
+    {
+      "descripcion": "Otro",
+      "costo": 0,
+      "IsAplicaRetencion": true
+    }
+  ]
+
+return allAccesorios;
+}
+
+function reajusteAccesorios(){
+  var contTotalReajuste = 0;
+  var datosInputsA = $("input[name='dataAccesoriosIPT']");
+  for(var i = 0; i<datosInputsA.length; i++)
+  {
+    +$(datosInputsA[i]).val().includes("-") ? $(datosInputsA[i]).val(valorAnterioInputs): contTotalReajuste += +$(datosInputsA[i]).val();
+  }
+  return contTotalReajuste;
+}
+
+function recalculoRetencion()
+{
+  var thisAccesorio = 0;
+  var datosInputsA = $("input[name='dataAccesoriosIPT']");
+  for(var i = 0; i<datosInputsA.length; i++)
+  {
+    var aplicaRetencion = $(datosInputsA[i]).data('isretencion');
+    if (aplicaRetencion)
+    {
+      thisAccesorio +=  +$(datosInputsA[i]).val() * 0.04;
+    }
+  }
+  recalculoReajuste(thisAccesorio);
+}
+
+function reajusteRepartos()
+{
+  var totalNewRepartos = 0;
+  $("input[id=costoRepartosInput]").each(function () {
+    totalNewRepartos += +$(this).val();
+  });
+  return totalNewRepartos
 }

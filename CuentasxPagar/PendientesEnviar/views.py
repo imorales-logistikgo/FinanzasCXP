@@ -11,7 +11,8 @@ from django.db.models import Q
 
 @login_required
 def GetPendientesEnviar(request):
-	PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0 AND Moneda = %s", ['FINALIZADO', 'MXN'])
+	#PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0 AND Moneda = %s", ['FINALIZADO', 'MXN'])
+	PendingToSend = View_PendientesEnviarCxP.objects.filter(Status = 'FINALIZADO', IsEvidenciaDigital = 1, IsEvidenciaFisica = 1, IsFacturaProveedor = 0, Moneda = 'MXN', FechaDescarga__month = datetime.datetime.now().month)
 	ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
 	Proveedores = Proveedor.objects.all()
 	ListPendientes = PendientesToList(PendingToSend)
@@ -79,7 +80,6 @@ def GetPendientesByFilters(request):
 def SaveFacturaxProveedor(request):
 	jParams = json.loads(request.body.decode('utf-8'))
 	newFactura = FacturasxProveedor()
-	print(FacturasxProveedor())
 	newFactura.Folio = jParams["FolioFactura"]
 	newFactura.NombreCortoProveedor = jParams["Proveedor"]
 	newFactura.FechaFactura = datetime.datetime.strptime(jParams["FechaFactura"],'%Y/%m/%d')
@@ -97,6 +97,7 @@ def SaveFacturaxProveedor(request):
 	newFactura.RutaPDF = jParams["RutaPDF"]
 	newFactura.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
 	newFactura.IDProveedor =  jParams["IDProveedor"]
+	newFactura.TotalXML = jParams["TotalXML"]
 	newFactura.save()
 	return HttpResponse(newFactura.IDFactura)
 
@@ -137,7 +138,7 @@ def CheckFolioDuplicado(request):
 def FindFolioProveedor(request):
 	Folio = request.GET["Folio"]
 	try:
-		PendienteEnviar = View_PendientesEnviarCxP.objects.get(Folio = Folio, IsFacturaProveedor = False, IsEvidenciaFisica = True, IsEvidenciaDigital = True, IDProveedor = request.user.IDTransportista, Status= 'FINALIZADO')
+		PendienteEnviar = View_PendientesEnviarCxP.objects.filter(Folio = Folio, IsFacturaProveedor = False, IsEvidenciaFisica = True, IsEvidenciaDigital = True, IDProveedor = request.user.IDTransportista, Status= 'FINALIZADO').last()
 		if PendienteEnviar.IsControlDesk != 0:
 			return JsonResponse({'Found' : True, 'Folio' : PendienteEnviar.Folio, 'Proveedor' : PendienteEnviar.NombreProveedor, 'FechaDescarga' : PendienteEnviar.FechaDescarga, 'IDPendienteEnviar' : PendienteEnviar.IDPendienteEnviar, 'IDProveedor' : PendienteEnviar.IDProveedor, 'Subtotal': PendienteEnviar.Subtotal, 'IVA': PendienteEnviar.IVA, 'Retencion': PendienteEnviar.Retencion, 'Total' : PendienteEnviar.Total})
 		else:
@@ -148,13 +149,16 @@ def FindFolioProveedor(request):
 
 
 def CrearUsuariosTranportistas(request):
-	Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
+	#Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
+
+	Proveedores = Proveedor.objects.filter(RFC='EAAL610302L59')
+
 	for prov in Proveedores:
 		try:
 			oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
 		except AdmonUsuarios.DoesNotExist:
 			newUser = AdmonUsuarios()
-			newUser.nombre = prov.NombreComercial
+			newUser.nombre = prov.RazonSocial
 			newUser.nombreusuario = prov.RFC
 			newUser.correo = prov.Correo
 			newUser.fechacambiocontrasena = datetime.datetime.now()

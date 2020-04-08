@@ -25,6 +25,9 @@ class AdmonUsuarios(models.Model):
 class Proveedor(models.Model):
     IDTransportista = models.AutoField(primary_key=True)
     NombreComercial = models.CharField(max_length=200)
+    RazonSocial = models.CharField(max_length=200)
+    RFC = models.CharField(max_length=200)
+    Correo = models.CharField(db_column='Correo', max_length=200, blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'AdmonTransportistas'

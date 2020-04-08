@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'ReporteMaster',
     'users',
     'usersadmon',
+    'bkg_viajes',
+    'XD_Viajes'
 ]
 
 MIDDLEWARE = [
@@ -115,7 +117,30 @@ DATABASES = {
         'OPTIONS': {
             'driver': "ODBC Driver 17 for SQL Server",
         },
+        #'ATOMIC_REQUESTS': True,
     },
+    'bkg_viajesDB': {
+         'ENGINE': "sql_server.pyodbc",
+         'NAME': "LogistikGO_Brockeraje",
+         'HOST': "logistikgo.database.windows.net",
+         'USER': "QUR3n5qk4F33",
+         'PASSWORD': "Kh216Dr97DPoZxxS57",
+         'PORT': "1433",
+         'OPTIONS': {
+             'driver': "ODBC Driver 17 for SQL Server",
+         },
+     },
+    'XD_ViajesDB': {
+         'ENGINE': "sql_server.pyodbc",
+         'NAME': "LogistikGO_LKMXD_Copiar_01",
+         'HOST': "logistikgo.database.windows.net",
+         'USER': "QUR3n5qk4F33",
+         'PASSWORD': "Kh216Dr97DPoZxxS57",
+         'PORT': "1433",
+         'OPTIONS': {
+         'driver': "ODBC Driver 17 for SQL Server",
+         },
+      }
     # 'users': {
     #     'ENGINE': "sql_server.pyodbc",
     #     'NAME': "LogistikGO_Admon",

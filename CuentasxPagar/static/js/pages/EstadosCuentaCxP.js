@@ -2,6 +2,13 @@ var table;
 var proveedor;
 var rutaComprobante;
 var idprov;
+var idViajeProyecto;
+var typeProyecto;
+var totalIncialNoReajuste;
+var ivaProcentaje = 0.16;
+var retencionProcentaje = 0.04;
+var diferenciaReajuste = 0;
+var idFacturaReajuste, valorAnterioInputs, valorAnterioInputsRepartos, indexRowReajuste, costoViajeDefault, showBtnA, costoRecoleccionDefault;
 $(document).ready(function()
 {
   var calculo =0;
@@ -10,13 +17,13 @@ $(document).ready(function()
   var totConv=0;
   var isAuth;
 //tabla estados de cuenta
-
 formatDataTableFacturas();
 
 $('#TableEstadosdeCuenta').css("display", "block");
 
 $(document).on('click', '.btnDetallePago', fnGetDetallePago);
 // table.columns.adjust().draw();
+
 //ejecuta varias funciones cada que el checkbox es seleccionado en la tabla estados de cuenta
 $(document).on( 'change', 'input[name="checkEC"]', function () {
   var input = 'input[name="checkEC"]';
@@ -88,6 +95,333 @@ $(document).on('click', '.btnAprobarFactura',function(){
   }
 })
 });
+
+
+//***INICIAR CODIGO PARA LA FUNCIONALIDAD DE RAJUSTE***//
+
+$(document).on('click', '.btnEditarFactura', function(){
+  WaitMe_Show('#modalWaitReajuste');
+  $('#btnSaveReajuste').prop('disabled', true);
+  showBtnA = $(this);
+  var t =  $('#TableEstadosdeCuenta').DataTable();
+  var totalXMl_ = t.row($(this).parents('tr')).data()[16];
+  indexRowReajuste = t.row($(this).parents('tr')).index();
+  idFacturaReajuste = $(this).data('idfact');
+  fetch(`/EstadosdeCuenta/GetDataReajuste?IDFactura=${$(this).data('idfact')}`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    if (response.status == 200)
+    {
+      return response.clone().json();
+    }
+    else if (response.status == 500)
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'Algo salio mal, por favor intenta de nuevo',
+        showConfirmButton: false,
+        timer: 2500
+      })
+      $('#ModalReajusteCXP').modal('hide');
+      WaitMe_Hide('#modalWaitReajuste');
+    }
+  }).then(function(data){
+    $('#CostoReajuste').val(+data.DataBKG[0].CostoViaje.toFixed(2));
+    data.DataBKG[0].Proyecto == 'BKG' ? $('#CostoRecoleccionReajuste').val(+data.DataBKG[0].CostoRecoleccion.toFixed(2)): ($('#CostoRecoleccionReajuste').val(0));
+    $('#CostoRecoleccionReajuste').val() == 0 ? $('#CostoRecoleccionReajuste').prop('disabled', true) : $('#CostoRecoleccionReajuste').prop('disabled', false)
+    $('#costoAccesoriosReajuste').val(+data.DataBKG[0].CostoAccesorios.toFixed(2))
+    $('#costoRepartosReajuste').val(+data.DataBKG[0].CostoRepartos.toFixed(2))
+    $('#subtotalReajuste').val(+data.DataBKG[0].CostoSubtotal.toFixed(2));
+    $('#IVAReajuste').val(+data.DataBKG[0].CostoIVA.toFixed(2));
+    $('#RetencionReajuste').val(+data.DataBKG[0].CostoRetencion.toFixed(2));
+    $('#TotalReajuste').val(+data.DataBKG[0].CostoTotal.toFixed(2));
+
+    $('#costoAccesoriosReajuste').val() == 0 ? $('#AccesoriosReajuste').prop('disabled', true): $('#AccesoriosReajuste').prop('disabled', false);
+    $('#costoRepartosReajuste').val() == 0 ? $('#RepartosReajuste').prop('disabled', true):$('#RepartosReajuste').prop('disabled', false);
+
+    idViajeProyecto = data.DataBKG[0].IDViaje;
+    typeProyecto = data.DataBKG[0].Proyecto;
+    totalIncialNoReajuste = +data.DataBKG[0].CostoTotal.toFixed(2);
+    costoViajeDefault = +data.DataBKG[0].CostoViaje.toFixed(2);
+    costoRecoleccionDefault = +$('#CostoRecoleccionReajuste').val();
+    xmlValor = +totalXMl_;
+    $('#FolioReajuste').html(data.DataBKG[0].Folio);
+    +$('#TotalProveedor').val(xmlValor.toFixed(2)) != totalIncialNoReajuste ? $('#TotalProveedor').css('background-color', '#F91919') : $('#TotalProveedor').css('background-color', '#09DD08');
+    WaitMe_Hide('#modalWaitReajuste');
+  }).catch(function(ex){
+    console.log(ex);
+  });
+
+});
+
+
+//Modal reajuste de los accesorios
+$('#ModalReajusteAccesorios').on('shown.bs.modal', function(){
+  WaitMe_Show('#modalWaitReajusteAccesorios');
+  fetch(`/EstadosdeCuenta/GetAccesoriosxViaje?IDViaje=${idViajeProyecto}&Proyecto=${typeProyecto}`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    if (response.status == 200)
+    {
+      return response.clone().json();
+    }
+    else if (response.status == 500)
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'Algo salio mal, por favor intentalo de nuevo',
+        showConfirmButton: false,
+        timer: 2500
+      })
+    }
+  }).then(function(data){
+    var accesorioCosto = 0;
+    if (typeProyecto == 'BKG'){
+      for (var i = 0; i<data.NewData.length; i++)
+      {
+        document.querySelector(".listaAccesorios").innerHTML += `
+        <div>
+          <div class="row py-2" >
+            <div class="col col-md-7">
+             <label>`+data.NewData[i].NombreAccesorio+`</label>
+            </div>
+            <div class="col col-md-5" id="inputsAccesoriosModal">
+              <input type="number" name="dataAccesoriosIPT" min="0" class="form-control" data-isretencion="`+data.NewData[i].IsAplicaRetencion+`" id="`+data.NewData[i].NombreAccesorio.replace(/ /g, "")+`" value="`+data.NewData[i].CostoAccesorio+`">
+            </div>
+          </div>
+        </div>`;
+      }
+    }
+    else if (typeProyecto == 'XD') {
+      var dataJsonAccesorios = jsonAccesoriosXD();
+      for (var i=0; i < dataJsonAccesorios.length; i++)
+        {
+          for (var j = 0; j<data.NewData.length; j++)
+          {
+              accesorioCosto = dataJsonAccesorios[i].descripcion == data.NewData[j].NombreAccesorio ? dataJsonAccesorios[i].costo = data.NewData[j].CostoAccesorio : accesorioCosto;
+          }
+          document.querySelector(".listaAccesorios").innerHTML += `
+          <div>
+            <div class="row py-2" >
+              <div class="col col-md-7">
+               <label>`+dataJsonAccesorios[i].descripcion+`</label>
+              </div>
+              <div class="col col-md-5" id="inputsAccesoriosModal">
+                <input type="number" name="dataAccesoriosIPT" min="0" class="form-control" data-isretencion="`+dataJsonAccesorios[i].IsAplicaRetencion+`" id="`+dataJsonAccesorios[i].descripcion.replace(/ /g, "")+`" value="`+accesorioCosto+`" required>
+              </div>
+            </div>
+          </div>`;
+          accesorioCosto = 0;
+          data.NewData[0] == undefined ? $('input[id="'+dataJsonAccesorios[i].descripcion+'"]').prop('disabled', true): $('input[id="'+dataJsonAccesorios[i].descripcion+'"]').prop('disabled', false);
+        }
+    }
+
+    $('#cTotalAccesorios').val($('#costoAccesoriosReajuste').val());
+    WaitMe_Hide('#modalWaitReajusteAccesorios');
+  }).catch(function(ex){
+    console.log(ex)
+  });
+});
+
+
+//modal reajuste de los repartos
+$('#ModalReajusteRepartos').on('shown.bs.modal', function(){
+  WaitMe_Show('#modalWaitReajusteRepartos');
+  fetch("/EstadosdeCuenta/GetRepartosxViaje?IDViaje="+ idViajeProyecto+"&Proyecto="+typeProyecto, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    if (response.status == 200)
+    {
+      return response.clone().json();
+    }
+    else if (response.status == 500)
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'Algo salio mal, por favor intentalo de nuevo',
+        showConfirmButton: false,
+        timer: 2500
+      })
+    }
+  }).then(function(data){
+    for (var i=0; i < data.NewDataR.length; i++)
+      {
+        document.querySelector("#trRepartos").innerHTML += `
+            <tr>
+              <td></td>
+              <td>`+data.NewDataR[i].deliveries+`</td>
+              <td>`+data.NewDataR[i].ciudadDestino+`</td>
+              <td><input type="number" class="form-control" id="costoRepartosInput" value="`+data.NewDataR[i].costo+`"></td>
+            </tr>`;
+      }
+    formatoTableRepartos();
+    WaitMe_Hide('#modalWaitReajusteRepartos');
+  }).catch(function(ex){
+    console.log(ex)
+  });
+});
+
+
+//al cerrar el modal de reajuste los campos se limpian
+$('#ModalReajusteCXP').on('hidden.bs.modal', cleanModalReajuste);
+
+//al cerrar el modal de accesorios los campos del modal se limpian
+$(document).on('hidden.bs.modal', '#ModalReajusteAccesorios', cleanModalAccesorios);
+
+// al cerrar el modal de repartos, los campos del modal se limpian
+$(document).on('hidden.bs.modal', '#ModalReajusteRepartos', function(){
+  $('#tableRepartos').DataTable().destroy();
+  $('#trRepartos tr').remove();
+});
+
+//validar que solo el total se pueda reajustar solo $1
+$("#TotalReajuste").on('change', function(){
+  $(this).val() > (+totalIncialNoReajuste + 1) || $(this).val() < (+totalIncialNoReajuste - 1) ? ($(this).val(+totalIncialNoReajuste), alertToastError("Solo se permite ajustar $1")) : (diferenciaReajuste = $(this).val() - (+totalIncialNoReajuste));
+  +$('#TotalProveedor').val() == +$('#TotalReajuste').val() ? ($('#TotalProveedor').css('background-color', '#09DD08'), $('#btnSaveReajuste').prop('disabled', false)) : ($('#TotalProveedor').css('background-color', '#F91919'), $('#btnSaveReajuste').prop('disabled', true));
+})
+
+//recalculo cuando se modifica el valor del costo
+$("#CostoReajuste").on('change', function(){
+  WaitMe_Show('#modalWaitReajuste');
+  +$(this).val() > costoViajeDefault ? ($(this).val(costoViajeDefault), alertToastError(`El total no puede ser mayor a $${costoViajeDefault}`), getAccesorios()) : (getAccesorios());
+  WaitMe_Hide('#modalWaitReajuste');
+});
+
+$("#CostoRecoleccionReajuste").on('change', function(){
+  WaitMe_Show('#modalWaitReajuste');
+  +$(this).val() > costoRecoleccionDefault ? ($(this).val(costoRecoleccionDefault), alertToastError(`El total no puede ser mayor a $${costoRecoleccionDefault}`), getAccesorios()) : (getAccesorios());
+  WaitMe_Hide('#modalWaitReajuste');
+});
+
+//onfocus para obtener el valor del input de los accesorios antes del evento change
+$(document).on('focus', "input[name='dataAccesoriosIPT']", function(){
+  valorAnterioInputs = $(this).val();
+});
+
+//validaciones para el reajuste de accesorios
+$(document).on('change', "input[name='dataAccesoriosIPT']",function(){
+  var newTotalAccesorios = reajusteAccesorios();
+  newTotalAccesorios > $('#costoAccesoriosReajuste').val() ? ($(this).val(valorAnterioInputs), alertToastError(`El total no puede ser mayor a $${$('#costoAccesoriosReajuste').val()}`), $("#btnSaveAccesoriosReajuste").prop('disabled', true)) : ($('#cTotalAccesorios').val(newTotalAccesorios), $("#btnSaveAccesoriosReajuste").prop('disabled', false));
+});
+
+//onfocus para obtener el valor del input de los repartos antes del evento change
+$(document).on('focus', "input[id=costoRepartosInput]", function(){
+  valorAnterioInputsRepartos = $(this).val();
+});
+
+//validaciones para el reajuste de los repartos
+$(document).on('change', '#costoRepartosInput', function(){
+  var newTotalRepartos = reajusteRepartos();
+  newTotalRepartos > +$('#costoRepartosReajuste').val() ? ($(this).val(valorAnterioInputsRepartos), alertToastError(`El total no puede ser mayor a $${$('#costoRepartosReajuste').val()}`), $('#btnSaveRepartosReajuste').prop('disabled', true)) : ($('#costoRepartosReajuste').val(newTotalRepartos), $('#btnSaveRepartosReajuste').prop('disabled', false));
+})
+
+//guardar nuevo total de reajuste de repartos
+$(document).on('click', '#btnSaveRepartosReajuste', function(){
+  getAccesorios();
+  $('#ModalReajusteRepartos').modal('hide');
+  $('#TotalReajuste').prop('disabled', true);
+});
+
+//guardar nuevo total de reajuste de accesorios
+$("#btnSaveAccesoriosReajuste").on('click', function(){
+  $('#costoAccesoriosReajuste').val($('#cTotalAccesorios').val());
+  recalculoRetencion();
+  $('#ModalReajusteAccesorios').modal('hide');
+  $('#TotalReajuste').prop('disabled', true);
+});
+
+// guardar los nuevos valores del reajuste
+$('#btnSaveReajuste').on('click', function(){
+  WaitMe_Show('#modalWaitReajuste');
+  jParams = {
+    IDFactura: idFacturaReajuste,
+    Costo: $('#CostoReajuste').val(),
+    CostoRecoleccion: $('#CostoRecoleccionReajuste').val(),
+    CostoAccesorios:$('#costoAccesoriosReajuste').val(),
+    CostoRepartos: $('#costoRepartosReajuste').val(),
+    Subtotal: $('#subtotalReajuste').val(),
+    IVA: $('#IVAReajuste').val(),
+    Retencion: $('#RetencionReajuste').val(),
+    Total: $('#TotalReajuste').val(),
+    DiferenciaReajuste: diferenciaReajuste.toFixed(2),
+    IDViaje: idViajeProyecto,
+    Proyecto: typeProyecto,
+    Motivo: $('#MotivoReajuste').val(),
+  }
+  console.log(jParams);
+  fetch("/EstadosdeCuenta/saveReajuste", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken"),
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(jParams)
+  }).then(function(response,DataFacturaByID){
+    if(response.status == 200)
+    {
+      return response.clone().json();
+    }
+    else if(response.status == 500 || response.status == 400)
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'No se pudo guardar el reajuste',
+        showConfirmButton: false,
+        timer: 3500
+      })
+      WaitMe_Hide('#modalWaitReajuste');
+     }
+  }).then(function(data){
+    var t =  $('#TableEstadosdeCuenta').DataTable();
+    for (var i=0; i<data.DataFacturaByID.length; i++)
+    {
+       t.cell(indexRowReajuste,4).data(data.DataFacturaByID[i].newSubtotal);
+       t.cell(indexRowReajuste,5).data(data.DataFacturaByID[i].newIVA);
+       t.cell(indexRowReajuste,6).data(data.DataFacturaByID[i].newRetencion);
+       t.cell(indexRowReajuste,7).data(data.DataFacturaByID[i].newTotal);
+       t.cell(indexRowReajuste,8).data(data.DataFacturaByID[i].newTotal);
+    }
+
+    var btnEditar = (showBtnA)[0];
+    $(btnEditar).css('display', 'none');
+    var showbtn_= $(showBtnA).parents("tr").find("td")[14];
+    var btnAprov = $(showbtn_).children()[0];
+    btnAprov.style.display = "block";
+
+   Swal.fire({
+      type: 'success',
+      title: 'Reajuste guardado correctamente',
+      showConfirmButton: true,
+      timer: 3500
+    })
+    $('#ModalReajusteCXP').modal('hide');
+    WaitMe_Hide('#modalWaitReajuste');
+  }).catch(function(ex){
+    console.log(ex);
+  });
+});
+
+
+
+//***TERMINA CODIGO PARA LA FUNCIONALIDAD DE REAJUSTE***//
+
 
 
 //elementos a mostrar al abrirse el modeal de subir cobros
@@ -320,15 +654,15 @@ function showDatosObtenidos(){
  {
    if(datos[i][3] == 'MXN')
    {
-     var Balance = parseFloat(datos[i][2].replace(/(\$)|(,)/g,''));
-     var tot = parseFloat(datos[i][1].replace(/(\$)|(,)/g,''));
+     var Balance = +datos[i][2].replace(/(\$)|(,)/g,'');
+     var tot = +datos[i][1].replace(/(\$)|(,)/g,'');
      total = total + Balance;
    }
    if(datos[i][3] == 'USD')
    {
      var tipoCambio = $('input[name="TipoCambioPago"]').val();
-     var Balance = parseFloat(datos[i][2].replace(/(\$)|(,)/g,'') * tipoCambio);
-     var tot = parseFloat(datos[i][1].replace(/(\$)|(,)/g,''));
+     var Balance = +datos[i][2].replace(/(\$)|(,)/g,'') * tipoCambio;
+     var tot = +datos[i][1].replace(/(\$)|(,)/g,'');
      totConv = Balance;
       // datos[i].push(tot);
       total = total + Balance;
@@ -399,10 +733,11 @@ function ValidacionCheckboxPagos(){
 });
 }
 
+/*
 $('#tablaDetalles').DataTable({
   "responsive": true
 });
-
+*/
 
 });
 
@@ -491,6 +826,9 @@ function formatDataTableFacturas(){
     {
       extend: 'excel',
       text: '<i class="fas fa-file-excel fa-lg"></i>',
+      exportOptions: {
+              columns: ':visible'
+      }
     }
     ],
     /*fixedColumns:   {
@@ -558,7 +896,7 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 13,
       "mRender": function (data, type, full) {
-       return ( full[10] == 'pendiente'.toUpperCase() && isAuth != 'True' ? '<button type ="button" title="Aprobar" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'');
+       return (full[10] == 'pendiente'.toUpperCase() && +full[16] != +full[7].replace(/(\$)|(,)/g,'') && +full[16]!=0 ? '<a href="#ModalReajusteCXP" title="Editar" class="btnEditarFactura btn btn-dark btn-elevate btn-pill btn-sm" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-idfact="'+idfac+'"><i class="far fa-edit"></i></a>': '');
      }
     },
     {
@@ -566,14 +904,24 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 14,
       "mRender": function (data, type, full) {
+       return ( full[10] == 'pendiente'.toUpperCase() && isAuth == 'False' && +full[16] == +full[7].replace(/(\$)|(,)/g,'') ? '<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" style="display:none"><i class="flaticon2-checkmark"></i></button>');
+     }
+    },
+    {
+      "width": "3%",
+      "className": "text-center",
+      "targets": 15,
+      "mRender": function (data, type, full) {
           return ( full[10] === 'pendiente'.toUpperCase() ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" title="Eliminar"><i class="flaticon-delete"></i></button>':'');
       }
+    },
+    {
+      "targets":16,
+      "visible": false
     }
    ]
  });
 }
-
-
 
 
 function getDetalleFactura()
@@ -676,7 +1024,7 @@ function ValidarFactura(IDFactura, btn) {
       Swal.fire({
         type: 'success',
         title: 'La factura ha sido validada correctamente',
-        showConfirmButton: false,
+        showConfirmButton: true,
         timer: 2500
       })
       var trBtnAprovar= $(btn).closest('tr');
@@ -731,8 +1079,8 @@ function SavePagoxFactura(IDPago)
       Swal.fire({
         type: 'success',
         title: 'El pago fue guardado correctamente',
-        showConfirmButton: false,
-        timer: 3500
+        showConfirmButton: true,
+        //timer: 3500
       })
       $('#modalSubirPagos').modal('hide');
 
@@ -841,5 +1189,119 @@ var fnGetDetallePago = function () {
     $('#divTableDetallesPago').html(data.htmlRes);
   }).catch(function(ex){
     console.log("no success!");
+  });
+}
+
+function cleanModalReajuste()
+{
+  $('#CostoReajuste').val("");
+  $('#costoAccesoriosReajuste').val("")
+  $('#costoRepartosReajuste').val("")
+  $('#subtotalReajuste').val("");
+  $('#IVAReajuste').val("");
+  $('#RetencionReajuste').val("");
+  $('#TotalReajuste').val("");
+  diferenciaReajuste = 0;
+  $('#TotalReajuste').prop('disabled', false);
+  $('#CostoRecoleccionReajuste').prop('disabled', false);
+  $('#btnSaveRepartosReajuste').prop('disabled', true);
+}
+
+function cleanModalAccesorios()
+{
+  $('.listaAccesorios div').remove();
+  $("#btnSaveAccesoriosReajuste").prop('disabled', true);
+}
+
+function formatoTableRepartos()
+{
+  var t = $('#tableRepartos').DataTable( {
+    "paging": false,
+    "columnDefs": [ {
+        "searchable": false,
+        "orderable": false,
+        "targets": 0
+    } ],
+} );
+
+t.on( 'order.dt search.dt', function () {
+    t.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+        cell.innerHTML = i+1;
+    } );
+} ).draw();
+}
+
+
+function recalculoReajuste(retencionAccesorios)
+{
+  WaitMe_Show('#modalWaitReajuste');
+  //diferenciaReajuste = 0;
+  var costoViaje = 0;
+  typeProyecto == 'BKG' && +$('#CostoReajuste').val() == 0 ? costoViaje = +$('#CostoRecoleccionReajuste').val() : costoViaje = +$('#CostoReajuste').val();
+  var recalculoSubtotal = costoViaje+(+$('#costoAccesoriosReajuste').val())+(+$('#costoRepartosReajuste').val());
+  var recalculoIVA = recalculoSubtotal * ivaProcentaje;
+  var recalculoRetencion = ((costoViaje * retencionProcentaje) + retencionAccesorios) + ((+$('#costoRepartosReajuste').val())* retencionProcentaje);
+  var recalculoTotal = ((Number(recalculoSubtotal.toFixed(2)) + Number(recalculoIVA.toFixed(2))) - recalculoRetencion.toFixed(2));
+
+  $('#subtotalReajuste').val(recalculoSubtotal.toFixed(2));
+  $('#IVAReajuste').val(recalculoIVA.toFixed(2));
+  $('#RetencionReajuste').val(recalculoRetencion.toFixed(2));
+  $('#TotalReajuste').val(recalculoTotal.toFixed(2));
+  +$('#TotalProveedor').val() == +$('#TotalReajuste').val() ? ($('#TotalProveedor').css('background-color', '#09DD08'), $('#btnSaveReajuste').prop('disabled', false)) : ($('#TotalProveedor').css('background-color', '#F91919'), $('#btnSaveReajuste').prop('disabled', true));
+  //$('#btnSaveReajuste').prop('disabled', false);
+  WaitMe_Hide('#modalWaitReajuste');
+}
+
+function getAccesorios()
+{
+  fetch(`/EstadosdeCuenta/GetAccesoriosxViaje?IDViaje=${idViajeProyecto}&Proyecto=${typeProyecto}`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    WaitMe_Show('#modalWaitReajuste');
+    if (response.status == 200)
+    {
+      return response.clone().json();
+    }
+    else if (response.status == 500)
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'Algo salio mal, por favor intentalo de nuevo',
+        showConfirmButton: false,
+        timer: 2500
+      })
+      $('#btnSaveReajuste').prop('disabled', true)
+      WaitMe_Hide('#modalWaitReajuste');
+    }
+  }).then(function(data){
+    if (typeProyecto == 'BKG')
+    {
+      var accesorioRetencionCosto = 0;
+      for (var i = 0; i<data.NewData.length; i++)
+      {
+        data.NewData[i].IsAplicaRetencion ? accesorioRetencionCosto+= (+data.NewData[i].CostoAccesorio*retencionProcentaje) : "";
+      }
+      recalculoReajuste(accesorioRetencionCosto);
+    }
+    else if (typeProyecto == 'XD') {
+      var accesorioRetencionCosto = 0;
+      var dataJsonAccesorios = jsonAccesoriosXD();
+      for (var i=0; i < dataJsonAccesorios.length; i++)
+        {
+          for (var j = 0; j<data.NewData.length; j++)
+          {
+            dataJsonAccesorios[i].descripcion == data.NewData[j].NombreAccesorio && dataJsonAccesorios[i].IsAplicaRetencion ? accesorioRetencionCosto += (+data.NewData[j].CostoAccesorio*retencionProcentaje) : "";
+          }
+        }
+        recalculoReajuste(accesorioRetencionCosto);
+    }
+    WaitMe_Hide('#modalWaitReajuste');
+  }).catch(function(ex){
+    console.log(ex)
   });
 }

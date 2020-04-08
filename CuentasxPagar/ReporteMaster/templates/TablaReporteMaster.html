@@ -46,18 +46,18 @@
 						<td>{{Master.IsFacturaCliente|safe}}</td>
 						<td>{{Master.FolioFactCliente|default:""|safe}}</td>
 						<td>{{Master.StatusFacturaCliente|default:""|safe}}</td>
-						<td>${{Master.SubtotalC|default:0|intcomma|safe}}</td>
-						<td>${{Master.IVAC|default:0|intcomma|safe}}</td>
-						<td>${{Master.RetencionC|default:0|intcomma|safe}}</td>
-						<td>${{Master.TotalC|default:0|intcomma|safe}}</td>
-						<td>{{Master.IsFacturaProveedor|safe}}</td>
-						<td>{{Master.FolioFactProveedor|default:""|safe}}</td>
-						<td>{{Master.StatusFacturaProveedor|default:""|safe}}</td>
-						<td>${{Master.MOP|default:0|intcomma|safe|safe}}</td>
 						<td>${{Master.Subtotal|default:0|intcomma|safe}}</td>
 						<td>${{Master.IVA|default:0|intcomma|safe}}</td>
 						<td>${{Master.Retencion|default:0|intcomma|safe}}</td>
 						<td>${{Master.Total|default:0|intcomma|safe}}</td>
+						<td>{{Master.IsFacturaProveedor|safe}}</td>
+						<td>{{Master.FolioFactProveedor|default:""|safe}}</td>
+						<td>{{Master.StatusFacturaProveedor|default:""|safe}}</td>
+						<td>${{Master.MOP|default:0|intcomma|safe|safe}}</td>
+						<td>${{Master.SubtotalC|default:0|intcomma|safe}}</td>
+						<td>${{Master.IVAC|default:0|intcomma|safe}}</td>
+						<td>${{Master.RetencionC|default:0|intcomma|safe}}</td>
+						<td>${{Master.TotalC|default:0|intcomma|safe}}</td>
 					</tr>
 					{%endfor%}
 				</tbody>

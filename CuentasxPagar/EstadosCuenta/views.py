@@ -1,7 +1,9 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from PendientesEnviar.models import RelacionFacturaProveedorxPartidas, FacturasxProveedor, PendientesEnviar, RelacionConceptoxProyecto, Ext_PendienteEnviar_Costo
-from EstadosCuenta.models import  View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor
+from bkg_viajes.models import Bro_Viajes, Bro_ServiciosxViaje, Servicios, Clientes, Bro_RepartosxViaje
+from XD_Viajes.models import XD_Viajes, XD_AccesoriosxViajes, RepartosxViaje
+from PendientesEnviar.models import RelacionFacturaProveedorxPartidas, FacturasxProveedor, PendientesEnviar, RelacionConceptoxProyecto, Ext_PendienteEnviar_Costo, View_PendientesEnviarCxP
+from EstadosCuenta.models import  View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor, HistorialReajusteProveedor
 from usersadmon.models import Proveedor, AdmonUsuarios
 from users.models import User
 from django.core.mail import send_mail, EmailMessage
@@ -10,13 +12,17 @@ from decimal import Decimal
 from django.db.models import Q
 import json, datetime, math
 from django.contrib.auth.decorators import login_required
+from django.db import transaction, DatabaseError
+import json
+
 
 @login_required
 def EstadosdeCuenta(request):
 	if request.user.roles == 'Proveedor':
 		 return render(request, '404.html')
 	else:
-		result = View_FacturasxProveedor.objects.filter(Q(Status = "PENDIENTE") | Q(Status = "ABONADA"))
+		result = View_FacturasxProveedor.objects.filter(Status__in = ("PENDIENTE", "ABONADA"), FechaFactura__month = datetime.datetime.now().month)
+		#result = View_FacturasxProveedor.objects.filter(Q(Status = "PENDIENTE") | Q(Status = "ABONADA") & Q(FechaFactura__month = datetime.datetime.now().month))
 		ListaFacturas = FacturasToList(result)
 		Folios = list()
 		for Factura in ListaFacturas:
@@ -28,7 +34,134 @@ def EstadosdeCuenta(request):
 			Folios.append(FoliosPago)
 		ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas = GetContadores()
 		Proveedores = Proveedor.objects.all()
-		return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Proveedores': Proveedores, 'Folios': Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas, 'Rol': request.user.roles})
+		return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Proveedores': Proveedores, 'Folios':Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas, 'Rol': request.user.roles})
+
+
+def GetDataReajuste(request):
+	IDFac = request.GET["IDFactura"]
+	IDPECXP = RelacionFacturaProveedorxPartidas.objects.get(IDFacturaxProveedor = IDFac)
+	projectType = PendientesEnviar.objects.get(IDPendienteEnviar = str(IDPECXP.IDPendienteEnviar))
+	GetConcepto = RelacionConceptoxProyecto.objects.get(IDPendienteEnviar = IDPECXP.IDPendienteEnviar)
+	if projectType.Proyecto == 'BKG':
+		GetBkgData = Bro_Viajes.objects.get(IDBro_Viaje = GetConcepto.IDConcepto)
+		DataBKG = list()
+		data = {}
+		data["IDViaje"] = GetBkgData.IDBro_Viaje
+		data["Folio"] = GetBkgData.Folio
+		data["CostoViaje"] = GetBkgData.CostoViaje
+		data["CostoRecoleccion"] = GetBkgData.CostoRecoleccion
+		data["CostoAccesorios"] = GetBkgData.CostoServicios
+		data["CostoRepartos"] = GetBkgData.CostoTotalRepartos
+		data["CostoSubtotal"] = GetBkgData.CostoSubtotal
+		data["CostoIVA"] = GetBkgData.CostoIVA
+		data["CostoRetencion"] = GetBkgData.CostoRetencion
+		data["CostoTotal"] = GetBkgData.CostoTotal
+		data["Proyecto"] = 'BKG'
+		DataBKG.append(data)
+	elif projectType.Proyecto == 'XD':
+		GetXdData = XD_Viajes.objects.get(XD_IDViaje = GetConcepto.IDConcepto)
+		DataBKG = list()
+		data = {}
+		data["IDViaje"] = GetXdData.XD_IDViaje
+		data["Folio"] = GetXdData.Folio
+		data["CostoViaje"] = GetXdData.Costo
+		data["CostoAccesorios"] = GetXdData.CostoAccesorios
+		data["CostoRepartos"] = GetXdData.CostoRepartos
+		data["CostoSubtotal"] = GetXdData.CostoSubtotal
+		data["CostoIVA"] = GetXdData.CostoIVA
+		data["CostoRetencion"] = GetXdData.CostoRetencion
+		data["CostoTotal"] = GetXdData.CostoTotal
+		data["Proyecto"] = 'XD'
+		DataBKG.append(data)
+	return JsonResponse({'DataBKG':DataBKG})
+
+
+def GetAccesoriosxViaje(request):
+	IDViaje_ = request.GET["IDViaje"]
+	GetDataAccesoriosBKG = Bro_ServiciosxViaje.objects.filter(IDBro_Viaje = IDViaje_)
+	GetDataAccesoriosXD = XD_AccesoriosxViajes.objects.filter(XD_IDViaje = IDViaje_)
+	GetnameAccesorio = Servicios.objects.all()
+	NewData = list()
+	costoA = 0;
+	dataFromProject = GetnameAccesorio if (request.GET["Proyecto"] == 'BKG')  else GetDataAccesoriosXD if (request.GET["Proyecto"] == 'XD') else ""
+	for Accesorios in dataFromProject :
+		dataAccesorios = {}
+		if request.GET["Proyecto"] == 'BKG':
+			for eachAccesorio in GetDataAccesoriosBKG:
+				costoA = eachAccesorio.Costo if (Accesorios.IDservicio == eachAccesorio.IDBro_Servicio) else 0
+		dataAccesorios['NombreAccesorio'] = Accesorios.Nombre if(request.GET["Proyecto"] == 'BKG') else Accesorios.Descripcion if (request.GET["Proyecto"] == 'XD') else ""
+		dataAccesorios['CostoAccesorio'] = costoA if(request.GET["Proyecto"] == 'BKG') else Accesorios.Costo if (request.GET["Proyecto"] == 'XD') else ""
+		dataAccesorios['IsAplicaRetencion'] = Accesorios.IsAplicaRetencion if(request.GET["Proyecto"] == 'BKG') else ""
+		dataAccesorios['IsAplicaIVA'] = Accesorios.IsAplicaiva if(request.GET["Proyecto"] == 'BKG') else ""
+		NewData.append(dataAccesorios)
+	return JsonResponse({"NewData":NewData})
+
+
+def GetRepartosxViaje(request):
+	IDViaje_ = request.GET['IDViaje']
+	GetDataRepartosBKG = Bro_RepartosxViaje.objects.filter(IDBro_Viaje = IDViaje_)
+	GetDataRepartosXD = RepartosxViaje.objects.filter(XD_IDViaje = IDViaje_)
+	NewDataR = list()
+	whichProyect =  GetDataRepartosBKG if (request.GET["Proyecto"] == 'BKG')  else GetDataRepartosXD if (request.GET["Proyecto"] == 'XD') else ""
+	for Repartos in whichProyect:
+		dataRepartos = {}
+		dataRepartos["deliveries"] = 0 if (request.GET["Proyecto"] == 'BKG') else Repartos.Numero if (request.GET["Proyecto"] == 'XD') else ""
+		try:
+			GetDestinoReparto = Clientes.objects.get(IDCliente = Repartos.IDCliente) if (request.GET["Proyecto"] == 'BKG') else ""
+			dataRepartos["ciudadDestino"] = GetDestinoReparto.Estado if (request.GET["Proyecto"] == 'BKG') else Repartos.Estado if (request.GET["Proyecto"] == 'XD') else ""
+		except Clientes.DoesNotExist:
+			dataRepartos["ciudadDestino"] = ""
+		dataRepartos["costo"] = Repartos.CostoReparto if (request.GET["Proyecto"] == 'BKG') else Repartos.Costo if (request.GET["Proyecto"] == 'XD') else ""
+		NewDataR.append(dataRepartos)
+	return JsonResponse({"NewDataR":NewDataR})
+
+
+
+def saveReajuste(request):
+	jParams = json.loads(request.body.decode('utf-8'))
+	try:
+		idPendienteEnviarReajuste = RelacionFacturaProveedorxPartidas.objects.get(IDFacturaxProveedor = jParams["IDFactura"])
+		FacturaReajuste = FacturasxProveedor.objects.get(IDFactura = jParams["IDFactura"])
+		with transaction.atomic(using='users'):
+			newFacturaReajuste = HistorialReajusteProveedor()
+			newFacturaReajuste.IDPendienteEnviar = str(idPendienteEnviarReajuste.IDPendienteEnviar)
+			newFacturaReajuste.IDFacturaxProveedor = jParams["IDFactura"]
+			newFacturaReajuste.CostoSubtotalAnterior = FacturaReajuste.Subtotal
+			newFacturaReajuste.CostoIVAAnterior =FacturaReajuste.IVA
+			newFacturaReajuste.CostoRetencionAnterior =FacturaReajuste.Retencion
+			newFacturaReajuste.CostoTotalAnterior = FacturaReajuste.Total
+			newFacturaReajuste.NuevoCosto =jParams["Costo"]
+			newFacturaReajuste.NuevoCostoRecoleccion = jParams["CostoRecoleccion"]
+			newFacturaReajuste.NuevoCostoRepartos = jParams["CostoRepartos"]
+			newFacturaReajuste.NuevoCostoAccesorios = jParams["CostoAccesorios"]
+			newFacturaReajuste.NuevoCostoSubtotal = jParams["Subtotal"]
+			newFacturaReajuste.NuevoCostoIVA = jParams["IVA"]
+			newFacturaReajuste.NuevoCostoRetencion = jParams["Retencion"]
+			newFacturaReajuste.NuevoCostoTotal = jParams["Total"]
+			newFacturaReajuste.FechaAlta = datetime.datetime.now()
+			newFacturaReajuste.IDUsuarioAlta = request.user.idusuario
+			newFacturaReajuste.Motivo = jParams["Motivo"]
+			newFacturaReajuste.save()
+			FacturaReajuste.Subtotal = jParams["Subtotal"]
+			FacturaReajuste.IVA = jParams["IVA"]
+			FacturaReajuste.Retencion = jParams["Retencion"]
+			FacturaReajuste.Total = jParams["Total"]
+			FacturaReajuste.Saldo = jParams["Total"]
+			FacturaReajuste.save()
+			DataFacturaByID = list()
+			NewDataFactura = FacturasxProveedor.objects.get(IDFactura = jParams["IDFactura"])
+			data = {}
+			data["newSubtotal"] = NewDataFactura.Subtotal
+			data["newIVA"] = NewDataFactura.IVA
+			data["newRetencion"] = NewDataFactura.Retencion
+			data["newTotal"] = NewDataFactura.Total
+			DataFacturaByID.append(data)
+			return JsonResponse({'DataFacturaByID':DataFacturaByID})
+	except:
+		transaction.rollback(using = 'users')
+		return HttpResponse(status=400)
+
+
 
 
 
@@ -90,6 +223,7 @@ def FacturasToList(Facturas):
 		NuevaFactura["RutaXML"] = Factura.RutaXML
 		NuevaFactura["IsAutorizada"] = Factura.IsAutorizada
 		NuevaFactura["IDProveedor"] = Factura.IDProveedor
+		NuevaFactura["TotalXML"] = Factura.TotalXML
 		ListaFacturas.append(NuevaFactura)
 	return ListaFacturas
 
@@ -179,7 +313,7 @@ def SavePagoxFactura(request):
 		print(Factura)
 		Factura.save()
 		newRelacionPagoxFactura.save()
-		EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
+	#EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
 	return HttpResponse("")
 
 
@@ -190,17 +324,6 @@ def ValidarFactura(request):
 	if Factura:
 		Factura.IsAutorizada = True
 		Factura.save()
-	#result = View_FacturasxProveedor.objects.filter(IDFactura = IDFactura)
-	#ListaFacturas = FacturasToList(result)
-	#Folios = list()
-	#for Fact in ListaFacturas:
-	#	FoliosPago= ""
-	#	for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Fact["IDFactura"]).select_related('IDPago'):
-	#		FoliosPago += Pago.IDPago.Folio + ", "
-	#	FoliosPago = FoliosPago[:-2]
-	#	Folios.append(FoliosPago)
-	#htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas':ListaFacturas, 'Folios': Folios}, request = request,)
-	#print(htmlRes)
 	return HttpResponse('')
 
 
