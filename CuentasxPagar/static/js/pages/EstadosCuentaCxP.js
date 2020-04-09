@@ -904,7 +904,7 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 14,
       "mRender": function (data, type, full) {
-       return ( full[10] == 'pendiente'.toUpperCase() && isAuth == 'False' && +full[16] == +full[7].replace(/(\$)|(,)/g,'') ? '<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" style="display:none"><i class="flaticon2-checkmark"></i></button>');
+       return ( full[10] == 'pendiente'.toUpperCase() && isAuth == 'False' && (+full[16] == +full[7].replace(/(\$)|(,)/g,'')) ? '<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>': full[10] == 'pendiente'.toUpperCase() && isAuth == 'False' && +full[16]==0 ? '<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" style="display:none"><i class="flaticon2-checkmark"></i></button>');
      }
     },
     {
@@ -945,17 +945,6 @@ function getDetalleFactura()
     console.log(ex);
   });
 }
-/*
-function getDetallePago()
-{
-  $('#totalPago').html('12,000.00');
-  $('#fechaPago').html('today');
-  $('#verArchivoPDFPAgo').prop("href", "http://lgklataforma.blob.core.windows.net/evidencias/f8e459bb-6da8-4fa9-a9db-8f9292585939.pdf");
-  $('#imgArchivoPDF').prop("src", "../static/img/pdf-2.png");
-  $('#verArchivoXMLPAgo').prop("href", "http://lgklataforma.blob.core.windows.net/evidencias/0a2228ec-ffe0-4808-957f-df08dc5b4107.xml");
-  $('#imgArchivoXML').prop("src", "../static/img/xml-logo.png");
-}
-*/
 
 function savePagoxProveedor()  {
   WaitMe_Show('#waitModalSubirPagos');
@@ -1205,6 +1194,7 @@ function cleanModalReajuste()
   $('#TotalReajuste').prop('disabled', false);
   $('#CostoRecoleccionReajuste').prop('disabled', false);
   $('#btnSaveRepartosReajuste').prop('disabled', true);
+  $("#TotalReajuste").prop('disabled', false);
 }
 
 function cleanModalAccesorios()
@@ -1248,7 +1238,7 @@ function recalculoReajuste(retencionAccesorios)
   $('#RetencionReajuste').val(recalculoRetencion.toFixed(2));
   $('#TotalReajuste').val(recalculoTotal.toFixed(2));
   +$('#TotalProveedor').val() == +$('#TotalReajuste').val() ? ($('#TotalProveedor').css('background-color', '#09DD08'), $('#btnSaveReajuste').prop('disabled', false)) : ($('#TotalProveedor').css('background-color', '#F91919'), $('#btnSaveReajuste').prop('disabled', true));
-  //$('#btnSaveReajuste').prop('disabled', false);
+  $("#TotalReajuste").prop('disabled', true);
   WaitMe_Hide('#modalWaitReajuste');
 }
 

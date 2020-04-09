@@ -1049,9 +1049,9 @@ function archivosproveedor()
            {
              const urlXMLCheck = response.body
              totalXMLProveedor = leerXMLTransportista(urlXMLCheck)
-             if(+totalXMLProveedor > +totalViaje.toFixed(2) || +totalXMLProveedor == null)
+             if(+totalXMLProveedor > Number(totalViaje).toFixed(2) || totalXMLProveedor == null)
              {
-               alertToastError(`El total de la factura no coincide con el total calculado del sistema $${totalViaje.toFixed(2)}`)
+               alertToastError(`El total de la factura no coincide con el total calculado del sistema`)
                       //uppyDashboard.reset()
                       uppyDashboard.cancelAll()
                       $('.uploaded-files-proveedor ol').remove();
