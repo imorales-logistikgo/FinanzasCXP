@@ -150,40 +150,40 @@ def FindFolioProveedor(request):
 
 def CrearUsuariosTranportistas(request):
 	#prueba = FacturasxProveedor.objects.filter(IDPendienteEnviar__in=RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor__in = View_PendientesEnviarCxP.objects.only('IDPendienteEnviar').filter(IDPendienteEnviar=str(96))))
-	prueba = FacturasxProveedor.objects.latest('IDFactura')
-	print(prueba.IDFactura)
+	#prueba = FacturasxProveedor.objects.latest('IDFactura')
+	#print(prueba.IDFactura)
 	#Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-	#Proveedores = Proveedor.objects.filter(RFC='EAAL610302L59')
+	Proveedores = Proveedor.objects.filter(RFC='TLA170123J17')
 
-	#for prov in Proveedores:
-		#try:
-		#	oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
-		#except AdmonUsuarios.DoesNotExist:
-		#	newUser = AdmonUsuarios()
-		#	newUser.nombre = prov.RazonSocial
-		#	newUser.nombreusuario = prov.RFC
-		#	newUser.correo = prov.Correo
-		#	newUser.fechacambiocontrasena = datetime.datetime.now()
-		#	newUser.hasbytes = 0
-		#	newUser.saltbytes = 0
-		#	newUser.periodo = 365
-		#	newUser.statusreg = "ACTIVO"
-		#	newUser.apepaterno = ""
-		#	newUser .apematerno = ""
-		#	newUser.save()
-		#	prov.IDUsuarioAcceso = newUser.idusuario
-		#	prov.save()
-		#	try:
-		#		DjangoUser = User.User.objects.get(username=prov.RFC)
-		#		DjangoUser.IDTransportista = prov.IDTransportista
-		#		DjangoUser.idusuario = newUser.idusuario
-		#	except User.User.DoesNotExist:
-		#		user = User.User(username=prov.RFC)
-		#		user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
-		#		user.email = newUser.correo
-		#		user.idusuario = newUser.idusuario
-		#		user.is_staff = True
-		#		user.roles = "Proveedor"
-		#		user.IDTransportista = prov.IDTransportista
-		#		user.save()'''
+	for prov in Proveedores:
+		try:
+			oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
+		except AdmonUsuarios.DoesNotExist:
+			newUser = AdmonUsuarios()
+			newUser.nombre = prov.RazonSocial
+			newUser.nombreusuario = prov.RFC
+			newUser.correo = prov.Correo
+			newUser.fechacambiocontrasena = datetime.datetime.now()
+			newUser.hasbytes = 0
+			newUser.saltbytes = 0
+			newUser.periodo = 365
+			newUser.statusreg = "ACTIVO"
+			newUser.apepaterno = ""
+			newUser .apematerno = ""
+			newUser.save()
+			prov.IDUsuarioAcceso = newUser.idusuario
+			prov.save()
+			try:
+				DjangoUser = User.User.objects.get(username=prov.RFC)
+				DjangoUser.IDTransportista = prov.IDTransportista
+				DjangoUser.idusuario = newUser.idusuario
+			except User.User.DoesNotExist:
+				user = User.User(username=prov.RFC)
+				user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
+				user.email = newUser.correo
+				user.idusuario = newUser.idusuario
+				user.is_staff = True
+				user.roles = "Proveedor"
+				user.IDTransportista = prov.IDTransportista
+				user.save()

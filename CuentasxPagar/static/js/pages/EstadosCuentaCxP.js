@@ -8,7 +8,8 @@ var totalIncialNoReajuste;
 var ivaProcentaje = 0.16;
 var retencionProcentaje = 0.04;
 var diferenciaReajuste = 0;
-var idFacturaReajuste, valorAnterioInputs, valorAnterioInputsRepartos, indexRowReajuste, costoViajeDefault, showBtnA, costoRecoleccionDefault;
+var idFacturaReajuste, valorAnterioInputs, valorAnterioInputsRepartos, indexRowReajuste, showBtnA;
+var costoRepartoDefault, costoAccesoriosDefault, costoRecoleccionDefault, costoViajeDefault;
 $(document).ready(function()
 {
   var calculo =0;
@@ -149,6 +150,8 @@ $(document).on('click', '.btnEditarFactura', function(){
     totalIncialNoReajuste = +data.DataBKG[0].CostoTotal.toFixed(2);
     costoViajeDefault = +data.DataBKG[0].CostoViaje.toFixed(2);
     costoRecoleccionDefault = +$('#CostoRecoleccionReajuste').val();
+    costoRepartoDefault = $('#costoRepartosReajuste').val();
+    costoAccesoriosDefault = $('#costoAccesoriosReajuste').val();
     xmlValor = +totalXMl_;
     $('#FolioReajuste').html(data.DataBKG[0].Folio);
     +$('#TotalProveedor').val(xmlValor.toFixed(2)) != totalIncialNoReajuste ? $('#TotalProveedor').css('background-color', '#F91919') : $('#TotalProveedor').css('background-color', '#09DD08');
@@ -287,6 +290,7 @@ $(document).on('hidden.bs.modal', '#ModalReajusteAccesorios', cleanModalAccesori
 $(document).on('hidden.bs.modal', '#ModalReajusteRepartos', function(){
   $('#tableRepartos').DataTable().destroy();
   $('#trRepartos tr').remove();
+  $('#btnSaveRepartosReajuste').prop('disabled', true);
 });
 
 //validar que solo el total se pueda reajustar solo $1
@@ -316,7 +320,7 @@ $(document).on('focus', "input[name='dataAccesoriosIPT']", function(){
 //validaciones para el reajuste de accesorios
 $(document).on('change', "input[name='dataAccesoriosIPT']",function(){
   var newTotalAccesorios = reajusteAccesorios();
-  newTotalAccesorios > $('#costoAccesoriosReajuste').val() ? ($(this).val(valorAnterioInputs), alertToastError(`El total no puede ser mayor a $${$('#costoAccesoriosReajuste').val()}`), $("#btnSaveAccesoriosReajuste").prop('disabled', true)) : ($('#cTotalAccesorios').val(newTotalAccesorios), $("#btnSaveAccesoriosReajuste").prop('disabled', false));
+  newTotalAccesorios > costoAccesoriosDefault ? ($(this).val(valorAnterioInputs), alertToastError(`El total no puede ser mayor a $${costoAccesoriosDefault}`), $("#btnSaveAccesoriosReajuste").prop('disabled', true)) : ($('#cTotalAccesorios').val(newTotalAccesorios), $("#btnSaveAccesoriosReajuste").prop('disabled', false));
 });
 
 //onfocus para obtener el valor del input de los repartos antes del evento change
@@ -327,7 +331,7 @@ $(document).on('focus', "input[id=costoRepartosInput]", function(){
 //validaciones para el reajuste de los repartos
 $(document).on('change', '#costoRepartosInput', function(){
   var newTotalRepartos = reajusteRepartos();
-  newTotalRepartos > +$('#costoRepartosReajuste').val() ? ($(this).val(valorAnterioInputsRepartos), alertToastError(`El total no puede ser mayor a $${$('#costoRepartosReajuste').val()}`), $('#btnSaveRepartosReajuste').prop('disabled', true)) : ($('#costoRepartosReajuste').val(newTotalRepartos), $('#btnSaveRepartosReajuste').prop('disabled', false));
+  newTotalRepartos > costoRepartoDefault ? ($(this).val(valorAnterioInputsRepartos), alertToastError(`El total no puede ser mayor a $${costoRepartoDefault}`), $('#btnSaveRepartosReajuste').prop('disabled', true)) : ($('#costoRepartosReajuste').val(newTotalRepartos), $('#btnSaveRepartosReajuste').prop('disabled', false));
 })
 
 //guardar nuevo total de reajuste de repartos
