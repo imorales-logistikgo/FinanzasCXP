@@ -900,7 +900,11 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 13,
       "mRender": function (data, type, full) {
-       return (full[10] == 'pendiente'.toUpperCase() && +full[16] != +full[7].replace(/(\$)|(,)/g,'') && +full[16]!=0 ? '<a href="#ModalReajusteCXP" title="Editar" class="btnEditarFactura btn btn-dark btn-elevate btn-pill btn-sm" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-idfact="'+idfac+'"><i class="far fa-edit"></i></a>': '');
+        var totalSistema = +full[7].replace(/(\$)|(,)/g,'');
+        if (UserRol == 'cxp1@logistikgo' || UserRol == 'jfraga@logistikgo')
+          return (full[10] == 'pendiente'.toUpperCase() && +full[16] != totalSistema.toFixed(2) && +full[16]!=0 ? '<a href="#ModalReajusteCXP" title="Editar" class="btnEditarFactura btn btn-dark btn-elevate btn-pill btn-sm" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-idfact="'+idfac+'"><i class="far fa-edit"></i></a>': '');
+        else
+          ""
      }
     },
     {
@@ -908,7 +912,8 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 14,
       "mRender": function (data, type, full) {
-       return ( full[10] == 'pendiente'.toUpperCase() && isAuth == 'False' && (+full[16] == +full[7].replace(/(\$)|(,)/g,'')) ? '<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>': full[10] == 'pendiente'.toUpperCase() && isAuth == 'False' && +full[16]==0 ? '<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" style="display:none"><i class="flaticon2-checkmark"></i></button>');
+       var totalSistema = +full[7].replace(/(\$)|(,)/g,'');
+       return ( full[10] == 'pendiente'.toUpperCase() && isAuth == 'False' && (+full[16] == totalSistema.toFixed(2)) ? '<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>': full[10] == 'pendiente'.toUpperCase() && isAuth == 'False' && +full[16]==0 ? '<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'"><i class="flaticon2-checkmark"></i></button>':'<button type ="button" title="Aprobar" name="aprobarFactura" class="btnAprobarFactura btn btn-success btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" style="display:none"><i class="flaticon2-checkmark"></i></button>');
      }
     },
     {

@@ -154,9 +154,9 @@ def CrearUsuariosTranportistas(request):
 	#print(prueba.IDFactura)
 	#Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-	Proveedores = Proveedor.objects.filter(RFC='TLA170123J17')
+	#Proveedores = Proveedor.objects.filter(RFC='TLA170123J17')
 
-	for prov in Proveedores:
+	#for prov in Proveedores:
 		try:
 			oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
 		except AdmonUsuarios.DoesNotExist:
