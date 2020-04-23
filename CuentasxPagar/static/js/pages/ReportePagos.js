@@ -82,6 +82,13 @@ $(document).on( 'click', '.btnEliminarPago', function () {
   title: '¿Estas Seguro?',
   text: "Estas a un click de eliminar un pago importante",
   type: 'warning',
+  input: 'text',
+  inputAttributes: {
+    required: true,
+    placeholder: "Motivo de la eliminación",
+    id: "motivoEliminacionCXP"
+  },
+  validationMessage: 'Ingresa el motivo de la eliminación',
   showCancelButton: true,
   confirmButtonColor: '#3085d6',
   cancelButtonColor: '#d33',
@@ -185,12 +192,13 @@ function getPagos(params) {
 
 function formatDataTable() {
 $('#TableReportePagos').DataTable({
-    "scrollX": true,
+    "scrollY": "410px",
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
     //"responsive": true,
     "paging": true,
+    "lengthMenu": [50],
     "dom": 'Bfrtip',
     "buttons": [
     {
@@ -222,7 +230,7 @@ $('#TableReportePagos').DataTable({
       "className": "dt-head-center dt-body-right"
     },
     {
-      "targets": [4,5],
+      "targets": [5],
       "width": "9%",
       "className": "dt-head-center dt-body-right"
     },
@@ -267,6 +275,7 @@ var fnCancelarPago = function (IDPago) {
   var res;
   jParams = {
     IDPago: IDPago,
+    motivoEliminacion: $('#motivoEliminacionCXP').val()
   }
   fetch("/ReportePagos/CancelarPago", {
     method: "PATCH",
@@ -288,7 +297,7 @@ var fnCancelarPago = function (IDPago) {
       'success'
       )
     }
-    else if(response.status == 500)
+    else if(response.status == 500 || response.status == 400)
     {
       res = false;
       WaitMe_Hide('#TbPading');

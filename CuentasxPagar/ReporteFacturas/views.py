@@ -15,7 +15,7 @@ def ReporteFacturas(request):
 		Proveedores = Proveedor.objects.all()
 		return render(request, 'ReporteFacturas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'Rol': request.user.roles})
 	else:
-		Facturas = FacturasxProveedor.objects.all()
+		Facturas = FacturasxProveedor.objects.filter(FechaFactura__month = datetime.datetime.now().month, FechaFactura__year = datetime.datetime.now().year)
 		listFacturas = FacturasToList(Facturas)
 		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
 		Proveedores = Proveedor.objects.all()

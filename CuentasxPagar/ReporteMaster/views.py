@@ -11,7 +11,7 @@ def GetReporteMaster(request):
 	if request.user.roles == 'Proveedor':
 		 return render(request, '404.html')
 	else:
-		ReporteMaster = View_Master_Proveedor.objects.all()
+		ReporteMaster = View_Master_Proveedor.objects.filter(FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
 		Proveedores = Proveedor.objects.all()
 		return render(request, 'Master.html', {'ReporteMaster': ReporteMaster, 'Proveedores': Proveedores})
 

@@ -5,12 +5,12 @@ from usersadmon.models import Proveedor, AdmonUsuarios
 from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 @login_required
 
 def ReportePagos(request):
 	if request.user.roles == 'Proveedor':
 		Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA").filter(IDProveedor = request.user.IDTransportista)
-		print(Pagos)
 		Folios = list()
 		for Pago in Pagos:
 			FoliosFactura = ""
@@ -21,7 +21,7 @@ def ReportePagos(request):
 		Proveedores = Proveedor.objects.all()
 		return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores, 'Rol': request.user.roles});
 	else:
-		Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA")
+		Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA").filter(FechaPago__month = datetime.datetime.now().month, FechaPago__year = datetime.datetime.now().year)
 		Folios = list()
 		for Pago in Pagos:
 			FoliosFactura = ""
@@ -60,19 +60,26 @@ def GetPagosByFilters(request):
 
 def CancelarPago(request):
 	IDPago = json.loads(request.body.decode('utf-8'))["IDPago"]
-	for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago).select_related('IDFactura'):
-		Factura.IDFactura.Saldo += Factura.IDPagoxFactura.Total
-		if Factura.IDFactura.Saldo == Factura.IDFactura.Total:
-			Factura.IDFactura.Status = "PENDIENTE"
-		else:
-			Factura.IDFactura.Status = "ABONADA"
-		Factura.IDFactura.save()
-	Pago = PagosxProveedor.objects.get(IDPago = IDPago)
-	Pago.Status = "CANCELADA"
-	Pago.IDUsuarioBaja = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
-	Pago.FechaBaja = datetime.datetime.now()
-	Pago.save()
-	return HttpResponse('')
+	Motivo = json.loads(request.body.decode('utf-8'))["motivoEliminacion"]
+	try:
+		with transaction.atomic(using = 'users'):
+			for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago).select_related('IDFactura'):
+				Factura.IDFactura.Saldo += Factura.IDPagoxFactura.Total
+				if Factura.IDFactura.Saldo == Factura.IDFactura.Total:
+					Factura.IDFactura.Status = "PENDIENTE"
+				else:
+					Factura.IDFactura.Status = "ABONADA"
+				Factura.IDFactura.save()
+			Pago = PagosxProveedor.objects.get(IDPago = IDPago)
+			Pago.Status = "CANCELADA"
+			Pago.IDUsuarioBaja = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
+			Pago.FechaBaja = datetime.datetime.now()
+			Pago.ComentarioBaja = Motivo
+			Pago.save()
+			return HttpResponse(status = 200)
+	except:
+		transaction.rollback(using='users')
+		return HttpResponse(status=400)
 
 
 

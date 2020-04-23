@@ -96,10 +96,11 @@ if (UserRol != 'Proveedor')
 {
   $("#TableReporteFacturas").DataTable({
     "scrollX": true,
+    "scrollY": "395px",
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
-    "responsive": false,
+    "lengthMenu": [50],
     "paging": true,
     "dom": 'Bfrtip',
     "buttons": [

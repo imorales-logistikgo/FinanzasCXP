@@ -21,20 +21,21 @@ def EstadosdeCuenta(request):
 	if request.user.roles == 'Proveedor':
 		 return render(request, '404.html')
 	else:
-		result = View_FacturasxProveedor.objects.filter(Status__in = ("PENDIENTE", "ABONADA"), FechaFactura__month = datetime.datetime.now().month)
+		result = View_FacturasxProveedor.objects.filter(Status__in = ("PENDIENTE", "ABONADA"), FechaFactura__month = datetime.datetime.now().month, FechaFactura__year = datetime.datetime.now().year)
 		#result = View_FacturasxProveedor.objects.filter(Q(Status = "PENDIENTE") | Q(Status = "ABONADA") & Q(FechaFactura__month = datetime.datetime.now().month))
 		ListaFacturas = FacturasToList(result)
-		Folios = list()
-		for Factura in ListaFacturas:
-			FoliosPago = ""
-			for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura["IDFactura"]).select_related('IDPago'):
-				if Pago.IDPago.Status != "CANCELADA":
-					FoliosPago += Pago.IDPago.Folio + ", "
-			FoliosPago = FoliosPago[:-2]
-			Folios.append(FoliosPago)
+		#Folios = list()
+		#for Factura in ListaFacturas:
+		#	FoliosPago = ""
+		#	for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura["IDFactura"]).select_related('IDPago').select_related('IDFactura'):
+		#		if Pago.IDPago.Status != "CANCELADA":
+		#			print(str(Factura['IDFactura']) in str(Pago.IDFactura.IDFactura))
+		#			FoliosPago += Pago.IDPago.Folio + ", "
+		#	FoliosPago = FoliosPago[:-2]
+		#	Folios.append(FoliosPago) 'Folios':Folios,
 		ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas = GetContadores()
 		Proveedores = Proveedor.objects.all()
-		return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Proveedores': Proveedores, 'Folios':Folios, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas, 'Rol': request.user.username})
+		return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Proveedores': Proveedores, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas, 'Rol': request.user.username})
 
 
 def GetDataReajuste(request):
@@ -192,14 +193,14 @@ def GetFacturasByFilters(request):
 	if Moneda:
 		Facturas = Facturas.filter(Moneda__in = Moneda)
 	ListaFacturas = FacturasToList(Facturas)
-	Folios = list()
-	for Factura in ListaFacturas:
-		FoliosPago= ""
-		for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura["IDFactura"]).select_related('IDPago'):
-			FoliosPago += Pago.IDPago.Folio + ", "
-		FoliosPago = FoliosPago[:-2]
-		Folios.append(FoliosPago)
-	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas': ListaFacturas, 'Folios': Folios}, request = request,)
+	#Folios = list()
+	#for Factura in ListaFacturas:
+	#	FoliosPago= ""
+	#	for Pago in RelacionPagosFacturasxProveedor.objects.filter(IDFactura = Factura["IDFactura"]).select_related('IDPago'):
+	#		FoliosPago += Pago.IDPago.Folio + ", "
+	#	FoliosPago = FoliosPago[:-2]
+	#	Folios.append(FoliosPago)
+	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas': ListaFacturas,}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
 
 
@@ -224,6 +225,7 @@ def FacturasToList(Facturas):
 		NuevaFactura["IsAutorizada"] = Factura.IsAutorizada
 		NuevaFactura["IDProveedor"] = Factura.IDProveedor
 		NuevaFactura["TotalXML"] = Factura.TotalXML
+		NuevaFactura["Pago"] = Factura.FolioPago #if (Factura.StatusPago != 'CANCELADA') else ""
 		ListaFacturas.append(NuevaFactura)
 	return ListaFacturas
 
@@ -231,10 +233,12 @@ def FacturasToList(Facturas):
 
 def CancelarFactura(request):
 	IDFactura = json.loads(request.body.decode('utf-8'))["IDFactura"]
+	Motivo = json.loads(request.body.decode('utf-8'))["MotivoEliminacion"]
 	conRelacionFacturaProveedorxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = IDFactura)
 	if conRelacionFacturaProveedorxPartidas:
 		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.Status = 'CANCELADA'
 		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.IDUsuarioBaja = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
+		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.ComentarioBaja = Motivo
 		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.save()
 		for Partida in conRelacionFacturaProveedorxPartidas:
 			Partida.IDPartida.IsActiva = False
@@ -368,6 +372,7 @@ def GetDetallesPago(request):
 		Pago["FolioPago"] = FacturaxPago.IDPago.Folio
 		Pago["FechaPago"] = FacturaxPago.IDPago.FechaPago
 		Pago["Total"] = FacturaxPago.IDPagoxFactura.Total
+		Pago["Status"] = "ACTIVO" if (FacturaxPago.IDPago.Status != 'CANCELADA') else FacturaxPago.IDPago.Status
 		Facturas.append(Pago)
 	htmlRes = render_to_string('TablaDetallesPago.html', {'Facturas':Facturas}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})

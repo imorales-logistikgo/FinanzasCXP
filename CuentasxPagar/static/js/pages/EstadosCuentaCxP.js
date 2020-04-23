@@ -54,6 +54,13 @@ $(document).on( 'click', '.btnEliminarFactura', function () {
   title: '¿Estas Seguro?',
   text: "Estas a un click de eliminar algo importante",
   type: 'warning',
+  input: 'text',
+  inputAttributes: {
+    required: true,
+    placeholder: "Motivo de la eliminación",
+    id: "motivoEliminacionCXP"
+  },
+  validationMessage: 'Ingresa el motivo de la eliminación',
   showCancelButton: true,
   confirmButtonColor: '#3085d6',
   cancelButtonColor: '#d33',
@@ -367,7 +374,6 @@ $('#btnSaveReajuste').on('click', function(){
     Proyecto: typeProyecto,
     Motivo: $('#MotivoReajuste').val(),
   }
-  console.log(jParams);
   fetch("/EstadosdeCuenta/saveReajuste", {
     method: "POST",
     credentials: "same-origin",
@@ -788,6 +794,7 @@ var fnCancelarFactura = async function (IDFactura) {
   var res = false;
   jParams = {
     IDFactura: IDFactura,
+    MotivoEliminacion: $('#motivoEliminacionCXP').val()
   }
   WaitMe_Show('#divTablaFacturas');
   await fetch("/EstadosdeCuenta/CancelarFactura", {
@@ -883,7 +890,7 @@ function formatDataTableFacturas(){
       "targets": 11,
       "mRender": function (data, type, full) {
         idfac = $('input[name="EvidenciaXML"]').data("facturaid");
-        return `<a  href="#detallesPago" class="btnDetallePago" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-folio="${full[11]}" id="foliopagos">${full[11]}</a>`;
+        return (full[11] != "" ? `<a  href="#detallesPago" class="btnDetallePago" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-folio="${full[11]}" id="foliopagos">Ver Pagos</a>` : "");
       }
     },
     {
@@ -904,7 +911,7 @@ function formatDataTableFacturas(){
         if (UserRol == 'cxp1@logistikgo' || UserRol == 'jfraga@logistikgo')
           return (full[10] == 'pendiente'.toUpperCase() && +full[16] != totalSistema.toFixed(2) && +full[16]!=0 ? '<a href="#ModalReajusteCXP" title="Editar" class="btnEditarFactura btn btn-dark btn-elevate btn-pill btn-sm" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-idfact="'+idfac+'"><i class="far fa-edit"></i></a>': '');
         else
-          ""
+          return '';
      }
     },
     {
@@ -1106,6 +1113,7 @@ function SavePagoxFactura(IDPago)
 }
 
 var fnCheckFolio = function () {
+  WaitMe_ShowBtn('#btnSavePago');
   fetch("/EstadosdeCuenta/CheckFolioDuplicado?Folio=" + $('#FolioPago').val(), {
     method: "GET",
     credentials: "same-origin",
@@ -1124,12 +1132,14 @@ var fnCheckFolio = function () {
         timer: 2500
       })
       $('#btnSavePago').attr('disabled',true);
+      WaitMe_HideBtn('#btnSavePago');
     }
     else {
       $('#btnSavePago').attr('disabled',false);
+      WaitMe_HideBtn('#btnSavePago');
     }
   }).catch(function(ex){
-    console.log("no success!");
+    console.log(ex);
   });
 }
 

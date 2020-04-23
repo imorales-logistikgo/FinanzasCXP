@@ -36,7 +36,6 @@ def CanceladasToList(Canceladas):
 		Factura["Retencion"] = CANCELADA.Retencion
 		Factura['Total'] = CANCELADA.Total
 		Factura['IDUsuarioBaja'] = CANCELADA.IDUsuarioBaja.nombre
-		print(CANCELADA.IDUsuarioBaja)
 		Factura['Viajes'] = ''
 		for PENDIENTE in conFacturaxPartidas:
 			Factura['Viajes'] += PENDIENTE.IDPendienteEnviar.Folio + ", "

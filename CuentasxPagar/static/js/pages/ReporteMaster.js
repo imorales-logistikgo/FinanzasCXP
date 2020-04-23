@@ -101,12 +101,12 @@ function formatTableReporteFacturas()
 {
 $('#TablaReporteMaster').DataTable({
  "scrollX": true,
- "scrollY": "400px",
+ "scrollY": "379px",
  "language": {
    "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
   },
- "responsive": false,
- "paging": false,
+ "lengthMenu": [200],
+ "paging": true,
  "dom": 'Bfrtip',
  "buttons": [
  {

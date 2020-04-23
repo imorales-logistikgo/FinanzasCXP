@@ -7,6 +7,7 @@
       <th>Folio Pago</th>
       <th>Fecha Pago</th>
       <th>Pago</th>
+      <th>Estatus</th>
     </thead>
     <tbody>
       {% for Factura in Facturas %}
@@ -14,6 +15,7 @@
         <td>{{Factura.FolioPago}}</td>
         <td>{{Factura.FechaPago|date:'Y/m/d'}}</td>
         <td>${{Factura.Total|floatformat:"2"|intcomma}}</td>
+        <td>{{Factura.Status}}</td>
       </tr>
       {%endfor%}
     </tbody>

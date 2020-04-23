@@ -55,9 +55,10 @@ $(document).on('click', '#btnSubirFacturaPendientesEnviar', function(){
 
 $('#btnAplicarFiltro').on('click', fnGetPendientesEnviar);
 
-$('#txtFolioFactura').on('change', function(){
-  var folioFac = $('#txtFolioFactura').val().replace(/ /g, "").trim().toUpperCase();
-  fnCheckFolio(folioFac)
+$(document).on('change', '#txtFolioFactura, #txtFolioFacturaP',function(){
+  var folioFac;
+  $(this)[0].id == 'txtFolioFactura' ? folioFac = $('#txtFolioFactura').val().replace(/ /g, "").trim().toUpperCase() : $(this)[0].id == 'txtFolioFacturaP' ? folioFac = $('#txtFolioFacturaP').val().replace(/ /g, "").trim().toUpperCase():"";
+  fnCheckFolio(folioFac, $(this)[0].id)
 });
 
 //$('#txtFolioFacturaP').on('change', function(){
@@ -425,7 +426,7 @@ function LimpiarModalSF()
                {
                  const urlXMLCheck = response.body
                  totalXML = leerxml(urlXMLCheck)
-                 if(+totalXML > total.toFixed(2) || +totalXML == null)
+                 if(+totalXML > (Number(total.toFixed(2)) + 1) || +totalXML == null)
                  {
                    $("#btnGuardarFactura").prop("disabled", true)
                    alertToastError(`El total de la factura no coincide con el total calculado del sistema $${total.toFixed(2)}`)
@@ -802,7 +803,7 @@ function getPendientesEnviar(params){
   });
 }
 
-var fnCheckFolio = function (folio) {
+var fnCheckFolio = function (folio, idInput) {
   WaitMe_ShowBtn('#btnGuardarFactura');
   $('#btnGuardarFactura').prop('disabled', true);
   fetch("/PendientesEnviar/CheckFolioDuplicado?Folio=" + folio, {
@@ -822,15 +823,15 @@ var fnCheckFolio = function (folio) {
         showConfirmButton: false,
         timer: 2500
       })
-      $('#btnGuardarFactura').attr('disabled',true);
+      idInput == 'txtFolioFactura' ? $('#btnGuardarFactura').attr('disabled',true) : idInput == 'txtFolioFacturaP' ? $('#btnGuardarFacturaP').attr('disabled',true):"";
       WaitMe_HideBtn('#btnGuardarFactura');
     }
     else {
-      $('#btnGuardarFactura').attr('disabled',false);
+      idInput == 'txtFolioFactura' ? $('#btnGuardarFactura').attr('disabled',false) : idInput == 'txtFolioFacturaP' ? $('#btnGuardarFacturaP').attr('disabled',false):"";
       WaitMe_HideBtn('#btnGuardarFactura');
     }
   }).catch(function(ex){
-    console.log("no success!");
+    console.log(ex);
   });
 }
 
@@ -865,7 +866,7 @@ function BuscarFolioProveedor() {
       TRetencion = data.Retencion;
       total = data.Total;
       idPend = data.IDPendienteEnviar;
-      totalViaje = data.Total;
+      totalViaje = +data.Total;
       proveedor = data.Proveedor;
       idprov = data.IDProveedor;
       $('#FolioConcepto').html(data.Folio);
@@ -1049,7 +1050,7 @@ function archivosproveedor()
            {
              const urlXMLCheck = response.body
              totalXMLProveedor = leerXMLTransportista(urlXMLCheck)
-             if(+totalXMLProveedor > Number(totalViaje).toFixed(2) || totalXMLProveedor == null)
+             if(+totalXMLProveedor > (Number(totalViaje.toFixed(2)) + 1) || totalXMLProveedor == null)
              {
                alertToastError(`El total de la factura no coincide con el total calculado del sistema`)
                       //uppyDashboard.reset()
