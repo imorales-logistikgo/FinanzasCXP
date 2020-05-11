@@ -30,6 +30,18 @@ class View_Master_Proveedor(models.Model):
     FolioFactCliente = models.CharField(max_length=50)
     StatusFacturaCliente = models.CharField(max_length=50)
     IDProveedor = models.IntegerField(default=0)
+    CostoSubtotalAnterior = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    CostoIVAAnterior = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    CostoRetencionAnterior = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    CostoTotalAnterior = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    NuevoCosto = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    NuevoCostoAccesorios = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    NuevoCostoRecoleccion = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    NuevoCostoRepartos = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    NuevoCostoSubtotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    NuevoCostoIVA = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    NuevoCostoRetencion = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    NuevoCostoTotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
 
     class Meta:
         db_table = "View_Master_Proveedor"

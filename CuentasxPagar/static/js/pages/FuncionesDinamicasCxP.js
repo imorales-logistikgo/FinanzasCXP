@@ -135,25 +135,36 @@ return cont;
 
 function leerxml(xml)
 {
-    const proxyURL = "https://cors-anywhere.herokuapp.com/";
-    var newXML = proxyURL + xml;
-    var rest;
-    var req = new XMLHttpRequest();
-       req.open('GET', newXML, false);
-       req.send(null);
-       console.log(req);
-       if (req.status == 200)
-       {
-           var resp = req.responseXML;
-           var obNodos = resp.children[0].attributes;
-           var total = obNodos.Total;
-           (total != undefined) ? rest = total.nodeValue : rest = null;
-       }
-       else
-       {
-           rest = null;
-       }
-    return rest;
+  try{
+      const proxyURL = "https://cors-anywhere.herokuapp.com/";
+      var newXML = proxyURL + xml;
+      var rest;
+      var req = new XMLHttpRequest();
+         req.open('GET', newXML, false);
+         req.send(null);
+         console.log(req);
+         if (req.status == 200)
+         {
+             var resp = req.responseXML;
+             var obNodos = resp.children[0].attributes;
+             var total = obNodos.Total;
+             (total != undefined) ? rest = total.nodeValue : rest = null;
+         }
+         else
+         {
+             rest = null;
+         }
+      return rest;
+  }
+  catch(error){
+    Swal.fire({
+      type: 'error',
+      title: 'Ocurrio un error al leer el XML',
+      showConfirmButton: false,
+      timer: 2500
+    })
+    console.error(error);
+  }
 }
 
 function WaitMe_Show(idForm) {
@@ -252,7 +263,6 @@ function fechaVencimineto(fecha)
   var day = $(fecha).datepicker('getDate').getDate();
   var month = $(fecha).datepicker('getDate').getMonth() +1;
   var year = $(fecha).datepicker('getDate').getFullYear();
-console.log(day);
   if (month != 12)
   {
     var newMonth =  month + 1;
@@ -269,24 +279,35 @@ console.log(day);
 
 function leerXMLTransportista(xml)
 {
-    const proxyURL = "https://cors-anywhere.herokuapp.com/";
-    var newXML = proxyURL + xml;
-    var rest;
-    var req = new XMLHttpRequest();
-       req.open('GET', newXML, false);
-       req.send(null);
-       if (req.status == 200)
-       {
-           var resp = req.responseXML;
-           var obNodos = resp.children[0].attributes;
-           var total = obNodos.Total;
-           (total != undefined) ? rest = total.nodeValue : rest = 0;
-       }
-       else
-       {
-           rest = 0;
-       }
-    return rest;
+  try{
+      const proxyURL = "https://cors-anywhere.herokuapp.com/";
+      var newXML = proxyURL + xml;
+      var rest;
+      var req = new XMLHttpRequest();
+         req.open('GET', newXML, false);
+         req.send(null);
+         if (req.status == 200)
+         {
+             var resp = req.responseXML;
+             var obNodos = resp.children[0].attributes;
+             var total = obNodos.Total;
+             (total != undefined) ? rest = total.nodeValue : rest = 0;
+         }
+         else
+         {
+             rest = 0;
+         }
+      return rest;
+  }
+  catch(error){
+    Swal.fire({
+      type: 'error',
+      title: 'Ocurrio un error al leer el XML',
+      showConfirmButton: false,
+      timer: 2500
+    })
+    console.error(error);
+  }
 }
 
 function jsonAccesoriosXD ()
@@ -386,19 +407,118 @@ function reajusteRepartos()
   return totalNewRepartos
 }
 
-function WaitMe_ShowBtn(idForm) {
-    $(idForm).waitMe({
-        effect: 'ios',
-        //text: 'Por favor espera...',
-        bg: 'rgb(255,255,255)',
-        maxSize : 30,
-        color: '#38227F',
-        sizeW: '',
-        sizeH: '',
-        source: ''
-    });
-};
+function getFolioXML(xml)
+{
+    const proxyURL = "https://cors-anywhere.herokuapp.com/";
+    var newXML = proxyURL + xml;
+    var rest;
+    var req = new XMLHttpRequest();
+       req.open('GET', newXML, false);
+       req.send(null);
+       console.log(req);
+       if (req.status == 200)
+       {
+           var resp = req.responseXML;
+           var obNodos = resp.children[0].attributes;
+           var rest = obNodos.Folio.nodeValue;
+           //(folio != undefined) ? rest = folio.nodeValue : rest = null;
+       }
+       else
+       {
+           rest = null;
+       }
+    return rest;
+}
 
-function WaitMe_HideBtn(idForm) {
-  $(idForm).waitMe('hide');
-};
+var getSerieProveedor = function(idProveedor){
+  return fetch("/PendientesEnviar/GetSerieProveedor?IDProveedor=" + idProveedor, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+  }).then(function(response){
+    if (response.status == 200)
+    {
+      return response.json();
+    }
+    else
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'Algo salio mal',
+        showConfirmButton: false,
+        timer: 2500
+      })
+    }
+  }).then(function(data){
+    return data;
+  }).catch(function(ex){
+    console.log(ex);
+  });
+}
+
+var getProveedorAmericano = function(idProveedor) {
+  return fetch("/PendientesEnviar/GetProveedorByID?IDProveedor=" + idProveedor, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+  }).then(function(response){
+    if (response.status == 200)
+    {
+      return response.json();
+    }
+    else
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'Algo salio mal',
+        showConfirmButton: false,
+        timer: 2500
+      })
+    }
+  }).then(function(data){
+    return data;
+  }).catch(function(ex){
+    console.log(ex);
+  });
+}
+
+function Dasboard(){
+
+  var uppyDashboard = Uppy.Core({
+    autoProceed: false,
+    restrictions: {
+     maxFileSize: 4200000, // 5mb
+     maxNumberOfFiles: 2,
+     minNumberOfFiles: 2,
+    allowedFileTypes:['.pdf', '.xml']
+  },
+  locale: Uppy.locales.es_ES,
+  onBeforeFileAdded: (currentFile, file) => {
+    //if($('.uppy-DashboardContent-title').length == 0)
+    if(Object.values(file)[0] === undefined)
+    {
+      console.log("+1")
+    }
+    else
+    {
+      if((currentFile.type === Object.values(file)[0].meta.type))
+      {
+        uppyDashboard.info(`Los archivos deben ser diferentes`, 'error', 500)
+        return false
+      }
+      else
+      {
+        console.log("ok")
+      }
+    }
+
+  }
+  });
+  return uppyDashboard;
+}

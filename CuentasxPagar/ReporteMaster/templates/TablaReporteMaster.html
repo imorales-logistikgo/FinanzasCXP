@@ -28,6 +28,18 @@
 						<th>Precio IVA</th>
 						<th>Precio Retencion</th>
 						<th>Precio Total</th>
+						<th>CostoSubtotalAnterior</th>
+						<th>CostoIVAAnterior</th>
+						<th>CostoRetencionAnterior</th>
+						<th>CostoTotalAnterior</th>
+						<th>NuevoCosto</th>
+						<th>NuevoCostoAccesorios</th>
+						<th>NuevoCostoRecoleccion</th>
+						<th>NuevoCostoRepartos</th>
+						<th>NuevoCostoSubtotal</th>
+						<th>NuevoCostoIVA</th>
+						<th>NuevoCostoRetencion</th>
+						<th>NuevoCostoTotal</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -58,6 +70,18 @@
 						<td>${{Master.IVAC|default:0|intcomma|safe}}</td>
 						<td>${{Master.RetencionC|default:0|intcomma|safe}}</td>
 						<td>${{Master.TotalC|default:0|intcomma|safe}}</td>
+						<td>${{Master.CostoSubtotalAnterior|default:0|intcomma|safe}}</td>
+						<td>${{Master.CostoIVAAnterior|default:0|intcomma|safe}}</td>
+						<td>${{Master.CostoRetencionAnterior|default:0|intcomma|safe}}</td>
+						<td>${{Master.CostoTotalAnterior|default:0|intcomma|safe}}</td>
+						<td>${{Master.NuevoCosto|default:0|intcomma|safe}}</td>
+						<td>${{Master.NuevoCostoAccesorios|default:0|intcomma|safe}}</td>
+						<td>${{Master.NuevoCostoRecoleccion|default:0|intcomma|safe}}</td>
+						<td>${{Master.NuevoCostoRepartos|default:0|intcomma|safe}}</td>
+						<td>${{Master.NuevoCostoSubtotal|default:0|intcomma|safe}}</td>
+						<td>${{Master.NuevoCostoIVA|default:0|intcomma|safe}}</td>
+						<td>${{Master.NuevoCostoRetencion|default:0|intcomma|safe}}</td>
+						<td>${{Master.NuevoCostoTotal|default:0|intcomma|safe}}</td>
 					</tr>
 					{%endfor%}
 				</tbody>

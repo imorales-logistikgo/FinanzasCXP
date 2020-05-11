@@ -101,7 +101,7 @@ DATABASES = {
         'NAME': "LogistikGO_Admon_Django",
         'HOST': "logistikgo.database.windows.net",
         'USER': "QUR3n5qk4F33",
-        'PASSWORD': "Kh216Dr97DPoZxxS57",
+        'PASSWORD': "Hi0p68To45lzXp0klf",
         'PORT': "1433",
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
@@ -112,7 +112,7 @@ DATABASES = {
         'NAME': "LogistikGO_Admon_Copiar_01",
         'HOST': "logistikgo.database.windows.net",
         'USER': "QUR3n5qk4F33",
-        'PASSWORD': "Kh216Dr97DPoZxxS57",
+        'PASSWORD': "Hi0p68To45lzXp0klf",
         'PORT': "1433",
         'OPTIONS': {
             'driver': "ODBC Driver 17 for SQL Server",
@@ -124,7 +124,7 @@ DATABASES = {
          'NAME': "LogistikGO_Brockeraje_Copiar_03",
          'HOST': "logistikgo.database.windows.net",
          'USER': "QUR3n5qk4F33",
-         'PASSWORD': "Kh216Dr97DPoZxxS57",
+         'PASSWORD': "Hi0p68To45lzXp0klf",
          'PORT': "1433",
          'OPTIONS': {
              'driver': "ODBC Driver 17 for SQL Server",
@@ -135,7 +135,7 @@ DATABASES = {
          'NAME': "LogistikGO_LKMXD_Copiar_01",
          'HOST': "logistikgo.database.windows.net",
          'USER': "QUR3n5qk4F33",
-         'PASSWORD': "Kh216Dr97DPoZxxS57",
+         'PASSWORD': "Hi0p68To45lzXp0klf",
          'PORT': "1433",
          'OPTIONS': {
          'driver': "ODBC Driver 17 for SQL Server",
@@ -204,7 +204,7 @@ LOGIN_URL = "/Usuario/Login/"
 AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = '/PendientesEnviar/'
 SESSION_COOKIE_AGE = 21600
-
+#SESSION_COOKIE_SECURE = True
 #LOGOUT_REDIRECT_URL = "/Usuario/Login/"
 
 #SECURE_SSL_REDIRECT = True

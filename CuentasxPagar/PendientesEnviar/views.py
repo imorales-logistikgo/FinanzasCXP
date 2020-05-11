@@ -8,6 +8,8 @@ from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+import xlrd
+
 
 @login_required
 def GetPendientesEnviar(request):
@@ -16,7 +18,7 @@ def GetPendientesEnviar(request):
 	ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
 	Proveedores = Proveedor.objects.all()
 	ListPendientes = PendientesToList(PendingToSend)
-	return render(request, 'PendienteEnviar.html', {'Pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles})
+	return render(request, 'PendienteEnviar.html', {'Pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles, 'IDUsuraio_': request.user.idusuario})
 
 
 def PendientesToList(PendingToSend):
@@ -147,6 +149,23 @@ def FindFolioProveedor(request):
 		return JsonResponse({'Found' : False})
 
 
+def GetSerieProveedor(request):
+	try:
+		IDProveedor = request.GET["IDProveedor"]
+		getSerie = Proveedor.objects.get(IDTransportista = IDProveedor)
+		Serie = getSerie.Serie
+		IsAmericano = getSerie.IsAmericano
+		return JsonResponse({'Serie' : Serie, 'IsAmericano': IsAmericano})
+	except:
+		return HttpResponse(status=500)
+
+
+def GetProveedorByID(request):
+	IDProveedor = request.Get["IDProveedor"]
+	Proveedor = Proveedor.objects.get(IDTransportista = IDProveedor)
+	IsAmericano = Proveedor.IsAmericano
+	return JsonResponse({'IsAmericano': IsAmericano})
+
 
 def CrearUsuariosTranportistas(request):
 #editar un usuario
@@ -182,37 +201,37 @@ def CrearUsuariosTranportistas(request):
 
 	#Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-	Proveedores = Proveedor.objects.filter(RFC='TLA170123J17')
-	#for prov in Proveedores:
-	#	try:
-	#		oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
-	#	except AdmonUsuarios.DoesNotExist:
-	#		newUser = AdmonUsuarios()
-	#		newUser.nombre = prov.RazonSocial
-	#		newUser.nombreusuario = prov.RFC
-	#		newUser.correo = prov.Correo
-	#		newUser.fechacambiocontrasena = datetime.datetime.now()
-	#		newUser.hasbytes = 0
-	#		newUser.saltbytes = 0
-	#		newUser.periodo = 365
-	#		newUser.statusreg = "ACTIVO"
-	#		newUser.apepaterno = ""
-	#		newUser .apematerno = ""
-	#		newUser.save()
-	#		prov.IDUsuarioAcceso = newUser.idusuario
-	#		prov.save()
-	#		try:
-	#			DjangoUser = User.User.objects.get(username=prov.RFC)
-	#			DjangoUser.IDTransportista = prov.IDTransportista
-	#			DjangoUser.idusuario = newUser.idusuario
-	#		except User.User.DoesNotExist:
-	#			user = User.User(username=prov.RFC)
-	#			user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
-	#			user.email = newUser.correo
-	#			user.idusuario = newUser.idusuario
-	#			user.is_staff = True
-	#			user.roles = "Proveedor"
-	#			user.IDTransportista = prov.IDTransportista
-	#			user.save()
+	Proveedores = Proveedor.objects.filter(RFC='TSU750725AS5')
+	# for prov in Proveedores:
+	# 	try:
+	# 		oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
+	# 	except AdmonUsuarios.DoesNotExist:
+	# 		newUser = AdmonUsuarios()
+	# 		newUser.nombre = prov.RazonSocial
+	# 		newUser.nombreusuario = prov.RFC
+	# 		newUser.correo = prov.Correo
+	# 		newUser.fechacambiocontrasena = datetime.datetime.now()
+	# 		newUser.hasbytes = 0
+	# 		newUser.saltbytes = 0
+	# 		newUser.periodo = 365
+	# 		newUser.statusreg = "ACTIVO"
+	# 		newUser.apepaterno = ""
+	# 		newUser .apematerno = ""
+	# 		newUser.save()
+	# 		prov.IDUsuarioAcceso = newUser.idusuario
+	# 		prov.save()
+	# 		try:
+	# 			DjangoUser = User.User.objects.get(username=prov.RFC)
+	# 			DjangoUser.IDTransportista = prov.IDTransportista
+	# 			DjangoUser.idusuario = newUser.idusuario
+	# 		except User.User.DoesNotExist:
+	# 			user = User.User(username=prov.RFC)
+	# 			user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
+	# 			user.email = newUser.correo
+	# 			user.idusuario = newUser.idusuario
+	# 			user.is_staff = True
+	# 			user.roles = "Proveedor"
+	# 			user.IDTransportista = prov.IDTransportista
+	# 			user.save()
 
 	# fin dar de alta un usuario

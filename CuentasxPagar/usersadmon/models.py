@@ -28,6 +28,8 @@ class Proveedor(models.Model):
     RazonSocial = models.CharField(max_length=200)
     RFC = models.CharField(max_length=200)
     Correo = models.CharField(db_column='Correo', max_length=200, blank=True, null=True)
+    IsAmericano = models.BooleanField()
+    Serie = models.CharField(max_length=15)
     class Meta:
         managed = False
         db_table = 'AdmonTransportistas'
