@@ -416,7 +416,7 @@ function LimpiarModalSF()
                {
                  const urlXMLCheck = response.body
                  totalXML = leerxml(urlXMLCheck)
-                 if(+totalXML > (Number(total.toFixed(2)) + 1) || +totalXML == null)
+                 if(+totalXML > (Number(total.toFixed(2)) + 1) || totalXML == null)
                  {
                    $("#btnGuardarFactura").prop("disabled", true)
                    alertToastError(`El total de la factura no coincide con el total calculado del sistema $${total.toFixed(2)}`)

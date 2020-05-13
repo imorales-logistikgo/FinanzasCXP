@@ -8,7 +8,6 @@ from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-import xlrd
 
 
 @login_required

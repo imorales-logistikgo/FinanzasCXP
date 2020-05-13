@@ -164,6 +164,7 @@ function leerxml(xml)
       timer: 2500
     })
     console.error(error);
+    return null;
   }
 }
 
