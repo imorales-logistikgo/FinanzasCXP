@@ -421,8 +421,8 @@ function getFolioXML(xml)
        {
            var resp = req.responseXML;
            var obNodos = resp.children[0].attributes;
-           var rest = obNodos.Folio.nodeValue;
-           //(folio != undefined) ? rest = folio.nodeValue : rest = null;
+           var fol = obNodos.Folio ? obNodos.Folio.nodeValue : obNodos.Serie.nodeValue;
+           rest = fol.replace(/^0+/, '');
        }
        else
        {
