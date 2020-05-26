@@ -64,7 +64,7 @@ def CancelarPago(request):
 	try:
 		with transaction.atomic(using = 'users'):
 			for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago).select_related('IDFactura'):
-				Factura.IDFactura.Saldo += Factura.IDPagoxFactura.Total
+				Factura.IDFactura.Saldo += (Factura.IDPagoxFactura.Total/Factura.IDPago.TipoCambio) if (Factura.IDFactura.Moneda == 'USD') else Factura.IDPagoxFactura.Total
 				if Factura.IDFactura.Saldo == Factura.IDFactura.Total:
 					Factura.IDFactura.Status = "PENDIENTE"
 				else:
@@ -77,8 +77,9 @@ def CancelarPago(request):
 			Pago.ComentarioBaja = Motivo
 			Pago.save()
 			return HttpResponse(status = 200)
-	except:
+	except Exception as e:
 		transaction.rollback(using='users')
+		print(e)
 		return HttpResponse(status=400)
 
 

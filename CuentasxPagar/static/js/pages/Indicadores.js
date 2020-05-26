@@ -1,4 +1,6 @@
 $(document).ready(function(){
+  var h = new Date;
+  console.log(h.getFullYear()+'/'+(h.getMonth()+1)+'/'+h.getDate());
 
     WaitMe_Show('#waitIndicadores');
     google.charts.load('current', {'packages':['table']});

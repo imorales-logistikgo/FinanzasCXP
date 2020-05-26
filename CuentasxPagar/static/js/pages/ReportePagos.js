@@ -347,7 +347,6 @@ function subirComplementoPagoProveedor(totalPago)
         // to get uppy companions working, please refer to the official documentation here: https://uppy.io/docs/companion/
         const Dashboard = Uppy.Dashboard;
         const GoogleDrive = Uppy.GoogleDrive;
-        const Webcam = Uppy.Webcam;
 
         // Private functions
         var initUppy1 = function(){
@@ -399,7 +398,7 @@ function subirComplementoPagoProveedor(totalPago)
            uppyDashboard.use(Dashboard, options);
            uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
           //uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
-          uppyDashboard.use(Webcam, {target: Dashboard});
+          //uppyDashboard.use(Webcam, {target: Dashboard});
           uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
           uppyDashboard.on('upload-success', (file, response) => {
             const fileName = file.name

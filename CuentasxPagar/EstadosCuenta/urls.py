@@ -14,6 +14,8 @@ urlpatterns = [
     path('GetDataReajuste', views.GetDataReajuste, name='GetDataReajuste'),
     path('GetAccesoriosxViaje', views.GetAccesoriosxViaje, name='GetAccesoriosxViaje'),
     path('GetRepartosxViaje', views.GetRepartosxViaje, name='GetRepartosxViaje'),
-    path('saveReajuste', views.saveReajuste, name='saveReajuste')
+    path('saveReajuste', views.saveReajuste, name='saveReajuste'),
+    # path('leerExcel', views.leerExcel, name='leerExcel')
+    # path('InsertSerieProveedor', views.InsertSerieProveedor, name='InsertSerieProveedor')
     # path('FixIDProveedor', views.FixIDProveedor, name='FixIDProveedor')
 ]

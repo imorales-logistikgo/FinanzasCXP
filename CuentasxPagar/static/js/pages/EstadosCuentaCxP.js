@@ -1,4 +1,4 @@
-var table;
+var table, arrSelect=[];
 var proveedor;
 var rutaComprobante;
 var idprov;
@@ -23,22 +23,22 @@ formatDataTableFacturas();
 $('#TableEstadosdeCuenta').css("display", "block");
 
 $(document).on('click', '.btnDetallePago', fnGetDetallePago);
-// table.columns.adjust().draw();
 
 //ejecuta varias funciones cada que el checkbox es seleccionado en la tabla estados de cuenta
 $(document).on( 'change', 'input[name="checkEC"]', function () {
-  var input = 'input[name="checkEC"]';
-  var btnSubir = '#btnSubirPagos';
   if($(this).is(':checked'))
   {
-    ValidacionCheckboxPagos();
-    Getdatos();
-    ContadorCheck(input, btnSubir);
+    ValidacionCheckboxPagos($($(this).parents('tr')).data('idproveedor'), this) ? Getdatos(this):"";
+    arrSelect.length >= 1 ? $('#btnSubirPagos').prop('disabled', false) : $('#btnSubirPagos').prop('disabled', true);
   }
   else
   {
-    Getdatos();
-    ContadorCheck(input, btnSubir);
+    var arrN = [];
+    var a = table.row($(this).parents('tr')).data();
+    var prueba = $(this).data("idfactu");
+    arrN.push([a[1], a[7], a[8], a[9], a[7], prueba, a[2]])
+    removeItemFromArr(arrSelect, arrN)
+    arrSelect.length >= 1 ? $('#btnSubirPagos').prop('disabled', false) : ($('#btnSubirPagos').prop('disabled', true), proveedor="");
   }
 });
 
@@ -606,10 +606,9 @@ $('input[name="TipoCambioPago"]').on('keyup change', function(){
   }
 
 });
-
+});
 
 //FUNCIONES DE ESTADOS DE CUENTA
-
 //funcion limpiar modal
 function CleanModal()
 {
@@ -622,25 +621,11 @@ function CleanModal()
  $('#ComplementosPagos').data("rutaarchivoXML", "");
  $('#ComplementosPagos').data("rutaarchivoPDF", "");
 }
-
-
-//obtiene los datos de cada checkbox seleccionado
-function Getdatos(){
-  var arrSelect=[];
-  $("input[name=checkEC]:checked").each(function () {
-    var datosRow = table.row($(this).parents('tr')).data();
-    var prueba = $(this).data("idfactu");
-    arrSelect.push([datosRow[1],datosRow[7], datosRow[8], datosRow[9], datosRow[7], prueba, datosRow[2]]);
-  });
-  return arrSelect;
-}
-
-
 //funcion para mostrar u ocultar el input del timpo de cambio
 function mostrarTipoCambio()
 {
   var found;
-  var datos = Getdatos();
+  var datos = arrSelect;
   for(var i=0; i<datos.length; i++)
   {
     // datos[i][3].push(datos[i][3]);
@@ -656,9 +641,17 @@ function mostrarTipoCambio()
  }
 }
 
+//validacion mismo cliente en los checkbox
+function ValidacionCheckboxPagos(validarIdProveedor_, check_){
+  var checked = $("input[name='checkEC']:checked");
+  idprov = $($(checked[0]).parents('tr')[0]).data("idproveedor");
+  proveedor == undefined || proveedor == '' ? proveedor = validarIdProveedor_ : validarMismoProveedor(validarIdProveedor_, check_)
+  return (validarIdProveedor_ == proveedor)
+}
+
 //funcion para obtener los datos de la tabla Estados de cuenta para mostrarlos en la tabla del modal subir pagos
 function showDatosObtenidos(){
- var datos = Getdatos();
+ var datos = arrSelect;
  var TBalance=0, total=0;
  for (var i=0; i<datos.length; i++)
  {
@@ -683,6 +676,7 @@ function showDatosObtenidos(){
   var h = [datos];
   $('#tableAddPago').DataTable({
   "responsive": false,
+  "scrollX":false,
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
@@ -694,62 +688,32 @@ function showDatosObtenidos(){
     {
      "className": "text-center",
      "targets": 0,
+     "width": "150px"
    },
    {
      "className": "text-right",
-     "targets": [1,2]
+     "targets": [1,2],
+     "width": "150px"
    },
    {
     "className": "text-center",
-    "targets": 3
+    "targets": 3,
+    "width": "150px"
   },
   {
     "className": "dt-head-center dt-body-right",
     "targets": 4,
+    "width": "150px",
     "mRender": function (data, type, full) {
-     return (full[3] === 'MXN' ? `$ <input class="col-md-6 col-sm-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}" min="0" pattern="^[0-9]+" required>` : '$ <input type="number" class=""col-md-6 col-sm-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'" min="0" pattern="^[0-9]+">');
+     return (full[3] === 'MXN' ? `$ <input class="col-md-6 col-sm-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}" min="0" pattern="^[0-9]+" required>` : '$ <input type="number" class="col-md-6 col-sm-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'" min="0" pattern="^[0-9]+">');
    }
  },
 
  ]
 });
 
-  $('#AddCosto').val(total.toFixed(2));
+  $('#AddCosto').val(truncarDecimalesPE(total,2));
 }
-
-
-//validacion mismo cliente en los checkbox
-function ValidacionCheckboxPagos(){
-  var checked = $("input[name='checkEC']:checked");
-  idprov = $($(checked[0]).parents('tr')[0]).data("idproveedor");
-  $("input[name=checkEC]:checked").each(function () {
-   var check = table.row($(this).parents('tr')).data();
-   if(checked.length > 1)
-   {
-     if (check[2] != proveedor /*|| check[8] != moneda*/) {
-       $(this).prop('checked', false);
-       alertToastError("El proveedor debe ser el mismo");
-     }
-     else
-     {
-      console.log("ok");
-    }
-  }
-  else
-  {
-    proveedor = check[2];
-   // moneda = check[8];
- }
-});
-}
-
-/*
-$('#tablaDetalles').DataTable({
-  "responsive": true
-});
-*/
-
-});
 
 var fnGetFacturas = function () {
   arrStatus = $('#cboStatus').val();
@@ -783,6 +747,8 @@ function getFacturas (params) {
   }).then(function(data){
     WaitMe_Hide('#divTablaFacturas');
     $('#divTablaFacturas').html(data.htmlRes);
+    arrSelect = [];
+    proveedor = '';
     formatDataTableFacturas();
     $('#TableEstadosdeCuenta').css("display", "block");
   }).catch(function(ex){
@@ -825,13 +791,13 @@ var fnCancelarFactura = async function (IDFactura) {
 function formatDataTableFacturas(){
   table = $('#TableEstadosdeCuenta').DataTable({
     "scrollX": true,
-    "scrollY": "400px",
-    //"scrollCollapse": true,
+    "scrollY": "360px",
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
     "responsive": false,
     "paging": false,
+    //"lengthMenu": [20],
     "dom": 'Bfrtip',
     "buttons": [
     {
@@ -842,10 +808,6 @@ function formatDataTableFacturas(){
       }
     }
     ],
-    /*fixedColumns:   {
-      leftColumns: 1
-    },*/
-
     columnDefs: [ {
       orderable: false,
       targets:   0,
@@ -854,7 +816,7 @@ function formatDataTableFacturas(){
       "mRender": function (data, type, full) {
         isAuth = $('input[name="EvidenciaXML"]').data("isautorizada");
         idfac = $('input[name="EvidenciaXML"]').data("facturaid");
-        return (full[10] != 'cancelada'.toUpperCase() && full[10] != 'pagada'.toUpperCase() && isAuth != 'False' ? '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'"/>': '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'" style="display:none"/>');
+        return (full[10] != 'cancelada'.toUpperCase() && full[10] != 'pagada'.toUpperCase() && isAuth != 'False' ? '<input type="checkbox" class="chk" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'"/>': '<input type="checkbox" name="checkEC" id="estiloCheckbox" data-idfactu="'+idfac+'" style="display:none"/>');
       }
     },
     {
@@ -972,7 +934,7 @@ function savePagoxProveedor()  {
     Comentarios: $('#comentariosEC').val(),
     RutaComprobante: rutaComprobante,
     Proveedor: proveedor,
-    IDProveedor: idprov,
+    IDProveedor: proveedor,
   }
 
   fetch("/EstadosdeCuenta/SavePagoxProveedor", {
@@ -1066,6 +1028,7 @@ function SavePagoxFactura(IDPago)
   jParams = {
     IDPago: IDPago,
     arrPagos: arrPagos,
+    TipoCambio: $('#TipoCambioPago').val()
   }
 
   fetch("/EstadosdeCuenta/SavePagoxFactura", {
@@ -1087,6 +1050,8 @@ function SavePagoxFactura(IDPago)
         showConfirmButton: true,
         //timer: 3500
       })
+      arrSelect = [];
+      proveedor = '';
       $('#modalSubirPagos').modal('hide');
 
       var table = $('#TableEstadosdeCuenta').DataTable();

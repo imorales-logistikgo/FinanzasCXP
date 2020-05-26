@@ -1,4 +1,4 @@
-// funcion contador para los checkbox seleccionados
+
 function ContadorCheck(input, btnSubir)
 {
   var cont = 0;
@@ -12,6 +12,13 @@ function ContadorCheck(input, btnSubir)
 return cont;
 }
 
+var validarMismoProveedor = function(validarIdProveedor_, check_){
+	if (validarIdProveedor_ != proveedor) {
+		$(check_).prop('checked', false);
+		alertToastError("El proveedor debe ser el mismo");
+	}
+}
+//var ContadorCheck = (btnSubir) => arrSelect.length >= 1 ? $(btnSubir).prop('disabled', false) : $(btnSubir).prop('disabled', true);
 
 // plugin para subir los archivos de las facturas en Modal Pendientes de enviar
 "use strict";

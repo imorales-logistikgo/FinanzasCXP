@@ -3,7 +3,7 @@ from django.shortcuts import render
 from bkg_viajes.models import Bro_Viajes, Bro_ServiciosxViaje, Servicios, Clientes, Bro_RepartosxViaje
 from XD_Viajes.models import XD_Viajes, XD_AccesoriosxViajes, RepartosxViaje
 from PendientesEnviar.models import RelacionFacturaProveedorxPartidas, FacturasxProveedor, PendientesEnviar, RelacionConceptoxProyecto, Ext_PendienteEnviar_Costo, View_PendientesEnviarCxP
-from EstadosCuenta.models import  View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor, HistorialReajusteProveedor
+from EstadosCuenta.models import  TempSerie, View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor, HistorialReajusteProveedor
 from usersadmon.models import Proveedor, AdmonUsuarios
 from users.models import User
 from django.core.mail import send_mail, EmailMessage
@@ -14,6 +14,8 @@ import json, datetime, math
 from django.contrib.auth.decorators import login_required
 from django.db import transaction, DatabaseError
 import json
+from string import digits
+import pandas as pd
 
 
 @login_required
@@ -284,7 +286,8 @@ def SavePagoxProveedor(request):
 		newPago.RutaComprobante = jParams["RutaComprobante"]
 	newPago.Comentarios = jParams["Comentarios"]
 	newPago.TipoCambio = jParams["TipoCambio"]
-	newPago.NombreCortoProveedor = jParams["Proveedor"]
+	NombrePro = Proveedor.objects.filter(IDTransportista = jParams["Proveedor"]).get()
+	newPago.NombreCortoProveedor = NombrePro.NombreComercial
 	newPago.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
 	newPago.IDProveedor = jParams["IDProveedor"]
 	newPago.save()
@@ -308,7 +311,7 @@ def SavePagoxFactura(request):
 		newRelacionPagoxFactura.IDPago = PagosxProveedor.objects.get(IDPago = jParams["IDPago"])
 		newRelacionPagoxFactura.IDPagoxFactura = newPagoxFactura
 		Factura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
-		Factura.Saldo -= Decimal(Pago["Total"])
+		Factura.Saldo -= Decimal(float(Pago["Total"])/float(jParams["TipoCambio"]) if (Factura.Moneda == 'USD') else Pago["Total"])
 		newRelacionPagoxFactura.IDFactura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
 		if truncate(float(Factura.Saldo), 2) == 0:
 			Factura.Status = "PAGADA"
@@ -386,3 +389,40 @@ def FixIDProveedor(request):
 		Fact.IDProveedor = IDProveedor
 		Fact.save()
 	return HttpResponse('Done')
+
+
+# def InsertSerieProveedor(request):
+# 	Serie = list(FacturasxProveedor.objects.values('IDProveedor').distinct())
+# 	for each in Serie:
+# 		try:
+# 			ser = FacturasxProveedor.objects.filter(IDProveedor = each["IDProveedor"])[:1].get()
+# 			remove_digits = str.maketrans('', '', digits)
+# 			res = ser.Folio.translate(remove_digits)
+# 			saveP = Proveedor.objects.get(IDTransportista=each["IDProveedor"])
+# 			saveP.Serie = res
+# 			saveP.save()
+# 		except Exception as e:
+# 			print(e)
+
+# def leerExcel(reques):
+	# archivo_excel = pd.read_excel('static/json/Serie.xlsx')
+	# print(archivo_excel.columns)
+	# values = archivo_excel['Razon Social'].values
+	# for data in values:
+	# 	a = '{"RazonSocial":data}'
+	# for x in archivo_excel['Razon Social'].values:
+	# 	b = '{"Serie":x}'
+	# jsonA = json.loads(a)
+	# jsonB = json.loads(b)
+	# print(jsonA)
+
+		# try:
+		# 	dataProveedor = Proveedor.objects.filter(RazonSocial = data).get()
+		# 	for dataSerie in archivo_excel['Serie'].values:
+		# 		dataProveedor.Serie =  dataSerie
+		# 		dataProveedor.save()
+		# except Exception as e:
+		# 	print(e)
+	# columnas = ['Folio', 'Cliente', 'Transportista']
+	# df_seleccionados = archivo_excel[columnas]
+	# print(df_seleccionados)

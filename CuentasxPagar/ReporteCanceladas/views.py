@@ -1,7 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from PendientesEnviar.models import FacturasxProveedor, RelacionFacturaProveedorxPartidas, RelacionConceptoxProyecto
-from usersadmon.models import Proveedor
+from usersadmon.models import Proveedor, AdmonUsuarios
 from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required

@@ -93,3 +93,11 @@ class HistorialReajusteProveedor(models.Model):
     class Meta:
         db_table = "HistorialReajusteProveedor"
         managed = False
+
+class TempSerie(models.Model):
+    RazonSocial = models.CharField(max_length=500)
+    Serie = models.CharField(max_length=15)
+
+    class Meta:
+        db_table = "TempSerie"
+        managed = False

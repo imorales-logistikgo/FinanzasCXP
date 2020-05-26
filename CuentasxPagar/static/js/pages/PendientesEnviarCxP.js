@@ -4,7 +4,6 @@ var Ev;
 var EvDigital;
 var EvFisica;
 var idprov;
-//var idPendienteenviar;
 var table;
 var subtotal = 0, Tiva=0, TRetencion=0, total=0;
 var totalViaje = 0;
@@ -864,6 +863,7 @@ function BuscarFolioProveedor() {
       $('#FechaFacturaP').datepicker({
         format: 'yyyy/mm/dd',
         todayHighlight: true,
+        endDate: '+0d',
         language:'es'
       });
 
