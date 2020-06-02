@@ -10,6 +10,8 @@ class XD_Viajes(models.Model):
     CostoIVA = models.DecimalField(db_column='CostoIVA',default=0, max_digits=30, decimal_places=5)
     CostoRetencion = models.DecimalField(db_column='CostoRetencion',default=0, max_digits=30, decimal_places=5)
     CostoTotal = models.DecimalField(db_column='CostoTotal',default=0, max_digits=30, decimal_places=5)
+    IsEvidencia = models.BooleanField()
+    IsEvidenciaFisica = models.BooleanField()
     Status = models.CharField(max_length=100)
     class Meta:
         managed = False
@@ -37,3 +39,20 @@ class RepartosxViaje(models.Model):
     class Meta:
         managed = False
         db_table = 'RepartosxViaje'
+
+class XD_Pedidos(models.Model):
+    XD_IDPedido = models.AutoField(primary_key = True)
+    Delivery = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'XD_Pedidos'
+
+class XD_PedidosxViajes(models.Model):
+    XD_PedidoxViaje = models.AutoField(primary_key=True)
+    XD_IDPedido = models.ForeignKey(XD_Pedidos, on_delete=models.CASCADE, db_column = 'XD_IDPedido')
+    XD_IDViaje = models.ForeignKey(XD_Viajes, on_delete=models.CASCADE, db_column = 'XD_IDViaje')
+
+    class Meta:
+        managed = False
+        db_table = 'XD_PedidosxViajes'

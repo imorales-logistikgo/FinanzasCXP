@@ -100,7 +100,7 @@ if (UserRol != 'Proveedor')
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
-    "lengthMenu": [50],
+    "lengthMenu": [200],
     "paging": true,
     "dom": 'Bfrtip',
     "buttons": [

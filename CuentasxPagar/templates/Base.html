@@ -61,7 +61,7 @@ end:: Header Mobile -->
 				<div id="kt_aside_menu" class="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1" data-ktmenu-dropdown-timeout="500">
 					<ul class="kt-menu__nav ">
 						{% if Rol != "Proveedor" %}
-						<li class="kt-menu__item {% block activateIndicadores %} {% endblock %}" aria-haspopup="true"><a href="{% url 'Indicadores' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon2-architecture-and-city"></i><span class="kt-menu__link-text">Indicadores</span></a></li>
+						<!-- <li class="kt-menu__item {% block activateIndicadores %} {% endblock %}" aria-haspopup="true"><a href="{% url 'Indicadores' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon2-architecture-and-city"></i><span class="kt-menu__link-text">Indicadores</span></a></li> -->
 						{% endif %}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Facturas</h4>
@@ -90,7 +90,11 @@ end:: Header Mobile -->
 						<li class="kt-menu__item {% block activateReportePagosCancelados %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagosCancelados' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Pagos cancelados</span></a></li>
 						<li class="kt-menu__item {% block activateReporteMaster %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteMaster' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas flaticon-list-1"></i><span class="kt-menu__link-text">Master</span></a></li>
 						{% endif %}
-
+						<li class="kt-menu__section ">
+							<h4 class="kt-menu__section-text">Evidencias</h4>
+							<i class="kt-menu__section-icon flaticon-more-v2"></i>
+						</li>
+						<li class="kt-menu__item {% block activateEvidenciasProveedor %} {% endblock %}" aria-haspopup="true"><a href="{% url 'EvidenciasProveedor' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon2-telegram-logo"></i><span class="kt-menu__link-text">Evidencias</span></a></li>
 					</ul>
 				</div>
 			</div>
@@ -186,6 +190,9 @@ end:: Header Mobile -->
 			{% block ContadoresReporteMaster %}
 			{% endblock %}
 
+			{% block ContadoresEvidenciasProveedor %}
+			{% endblock %}
+
 
 			<!-- fin contadores-->
 
@@ -209,6 +216,9 @@ end:: Header Mobile -->
 			{% endblock %}
 
 			{% block FiltrosReporteMaster %}
+			{% endblock %}
+
+			{% block FiltrosEvidenciasProveedor %}
 			{% endblock %}
 
 			<!-- fin filtros-->
@@ -236,6 +246,9 @@ end:: Header Mobile -->
 			{% endblock %}
 
 			{% block ReporteMaster %}
+			{% endblock %}
+
+			{% block EvidenciasProveedor %}
 			{% endblock %}
 
 			<!--end contenido-->

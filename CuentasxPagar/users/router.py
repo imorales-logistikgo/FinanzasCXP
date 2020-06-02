@@ -5,7 +5,7 @@ class AuthRouter:
     """
     route_app_labels = {'usersadmon', 'EstadosCuenta', 'PendientesEnviar', 'ReporteMaster'}
     route_app_labels_bkg = {'bkg_viajes','EstadosCuenta'}
-    route_app_labels_XD = {'XD_Viajes','EstadosCuenta'}
+    route_app_labels_XD = {'XD_Viajes','EstadosCuenta','EvidenciasProveedor'}
 
     def db_for_read(self, model, **hints):
         """

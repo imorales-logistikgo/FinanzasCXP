@@ -445,7 +445,7 @@ $('#modalSubirPagos').on('shown.bs.modal', function(){
 
 });
 
-$(document).on('change', '#FolioPago', fnCheckFolio);
+$(document).on('change', '#FolioPago', fnCheckFolioEC);
 
 //filtro de fecha solo por mes y año
 $(document).on( 'change', 'input[name="fechaxMesyAño"]', function () {
@@ -670,7 +670,6 @@ function showDatosObtenidos(){
       // datos[i].push(tot);
       total = total + Balance;
     }
-
   }
 
   var h = [datos];
@@ -712,7 +711,7 @@ function showDatosObtenidos(){
  ]
 });
 
-  $('#AddCosto').val(truncarDecimalesPE(total,2));
+  $('#AddCosto').val(total.toFixed(2));
 }
 
 var fnGetFacturas = function () {
@@ -1040,7 +1039,7 @@ function SavePagoxFactura(IDPago)
       "Content-Type": "application/json"
     },
     body: JSON.stringify(jParams)
-  }).then(function(response){
+  }).then(function(response, data){
 
     if(response.status == 200)
     {
@@ -1050,6 +1049,7 @@ function SavePagoxFactura(IDPago)
         showConfirmButton: true,
         //timer: 3500
       })
+      alertToastSuccess(data);
       arrSelect = [];
       proveedor = '';
       $('#modalSubirPagos').modal('hide');
@@ -1077,7 +1077,7 @@ function SavePagoxFactura(IDPago)
   });
 }
 
-var fnCheckFolio = function () {
+var fnCheckFolioEC = function () {
   WaitMe_ShowBtn('#btnSavePago');
   fetch("/EstadosdeCuenta/CheckFolioDuplicado?Folio=" + $('#FolioPago').val(), {
     method: "GET",

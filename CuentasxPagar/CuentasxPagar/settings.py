@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'ReporteCanceladas',
     'ReportePagosCancelados',
     'ReporteMaster',
+    'EvidenciasProveedor',
     'users',
     'usersadmon',
     'bkg_viajes',

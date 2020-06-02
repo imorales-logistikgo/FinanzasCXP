@@ -241,13 +241,20 @@ $('#TableReportePagos').DataTable({
     {
       "targets": 8,
       "width": "2%",
+      "mRender": function (data, type, full) {
+        return  (full[8]!= "" ? `<a href="${full[8]}" target="_blank" class="btn btn-brand btn-elevate btn-pill btn-sm" title="Complemento"><i class="fa fa-file-pdf"></i></a>`:'');
+      }
+    },
+    {
+      "targets": 9,
+      "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {
         return  (full[6]!= "" && full[7]!= "" ? `<a href="${full[6]}" target="_blank" class="btn btn-primary btn-elevate btn-pill btn-sm"><i class="flaticon2-file"></i></a>`:'');
       }
     },
     {
-      "targets": 9,
+      "targets": 10,
       "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {
@@ -256,7 +263,7 @@ $('#TableReportePagos').DataTable({
       }
     },
     {
-      "targets": 10,
+      "targets": 11,
       "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {

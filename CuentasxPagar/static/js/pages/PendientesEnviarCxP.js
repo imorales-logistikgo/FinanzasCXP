@@ -549,10 +549,10 @@ function getDatos(){
       FechaRevision: $('#FechaRevisionP').val(),
       FechaVencimiento: $('#FechaVencimientoP').val(),
       Moneda: moneda,
-      SubTotal: subtotal,
-      IVA: Tiva,
-      Retencion: TRetencion,
-      Total: total,
+      SubTotal: truncarDecimalesPE(subtotal, 2),
+      IVA: truncarDecimalesPE(Tiva, 2),
+      Retencion: truncarDecimalesPE(TRetencion, 2),
+      Total: truncarDecimalesPE(total, 2),
       RutaXML: $('#archivosProveedor').data("rutaarchivoXML") == undefined ? "":$('#archivosProveedor').data("rutaarchivoXML"),
       RutaPDF: $('#archivosProveedor').data("rutaarchivoPDF"),
       TipoCambio: 1,
@@ -808,7 +808,7 @@ var fnCheckFolio = function (folio, cancel, user) {
       })
       user == 'Lgk' ? ($('#btnGuardarFactura').attr('disabled',true),$('#txtFolioFactura').val('')) : user == 'Proveedor' ? ($('#btnGuardarFacturaP').attr('disabled',true),$('#txtFolioFacturaP').val('')):"";
       IDUsuraio_ != 3126 ? cancel.cancelAll():"";
-      IDUsuraio_ != 3126 ? $('.uploaded-files ol').remove():"";
+      IDUsuraio_ != 3126 && user == 'Lgk' ? $('.uploaded-files ol').remove(): IDUsuraio_ != 3126 && user == 'Proveedor' ? $('.uploaded-files-proveedor ol').remove() : "";
       WaitMe_HideBtn(user == 'Lgk' ? '#btnGuardarFactura': '#btnGuardarFacturaP');
     }
     else {

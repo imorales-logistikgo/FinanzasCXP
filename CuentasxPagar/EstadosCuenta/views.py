@@ -2,8 +2,8 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from bkg_viajes.models import Bro_Viajes, Bro_ServiciosxViaje, Servicios, Clientes, Bro_RepartosxViaje
 from XD_Viajes.models import XD_Viajes, XD_AccesoriosxViajes, RepartosxViaje
-from PendientesEnviar.models import RelacionFacturaProveedorxPartidas, FacturasxProveedor, PendientesEnviar, RelacionConceptoxProyecto, Ext_PendienteEnviar_Costo, View_PendientesEnviarCxP
-from EstadosCuenta.models import  TempSerie, View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor, HistorialReajusteProveedor
+from PendientesEnviar.models import PartidaProveedor, RelacionFacturaProveedorxPartidas, FacturasxProveedor, PendientesEnviar, RelacionConceptoxProyecto, Ext_PendienteEnviar_Costo, View_PendientesEnviarCxP, Ext_PendienteEnviar_Precio
+from EstadosCuenta.models import TempSerie, View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor, HistorialReajusteProveedor
 from usersadmon.models import Proveedor, AdmonUsuarios
 from users.models import User
 from django.core.mail import send_mail, EmailMessage
@@ -317,11 +317,11 @@ def SavePagoxFactura(request):
 			Factura.Status = "PAGADA"
 		else:
 			Factura.Status = "ABONADA"
-		print(Factura)
 		Factura.save()
 		newRelacionPagoxFactura.save()
-	#EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
-	return HttpResponse("")
+	MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
+	print(MsjCorreo)
+	return HttpResponse('')
 
 
 
@@ -342,27 +342,29 @@ def CheckFolioDuplicado(request):
 
 def EnviarCorreoProveedor(IDPagoEmail):
 	DatosPagoProveedor = PagosxProveedor.objects.get(IDPago = IDPagoEmail)
-	CorreoProveedor = User.objects.get(IDTransportista = DatosPagoProveedor.IDProveedor)
-	if CorreoProveedor.email != "":
-		context={
-			'nombre': DatosPagoProveedor.NombreCortoProveedor,
-			'folio' : DatosPagoProveedor.Folio,
-			'total' : DatosPagoProveedor.Total
-		}
-		template_name='email.html'
-		html_content=render_to_string("CorreoProveedor.html", context)
-		subject='Subir complementos de pago'
-		from_email='noreply@logisti-k.com.mx'
-		to='jfraga@logisti-k.com.mx'
+	try:
+		pass
+		CorreoProveedor = User.objects.get(IDTransportista = DatosPagoProveedor.IDProveedor)
+		if CorreoProveedor.email != "":
+			context={
+				'nombre': DatosPagoProveedor.NombreCortoProveedor,
+				'folio' : DatosPagoProveedor.Folio,
+				'total' : DatosPagoProveedor.Total
+			}
+			template_name='email.html'
+			html_content=render_to_string("CorreoProveedor.html", context)
+			subject='Subir complementos de pago'
+			from_email='noreply@logisti-k.com.mx'
+			to='jfraga@logisti-k.com.mx'
 
-		msg = EmailMessage(subject, html_content, from_email, [to])
-		msg.content_subtype = "html"  # Main content is now text/html
-		msg.send()
-
-		return HttpResponse('Mail successfully sent')
-	else:
-		return HttpResponse('Correo no enviado, El Proveedor no tiene correo')
-
+			msg = EmailMessage(subject, html_content, from_email, [to])
+			msg.content_subtype = "html"  # Main content is now text/html
+			msg.send()
+			return "Success"
+		else:
+			return "Error"
+	except Exception as e:
+		return "Error"
 
 
 
@@ -405,24 +407,128 @@ def FixIDProveedor(request):
 # 			print(e)
 
 # def leerExcel(reques):
-	# archivo_excel = pd.read_excel('static/json/Serie.xlsx')
-	# print(archivo_excel.columns)
-	# values = archivo_excel['Razon Social'].values
+# 	archivo_excel = pd.read_excel('static/json/Libro1.xlsx')
+# 	# values = archivo_excel['Folio'].values
+# 	for i in archivo_excel.index:
+# 		try:
+# 			with transaction.atomic(using='users'):
+# 				p = PendientesEnviar()
+# 				p.Folio = archivo_excel['Folio'][i]
+# 				p.NombreCortoCliente = archivo_excel['Cliente'][i]
+# 				p.NombreCortoProveedor = archivo_excel['Transportista'][i]
+# 				p.FechaDescarga = archivo_excel['FechaDescarga'][i]
+# 				p.Moneda = archivo_excel['Moneda'][i]
+# 				p.Status = archivo_excel['statusproceso'][i]
+# 				p.IsEvidenciaFisica = archivo_excel['IsEvidenciasFisicas'][i]
+# 				p.IsEvidenciaDigital = archivo_excel['IsEvidenciasDigitales'][i]
+# 				p.Proyecto = 'BKG'
+# 				p.TipoConcepto = 'VIAJE'
+# 				p.IsCrontrolDesk = archivo_excel['IsCapturaControlDesk'][i]
+# 				p.save()
+# 				r = RelacionConceptoxProyecto()
+# 				r.IDConcepto = archivo_excel['IDConcepto'][i]
+# 				r.IDCliente = archivo_excel['IDCliente'][i]
+# 				r.IDProveedor = archivo_excel['IDTransportista'][i]
+# 				r.IDPendienteEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = p.IDPendienteEnviar)
+# 				r.save()
+# 				ex = Ext_PendienteEnviar_Costo()
+# 				ex.CostoSubtotal = Decimal(archivo_excel['CostoSubtotal'][i].item())
+# 				ex.CostoIVA = Decimal(archivo_excel['CostoIVA'][i].item())
+# 				ex.CostoRetencion = Decimal(archivo_excel['CostoRetencion'][i].item())
+# 				ex.CostoTotal = Decimal(archivo_excel['CostoTotal'][i].item())
+# 				ex.IsFacturaProveedor = True if (archivo_excel['Factura'][i] != '') else False
+# 				ex.IDPendienteEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = p.IDPendienteEnviar)
+# 				ex.save()
+# 				# exp = Ext_PendienteEnviar_Precio()
+# 				# exp.PrecioSubtotal = Decimal(archivo_excel['PrecioSubtotal'][i].item())
+# 				# exp.PrecioIVA = Decimal(archivo_excel['PrecioIVA'][i].item())
+# 				# exp.PrecioRetencion = Decimal(archivo_excel['PrecioRetencion'][i].item())
+# 				# exp.PrecioTotal = Decimal(archivo_excel['PrecioTotal'][i].item())
+# 				# exp.IsFacturaCliente = False
+# 				# exp.IDPendienteEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = p.IDPendienteEnviar)
+# 				# exp.save()
+# 				if FacturasxProveedor.objects.filter(Folio = archivo_excel['Factura'][i]).exclude(Status = "CANCELADA").exists():
+# 					idF = FacturasxProveedor.objects.filter(Folio = archivo_excel['Factura'][i]).exclude(Status = "CANCELADA").get()
+# 					idF.Subtotal = (Decimal(archivo_excel['CostoSubtotal'][i].item()) + idF.Subtotal)
+# 					idF.IVA = (Decimal(archivo_excel['CostoIVA'][i].item()) + idF.IVA)
+# 					idF.Retencion = (Decimal(archivo_excel['CostoRetencion'][i].item()) + idF.Retencion)
+# 					idF.Total = ((Decimal(archivo_excel['CostoSubtotal'][i].item()) + idF.Subtotal)+(Decimal(archivo_excel['CostoIVA'][i].item()) + idF.IVA)) - (Decimal(archivo_excel['CostoRetencion'][i].item()) + idF.Retencion)
+# 					idF.Saldo = ((Decimal(archivo_excel['CostoSubtotal'][i].item()) + idF.Subtotal)+(Decimal(archivo_excel['CostoIVA'][i].item()) + idF.IVA)) - (Decimal(archivo_excel['CostoRetencion'][i].item()) + idF.Retencion)
+# 					idF.save()
+# 					pr = PartidaProveedor()
+# 					pr.FechaAlta = '2020-01-01'
+# 					pr.Subtotal = Decimal(archivo_excel['CostoSubtotal'][i].item())
+# 					pr.IVA = Decimal(archivo_excel['CostoIVA'][i].item())
+# 					pr.Retencion = Decimal(archivo_excel['CostoRetencion'][i].item())
+# 					pr.Total = Decimal(archivo_excel['CostoTotal'][i].item())
+# 					pr.IsActiva = True
+# 					pr.save()
+# 					RF = RelacionFacturaProveedorxPartidas()
+# 					RF.IDFacturaxProveedor = FacturasxProveedor.objects.get(IDFactura = idF.IDFactura)
+# 					RF.IDPartida = PartidaProveedor.objects.get(IDPartida = pr.IDPartida)
+# 					RF.IDPendienteEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = p.IDPendienteEnviar)
+# 					RF.save()
+# 				else:
+# 					fac = FacturasxProveedor()
+# 					fac.Folio = archivo_excel['Factura'][i]
+# 					fac.NombreCortoProveedor = archivo_excel['Transportista'][i]
+# 					fac.FechaFactura = '2020-01-01'
+# 					fac.FechaRevision = '2020-01-01'
+# 					fac.FechaVencimiento = '2020-01-01'
+# 					fac.Moneda = archivo_excel['Moneda'][i]
+# 					fac.Subtotal = Decimal(archivo_excel['CostoSubtotal'][i].item())
+# 					fac.IVA = Decimal(archivo_excel['CostoIVA'][i].item())
+# 					fac.Retencion = Decimal(archivo_excel['CostoRetencion'][i].item())
+# 					fac.Total = Decimal(archivo_excel['CostoTotal'][i].item())
+# 					fac.Saldo = Decimal(archivo_excel['CostoTotal'][i].item())
+# 					fac.IsAutorizada = False
+# 					fac.RutaXML = ''
+# 					fac.RutaPDF = ''
+# 					fac.TipoCambio = 1
+# 					fac.Comentarios = ''
+# 					fac.TotalConvertido = 0
+# 					fac.Status = 'PENDIENTE'
+# 					fac.IDUsuraioAlta = 152
+# 					fac.IDProveedor = archivo_excel['IDTransportista'][i]
+# 					fac.save()
+# 					pr = PartidaProveedor()
+# 					pr.FechaAlta = '2020-01-01'
+# 					pr.Subtotal = Decimal(archivo_excel['CostoSubtotal'][i].item())
+# 					pr.IVA = Decimal(archivo_excel['CostoIVA'][i].item())
+# 					pr.Retencion = Decimal(archivo_excel['CostoRetencion'][i].item())
+# 					pr.Total = Decimal(archivo_excel['CostoTotal'][i].item())
+# 					pr.IsActiva = True
+# 					pr.save()
+# 					RF = RelacionFacturaProveedorxPartidas()
+# 					RF.IDFacturaxProveedor = FacturasxProveedor.objects.get(IDFactura = fac.IDFactura)
+# 					RF.IDPartida = PartidaProveedor.objects.get(IDPartida = pr.IDPartida)
+# 					RF.IDPendienteEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = p.IDPendienteEnviar)
+# 					RF.save()
+# 		except Exception as e:
+# 			transaction.rollback(using='users')
+# 			print(e)
+	#for para leer cada row del excel
+	# f = list()
+	# for Excel in archivo_excel.index:
+	# 	try:
+	# 		a = FacturasxProveedor.objects.filter(Folio = archivo_excel['FACTURA'][Excel]).get()
+	# 		if a.Moneda==archivo_excel['Moneda'][Excel]:
+	# 			print('Yes')
+	# 		else:
+	# 			a.Moneda = archivo_excel['Moneda'][Excel]
+	# 			a.save()
+	# 			print('save')
+	# 	except Exception as e:
+	# 		print(e)
+	# print(f)
+	#
+	# f = list()
 	# for data in values:
-	# 	a = '{"RazonSocial":data}'
-	# for x in archivo_excel['Razon Social'].values:
-	# 	b = '{"Serie":x}'
-	# jsonA = json.loads(a)
-	# jsonB = json.loads(b)
-	# print(jsonA)
-
-		# try:
-		# 	dataProveedor = Proveedor.objects.filter(RazonSocial = data).get()
-		# 	for dataSerie in archivo_excel['Serie'].values:
-		# 		dataProveedor.Serie =  dataSerie
-		# 		dataProveedor.save()
-		# except Exception as e:
-		# 	print(e)
-	# columnas = ['Folio', 'Cliente', 'Transportista']
-	# df_seleccionados = archivo_excel[columnas]
-	# print(df_seleccionados)
+	# 	try:
+	# 		a = PendientesEnviar.objects.filter(Folio = data)[:1].get()
+	# 		print("Yes")
+	# 		# a.FechaFactura = '2020-01-01'
+	# 		# a.save()
+	# 	except:
+	# 		f.append(data, )
+	# print(f)
