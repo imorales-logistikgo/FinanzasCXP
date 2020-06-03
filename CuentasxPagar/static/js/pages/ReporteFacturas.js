@@ -134,7 +134,10 @@ if (UserRol != 'Proveedor')
     {
       "targets": [7],
       "width": "12px",
-      "className": "dt-head-center dt-body-center"
+      "className": "dt-head-center dt-body-center",
+      "mRender": function (data, type, full) {
+        return (full[7] == 'CANCELADA' ? 'RECHAZADA': full[7]);
+      }
     },
     ]
   });
@@ -163,9 +166,17 @@ else
     },
 
     {
-      "targets": [1,2,3],
+      "targets": [1,2],
       "width": "15px",
       "className": "dt-head-center dt-body-center"
+    },
+    {
+      "targets": 3,
+      "width": "15px",
+      "className": "dt-head-center dt-body-center",
+      "mRender": function (data, type, full) {
+        return (full[3] == 'CANCELADA' ? 'RECHAZADA': full[3]);
+      }
     },
 
     {

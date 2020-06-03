@@ -11,23 +11,21 @@ def FindFolioProveedor(request):
     Folio = request.GET["Folio"]
     arrFoliosEvidencias = list()
     try:
-        XDFolio = XD_Viajes.objects.get(Folio = Folio)
+        XDFolio = XD_Viajes.objects.exclude(Status = 'CANCELADO').get(Folio = Folio, IsEvidenciaPedidos = 0, IsEvidenciaFisica = 0)
         GetDelivery = XD_PedidosxViajes.objects.filter(XD_IDViaje = XDFolio.XD_IDViaje).values_list("XD_IDPedido", flat=True)
         if GetDelivery:
             for Delivery in GetDelivery:
+                newDelivery = {}
                 a = XD_Pedidos.objects.get(XD_IDPedido = Delivery)
-                arrFoliosEvidencias.append(a.Delivery)
+                newDelivery['XD_IDPedido'] = a.XD_IDPedido
+                newDelivery['Delivery'] = a.Delivery
+                arrFoliosEvidencias.append(newDelivery)
+        else:
+            arrFoliosEvidencias.append(XDFolio.Folio)
         for Maniobras in XD_AccesoriosxViajes.objects.filter(XD_IDViaje = XDFolio.XD_IDViaje).values_list("Descripcion", flat=True):
             if Maniobras == 'Maniobras de descarga' or Maniobras == 'Maniobras de carga':
                 arrFoliosEvidencias.append(Maniobras)
         return JsonResponse({'Found': True, 'Folios': arrFoliosEvidencias})
     except Exception as e:
+        print(e)
         return JsonResponse({'Found': False})
-
-def ListFolios (Folios):
-    ListaFolios = list()
-    for Folio in Folios:
-        NuevFolio = {}
-        NuevFolio["XD_IDPedido"] = Folio.XD_IDPedido
-        ListaFolios.append(NuevFolio)
-    return ListaFolios

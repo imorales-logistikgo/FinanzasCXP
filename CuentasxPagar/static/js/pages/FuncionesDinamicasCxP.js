@@ -616,26 +616,28 @@ var uploadEvidences = function(idU, ver){
          });
          uppyDashboard.use(Dashboard, options);
          uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
-          //uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
-          //uppyDashboard.use(Webcam, {target: Dashboard});
           uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
           uppyDashboard.on('upload-success', (file, response) => {
-            const fileName = file.name
-            if (file.extension === 'pdf')
-            {
-             const urlPDF = response.body
-             $(id).data("rutaarchivoPDF", urlPDF)
-             document.querySelector(ver).innerHTML +=
-             `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaPDF">${fileName}</a></li></ol>`
-             //IDUsuraio_ == 3126 ? getSerieProveedor(idprov).then((response) =>  fnCheckFolio(response.Serie, uppyDashboard, "Proveedor")).catch((e) => (uppyDashboard.cancelAll(), $('.uploaded-files ol').remove(), alertToastError("Algo salio mal :("))): '';
-           }
-           else
-           {
-              const urlPDF = response.body
-              $(id).data("rutaarchivoXML", urlPDF)
-              document.querySelector(ver).innerHTML +=
-              `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
-            }
+
+           $(`#${ver}`).append(`<a class="uppy-DashboardItem-previewLink" href="${response.body}" target="_blank" rel="noreferrer noopener"></a>`);
+           $(`#${ver}`).append('<i class="fa fa-eye"></i>');
+           $(`#${ver}`).css('color', 'green');
+           //  const fileName = file.name
+           //  if (file.extension === 'pdf')
+           //  {
+           //   const urlPDF = response.body
+           //   $(id).data("rutaarchivoPDF", urlPDF)
+           //   document.querySelector(ver).innerHTML +=
+           //   `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaPDF">${fileName}</a></li></ol>`
+           //   //IDUsuraio_ == 3126 ? getSerieProveedor(idprov).then((response) =>  fnCheckFolio(response.Serie, uppyDashboard, "Proveedor")).catch((e) => (uppyDashboard.cancelAll(), $('.uploaded-files ol').remove(), alertToastError("Algo salio mal :("))): '';
+           // }
+           // else
+           // {
+           //    const urlPDF = response.body
+           //    $(id).data("rutaarchivoXML", urlPDF)
+           //    document.querySelector(ver).innerHTML +=
+           //    `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
+           //  }
           });
         }
         return {

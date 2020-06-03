@@ -242,7 +242,7 @@ $('#TableReportePagos').DataTable({
       "targets": 8,
       "width": "2%",
       "mRender": function (data, type, full) {
-        return  (full[8]!= "" ? `<a href="${full[8]}" target="_blank" class="btn btn-brand btn-elevate btn-pill btn-sm" title="Complemento"><i class="fa fa-file-pdf"></i></a>`:'');
+        return  (full[8]!= "" ? `<a href="${full[8]}" target="_blank" class="btn btn-brand btn-elevate btn-pill btn-sm" title="Transferencia"><i class="fa fa-file-pdf"></i></a>`:'');
       }
     },
     {

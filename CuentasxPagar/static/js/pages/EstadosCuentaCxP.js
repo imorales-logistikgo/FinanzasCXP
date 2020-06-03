@@ -842,7 +842,15 @@ function formatDataTableFacturas(){
     {
       "width": "5%",
       "className": "text-center",
-      "targets": [9, 10]
+      "targets": 9
+    },
+    {
+      "width": "5%",
+      "className": "text-center",
+      "targets": 10,
+      "mRender": function (data, type, full) {
+        return (full[10] == 'CANCELADA' ? 'RECHAZADA':full[10]);
+      }
     },
     {
       "name": "Status",

@@ -45,21 +45,22 @@ var GetFolioEvidencias = function(Folio){
       WaitMe_Hide('#TbPading');
     }
     else {
+      $('#StatusEvidencias').append(`Estatus: <strong>Pendiente</strong> <i class="fa fa-clock fa-1x"></i>`)
       for(var i=0; i<data.Folios.length; i++)
       {
         $('#allEvidences').append(`<div class="col-sm-4 col-lg-4 col-md-4">
                             	<div class="kt-portlet kt-portlet--height-fluid">
                             		<div class="kt-portlet__head" id="headUppyTitulo">
                             			<div class="kt-portlet__head-label">
-                            				<h3 class="kt-portlet__head-title">
-                            					${data.Folios[i]}
+                            				<h3 class="kt-portlet__head-title" id='${data.Folios[i].Delivery}'>
+                            					${data.Folios[i].Delivery}
                             				</h3>
                             			</div>
                             		</div>
                             			<div class="kt-portlet__body">
                             				<div class="row" id="prueba">
                             				</div>
-                            				<div class="kt-uppy" id="uploadEvidencesProveedor${data.Folios[i]}">
+                            				<div class="kt-uppy" id="uploadEvidencesProveedor${data.Folios[i].Delivery}">
                             					<div  class="kt-uppy__dashboard"></div>
                             					<div class="kt-uppy__progress"></div>
                             				</div>
@@ -67,10 +68,10 @@ var GetFolioEvidencias = function(Folio){
                             			</div>
                             	</div>
                             </div>`);
-
-      uploadEvidences(`#uploadEvidencesProveedor${data.Folios[i]}`, ".uploaded-files-Evidences");
+      uploadEvidences(`#uploadEvidencesProveedor${data.Folios[i].Delivery}`, `${data.Folios[i].Delivery}`);
       }
-      $('#FolioProveedorEvidencia').text(data.Folios);
+
+      $('#FolioProveedorEvidencia').text(data.Folios.Delivery);
       $('#uploadEvidenciasModal').css('display', 'block');
       $('#inputBuscarViajeProveedor').removeClass("border border-danger");
       $('#inputBuscarViajeProveedor').addClass("border border-success");

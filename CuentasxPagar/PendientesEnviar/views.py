@@ -166,71 +166,71 @@ def GetProveedorByID(request):
 	return JsonResponse({'IsAmericano': IsAmericano})
 
 
-def CrearUsuariosTranportistas(request):
-#editar un usuario
-
-	#usuarios = User.User.objects.filter()
-	#FoliosSuccess = list()
-	#FoliosNoSuccess = list()
-	#for a in usuarios:
-	#	try:
-	#		usu = AdmonUsuarios.objects.get(idusuario = a.idusuario)
-	#		if usu.idusuario == a.idusuario and usu.nombreusuario == a.username:
-	#			FoliosSuccess.append(a.id)
-	#		else:
-	#			FoliosNoSuccess.append(a.id)
-	#	except:
-	#		pass
-	#findFolio = User.User.objects.filter(id = 20)
-	#for correctoID in findFolio:
-	#	try:
-	#		findNombreUsuario = AdmonUsuarios.objects.get(nombreusuario = correctoID.username)
-	#		getRSTransportista =  Proveedor.objects.get(IDTransportista = correctoID.IDTransportista)
-	#		correctoID.idusuario = findNombreUsuario.idusuario
-	#		if getRSTransportista.RFC == correctoID.username:
-	#			correctoID.name = getRSTransportista.RazonSocial
-	#		correctoID.save()
-	#	except:
-	#		pass
-	#print(FoliosNoSuccess)
-
-#fin editar usuario
-
-#dar de alta un usuario
-
-	#Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
-
-	Proveedores = Proveedor.objects.filter(RFC='TSU750725AS5')
-	# for prov in Proveedores:
-	# 	try:
-	# 		oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
-	# 	except AdmonUsuarios.DoesNotExist:
-	# 		newUser = AdmonUsuarios()
-	# 		newUser.nombre = prov.RazonSocial
-	# 		newUser.nombreusuario = prov.RFC
-	# 		newUser.correo = prov.Correo
-	# 		newUser.fechacambiocontrasena = datetime.datetime.now()
-	# 		newUser.hasbytes = 0
-	# 		newUser.saltbytes = 0
-	# 		newUser.periodo = 365
-	# 		newUser.statusreg = "ACTIVO"
-	# 		newUser.apepaterno = ""
-	# 		newUser .apematerno = ""
-	# 		newUser.save()
-	# 		prov.IDUsuarioAcceso = newUser.idusuario
-	# 		prov.save()
-	# 		try:
-	# 			DjangoUser = User.User.objects.get(username=prov.RFC)
-	# 			DjangoUser.IDTransportista = prov.IDTransportista
-	# 			DjangoUser.idusuario = newUser.idusuario
-	# 		except User.User.DoesNotExist:
-	# 			user = User.User(username=prov.RFC)
-	# 			user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
-	# 			user.email = newUser.correo
-	# 			user.idusuario = newUser.idusuario
-	# 			user.is_staff = True
-	# 			user.roles = "Proveedor"
-	# 			user.IDTransportista = prov.IDTransportista
-	# 			user.save()
-
-	# fin dar de alta un usuario
+# def CrearUsuariosTranportistas(request):
+# #editar un usuario
+#
+# 	#usuarios = User.User.objects.filter()
+# 	#FoliosSuccess = list()
+# 	#FoliosNoSuccess = list()
+# 	#for a in usuarios:
+# 	#	try:
+# 	#		usu = AdmonUsuarios.objects.get(idusuario = a.idusuario)
+# 	#		if usu.idusuario == a.idusuario and usu.nombreusuario == a.username:
+# 	#			FoliosSuccess.append(a.id)
+# 	#		else:
+# 	#			FoliosNoSuccess.append(a.id)
+# 	#	except:
+# 	#		pass
+# 	#findFolio = User.User.objects.filter(id = 20)
+# 	#for correctoID in findFolio:
+# 	#	try:
+# 	#		findNombreUsuario = AdmonUsuarios.objects.get(nombreusuario = correctoID.username)
+# 	#		getRSTransportista =  Proveedor.objects.get(IDTransportista = correctoID.IDTransportista)
+# 	#		correctoID.idusuario = findNombreUsuario.idusuario
+# 	#		if getRSTransportista.RFC == correctoID.username:
+# 	#			correctoID.name = getRSTransportista.RazonSocial
+# 	#		correctoID.save()
+# 	#	except:
+# 	#		pass
+# 	#print(FoliosNoSuccess)
+#
+# #fin editar usuario
+#
+# #dar de alta un usuario
+#
+# 	#Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
+#
+# 	Proveedores = Proveedor.objects.filter(RFC='GASE910419PN2')
+# 	for prov in Proveedores:
+# 		try:
+# 			oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
+# 		except AdmonUsuarios.DoesNotExist:
+# 			newUser = AdmonUsuarios()
+# 			newUser.nombre = prov.RazonSocial
+# 			newUser.nombreusuario = prov.RFC
+# 			newUser.correo = prov.Correo
+# 			newUser.fechacambiocontrasena = datetime.datetime.now()
+# 			newUser.hasbytes = 0
+# 			newUser.saltbytes = 0
+# 			newUser.periodo = 365
+# 			newUser.statusreg = "ACTIVO"
+# 			newUser.apepaterno = ""
+# 			newUser .apematerno = ""
+# 			newUser.save()
+# 			prov.IDUsuarioAcceso = newUser.idusuario
+# 			prov.save()
+# 			try:
+# 				DjangoUser = User.User.objects.get(username=prov.RFC)
+# 				DjangoUser.IDTransportista = prov.IDTransportista
+# 				DjangoUser.idusuario = newUser.idusuario
+# 			except User.User.DoesNotExist:
+# 				user = User.User(username=prov.RFC)
+# 				user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
+# 				user.email = newUser.correo
+# 				user.idusuario = newUser.idusuario
+# 				user.is_staff = True
+# 				user.roles = "Proveedor"
+# 				user.IDTransportista = prov.IDTransportista
+# 				user.save()
+#
+# 	# fin dar de alta un usuario

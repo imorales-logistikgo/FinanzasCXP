@@ -319,8 +319,10 @@ def SavePagoxFactura(request):
 			Factura.Status = "ABONADA"
 		Factura.save()
 		newRelacionPagoxFactura.save()
-	MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
-	print(MsjCorreo)
+	try:
+		MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
+	except Exception as e:
+		pass
 	return HttpResponse('')
 
 

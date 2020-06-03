@@ -11,6 +11,7 @@ class XD_Viajes(models.Model):
     CostoRetencion = models.DecimalField(db_column='CostoRetencion',default=0, max_digits=30, decimal_places=5)
     CostoTotal = models.DecimalField(db_column='CostoTotal',default=0, max_digits=30, decimal_places=5)
     IsEvidencia = models.BooleanField()
+    IsEvidenciaPedidos = models.BooleanField()
     IsEvidenciaFisica = models.BooleanField()
     Status = models.CharField(max_length=100)
     class Meta:

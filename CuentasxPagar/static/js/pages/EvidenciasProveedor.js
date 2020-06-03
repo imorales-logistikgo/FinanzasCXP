@@ -9,13 +9,14 @@ $(document).ready(function(){
   $('#buscarViajeProveedor').on('click', function(){
     $('#inputBuscarViajeProveedor').val() == "" ? validacionBuscarFolio() : GetFolioEvidencias($('#inputBuscarViajeProveedor').val());
   });
-
   $('#btnCerrarDivProveedorEvidencias').on('click', function(){
     $('#uploadEvidenciasModal').css('display', 'none');
     $('#inputBuscarViajeProveedor').removeClass("border border-success");
     $('#inputBuscarViajeProveedor,#buscarViajeProveedor').prop('disabled', false);
     $('#inputBuscarViajeProveedor').val('');
     $('#inputBuscarViajeProveedor').focus();
+    $('#allEvidences').empty();
+    $('#StatusEvidencias').empty();
   });
 
 });
