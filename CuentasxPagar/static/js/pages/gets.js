@@ -60,7 +60,7 @@ var GetFolioEvidencias = function(Folio){
                             			<div class="kt-portlet__body">
                             				<div class="row" id="prueba">
                             				</div>
-                            				<div class="kt-uppy" id="uploadEvidencesProveedor${data.Folios[i].Delivery}">
+                            				<div class="kt-uppy verificar" id="uploadEvidencesProveedor${data.Folios[i].Delivery}">
                             					<div  class="kt-uppy__dashboard"></div>
                             					<div class="kt-uppy__progress"></div>
                             				</div>
@@ -68,6 +68,7 @@ var GetFolioEvidencias = function(Folio){
                             			</div>
                             	</div>
                             </div>`);
+       $(`#${data.Folios[i].Delivery}`).append(`<a class="uppy-DashboardItem-previewLink" target="_blank" rel="noreferrer noopener"></a>`)
       uploadEvidences(`#uploadEvidencesProveedor${data.Folios[i].Delivery}`, `${data.Folios[i].Delivery}`);
       }
 

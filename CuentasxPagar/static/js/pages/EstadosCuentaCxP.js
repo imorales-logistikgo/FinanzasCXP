@@ -9,7 +9,7 @@ var ivaProcentaje = 0.16;
 var retencionProcentaje = 0.04;
 var diferenciaReajuste = 0;
 var idFacturaReajuste, valorAnterioInputs, valorAnterioInputsRepartos, indexRowReajuste, showBtnA;
-var costoRepartoDefault, costoAccesoriosDefault, costoRecoleccionDefault, costoViajeDefault;
+var costoRepartoDefault, costoAccesoriosDefault, costoRecoleccionDefault, costoViajeDefault, tipoViaje;
 $(document).ready(function()
 {
   var calculo =0;
@@ -148,6 +148,7 @@ $(document).on('click', '.btnEditarFactura', function(){
     $('#IVAReajuste').val(+data.DataBKG[0].CostoIVA.toFixed(2));
     $('#RetencionReajuste').val(+data.DataBKG[0].CostoRetencion.toFixed(2));
     $('#TotalReajuste').val(+data.DataBKG[0].CostoTotal.toFixed(2));
+    tipoViaje = data.DataBKG[0].TipoViaje;
 
     $('#costoAccesoriosReajuste').val() == 0 ? $('#AccesoriosReajuste').prop('disabled', true): $('#AccesoriosReajuste').prop('disabled', false);
     $('#costoRepartosReajuste').val() == 0 ? $('#RepartosReajuste').prop('disabled', true):$('#RepartosReajuste').prop('disabled', false);
@@ -1057,7 +1058,7 @@ function SavePagoxFactura(IDPago)
         showConfirmButton: true,
         //timer: 3500
       })
-      alertToastSuccess(data);
+      //alertToastSuccess(data);
       arrSelect = [];
       proveedor = '';
       $('#modalSubirPagos').modal('hide');
@@ -1222,7 +1223,7 @@ function recalculoReajuste(retencionAccesorios)
   typeProyecto == 'BKG' && +$('#CostoReajuste').val() == 0 ? costoViaje = +$('#CostoRecoleccionReajuste').val() : costoViaje = +$('#CostoReajuste').val();
   var recalculoSubtotal = costoViaje+(+$('#costoAccesoriosReajuste').val())+(+$('#costoRepartosReajuste').val());
   var recalculoIVA = recalculoSubtotal * ivaProcentaje;
-  var recalculoRetencion = ((costoViaje * retencionProcentaje) + retencionAccesorios) + ((+$('#costoRepartosReajuste').val())* retencionProcentaje);
+  var recalculoRetencion = ((tipoViaje != 'CUSTODIA' ? (costoViaje * retencionProcentaje) : 0) + retencionAccesorios) + ((+$('#costoRepartosReajuste').val())* retencionProcentaje);
   var recalculoTotal = ((Number(recalculoSubtotal.toFixed(2)) + Number(recalculoIVA.toFixed(2))) - recalculoRetencion.toFixed(2));
 
   $('#subtotalReajuste').val(recalculoSubtotal.toFixed(2));

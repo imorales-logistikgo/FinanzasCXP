@@ -9,6 +9,8 @@ $(document).ready(function(){
   $('#buscarViajeProveedor').on('click', function(){
     $('#inputBuscarViajeProveedor').val() == "" ? validacionBuscarFolio() : GetFolioEvidencias($('#inputBuscarViajeProveedor').val());
   });
+
+
   $('#btnCerrarDivProveedorEvidencias').on('click', function(){
     $('#uploadEvidenciasModal').css('display', 'none');
     $('#inputBuscarViajeProveedor').removeClass("border border-success");
@@ -17,6 +19,12 @@ $(document).ready(function(){
     $('#inputBuscarViajeProveedor').focus();
     $('#allEvidences').empty();
     $('#StatusEvidencias').empty();
+  });
+
+  $('#btnGuardarEvidenciasP').on('click', function(){
+    $('.uppy-DashboardItem-previewLink').each(function(){
+      $(this).attr('href');
+    });
   });
 
 });

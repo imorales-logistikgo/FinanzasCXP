@@ -11,7 +11,7 @@ class Bro_Viajes(models.Model):
     CostoIVA = models.DecimalField(db_column='CostoIVA',default=0, max_digits=30, decimal_places=5)
     CostoRetencion = models.DecimalField(db_column='CostoRetencion',default=0, max_digits=30, decimal_places=5)
     CostoTotal = models.DecimalField(db_column='CostoTotal',default=0, max_digits=30, decimal_places=5)
-
+    Tipo = models.CharField(max_length=100)
     class Meta:
         managed = False
         db_table = 'Bro_Viajes'

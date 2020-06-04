@@ -420,21 +420,21 @@ function subirComplementoPagoProveedor(totalPago)
                  else
                  {
 
-                   const urlXMLCheck = response.body
-                   var to = leerXMLTransportista(urlXMLCheck)
-                   if(to != totalPago)
-                   {
-                     alertToastError("El total del pago no coincide con el total calculado del sistema")
-                      //uppyDashboard.reset()
-                      uppyDashboard.cancelAll()
-                    }
-                    else
-                    {
+                   // const urlXMLCheck = response.body
+                   // var to = leerXMLTransportista(urlXMLCheck)
+                   // if(to != totalPago)
+                   // {
+                   //   alertToastError("El total del pago no coincide con el total calculado del sistema")
+                   //    //uppyDashboard.reset()
+                   //    uppyDashboard.cancelAll()
+                   //  }
+                   //  else
+                   //  {
                      const urlPDF = response.body
                      $('#ComplementosPagos').data("rutaarchivoXML", urlPDF)
                      document.querySelector('.uploaded-files-ComplemetoPagos').innerHTML +=
                      `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
-                    }
+                    // }
                   }
                   if($('#ComplementosPagos').data("rutaarchivoXML") != null && $('#ComplementosPagos').data("rutaarchivoPDF") != null || $('#ComplementosPagos').data("rutaarchivoXML") != undefined && $('#ComplementosPagos').data("rutaarchivoPDF") != undefined)
                   {

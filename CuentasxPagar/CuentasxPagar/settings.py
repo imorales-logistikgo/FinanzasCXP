@@ -122,7 +122,7 @@ DATABASES = {
     },
     'bkg_viajesDB': {
          'ENGINE': "sql_server.pyodbc",
-         'NAME': "LogistikGO_Brockeraje_Copiar_03",
+         'NAME': "LogistikGO_Brockeraje",
          'HOST': "logistikgo.database.windows.net",
          'USER': "QUR3n5qk4F33",
          'PASSWORD': "Hi0p68To45lzXp0klf",
@@ -209,8 +209,8 @@ SESSION_COOKIE_AGE = 21600
 #LOGOUT_REDIRECT_URL = "/Usuario/Login/"
 
 #SECURE_SSL_REDIRECT = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'noreply@logistikgo.com'
-EMAIL_HOST_PASSWORD = 'vk?ZTx&6X6}eFQSC{tR'
+EMAIL_HOST = 'smtp.alestraune.net.mx'
+EMAIL_HOST_USER = 'pagos.proveedores@logisti-k.com.mx'
+EMAIL_HOST_PASSWORD = 'Lgk2020k'
 EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = False

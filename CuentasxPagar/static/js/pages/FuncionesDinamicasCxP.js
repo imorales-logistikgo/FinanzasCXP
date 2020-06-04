@@ -619,9 +619,10 @@ var uploadEvidences = function(idU, ver){
           uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
           uppyDashboard.on('upload-success', (file, response) => {
 
-           $(`#${ver}`).append(`<a class="uppy-DashboardItem-previewLink" href="${response.body}" target="_blank" rel="noreferrer noopener"></a>`);
+           $(`.uppy-DashboardItem-previewLink`).prop('href', `${response.body}`);
            $(`#${ver}`).append('<i class="fa fa-eye"></i>');
            $(`#${ver}`).css('color', 'green');
+           $(`#${ver}`).data('urlEvidencia', response.body);
            //  const fileName = file.name
            //  if (file.extension === 'pdf')
            //  {

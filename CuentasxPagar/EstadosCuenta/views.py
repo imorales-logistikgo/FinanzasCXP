@@ -60,6 +60,7 @@ def GetDataReajuste(request):
 		data["CostoRetencion"] = GetBkgData.CostoRetencion
 		data["CostoTotal"] = GetBkgData.CostoTotal
 		data["Proyecto"] = 'BKG'
+		data["TipoViaje"] = GetBkgData.Tipo
 		DataBKG.append(data)
 	elif projectType.Proyecto == 'XD':
 		GetXdData = XD_Viajes.objects.get(XD_IDViaje = GetConcepto.IDConcepto)
@@ -75,6 +76,7 @@ def GetDataReajuste(request):
 		data["CostoRetencion"] = GetXdData.CostoRetencion
 		data["CostoTotal"] = GetXdData.CostoTotal
 		data["Proyecto"] = 'XD'
+		data["TipoViaje"] = GetXdData.TipoViaje
 		DataBKG.append(data)
 	return JsonResponse({'DataBKG':DataBKG})
 
@@ -96,6 +98,7 @@ def GetAccesoriosxViaje(request):
 		dataAccesorios['CostoAccesorio'] = costoA if(request.GET["Proyecto"] == 'BKG') else Accesorios.Costo if (request.GET["Proyecto"] == 'XD') else ""
 		dataAccesorios['IsAplicaRetencion'] = Accesorios.IsAplicaRetencion if(request.GET["Proyecto"] == 'BKG') else ""
 		dataAccesorios['IsAplicaIVA'] = Accesorios.IsAplicaiva if(request.GET["Proyecto"] == 'BKG') else ""
+		#dataAccesorios['TipoViaje'] = Accesorios.TipoViaje if(request.GET["Proyecto"] == 'BKG') else Accesorios.TipoViaje if(request.GET["Proyecto"] == 'XD')  else ""
 		NewData.append(dataAccesorios)
 	return JsonResponse({"NewData":NewData})
 
@@ -323,7 +326,7 @@ def SavePagoxFactura(request):
 		MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
 	except Exception as e:
 		pass
-	return HttpResponse('')
+	return JsonResponse({"MsjCorreo": MsjCorreo})
 
 
 
@@ -344,6 +347,7 @@ def CheckFolioDuplicado(request):
 
 def EnviarCorreoProveedor(IDPagoEmail):
 	DatosPagoProveedor = PagosxProveedor.objects.get(IDPago = IDPagoEmail)
+
 	try:
 		pass
 		CorreoProveedor = User.objects.get(IDTransportista = DatosPagoProveedor.IDProveedor)
@@ -356,10 +360,11 @@ def EnviarCorreoProveedor(IDPagoEmail):
 			template_name='email.html'
 			html_content=render_to_string("CorreoProveedor.html", context)
 			subject='Subir complementos de pago'
-			from_email='noreply@logisti-k.com.mx'
-			to='jfraga@logisti-k.com.mx'
+			from_email='pagos.proveedores@logisti-k.com.mx'
+			to='jvarela@logisti-k.com.mx'
+			reply_to=['jfraga@logisti-k.com.mx']
 
-			msg = EmailMessage(subject, html_content, from_email, [to])
+			msg = EmailMessage(subject, html_content, from_email, [to], [reply_to])
 			msg.content_subtype = "html"  # Main content is now text/html
 			msg.send()
 			return "Success"
@@ -393,6 +398,8 @@ def FixIDProveedor(request):
 		Fact.IDProveedor = IDProveedor
 		Fact.save()
 	return HttpResponse('Done')
+
+
 
 
 # def InsertSerieProveedor(request):

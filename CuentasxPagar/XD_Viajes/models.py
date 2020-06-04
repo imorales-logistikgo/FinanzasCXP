@@ -14,6 +14,7 @@ class XD_Viajes(models.Model):
     IsEvidenciaPedidos = models.BooleanField()
     IsEvidenciaFisica = models.BooleanField()
     Status = models.CharField(max_length=100)
+    TipoViaje = models.CharField(max_length=100)
     class Meta:
         managed = False
         db_table = 'XD_Viajes'
