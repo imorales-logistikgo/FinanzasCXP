@@ -27,6 +27,10 @@ $(document).ready(function(){
       WaitMe_Show('#waitModalPago');
       SaveComplementosPago();
     }
+    else
+    {
+      alertToastError('Son Necesarios los archivos PDF y XML');
+    }
 
   });
 
@@ -69,7 +73,6 @@ $(document).ready(function(){
   $('#ModalComplementos').on('hidden.bs.modal', function(){
    $('.uploaded-files-ComplemetoPagos ol').remove();
    $('.uploaded-files-ComplemetoPagos ol').remove();
-
  });
 
  $('#ModalComplementos').on('shown.bs.modal', function(){
