@@ -15,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction, DatabaseError
 import json
 from string import digits
-import pandas as pd
+#import pandas as pd
 
 
 @login_required
@@ -322,11 +322,11 @@ def SavePagoxFactura(request):
 			Factura.Status = "ABONADA"
 		Factura.save()
 		newRelacionPagoxFactura.save()
-	try:
-		MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
-	except Exception as e:
-		pass
-	return JsonResponse({"MsjCorreo": MsjCorreo})
+	# try:
+	# 	MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
+	# except Exception as e:
+	# 	pass
+	return HttpResponse('')
 
 
 

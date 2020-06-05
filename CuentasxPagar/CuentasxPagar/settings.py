@@ -122,7 +122,7 @@ DATABASES = {
     },
     'bkg_viajesDB': {
          'ENGINE': "sql_server.pyodbc",
-         'NAME': "LogistikGO_Brockeraje",
+         'NAME': "LogistikGO_Brockeraje_Copiar_01",
          'HOST': "logistikgo.database.windows.net",
          'USER': "QUR3n5qk4F33",
          'PASSWORD': "Hi0p68To45lzXp0klf",

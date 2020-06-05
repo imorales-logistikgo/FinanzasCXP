@@ -21,6 +21,15 @@ $(document).ready(function(){
     }
   });
 
+  $('#saveCom').on('click', function(){
+    if($('#ComplementosPagos').data("rutaarchivoXML") != null && $('#ComplementosPagos').data("rutaarchivoPDF") != null || $('#ComplementosPagos').data("rutaarchivoXML") != undefined && $('#ComplementosPagos').data("rutaarchivoPDF") != undefined)
+    {
+      WaitMe_Show('#waitModalPago');
+      SaveComplementosPago();
+    }
+
+  });
+
   //rago fecha para el Filtro
   $('input[name="filtroFechaReportePagos"]').daterangepicker({
    autoUpdateInput: false,
@@ -60,6 +69,7 @@ $(document).ready(function(){
   $('#ModalComplementos').on('hidden.bs.modal', function(){
    $('.uploaded-files-ComplemetoPagos ol').remove();
    $('.uploaded-files-ComplemetoPagos ol').remove();
+
  });
 
  $('#ModalComplementos').on('shown.bs.modal', function(){
@@ -106,12 +116,13 @@ $(document).on( 'click', '.btnEliminarPago', function () {
 });
 });
 
-function SaveComplementosPago(pdf, xml)
+function SaveComplementosPago()
 {
+  WaitMe_Show('#waitModalPago');
   jParams = {
     IDPago: idPag,
-    RutaPDF: pdf,
-    RutaXML: xml,
+    RutaPDF: $('#ComplementosPagos').data("rutaarchivoPDF"),
+    RutaXML: $('#ComplementosPagos').data("rutaarchivoXML"),
   }
   fetch("/ReportePagos/SaveComplementosPago", {
     method: "POST",
@@ -436,13 +447,13 @@ function subirComplementoPagoProveedor(totalPago)
                      `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
                     // }
                   }
-                  if($('#ComplementosPagos').data("rutaarchivoXML") != null && $('#ComplementosPagos').data("rutaarchivoPDF") != null || $('#ComplementosPagos').data("rutaarchivoXML") != undefined && $('#ComplementosPagos').data("rutaarchivoPDF") != undefined)
-                  {
-                    var pdf = $('#ComplementosPagos').data("rutaarchivoPDF");
-                    var xml = $('#ComplementosPagos').data("rutaarchivoXML");
-                    WaitMe_Show('#waitModalPago');
-                    SaveComplementosPago(pdf, xml);
-                  }
+                  // if($('#ComplementosPagos').data("rutaarchivoXML") != null && $('#ComplementosPagos').data("rutaarchivoPDF") != null || $('#ComplementosPagos').data("rutaarchivoXML") != undefined && $('#ComplementosPagos').data("rutaarchivoPDF") != undefined)
+                  // {
+                  //   var pdf = $('#ComplementosPagos').data("rutaarchivoPDF");
+                  //   var xml = $('#ComplementosPagos').data("rutaarchivoXML");
+                  //   WaitMe_Show('#waitModalPago');
+                  //   SaveComplementosPago(pdf, xml);
+                  // }
 
 
    });
