@@ -111,6 +111,7 @@ class FacturasxProveedor(models.Model):
     IDUsuarioBaja = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column = 'IDUsuarioBaja', related_name = "IDUsuarioBajaFactura", null=True)
     TotalXML = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     ComentarioBaja = models.CharField(max_length=500)
+    UUID = models.CharField(max_length=500)
 
     # def __str__(self):
     #     return str(self.IDFactura)

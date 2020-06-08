@@ -99,6 +99,7 @@ def SaveFacturaxProveedor(request):
 	newFactura.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
 	newFactura.IDProveedor =  jParams["IDProveedor"]
 	newFactura.TotalXML = jParams["TotalXML"]
+	newFactura.UUID = jParams["UUID"]
 	newFactura.save()
 	return HttpResponse(newFactura.IDFactura)
 

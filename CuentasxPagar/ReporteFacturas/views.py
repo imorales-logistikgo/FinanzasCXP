@@ -40,6 +40,7 @@ def FacturasToList(Facturas):
 		for PENDIENTE in conFacturaxPartidas:
 			Factura['Viajes'] += PENDIENTE.IDPendienteEnviar.Folio + ", "
 		Factura['Viajes'] = Factura['Viajes'][:-2]
+		Factura["ComentarioBaja"] = Fact.ComentarioBaja
 		listFacturas.append(Factura)
 	return listFacturas
 

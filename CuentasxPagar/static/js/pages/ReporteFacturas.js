@@ -178,9 +178,13 @@ else
         return (full[3] == 'CANCELADA' ? 'RECHAZADA': full[3]);
       }
     },
-
     {
-      "targets": [4],
+      "targets": 4,
+      "width": "15px",
+      "className": "dt-head-center dt-body-center"
+    },
+    {
+      "targets": 5,
       "width": "12px",
       "className": "dt-head-center dt-body-left"
     },

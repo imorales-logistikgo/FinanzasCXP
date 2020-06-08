@@ -84,3 +84,32 @@ var GetFolioEvidencias = function(Folio){
     WaitMe_Hide('#TbPading');
   });
 }
+
+
+var GetUUID = function(xml){
+    try{
+        const proxyURL = "https://cors-anywhere.herokuapp.com/";
+        var newXML = proxyURL + xml;
+        var newUUID;
+        var req = new XMLHttpRequest();
+           req.open('GET', newXML, false);
+           req.send(null);
+           if (req.status == 200)
+           {
+               var resp = req.responseXML;
+               var obNodosUI = resp.getElementsByTagName("cfdi:Complemento")[0];
+               var timbreFiscal = obNodosUI.getElementsByTagName('tfd:TimbreFiscalDigital')[0]
+               newUUID = timbreFiscal.getAttribute('UUID');
+           }
+           else
+           {
+               newUUID = '';
+           }
+        return newUUID;
+    }
+    catch(error){
+      alertToastError('Ocurrio un error al obtener el UUID');
+      console.error(error);
+      newUUID = '';
+    }
+}

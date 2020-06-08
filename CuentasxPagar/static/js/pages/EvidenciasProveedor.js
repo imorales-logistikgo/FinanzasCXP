@@ -22,9 +22,7 @@ $(document).ready(function(){
   });
 
   $('#btnGuardarEvidenciasP').on('click', function(){
-    $('.uppy-DashboardItem-previewLink').each(function(){
-      $(this).attr('href');
-    });
+
   });
 
 });
@@ -33,4 +31,10 @@ var validacionBuscarFolio = function(){
   $('#inputBuscarViajeProveedor').focus();
   $('#inputBuscarViajeProveedor').addClass("border border-danger")
   alertToastError("Ingresa un Folio");
+}
+
+var validarGuardarEvidencias = function (){
+  $('.uppy-DashboardItem-previewLink').each(function(){
+    $(this).attr('href');
+  });
 }

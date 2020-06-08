@@ -7,7 +7,7 @@ var idprov;
 var table;
 var subtotal = 0, Tiva=0, TRetencion=0, total=0;
 var totalViaje = 0;
-var idPend;
+var idPend, uuid;
 var totalXML=0, totalXMLProveedor=0;
 
 $(document).ready(function() {
@@ -322,6 +322,7 @@ function LimpiarModalSF()
   //ids = [];
   $('#kt_uppy_1').data("rutaarchivoXML", null);
   $('#kt_uppy_1').data("rutaarchivoPDF", null);
+  uuid = '';
 }
 
 
@@ -423,6 +424,7 @@ function LimpiarModalSF()
                   }
                   else
                   {
+                   uuid = GetUUID(urlXMLCheck);
                    const urlPDF = response.body
                    $('#kt_uppy_1').data("rutaarchivoXML", urlPDF)
                    document.querySelector('.uploaded-files').innerHTML +=
@@ -559,6 +561,7 @@ function getDatos(){
       Comentarios: $('#txtComentariosP').val(),
       IDProveedor: idprov,
       TotalXML: +totalXMLProveedor,
+      UUID: uuid
     }
 
     fetch("/PendientesEnviar/SaveFactura", {
@@ -627,6 +630,7 @@ function SavePartidasxFacturaP(IDFactura) {
         showConfirmButton: false,
         timer: 1500
       })
+      uuid = '';
       limpiarDivProveedor();
     }
     else if(response.status == 500)
@@ -658,6 +662,7 @@ function saveFactura() {
     Comentarios: $('#txtComentarios').val(),
     IDProveedor:idprov,
     TotalXML: +totalXML,
+    UUID: uuid
   }
 
   fetch("/PendientesEnviar/SaveFactura", {
@@ -734,6 +739,7 @@ function SavePartidasxFactura(IDFactura) {
         showConfirmButton: false,
         timer: 1500
       })
+      uuid = '';
       $('#divTablaPendientesEnviar').html(data.htmlRes)
       formatDataTable();
     }
@@ -1049,6 +1055,7 @@ function archivosproveedor()
              }
              else
              {
+                uuid = GetUUID(urlXMLCheck);
                 const urlPDF = response.body
                 $('#archivosProveedor').data("rutaarchivoXML", urlPDF)
                 document.querySelector('.uploaded-files-proveedor').innerHTML +=

@@ -12,6 +12,7 @@
 			<th>Total</th>
 			{% endif %}
 			<th>Status</th>
+			<th>Comentarios Rechazo</th>
 			<th>Folio viaje</th>
 			<!-- <th>Folio Pago</th> -->
 		</tr>
@@ -29,6 +30,7 @@
 			<td>${{Factura.Total|floatformat:"2"|intcomma|safe}}</td>
 			{% endif %}
 			<td>{{Factura.Status|safe}}</td>
+			<td>{{Factura.ComentarioBaja|default:""|safe}}</td>
 			<td>{{Factura.Viajes|safe}}</td>
 			<!-- <td></td> -->
 		</tr>

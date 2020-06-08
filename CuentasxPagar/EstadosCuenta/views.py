@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction, DatabaseError
 import json
 from string import digits
+from django.conf import settings
 #import pandas as pd
 
 
@@ -323,7 +324,7 @@ def SavePagoxFactura(request):
 		Factura.save()
 		newRelacionPagoxFactura.save()
 	# try:
-	# 	MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
+	#  	MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
 	# except Exception as e:
 	# 	pass
 	return HttpResponse('')
@@ -352,6 +353,7 @@ def EnviarCorreoProveedor(IDPagoEmail):
 		pass
 		CorreoProveedor = User.objects.get(IDTransportista = DatosPagoProveedor.IDProveedor)
 		if CorreoProveedor.email != "":
+			#Destino=['jfraga@logisti-k.com.mx','fragatorres2@gmail.com']
 			context={
 				'nombre': DatosPagoProveedor.NombreCortoProveedor,
 				'folio' : DatosPagoProveedor.Folio,
@@ -359,18 +361,20 @@ def EnviarCorreoProveedor(IDPagoEmail):
 			}
 			template_name='email.html'
 			html_content=render_to_string("CorreoProveedor.html", context)
-			subject='Subir complementos de pago'
-			from_email='pagos.proveedores@logisti-k.com.mx'
-			to='jvarela@logisti-k.com.mx'
-			reply_to=['jfraga@logisti-k.com.mx']
+			subject='Notificación de pago'
+			from_email= settings.EMAIL_HOST_USER #'pagos.proveedores@logisti-k.com.mx'
+			to=['jfraga@logisti-k.com.mx']
+			cc=['fragatorres2@gmail.com']
+			# reply_to=['jfraga@logisti-k.com.mx']
 
-			msg = EmailMessage(subject, html_content, from_email, [to], [reply_to])
+			msg = EmailMessage(subject, html_content, from_email, to, cc=cc)
 			msg.content_subtype = "html"  # Main content is now text/html
 			msg.send()
 			return "Success"
 		else:
 			return "Error"
 	except Exception as e:
+		print(e)
 		return "Error"
 
 
