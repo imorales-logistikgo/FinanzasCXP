@@ -21,6 +21,7 @@ kt-menu__item--active
 {% endblock %}
 
 {% block EvidenciasProveedor %}
+{% if Rol == "Proveedor" %}
 <form id="ValidateInput">
 	<div class="container py-4">
 		<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
@@ -55,33 +56,13 @@ kt-menu__item--active
 					</div>
 					<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid py-4" style="overflow:scroll; height:450px;">
 						<div class="row" id="allEvidences">
-
-						</div>
-						<!-- <div class="col-sm-4 col-lg-4 col-md-4">
-							<div class="kt-portlet kt-portlet--height-fluid">
-								<div class="kt-portlet__head" id="headUppyTitulo">
-									<div class="kt-portlet__head-label">
-										<h3 class="kt-portlet__head-title">
-											Evidencias
-										</h3>
-									</div>
-								</div>
-									<div class="kt-portlet__body">
-										<div class="row" id="prueba">
-
-										</div>
-										<!-- <label id="FolioProveedorEvidencia"></label>
-										<div class="kt-uppy" id="uploadEvidencesProveedor">
-											<div  class="kt-uppy__dashboard"></div>
-											<div class="kt-uppy__progress"></div>
-											<input type="text" id="ComentarioEvidencia">
-										</div> -->
-									</div>
-							</div>
 						</div>
 					</div>
+				</div>
+			</div>
+		</div>
 
-					<!--ver archivos subidos (PDF y XML)-->
+
 				<!-- <div class="container">
 					<div class="uploaded-files-Evidences">
 						<h5>Archivos Subidos:</h5>
@@ -91,13 +72,37 @@ kt-menu__item--active
 				 <div class="text-right">
 					 <button type="button" name="button" class="btn btn-success" id="btnGuardarEvidenciasP" >Guardar</button>
 					 <button type="button" name="button" class="btn btn-danger" id="btnCerrarDivProveedorEvidencias">Cancelar</button>
-				 </div>
+				 </div><br><br>
+				</div>
+			</div>
+{% elif Rol != "Proveedor" %}
+		 	<div id="divTablaPendientesEnviar">
+					{% include "TablaEvidenciasMesaControl.html" %}
+			</div>
+
+			<div class="modal fade" id="ModalValidarEvidencias" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+				<div class="modal-dialog modal-lg" role="document" id="WaitModalPE">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLongTitle">Validar Evidencias</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close" id="BtnCerrarSF">
+							</button>
+						</div>
+						<div class="modal-body">
+							<div class="kt-scroll" data-scroll="true" id="kt-scroll">
+								<div class="row" id="VerEvidencia">
+
+								</div>
+						  </div>
+					  </div>
+					<div class="modal-footer">
+						<!-- <button type="button" id="btnGuardarFactura" disabled="true" class="btn btn-success btn-elevate">Guardar</button> -->
+						<button type="button" class="btn btn-danger btn-elevate " data-dismiss="modal" id="cerrarModalEvidencias">Close</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-</div>
-
+{% endif %}
 {% endblock %}
 
 

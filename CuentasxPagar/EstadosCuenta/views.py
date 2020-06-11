@@ -4,7 +4,7 @@ from bkg_viajes.models import Bro_Viajes, Bro_ServiciosxViaje, Servicios, Client
 from XD_Viajes.models import XD_Viajes, XD_AccesoriosxViajes, RepartosxViaje
 from PendientesEnviar.models import PartidaProveedor, RelacionFacturaProveedorxPartidas, FacturasxProveedor, PendientesEnviar, RelacionConceptoxProyecto, Ext_PendienteEnviar_Costo, View_PendientesEnviarCxP, Ext_PendienteEnviar_Precio
 from EstadosCuenta.models import TempSerie, View_FacturasxProveedor, PagosxProveedor, PagosxFacturas, RelacionPagosFacturasxProveedor, HistorialReajusteProveedor
-from usersadmon.models import Proveedor, AdmonUsuarios
+from usersadmon.models import Proveedor, AdmonUsuarios, AdmonCorreosxTransportista
 from users.models import User
 from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
@@ -323,10 +323,10 @@ def SavePagoxFactura(request):
 			Factura.Status = "ABONADA"
 		Factura.save()
 		newRelacionPagoxFactura.save()
-	# try:
-	#  	MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
-	# except Exception as e:
-	# 	pass
+	try:
+	 	MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
+	except Exception as e:
+		pass
 	return HttpResponse('')
 
 
@@ -348,23 +348,24 @@ def CheckFolioDuplicado(request):
 
 def EnviarCorreoProveedor(IDPagoEmail):
 	DatosPagoProveedor = PagosxProveedor.objects.get(IDPago = IDPagoEmail)
-
 	try:
-		pass
-		CorreoProveedor = User.objects.get(IDTransportista = DatosPagoProveedor.IDProveedor)
-		if CorreoProveedor.email != "":
-			#Destino=['jfraga@logisti-k.com.mx','fragatorres2@gmail.com']
+		CorreoProveedor = list(AdmonCorreosxTransportista.objects.filter(IDTransportista = DatosPagoProveedor.IDProveedor, IsEnviarCorreo = 1).values('Correo'))
+		if CorreoProveedor != []:
+			SendEmail = list()
+			for new in CorreoProveedor:
+				SendEmail.append(new["Correo"], )
+			RS = Proveedor.objects.get(IDTransportista = DatosPagoProveedor.IDProveedor)
 			context={
-				'nombre': DatosPagoProveedor.NombreCortoProveedor,
+				'nombre': RS.RazonSocial,
 				'folio' : DatosPagoProveedor.Folio,
 				'total' : DatosPagoProveedor.Total
 			}
 			template_name='email.html'
 			html_content=render_to_string("CorreoProveedor.html", context)
 			subject='Notificación de pago'
-			from_email= settings.EMAIL_HOST_USER #'pagos.proveedores@logisti-k.com.mx'
-			to=['jfraga@logisti-k.com.mx']
-			cc=['fragatorres2@gmail.com']
+			from_email= settings.EMAIL_HOST_USER
+			to= SendEmail
+			cc=[settings.EMAIL_HOST_USER, 'jcastillo@logisti-k.com.mx']
 			# reply_to=['jfraga@logisti-k.com.mx']
 
 			msg = EmailMessage(subject, html_content, from_email, to, cc=cc)
@@ -419,15 +420,31 @@ def FixIDProveedor(request):
 # 		except Exception as e:
 # 			print(e)
 
-# def leerExcel(reques):
-# 	archivo_excel = pd.read_excel('static/json/Libro1.xlsx')
+def leerExcel(reques):
+	archivo_excel = pd.read_excel('static/json/CorreosProvedeoresValidados.xlsx')
 # 	# values = archivo_excel['Folio'].values
-# 	for i in archivo_excel.index:
+	for i in archivo_excel.index:
+		separador = ";"
+		print(archivo_excel['CxP'][i])
+		if archivo_excel['CxP'][i] != 'nan':
+			NewData = archivo_excel['CxP'][i].split(separador)
+			for correo in NewData:
+				try:
+					InsertCorreo = AdmonCorreosxTransportista()
+					InsertCorreo.IDTransportista = Proveedor.objects.get(IDTransportista = archivo_excel['IDTransportista'][i])
+					InsertCorreo.Correo = correo.replace(" ", "")
+					InsertCorreo.IsEnviarCorreo = 0
+					InsertCorreo.save()
+				except Exception as e:
+					print(e)
+		else:
+			print(archivo_excel['IDTransportista'][i])
+
 # 		try:
 # 			with transaction.atomic(using='users'):
 # 				p = PendientesEnviar()
 # 				p.Folio = archivo_excel['Folio'][i]
-# 				p.NombreCortoCliente = archivo_excel['Cliente'][i]
+# 				p.NombreCortoCliente = archivo_excel['Cliente']s[i]
 # 				p.NombreCortoProveedor = archivo_excel['Transportista'][i]
 # 				p.FechaDescarga = archivo_excel['FechaDescarga'][i]
 # 				p.Moneda = archivo_excel['Moneda'][i]

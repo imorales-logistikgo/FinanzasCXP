@@ -1,4 +1,5 @@
 from django.db import models
+from usersadmon.models import AdmonUsuarios
 
 class XD_Viajes(models.Model):
     XD_IDViaje = models.AutoField(db_column='XD_IDViaje', primary_key=True)
@@ -15,6 +16,8 @@ class XD_Viajes(models.Model):
     IsEvidenciaFisica = models.BooleanField()
     Status = models.CharField(max_length=100)
     TipoViaje = models.CharField(max_length=100)
+    FechaDespacho = models.DateTimeField()
+    
     class Meta:
         managed = False
         db_table = 'XD_Viajes'
@@ -58,3 +61,51 @@ class XD_PedidosxViajes(models.Model):
     class Meta:
         managed = False
         db_table = 'XD_PedidosxViajes'
+
+class XD_EvidenciasxPedido(models.Model):
+    IDEvidenciaxPedido = models.AutoField(db_column='IDXD_EvidenciaxPedido', primary_key = True)
+    IDXD_Pedido = models.IntegerField() #ForeignKey(XD_Pedidos, on_delete=models.CASCADE, db_column='XD_IDPedido')
+    XD_IDViaje = models.IntegerField() #ForeignKey(XD_Viajes, on_delete=models.CASCADE, db_column='XD_IDViaje')
+    IDUsuarioAlta = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column = 'IDUsuarioAlta')
+    FechaCaptura = models.DateTimeField()
+    FechaValidacion = models.DateTimeField()
+    FechaRechazo = models.DateTimeField()
+    Titulo = models.CharField(max_length=200)
+    Tipo = models.CharField(max_length=200)
+    NombreArchivo = models.CharField(max_length=200)
+    RutaArchivo = models.CharField(max_length=300)
+    Observaciones = models.CharField(max_length=200)
+    ComentarioRechazo = models.CharField(max_length=200)
+    IsValidada = models.BooleanField(default=0)
+    IsRechazada = models.BooleanField(default=0)
+    IsRemplazada = models.BooleanField(default=0)
+    IsProyectoEspecial = models.BooleanField(default=0)
+    IsEnviada = models.BooleanField()
+
+    class Meta:
+        managed = False
+        db_table = 'XD_EvidenciasxPedido'
+
+class XD_EvidenciasxViaje(models.Model):
+    IDEvidenciaxViaje = models.AutoField(db_column='IDXD_EvidenciaxViaje', primary_key = True)
+    IDXD_Pedido = models.ForeignKey(XD_Pedidos, on_delete=models.CASCADE, db_column='XD_IDPedido')
+    IDXD_Viaje = models.ForeignKey(XD_Viajes, on_delete=models.CASCADE, db_column='XD_IDViaje')
+    IDUsuarioAlta = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column = 'idusuario')
+    FechaCaptura = models.DateTimeField()
+    FechaValidacion = models.DateTimeField()
+    FechaRechazo = models.DateTimeField()
+    Titulo = models.CharField(max_length=200)
+    Tipo = models.CharField(max_length=200)
+    NombreArchivo = models.CharField(max_length=200)
+    RutaArchivo = models.CharField(max_length=300)
+    Observaciones = models.CharField(max_length=200)
+    ComentarioRechazo = models.CharField(max_length=200)
+    IsValidada = models.BooleanField(default=0)
+    IsRechazada = models.BooleanField(default=0)
+    IsRemplazada = models.BooleanField()
+    IsProyectoEspecial = models.BooleanField()
+    IsEnviada = models.BooleanField()
+
+    class Meta:
+        managed = False
+        db_table = 'XD_EvidenciasxViaje'

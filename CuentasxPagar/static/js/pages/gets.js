@@ -48,28 +48,42 @@ var GetFolioEvidencias = function(Folio){
       $('#StatusEvidencias').append(`Estatus: <strong>Pendiente</strong> <i class="fa fa-clock fa-1x"></i>`)
       for(var i=0; i<data.Folios.length; i++)
       {
-        $('#allEvidences').append(`<div class="col-sm-4 col-lg-4 col-md-4">
-                            	<div class="kt-portlet kt-portlet--height-fluid">
-                            		<div class="kt-portlet__head" id="headUppyTitulo">
-                            			<div class="kt-portlet__head-label">
-                            				<h3 class="kt-portlet__head-title" id='${data.Folios[i].Delivery}'>
-                            					${data.Folios[i].Delivery}
-                            				</h3>
-                            			</div>
-                            		</div>
-                            			<div class="kt-portlet__body">
-                            				<div class="row" id="prueba">
-                            				</div>
-                            				<div class="kt-uppy verificar" id="uploadEvidencesProveedor${data.Folios[i].Delivery}">
-                            					<div  class="kt-uppy__dashboard"></div>
-                            					<div class="kt-uppy__progress"></div>
-                            				</div>
-                                    <input type="text" id="ComentarioEvidencia" class="form-control" placeholder="Comentario">
-                            			</div>
-                            	</div>
-                            </div>`);
-       $(`#${data.Folios[i].Delivery}`).append(`<a class="uppy-DashboardItem-previewLink" target="_blank" rel="noreferrer noopener"></a>`)
-      uploadEvidences(`#uploadEvidencesProveedor${data.Folios[i].Delivery}`, `${data.Folios[i].Delivery}`);
+        if (data.Folios[i].Estatus == 'Pendiente' || data.Folios[i].Estatus == 'Rechazado') {
+          $('#allEvidences').append(`<div class="col-sm-4 col-lg-4 col-md-4">
+                              	<div class="kt-portlet kt-portlet--height-fluid">
+                              		<div class="kt-portlet__head" id="headUppyTitulo">
+                              			<div class="kt-portlet__head-label">
+                              				<h3 class="kt-portlet__head-title" id='${data.Folios[i].Delivery}'>
+                              					${data.Folios[i].Delivery}
+                              				</h3>
+                              			</div>
+                              		</div>
+                              			<div class="kt-portlet__body">
+                              				<div class="row" id="prueba">
+                              				</div>
+                              				<div class="kt-uppy verificar" id="uploadEvidencesProveedor${data.Folios[i].Delivery}">
+                              					<div  class="kt-uppy__dashboard"></div>
+                              					<div class="kt-uppy__progress"></div>
+                              				</div>
+                                      <input type="text" id="ComentarioEvidencia" class="form-control" placeholder="Comentario">
+                              			</div>
+                              	</div>
+                              </div>`);
+
+          $(`#${data.Folios[i].Delivery}`).data('idpedido', data.Folios[i].XD_IDPedido)
+          $(`#${data.Folios[i].Delivery}`).data('idviaje', data.Folios[i].IDViaje)
+          uploadEvidences(`#uploadEvidencesProveedor${data.Folios[i].Delivery}`, `${data.Folios[i].Delivery}`);
+        }
+        else{
+          $('#allEvidences').append(`
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <strong>La evidencia ah sido enviada.</strong>
+            </div>
+            `)
+        }
       }
 
       $('#FolioProveedorEvidencia').text(data.Folios.Delivery);
@@ -112,4 +126,64 @@ var GetUUID = function(xml){
       console.error(error);
       newUUID = '';
     }
+}
+
+
+var GetEvidenciaMesaControl = function(IDViaje){
+  WaitMe_Show('#TbPading');
+  fetch(`/EvidenciasProveedor/GetEvidenciasMesaControl?XD_IDViaje=${IDViaje}`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    if(response.status == 200){
+      return response.clone().json();
+    }
+    else if(response.status == 500){
+      Swal.fire({
+        type: 'error',
+        title: 'Ocurrio un error al obtener las evidencias',
+        showConfirmButton: false,
+        timer: 2500
+      });
+    }
+  }).then(function(data){
+    if(data.Evidencias.length == 0) {
+      Swal.fire({
+        type: 'error',
+        title: 'No Folio aun no tiene evidencias',
+        showConfirmButton: false,
+        timer: 2500
+      });
+      WaitMe_Hide('#TbPading');
+    }
+    else {
+      $('#ModalValidarEvidencias').modal({backdrop: 'static', keyboard: false, show: true});
+      for(var i=0; i<data.Evidencias.length; i++)
+      {
+        $('#VerEvidencia').append(`
+            <div class="col-md-4">
+              <div class="card bg-light mb-3" style="max-width: 25rem;">
+                <div class="card-header">${data.Evidencias[i].Delivery}</div>
+                <div class="card-body">
+                  <a href="${data.Evidencias[i].URLEvidencia}" target="_blank"><embed src='${data.Evidencias[i].URLEvidencia}' height="150px" width="220px"></a>
+                </div>
+                <div class="card-footer">
+                <button class="btn btn-outline-success btn-elevate btn-circle btn-icon AprobarEvidencia" title="Aprobar" data-idevidenciaaprobar="${data.Evidencias[i].IDEvidencia}" data-tipoevidencia="${data.Evidencias[i].TipoEvidencia}" ><i class="fa fa-check"></i></button>
+                <button class="btn btn-outline-danger btn-elevate btn-circle btn-icon RechazarEvidencia" title="Rechazar" data-tipoevidencia="${data.Evidencias[i].TipoEvidencia}" data-idevidenciarechazar="${data.Evidencias[i].IDEvidencia}"><i class="flaticon-cancel"></i></button>
+                </div>
+                <input type="text" placeholder="Comentario" class="form-control">
+              </div>
+            </div>
+          `)
+      }
+      WaitMe_Hide('#TbPading');
+    }
+  }).catch(function(ex){
+    console.log(ex);
+    WaitMe_Hide('#TbPading');
+  });
 }

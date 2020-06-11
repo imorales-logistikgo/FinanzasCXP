@@ -209,8 +209,8 @@ SESSION_COOKIE_AGE = 21600
 #LOGOUT_REDIRECT_URL = "/Usuario/Login/"
 
 #SECURE_SSL_REDIRECT = True
-EMAIL_HOST = 'smtp.googlemail.com' #'smtp.alestraune.net.mx'
-EMAIL_HOST_USER = 'fragatorres2@gmail.com' #'pagos.proveedores@logisti-k.com.mx'
-EMAIL_HOST_PASSWORD = 'skemsote' #'Lgk2020k'
+EMAIL_HOST = 'smtp.googlemail.com'
+EMAIL_HOST_USER = 'pagos.proveedores@logistikgo.com'
+EMAIL_HOST_PASSWORD = 'LogistiK20.1'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

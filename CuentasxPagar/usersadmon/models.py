@@ -30,6 +30,17 @@ class Proveedor(models.Model):
     Correo = models.CharField(db_column='Correo', max_length=200, blank=True, null=True)
     IsAmericano = models.BooleanField()
     Serie = models.CharField(max_length=15)
+
     class Meta:
         managed = False
         db_table = 'AdmonTransportistas'
+
+class AdmonCorreosxTransportista(models.Model):
+    IDCorreoxTransportista = models.AutoField(primary_key=True)
+    IDTransportista = models.ForeignKey(Proveedor, on_delete=models.CASCADE, db_column = 'IDTransportista')
+    Correo = models.CharField(max_length=500)
+    IsEnviarCorreo = models.BooleanField()
+
+    class Meta:
+        managed = False
+        db_table = 'AdmonCorreosxTransportista'

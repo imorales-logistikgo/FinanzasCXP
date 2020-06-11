@@ -84,7 +84,7 @@ end:: Header Mobile -->
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
 						<li class="kt-menu__item {% block activateReporteFacturas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteFacturas' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-file-invoice-dollar"></i><span class="kt-menu__link-text">Facturas</span></a></li>
-						<li class="kt-menu__item {% block activateReportePagos %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagos' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon2-checkmark"></i><span class="kt-menu__link-text">Pagos</span></a></li>
+						<li class="kt-menu__item {% block activateReportePagos %} {% endblock %}"  aria-haspopup="true"><a href="{% url 'ReportePagos' %}" class="kt-menu__link"><i class="kt-menu__link-icon flaticon2-checkmark"></i><span class="kt-menu__link-text">Pagos</span></a></li>
 						{% if Rol != "Proveedor" %}
 						<li class="kt-menu__item {% block activateReporteCanceladas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteCanceladas' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Facturas Canceladas</span></a></li>
 						<li class="kt-menu__item {% block activateReportePagosCancelados %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagosCancelados' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Pagos cancelados</span></a></li>
