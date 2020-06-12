@@ -38,7 +38,7 @@ $(document).ready(function(){
         "targets": 3,
         "className": "text-center bold",
         "mRender": function (data, type, full) {
-          return (full[2] == 'True' ?'<button class="btn btn-primary btn-elevate btn-pill btn-sm"><i class="fa fa-clock"></i></button>':'<button class="btn btn-primary btn-elevate btn-pill btn-sm" disabled><i class="fa fa-clock"></i></button>');
+          return '<button type="button" class="btn btn-primary btn-elevate btn-pill btn-sm" id="btnEvidenciasFisicas"><i class="fa fa-clock"></i></button>';
         }
       }
      ]
@@ -69,15 +69,31 @@ $(document).ready(function(){
     validarGuardarEvidencias();
   });
 
+
+//Boton evidencias digitales
   $(document).on('click', '#btnAprovarEvidencias', function(){
     var IDViaje = $($(this).parents('tr')[0]).data('idviaje');
     GetEvidenciaMesaControl(IDViaje);
   });
 
+//Boton Evidencias Fisicas
+  $(document).on('click', '#btnEvidenciasFisicas', function(){
+    var IDViaje = $($(this).parents('tr')[0]).data('idviaje');
+    GetEvidenciasFisicas(IDViaje);
+  });
+
+
+
+//APROBAR EVIDENCIA
   $(document).on('click', '.AprobarEvidencia', function(){
+    WaitMe_Show('#WaitModalEP')
+    var removeBtnAprovar = $(this);
+    var getDOMInput = $(this).parents()[1];
+    var getValorInput = $($(getDOMInput).find('input#ComentarioEvidencia')).val();
     jParams = {
       IDSaveEvidencia: $(this).data('idevidenciaaprobar'),
       TipoEvidencia: $(this).data('tipoevidencia'),
+      Comentarios: getValorInput,
     }
     fetch("/EvidenciasProveedor/SaveAprobarEvidencia", {
       method: "POST",
@@ -97,8 +113,8 @@ $(document).ready(function(){
           showConfirmButton: true,
           timer: 2500
         })
-
-        $(this).parents()[0].remove();
+        $(removeBtnAprovar).parents()[0].remove()
+         WaitMe_Hide('#WaitModalEP');
       }
       else if(response.status == 500)
       {
@@ -108,30 +124,105 @@ $(document).ready(function(){
           showConfirmButton: false,
           timer: 2500
         })
-        // WaitMe_Hide('#TbPading');
+         WaitMe_Hide('#WaitModalEP');
       }
 
     }).catch(function(ex){
+      WaitMe_Hide('#WaitModalEP')
       console.log(ex);
     });
-
-    // var a=$(this).data('idevidenciaaprobar');
-    // $(this).parents()[0].remove();
-    // console.log(a);
   });
 
+
+
+//RECHAZAR EVIDENCIA
   $(document).on('click', '.RechazarEvidencia', function(){
-    var a=$(this).data('idevidenciarechazar');
-    $(this).parents()[0].remove();
-    console.log(a);
+    var btnSelected = $(this);
+    var getDOMInput = $(this).parents()[1];
+    var getValorInput = $($(getDOMInput).find('input#ComentarioEvidencia')).val();
+    Swal.fire({
+      title: 'Rechazar Evidencia',
+      text: "Estas a un paso de rechazar esta evidencia",
+      type: 'warning',
+      // input: 'text',
+      // inputAttributes: {
+      //   required: true,
+      //   placeholder: "Motivo de la eliminación",
+      //   id: "motivoRechazo"
+      // },
+      // validationMessage: 'Ingresa el motivo del rechazo',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => {
+      if (result.value) {
+        jParams = {
+          IDRechazarEvidencia: $(this).data('idevidenciarechazar'),
+          TipoEvidencia: $(this).data('tipoevidencia'),
+          Comentarios: getValorInput,
+          //ComentarioRechazo: $("#motivoRechazo").val(),
+        }
+        fetch("/EvidenciasProveedor/RechazarEvidencias", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(jParams)
+        }).then(function(response, data){
+          if(response.status == 200)
+          {
+            Swal.fire({
+              type: 'success',
+              title: 'Evidencia Rechazada',
+              showConfirmButton: true,
+              timer: 2500
+            })
+            $(btnSelected).parents()[0].remove()
+
+          }
+          else if(response.status == 500)
+          {
+            Swal.fire({
+              type: 'error',
+              title: 'Hubo un error al rechazar la evidencia',
+              showConfirmButton: false,
+              timer: 2500
+            })
+             WaitMe_Hide('#WaitModalEP');
+          }
+
+        }).catch(function(ex){
+          WaitMe_Hide('#WaitModalEP')
+          console.log(ex);
+        });
+
+      }
+    });
   });
 
+$(document).on('click', '#btnAprobarEVFisica', function(){
+  $(this).removeClass('btn-outline-danger');
+  $(this).addClass('btn-success');
+  $(this).prop('disabled', true);
+});
+
+// LIMPIAR MODAL AL CERRARLO
   $('#ModalValidarEvidencias').on('hidden.bs.modal', function(){
     $('#VerEvidencia').empty();
   });
 
+  $('#ModalValidarEvidenciasFisicas').on('hidden.bs.modal', function(){
+    $('#listaEvidenciasFisicas').empty();
+  });
+
 });
 
+
+//***** CODIGO PARA EL PROVEEDOR ****////
 var validacionBuscarFolio = function(){
   $('#inputBuscarViajeProveedor').focus();
   $('#inputBuscarViajeProveedor').addClass("border border-danger")

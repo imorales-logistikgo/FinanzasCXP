@@ -17,7 +17,7 @@ class XD_Viajes(models.Model):
     Status = models.CharField(max_length=100)
     TipoViaje = models.CharField(max_length=100)
     FechaDespacho = models.DateTimeField()
-    
+
     class Meta:
         managed = False
         db_table = 'XD_Viajes'
@@ -57,6 +57,8 @@ class XD_PedidosxViajes(models.Model):
     XD_PedidoxViaje = models.AutoField(primary_key=True)
     XD_IDPedido = models.ForeignKey(XD_Pedidos, on_delete=models.CASCADE, db_column = 'XD_IDPedido')
     XD_IDViaje = models.ForeignKey(XD_Viajes, on_delete=models.CASCADE, db_column = 'XD_IDViaje')
+    IsEvidenciaPedidoxViaje = models.BooleanField()
+    IsEvidenciaFisicaPedidoxViaje = models.BooleanField()
 
     class Meta:
         managed = False
@@ -88,9 +90,9 @@ class XD_EvidenciasxPedido(models.Model):
 
 class XD_EvidenciasxViaje(models.Model):
     IDEvidenciaxViaje = models.AutoField(db_column='IDXD_EvidenciaxViaje', primary_key = True)
-    IDXD_Pedido = models.ForeignKey(XD_Pedidos, on_delete=models.CASCADE, db_column='XD_IDPedido')
-    IDXD_Viaje = models.ForeignKey(XD_Viajes, on_delete=models.CASCADE, db_column='XD_IDViaje')
-    IDUsuarioAlta = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column = 'idusuario')
+    IDXD_Pedido = models.IntegerField() #ForeignKey(XD_Pedidos, on_delete=models.CASCADE, db_column='XD_IDPedido')
+    IDXD_Viaje = models.IntegerField() #ForeignKey(XD_Viajes, on_delete=models.CASCADE, db_column='XD_IDViaje')
+    IDUsuarioAlta = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column = 'IDUsuarioAlta')
     FechaCaptura = models.DateTimeField()
     FechaValidacion = models.DateTimeField()
     FechaRechazo = models.DateTimeField()

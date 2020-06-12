@@ -79,9 +79,9 @@ kt-menu__item--active
 		 	<div id="divTablaPendientesEnviar">
 					{% include "TablaEvidenciasMesaControl.html" %}
 			</div>
-
+<!-- Modal validar evidencias digitales -->
 			<div class="modal fade" id="ModalValidarEvidencias" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-				<div class="modal-dialog modal-lg" role="document" id="WaitModalPE">
+				<div class="modal-dialog modal-lg" role="document" id="WaitModalEP">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h5 class="modal-title" id="exampleModalLongTitle">Validar Evidencias</h5>
@@ -102,6 +102,50 @@ kt-menu__item--active
 				</div>
 			</div>
 		</div>
+
+		<!-- Modal validar evidencias fisicas -->
+					<div class="modal fade" id="ModalValidarEvidenciasFisicas" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+						<div class="modal-dialog modal-lg" role="document" id="WaitModalEPF">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="exampleModalLongTitle">Validar Evidencias Fisicas</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="kt-scroll" data-scroll="true" id="kt-scroll" data-height="250">
+										<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+											<div class="row">
+												<div class="col-md-10 offset-md-1">
+													<div class="kt-portlet__head">
+														<div class="kt-portlet__head-label">
+															<h3 class="kt-portlet__head-title">
+																Evidencia Fisica
+															</h3>
+														</div>
+													</div>
+			      							<div class="kt-section">
+			      								<div class="kt-section__content kt-section__content--border kt-section__content--fit">
+			      									<ul class="kt-nav" id="listaEvidenciasFisicas">
+
+			      									</ul>
+			      								</div>
+			      							</div>
+			      						</div>
+											</div>
+										</div>
+								  </div>
+							  </div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger btn-elevate " data-dismiss="modal" id="cerrarModalEvidenciasFisicas">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+
+
 {% endif %}
 {% endblock %}
 

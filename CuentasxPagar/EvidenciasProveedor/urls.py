@@ -7,4 +7,6 @@ urlpatterns = [
     path('SaveEvidencias', views.SaveEvidencias, name='SaveEvidencias'),
     path('GetEvidenciasMesaControl', views.GetEvidenciasMesaControl, name='GetEvidenciasMesaControl'),
     path('SaveAprobarEvidencia', views.SaveAprobarEvidencia, name='SaveAprobarEvidencia'),
+    path('RechazarEvidencias', views.RechazarEvidencias, name='RechazarEvidencias'),
+    path('GetEvidenciaFisica', views.GetEvidenciaFisica, name='GetEvidenciaFisica'),
 ]

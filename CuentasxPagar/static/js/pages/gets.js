@@ -154,7 +154,7 @@ var GetEvidenciaMesaControl = function(IDViaje){
     if(data.Evidencias.length == 0) {
       Swal.fire({
         type: 'error',
-        title: 'No Folio aun no tiene evidencias',
+        title: 'El Folio aun no tiene evidencias',
         showConfirmButton: false,
         timer: 2500
       });
@@ -175,9 +175,64 @@ var GetEvidenciaMesaControl = function(IDViaje){
                 <button class="btn btn-outline-success btn-elevate btn-circle btn-icon AprobarEvidencia" title="Aprobar" data-idevidenciaaprobar="${data.Evidencias[i].IDEvidencia}" data-tipoevidencia="${data.Evidencias[i].TipoEvidencia}" ><i class="fa fa-check"></i></button>
                 <button class="btn btn-outline-danger btn-elevate btn-circle btn-icon RechazarEvidencia" title="Rechazar" data-tipoevidencia="${data.Evidencias[i].TipoEvidencia}" data-idevidenciarechazar="${data.Evidencias[i].IDEvidencia}"><i class="flaticon-cancel"></i></button>
                 </div>
-                <input type="text" placeholder="Comentario" class="form-control">
+                <input type="text" placeholder="Comentario" class="form-control" id="ComentarioEvidencia">
               </div>
             </div>
+          `)
+      }
+      WaitMe_Hide('#TbPading');
+    }
+  }).catch(function(ex){
+    console.log(ex);
+    WaitMe_Hide('#TbPading');
+  });
+}
+
+var GetEvidenciasFisicas = function(IDViaje){
+  WaitMe_Show('#TbPading');
+  fetch(`/EvidenciasProveedor/GetEvidenciaFisica?XD_IDViaje=${IDViaje}`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    if(response.status == 200){
+      return response.clone().json();
+    }
+    else if(response.status == 500){
+      Swal.fire({
+        type: 'error',
+        title: 'Ocurrio un error al obtener las evidencias',
+        showConfirmButton: false,
+        timer: 2500
+      });
+    }
+  }).then(function(data){
+    if(data.EvidenciaFisica.length == 0) {
+      Swal.fire({
+        type: 'error',
+        title: 'El folio aun no tiene todas las evidencias digitales',
+        showConfirmButton: false,
+        timer: 2500
+      });
+      WaitMe_Hide('#TbPading');
+    }
+    else {
+      $('#ModalValidarEvidenciasFisicas').modal({backdrop: 'static', keyboard: false, show: true});
+      for(var i=0; i<data.EvidenciaFisica.length; i++)
+      {
+        $('#listaEvidenciasFisicas').append(`
+            <li class="kt-nav__item kt-nav__item--active">
+              <h3 class="kt-nav__link">
+                <i class="kt-nav__link-icon flaticon2-rocket-2"></i>
+                <span class="kt-nav__link-text">${data.EvidenciaFisica[i].Delivery}</span>
+                <span class="kt-nav__link-badge">
+                  <button type="button" name="button" class="btn btn-outline-danger btn-elevate btn-circle btn-icon" id="btnAprobarEVFisica" data-idviaje="${data.EvidenciaFisica[i].XD_IDViaje}" data-idpedido="${data.EvidenciaFisica[i].XD_IDPedido}"><i class="fa fa-check"></i></button>
+                </span>
+              </h3>
+            </li>
           `)
       }
       WaitMe_Hide('#TbPading');
