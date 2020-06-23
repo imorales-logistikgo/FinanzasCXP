@@ -323,10 +323,10 @@ def SavePagoxFactura(request):
 			Factura.Status = "ABONADA"
 		Factura.save()
 		newRelacionPagoxFactura.save()
-	try:
-	 	MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
-	except Exception as e:
-		pass
+	# try:
+	#  	MsjCorreo = EnviarCorreoProveedor(IDPagoEmail = jParams["IDPago"])
+	# except Exception as e:
+	# 	pass
 	return HttpResponse('')
 
 
@@ -358,6 +358,7 @@ def EnviarCorreoProveedor(IDPagoEmail):
 			context={
 				'nombre': RS.RazonSocial,
 				'folio' : DatosPagoProveedor.Folio,
+				'fechapago' : DatosPagoProveedor.FechaPago,
 				'total' : DatosPagoProveedor.Total
 			}
 			template_name='email.html'
@@ -365,7 +366,7 @@ def EnviarCorreoProveedor(IDPagoEmail):
 			subject='Notificación de pago'
 			from_email= settings.EMAIL_HOST_USER
 			to= SendEmail
-			cc=[settings.EMAIL_HOST_USER, 'jcastillo@logisti-k.com.mx']
+			cc=[settings.EMAIL_HOST_USER]
 			# reply_to=['jfraga@logisti-k.com.mx']
 
 			msg = EmailMessage(subject, html_content, from_email, to, cc=cc)

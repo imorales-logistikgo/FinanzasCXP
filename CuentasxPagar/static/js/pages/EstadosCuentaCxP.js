@@ -621,6 +621,7 @@ function CleanModal()
  totConv = 0;
  $('#ComplementosPagos').data("rutaarchivoXML", "");
  $('#ComplementosPagos').data("rutaarchivoPDF", "");
+ rutaComprobante = "";
 }
 //funcion para mostrar u ocultar el input del timpo de cambio
 function mostrarTipoCambio()

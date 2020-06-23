@@ -75,13 +75,15 @@
       <thead>
         <tr>
           <th>Folio</th>
+          <th>Fecha</th>
           <th>Pago</th>
         </tr>
       </thead>
       <tbody>
         <tr style="border-bottom: 1px solid">
           <td id="tablapago">{{folio}}</td>
-          <td  id="tablapago">${{total}}</td>
+          <td id="tablapago">{{fechapago|date:'Y/m/d'|safe}}</td>
+          <td id="tablapago">${{total}}</td>
         </tr>
       </tbody>
     </table>
@@ -114,7 +116,7 @@
       <tr>
         <td>
           <center>
-            <img src='http://lgklataforma.blob.core.windows.net/evidencias/60ec78f0-bbff-4c5c-b900-a25772301493.png' style="margin: auto;" alt="No se puede ver la imagen" height="80" width="600">
+            <img src='http://lgklataforma.blob.core.windows.net/evidencias/3c60cf65-78bc-4682-b80c-5a956b84409d.png' style="margin: auto;" alt="No se puede ver la imagen" height="80" width="600">
           </center>
         </td>
       </tr>

@@ -12,6 +12,12 @@ class Bro_Viajes(models.Model):
     CostoRetencion = models.DecimalField(db_column='CostoRetencion',default=0, max_digits=30, decimal_places=5)
     CostoTotal = models.DecimalField(db_column='CostoTotal',default=0, max_digits=30, decimal_places=5)
     Tipo = models.CharField(max_length=100)
+    Remisiones = models.CharField(max_length=500)
+    StatusProceso = models.CharField(max_length=200)
+    IsEvidenciasDigitales = models.BooleanField()
+    IsEvidenciasFisicas = models.BooleanField()
+    FechaDespacho = models.DateTimeField(db_column = 'FechaDescarga')
+
     class Meta:
         managed = False
         db_table = 'Bro_Viajes'
@@ -55,3 +61,26 @@ class Clientes(models.Model):
     class Meta:
         managed = False
         db_table = 'Clientes'
+
+class Bro_EvidenciasxViaje(models.Model):
+    IDBro_EvidenciaxViaje = models.AutoField(primary_key=True)
+    IDBro_Viaje = models.ForeignKey(Bro_Viajes, on_delete=models.CASCADE, db_column = 'IDBro_Viaje')
+    FechaCaptura = models.DateTimeField()
+    FechaValidacion = models.DateTimeField()
+    FechaRechazo = models.DateTimeField()
+    Titulo = models.CharField(max_length=200)
+    Tipo = models.CharField(max_length=200)
+    NombreArchivo = models.CharField(max_length=200)
+    RutaArchivo = models.CharField(max_length=300)
+    Observaciones = models.CharField(max_length=200)
+    ComentarioRechazo = models.CharField(max_length=200)
+    IsValidada = models.BooleanField(default=0)
+    IsRechazada = models.BooleanField(default=0)
+    IsRemplazada = models.BooleanField(default=0)
+    IsProyectoEspecial = models.BooleanField(default=0)
+    IsEnviada = models.BooleanField()
+    IsEvidenciaFisicaAprobada = models.BooleanField(default = 0)
+
+    class Meta:
+        managed = False
+        db_table = 'Bro_EvidenciasxViaje'

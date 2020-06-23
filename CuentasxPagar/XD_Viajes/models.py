@@ -17,6 +17,8 @@ class XD_Viajes(models.Model):
     Status = models.CharField(max_length=100)
     TipoViaje = models.CharField(max_length=100)
     FechaDespacho = models.DateTimeField()
+    IDTransportista = models.IntegerField()
+    RutaHojaEmbarqueCosto= models.CharField(max_length=500)
 
     class Meta:
         managed = False
@@ -59,6 +61,8 @@ class XD_PedidosxViajes(models.Model):
     XD_IDViaje = models.ForeignKey(XD_Viajes, on_delete=models.CASCADE, db_column = 'XD_IDViaje')
     IsEvidenciaPedidoxViaje = models.BooleanField()
     IsEvidenciaFisicaPedidoxViaje = models.BooleanField()
+    StatusPedido = models.CharField(max_length = 100)
+    TipoTransporte = models.CharField(max_length = 100)
 
     class Meta:
         managed = False
@@ -107,6 +111,7 @@ class XD_EvidenciasxViaje(models.Model):
     IsRemplazada = models.BooleanField()
     IsProyectoEspecial = models.BooleanField()
     IsEnviada = models.BooleanField()
+    IsEvidenciaFisicaAprobada = models.BooleanField(default = 0)
 
     class Meta:
         managed = False

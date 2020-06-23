@@ -624,22 +624,8 @@ var uploadEvidences = function(idU, ver){
            $(`#${ver}`).append('<i class="fa fa-eye"></i>');
            $(`#${ver}`).css('color', 'green');
            $(`#${ver}`).data('urlEvidencia', response.body);
-           //  const fileName = file.name
-           //  if (file.extension === 'pdf')
-           //  {
-           //   const urlPDF = response.body
-           //   $(id).data("rutaarchivoPDF", urlPDF)
-           //   document.querySelector(ver).innerHTML +=
-           //   `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaPDF">${fileName}</a></li></ol>`
-           //   //IDUsuraio_ == 3126 ? getSerieProveedor(idprov).then((response) =>  fnCheckFolio(response.Serie, uppyDashboard, "Proveedor")).catch((e) => (uppyDashboard.cancelAll(), $('.uploaded-files ol').remove(), alertToastError("Algo salio mal :("))): '';
-           // }
-           // else
-           // {
-           //    const urlPDF = response.body
-           //    $(id).data("rutaarchivoXML", urlPDF)
-           //    document.querySelector(ver).innerHTML +=
-           //    `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
-           //  }
+           $(`#${ver}`).data('nombrearchivo', file.name);
+
           });
         }
         return {
@@ -655,3 +641,53 @@ var uploadEvidences = function(idU, ver){
         KTUppy.init();
       });
 }
+
+
+var EvidenciasCustodia = function(){
+  var TipoEvidencia = [
+    {
+      "Titulo": "CORREO",
+      "Tipo": "EVCUSTODIAF"
+    },
+    {
+      "Titulo": "FOLIO",
+      "Tipo": "EVCUSTODIAF"
+    },
+  ]
+  return TipoEvidencia;
+}
+
+var SubirEvidenciasCustodia = function(status,delivery,XD_IDPedido,IDViaje,TipoEvidencia,RutaArchivo){
+  var item = EvidenciasCustodia();
+  for (var i=0; i<item.length; i++){
+    $('#allEvidences').append(`<div class="col-sm-4 col-lg-4 col-md-4">
+                          <div class="kt-portlet kt-portlet--height-fluid">
+                          <h5>Estatus: <strong>${status}</strong></h5>
+                            <div class="kt-portlet__head" id="headUppyTitulo">
+                              <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title" id='${delivery.replace(/ /g, "")}' data-status="${status}">
+                                  ${delivery.replace(/ /g, "")}
+                                </h3>
+                              </div>
+                            </div>
+                              <div class="kt-portlet__body">
+                                <div class="row" id="prueba">
+                                </div>
+                                <div class="kt-uppy verificar" id="uploadEvidencesProveedor${delivery.replace(/ /g, "")}">
+                                  <div  class="kt-uppy__dashboard"></div>
+                                  <div class="kt-uppy__progress"></div>
+                                </div>
+                                <input type="text" id="ComentarioEvidencia" class="form-control" placeholder="Comentario" disabled>
+                              </div>
+                          </div>
+                        </div>`);
+
+    $(`#${delivery.replace(/ /g, "")}`).data('idpedido', XD_IDPedido)
+    $(`#${delivery.replace(/ /g, "")}`).data('idviaje', IDViaje)
+    $(`#${delivery.replace(/ /g, "")}`).data('tipoevidencia', TipoEvidencia)
+    status == 'Pendiente' || status == 'Rechazada' ? uploadEvidences(`#uploadEvidencesProveedor${delivery.replace(/ /g, "")}`, `${delivery.replace(/ /g, "")}`) : ($(`#uploadEvidencesProveedor${delivery.replace(/ /g, "")}`).append(`<div class="row">
+      <div class="col-md-4"><embed src="${RutaArchivo}"></div>
+    </div>`)/*, $('#btnGuardarEvidenciasP').prop('disabled', true)*/);
+  }
+}
+// SubirEvidenciasCustodia(data.Folios[i].Status,data.Folios[i].Delivery,data.Folios[i].XD_IDPedido,data.Folios[i].IDViaje,data.Folios[i].TipoEvidencia,data.Folios[i].RutaArchivo)

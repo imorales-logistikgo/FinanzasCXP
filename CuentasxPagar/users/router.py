@@ -3,8 +3,8 @@ class AuthRouter:
     A router to control all database operations on models in the
     auth and contenttypes applications.
     """
-    route_app_labels = {'usersadmon', 'EstadosCuenta', 'PendientesEnviar', 'ReporteMaster'}
-    route_app_labels_bkg = {'bkg_viajes','EstadosCuenta'}
+    route_app_labels = {'usersadmon', 'EstadosCuenta', 'PendientesEnviar', 'ReporteMaster', 'EvidenciasProveedor'}
+    route_app_labels_bkg = {'bkg_viajes','EstadosCuenta', 'EvidenciasProveedor'}
     route_app_labels_XD = {'XD_Viajes','EstadosCuenta','EvidenciasProveedor'}
 
     def db_for_read(self, model, **hints):

@@ -1,0 +1,37 @@
+{
+  "Principales":
+  [
+    {
+      "titulo": "CUSTOMS ENTRY",
+      "tipo": "EVIDENCIA"
+    },
+    {
+      "titulo": "FISCAL STAMP",
+      "tipo": "EVIDENCIA"
+    },
+    {
+      "titulo": "LEFT SIDE",
+      "tipo": "EVIDENCIA"
+    },
+    {
+      "titulo": "RIGHT SIDE",
+      "tipo": "EVIDENCIA"
+    },
+    {
+      "titulo": "REMISSION",
+      "tipo": "EVIDENCIA"
+    },
+    {
+      "titulo": "LOAD EVIDENCE",
+      "tipo": "EVIDENCIA"
+    },
+    {
+      "titulo": "BILL OF LADING",
+      "tipo": "EVIDENCIA"
+    },
+    {
+      "titulo": "REAR SIDE",
+      "tipo": "EVIDENCIA"
+    }
+  ]
+}

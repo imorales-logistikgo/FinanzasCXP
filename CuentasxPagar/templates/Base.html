@@ -69,8 +69,7 @@ end:: Header Mobile -->
 						</li>
 						<li class="kt-menu__item {% block activatePendientesEnviar %} {% endblock %}" aria-haspopup="true"><a href="{% url 'PendienteEnviar' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-file-invoice"></i><span class="kt-menu__link-text">Pendientes de enviar</span></a></li>
 
-
-						{% if Rol != "Proveedor" %}
+						{% if Rol != "Proveedor"%}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Pagos</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
@@ -85,11 +84,12 @@ end:: Header Mobile -->
 						</li>
 						<li class="kt-menu__item {% block activateReporteFacturas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteFacturas' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-file-invoice-dollar"></i><span class="kt-menu__link-text">Facturas</span></a></li>
 						<li class="kt-menu__item {% block activateReportePagos %} {% endblock %}"  aria-haspopup="true"><a href="{% url 'ReportePagos' %}" class="kt-menu__link"><i class="kt-menu__link-icon flaticon2-checkmark"></i><span class="kt-menu__link-text">Pagos</span></a></li>
-						{% if Rol != "Proveedor" %}
+						{% if Rol == "users" %}
 						<li class="kt-menu__item {% block activateReporteCanceladas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteCanceladas' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Facturas Canceladas</span></a></li>
 						<li class="kt-menu__item {% block activateReportePagosCancelados %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagosCancelados' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Pagos cancelados</span></a></li>
 						<li class="kt-menu__item {% block activateReporteMaster %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteMaster' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas flaticon-list-1"></i><span class="kt-menu__link-text">Master</span></a></li>
 						{% endif %}
+
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Evidencias</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>

@@ -33,7 +33,7 @@ var GetFolioEvidencias = function(Folio){
   }).then(function(response){
     return response.clone().json();
   }).then(function(data){
-    if(!data.Found) {
+    if(!data.Found || data.Folios.length == 0) {
       Swal.fire({
         type: 'error',
         title: 'El folio indicado no existe en el sistema',
@@ -45,46 +45,53 @@ var GetFolioEvidencias = function(Folio){
       WaitMe_Hide('#TbPading');
     }
     else {
-      $('#StatusEvidencias').append(`Estatus: <strong>Pendiente</strong> <i class="fa fa-clock fa-1x"></i>`)
+      var arrStatus = [];
+      // $('#StatusEvidencias').append(`Estatus: <strong>Pendiente</strong> <i class="fa fa-clock fa-1x"></i>`)
       for(var i=0; i<data.Folios.length; i++)
       {
-        if (data.Folios[i].Estatus == 'Pendiente' || data.Folios[i].Estatus == 'Rechazado') {
           $('#allEvidences').append(`<div class="col-sm-4 col-lg-4 col-md-4">
                               	<div class="kt-portlet kt-portlet--height-fluid">
+                                <h5>Estatus: <strong>${data.Folios[i].Status}</strong></h5>
                               		<div class="kt-portlet__head" id="headUppyTitulo">
                               			<div class="kt-portlet__head-label">
-                              				<h3 class="kt-portlet__head-title" id='${data.Folios[i].Delivery}'>
-                              					${data.Folios[i].Delivery}
+                              				<h3 class="kt-portlet__head-title" id='${data.Folios[i].Delivery.replace(/ /g, "")}' data-status="${data.Folios[i].Status}" data-evidencia="${data.Folios[i].TipoEvidencia}">
+                              					${data.Folios[i].Delivery.replace(/ /g, "")}
                               				</h3>
                               			</div>
                               		</div>
                               			<div class="kt-portlet__body">
                               				<div class="row" id="prueba">
                               				</div>
-                              				<div class="kt-uppy verificar" id="uploadEvidencesProveedor${data.Folios[i].Delivery}">
+                              				<div class="kt-uppy verificar" id="uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}">
                               					<div  class="kt-uppy__dashboard"></div>
                               					<div class="kt-uppy__progress"></div>
                               				</div>
-                                      <input type="text" id="ComentarioEvidencia" class="form-control" placeholder="Comentario">
+                                      <input type="text" id="ComentarioEvidencia" class="form-control" placeholder="Comentario" disabled>
                               			</div>
                               	</div>
                               </div>`);
 
-          $(`#${data.Folios[i].Delivery}`).data('idpedido', data.Folios[i].XD_IDPedido)
-          $(`#${data.Folios[i].Delivery}`).data('idviaje', data.Folios[i].IDViaje)
-          uploadEvidences(`#uploadEvidencesProveedor${data.Folios[i].Delivery}`, `${data.Folios[i].Delivery}`);
-        }
-        else{
-          $('#allEvidences').append(`
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-              <strong>La evidencia ah sido enviada.</strong>
-            </div>
-            `)
-        }
+          $(`#${data.Folios[i].Delivery.replace(/ /g, "")}`).data('idpedido', data.Folios[i].XD_IDPedido)
+          $(`#${data.Folios[i].Delivery.replace(/ /g, "")}`).data('idviaje', data.Folios[i].IDViaje)
+          $(`#${data.Folios[i].Delivery.replace(/ /g, "")}`).data('tipoevidencia', data.Folios[i].TipoEvidencia)
+          $('#BtnHojaLiberacion').data('IDViajeHL', data.Folios[i].IDViaje)
+          data.Folios[i].Status == 'Pendiente' || data.Folios[i].Status == 'Rechazada' ? uploadEvidences(`#uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}`, `${data.Folios[i].Delivery.replace(/ /g, "")}`) : ($(`#uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}`).append(`<div class="row">
+            <div class="col-md-4"><embed src="${data.Folios[i].RutaArchivo}"></div>
+          </div>`)/*, $('#btnGuardarEvidenciasP').prop('disabled', true), $('#HojaLiberacion').html('<strong>Hoja de liberacion lista para descargar</strong>')*/);
+          arrStatus.push(data.Folios[i].Status)
       }
+      console.log(arrStatus.includes('Rechazada'))
+      if(arrStatus.includes('Pendiente') || arrStatus.includes('Rechazada') || arrStatus.includes('Otro') || arrStatus.includes('Enviada')){
+        $('.BtnHojaLiberacion').css('display', 'none');
+        arrStatus.includes('Pendiente') || arrStatus.includes('Rechazada') ? "": $('#btnGuardarEvidenciasP').prop('disabled', true);
+      }
+      else{
+        $('.BtnHojaLiberacion').css('display', 'block');
+        $('#BtnHojaLiberacion').removeClass('btn-danger');
+        $('#BtnHojaLiberacion').addClass('btn-success');
+        $('#btnGuardarEvidenciasP').prop('disabled', true);
+      }
+
 
       $('#FolioProveedorEvidencia').text(data.Folios.Delivery);
       $('#uploadEvidenciasModal').css('display', 'block');
@@ -129,9 +136,9 @@ var GetUUID = function(xml){
 }
 
 
-var GetEvidenciaMesaControl = function(IDViaje){
+var GetEvidenciaMesaControl = function(IDViaje,Folio){
   WaitMe_Show('#TbPading');
-  fetch(`/EvidenciasProveedor/GetEvidenciasMesaControl?XD_IDViaje=${IDViaje}`, {
+  fetch(`/EvidenciasProveedor/GetEvidenciasMesaControl?XD_IDViaje=${IDViaje}&Folio=${Folio}`, {
     method: "GET",
     credentials: "same-origin",
     headers: {
@@ -172,8 +179,8 @@ var GetEvidenciaMesaControl = function(IDViaje){
                   <a href="${data.Evidencias[i].URLEvidencia}" target="_blank"><embed src='${data.Evidencias[i].URLEvidencia}' height="150px" width="220px"></a>
                 </div>
                 <div class="card-footer">
-                <button class="btn btn-outline-success btn-elevate btn-circle btn-icon AprobarEvidencia" title="Aprobar" data-idevidenciaaprobar="${data.Evidencias[i].IDEvidencia}" data-tipoevidencia="${data.Evidencias[i].TipoEvidencia}" ><i class="fa fa-check"></i></button>
-                <button class="btn btn-outline-danger btn-elevate btn-circle btn-icon RechazarEvidencia" title="Rechazar" data-tipoevidencia="${data.Evidencias[i].TipoEvidencia}" data-idevidenciarechazar="${data.Evidencias[i].IDEvidencia}"><i class="flaticon-cancel"></i></button>
+                <button class="btn btn-outline-success btn-elevate btn-circle btn-icon AprobarEvidencia" title="Aprobar" data-idviaje="${data.Evidencias[i].XD_IDViaje}" data-idevidenciaaprobar="${data.Evidencias[i].IDEvidencia}" data-tipoevidencia="${data.Evidencias[i].TipoEvidencia}" ><i class="fa fa-check"></i></button>
+                <button class="btn btn-outline-danger btn-elevate btn-circle btn-icon RechazarEvidencia" title="Rechazar" data-idviaje="${data.Evidencias[i].XD_IDViaje}" data-tipoevidencia="${data.Evidencias[i].TipoEvidencia}" data-idevidenciarechazar="${data.Evidencias[i].IDEvidencia}"><i class="flaticon-cancel"></i></button>
                 </div>
                 <input type="text" placeholder="Comentario" class="form-control" id="ComentarioEvidencia">
               </div>
@@ -188,9 +195,9 @@ var GetEvidenciaMesaControl = function(IDViaje){
   });
 }
 
-var GetEvidenciasFisicas = function(IDViaje){
+var GetEvidenciasFisicas = function(IDViaje, Folio){
   WaitMe_Show('#TbPading');
-  fetch(`/EvidenciasProveedor/GetEvidenciaFisica?XD_IDViaje=${IDViaje}`, {
+  fetch(`/EvidenciasProveedor/GetEvidenciaFisica?XD_IDViaje=${IDViaje}&Folio=${Folio}`, {
     method: "GET",
     credentials: "same-origin",
     headers: {
@@ -213,7 +220,7 @@ var GetEvidenciasFisicas = function(IDViaje){
     if(data.EvidenciaFisica.length == 0) {
       Swal.fire({
         type: 'error',
-        title: 'El folio aun no tiene todas las evidencias digitales',
+        title: 'El folio aun no tiene todas las evidencias digitales o las evidencia ya fueron aprobadas',
         showConfirmButton: false,
         timer: 2500
       });
@@ -229,7 +236,7 @@ var GetEvidenciasFisicas = function(IDViaje){
                 <i class="kt-nav__link-icon flaticon2-rocket-2"></i>
                 <span class="kt-nav__link-text">${data.EvidenciaFisica[i].Delivery}</span>
                 <span class="kt-nav__link-badge">
-                  <button type="button" name="button" class="btn btn-outline-danger btn-elevate btn-circle btn-icon" id="btnAprobarEVFisica" data-idviaje="${data.EvidenciaFisica[i].XD_IDViaje}" data-idpedido="${data.EvidenciaFisica[i].XD_IDPedido}"><i class="fa fa-check"></i></button>
+                  <button type="button" name="button" class="btn btn-outline-danger btn-elevate btn-circle btn-icon" id="btnAprobarEVFisica" data-idviaje="${data.EvidenciaFisica[i].XD_IDViaje}" data-idpedido="${data.EvidenciaFisica[i].XD_IDPedido}" data-tipoevidenciafisica="${data.EvidenciaFisica[i].Delivery}"><i class="fa fa-check"></i></button>
                 </span>
               </h3>
             </li>
@@ -240,5 +247,72 @@ var GetEvidenciasFisicas = function(IDViaje){
   }).catch(function(ex){
     console.log(ex);
     WaitMe_Hide('#TbPading');
+  });
+}
+
+
+
+var GetIsEvidenciaDigitalCompleta = function(IDViaje, TipoEv){
+  var url;
+  TipoEv == 'BKG' ? url = `/EvidenciasProveedor/EvidenciaDigitalCompletaBKG?`: url = `/EvidenciasProveedor/EvidenciaDigitalCompleta?`;
+  fetch(`${url}IDViaje=${IDViaje}`,{
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    if(response.status == 200){
+      return response.clone().json();
+    }
+    else if(response.status == 500){
+      Swal.fire({
+        type: 'error',
+        title: 'Ocurrio un error',
+        showConfirmButton: false,
+        timer: 2500
+      });
+    }
+  }).then(function(data){
+    if(data.IsEvidenciaDigitalCompleta){
+       $(btn).removeClass('btn-primary');
+       $(btn).addClass('btn-success');
+       var changeIcon = $(btn).find('i')[0];
+       $(changeIcon).removeClass('fa-clock');
+       $(changeIcon).addClass('fa-check')
+       $(btn).prop('disabled', true);
+    }
+  }).catch(function(ex){
+    console.log(ex);
+  });
+}
+
+var GetHojaLiberacion = function(IDViaje){
+  fetch(`/EvidenciasProveedor/DescargarHojaLiberacion?IDViaje=${IDViaje}`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    if(response.status == 200){
+      return response.clone().json();
+    }
+    else if(response.status == 500){
+      Swal.fire({
+        type: 'error',
+        title: 'Ocurrio un error obteniendo la hoja de liberacion',
+        showConfirmButton: false,
+        timer: 2500
+      });
+    }
+  }).then(function(data){
+    $('#BtnHojaLiberacion').attr('href', data.HojaLiberacion);
+    window.open(data.HojaLiberacion, '_blank');
+    WaitMe_HideBtn('#BtnHojaLiberacion')
+  }).catch(function(ex){
+    console.log(ex);
   });
 }

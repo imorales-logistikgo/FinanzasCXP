@@ -9,4 +9,11 @@ urlpatterns = [
     path('SaveAprobarEvidencia', views.SaveAprobarEvidencia, name='SaveAprobarEvidencia'),
     path('RechazarEvidencias', views.RechazarEvidencias, name='RechazarEvidencias'),
     path('GetEvidenciaFisica', views.GetEvidenciaFisica, name='GetEvidenciaFisica'),
+    path('SaveEvidenciaFisica', views.SaveEvidenciaFisica, name='SaveEvidenciaFisica'),
+    path('EvidenciaDigitalCompleta', views.EvidenciaDigitalCompleta, name='EvidenciaDigitalCompleta'),
+    path('EvidenciaDigitalCompletaBKG', views.EvidenciaDigitalCompletaBKG, name='EvidenciaDigitalCompletaBKG'),
+    path('ValidarEvidenciaXD_Viajea', views.ValidarEvidenciaXD_Viajea, name='ValidarEvidenciaXD_Viajea'),
+    path('FindFolioEvidenciaBGK', views.FindFolioEvidenciaBGK, name='FindFolioEvidenciaBGK'),
+    path('GetEachRemision', views.GetEachRemision, name='GetEachRemision'),
+    path('DescargarHojaLiberacion', views.DescargarHojaLiberacion, name='DescargarHojaLiberacion'),
 ]
