@@ -75,6 +75,7 @@ var GetFolioEvidencias = function(Folio){
           $(`#${data.Folios[i].Delivery.replace(/ /g, "")}`).data('idviaje', data.Folios[i].IDViaje)
           $(`#${data.Folios[i].Delivery.replace(/ /g, "")}`).data('tipoevidencia', data.Folios[i].TipoEvidencia)
           $('#BtnHojaLiberacion').data('IDViajeHL', data.Folios[i].IDViaje)
+          $('#BtnHojaLiberacion').data('TipoEvidenciaHL', data.Folios[i].TipoEvidencia)
           data.Folios[i].Status == 'Pendiente' || data.Folios[i].Status == 'Rechazada' ? uploadEvidences(`#uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}`, `${data.Folios[i].Delivery.replace(/ /g, "")}`) : ($(`#uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}`).append(`<div class="row">
             <div class="col-md-4"><embed src="${data.Folios[i].RutaArchivo}"></div>
           </div>`)/*, $('#btnGuardarEvidenciasP').prop('disabled', true), $('#HojaLiberacion').html('<strong>Hoja de liberacion lista para descargar</strong>')*/);
@@ -90,6 +91,7 @@ var GetFolioEvidencias = function(Folio){
         $('#BtnHojaLiberacion').removeClass('btn-danger');
         $('#BtnHojaLiberacion').addClass('btn-success');
         $('#btnGuardarEvidenciasP').prop('disabled', true);
+        // $('#HojaLiberacion').html('<strong>Hoja de liberacion lista para descargar</strong>')
       }
 
 
@@ -288,8 +290,8 @@ var GetIsEvidenciaDigitalCompleta = function(IDViaje, TipoEv){
   });
 }
 
-var GetHojaLiberacion = function(IDViaje){
-  fetch(`/EvidenciasProveedor/DescargarHojaLiberacion?IDViaje=${IDViaje}`, {
+var GetHojaLiberacion = function(IDViaje, Proyecto){
+  fetch(`/EvidenciasProveedor/DescargarHojaLiberacion?IDViaje=${IDViaje}&Proyecto=${Proyecto}`, {
     method: "GET",
     credentials: "same-origin",
     headers: {
@@ -307,6 +309,7 @@ var GetHojaLiberacion = function(IDViaje){
         showConfirmButton: false,
         timer: 2500
       });
+      WaitMe_HideBtn('#BtnHojaLiberacion')
     }
   }).then(function(data){
     $('#BtnHojaLiberacion').attr('href', data.HojaLiberacion);

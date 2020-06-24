@@ -88,7 +88,7 @@ def FindFolioProveedor(request):
                         newDelivery['Status'] = 'Rechazada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else 'Aprobada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsValidada) else 'Pendiente' if len(GetManiobras) == 0 else "Enviada" if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else "Otro"
                         arrFoliosEvidencias.append(newDelivery)
         elif 'FTL' in Folio:
-            GetEviBKG = FindFolioEvidenciaBGK(Folio)
+            GetEviBKG = FindFolioEvidenciaBGK(Folio, request.user.IDTransportista)
             for i in GetEviBKG['ListaEvidencias']:
                 arrFoliosEvidencias.append(i)
         return JsonResponse({'Found': True, 'Folios': arrFoliosEvidencias})
@@ -480,9 +480,9 @@ def GetTituloForCustodia(Titulo):
     return NewTitulo
 
 
-def FindFolioEvidenciaBGK(Folio):
+def FindFolioEvidenciaBGK(Folio, Transportista):
     try:
-        GetIDViaje = Bro_Viajes.objects.get(Folio = Folio, StatusProceso = 'FINALIZADO')
+        GetIDViaje = Bro_Viajes.objects.get(Folio = Folio, StatusProceso = 'FINALIZADO', IDTransportista = Transportista)
         # ListaEvidencias=''
         if not Bro_EvidenciasxViaje.objects.filter(IDBro_Viaje = GetIDViaje.IDBro_Viaje).exists():
             ListaEvidencias = readJson(GetIDViaje.Remisiones) if(len(GetIDViaje.Remisiones) >= 1) else readJson(0)
@@ -597,8 +597,13 @@ def GetAllEvidecesDigitalsT1yT2(IDViaje):
 
 def DescargarHojaLiberacion(request):
     IDViaje = request.GET["IDViaje"]
-    GetRutaHojaLiberacion = XD_Viajes.objects.get(XD_IDViaje = IDViaje)
-    HojaLiberacion = GetRutaHojaLiberacion.RutaHojaEmbarqueCosto
+    Proyecto = request.GET["Proyecto"]
+    if Proyecto == 'BKG':
+        GetRutaHojaLiberacion = Bro_Viajes.objects.get(IDBro_Viaje = IDViaje)
+        HojaLiberacion = GetRutaHojaLiberacion.RutaHojaLiberacion
+    else:
+        GetRutaHojaLiberacion = XD_Viajes.objects.get(XD_IDViaje = IDViaje)
+        HojaLiberacion = GetRutaHojaLiberacion.RutaHojaEmbarqueCosto
     return JsonResponse({'HojaLiberacion':HojaLiberacion})
 
     # try:

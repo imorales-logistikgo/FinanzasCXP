@@ -293,7 +293,7 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
     $(document).on('click', '#BtnHojaLiberacion', function(){
       WaitMe_ShowBtn('#BtnHojaLiberacion')
       var IDViajeHoja = $(this).data('IDViajeHL');
-      GetHojaLiberacion(IDViajeHoja)
+      GetHojaLiberacion(IDViajeHoja, $(this).data('TipoEvidenciaHL'))
     });
 
 

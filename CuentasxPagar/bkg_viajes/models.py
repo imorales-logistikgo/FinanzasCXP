@@ -17,6 +17,8 @@ class Bro_Viajes(models.Model):
     IsEvidenciasDigitales = models.BooleanField()
     IsEvidenciasFisicas = models.BooleanField()
     FechaDespacho = models.DateTimeField(db_column = 'FechaDescarga')
+    IDTransportista = models.IntegerField()
+    RutaHojaLiberacion = models.CharField(max_length=500)
 
     class Meta:
         managed = False

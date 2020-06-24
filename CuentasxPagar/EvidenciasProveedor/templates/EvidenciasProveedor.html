@@ -6,15 +6,17 @@ kt-menu__item--active
 {% endblock %}
 
 {% block ContadoresEvidenciasProveedor %}
+
+{% if request.user.roles == "MesaControl" %}
 <div class="kt-subheader kt-grid__item">
 	<div class="kt-container  kt-container--fluid ">
 		<div>
 			<span class="badge badge-pill badge-success">Sin Evidencias Fisicas<span class="badge badge-pill badge-secondary"><strong>{{EvidenciaFisica}}</strong></span></span>
 			<span class="badge badge-pill badge-warning">Sin Evidencias Digitales<span class="badge badge-pill badge-secondary"><strong>{{EvidenciaDigital}}</strong></span></span>
-			<span class="badge badge-pill badge-danger">Evidencias Rechazadas<span class="badge badge-pill badge-secondary"><strong>150</strong></span></span>
 		</div>
 	</div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block FiltrosEvidenciasProveedor %}
@@ -48,7 +50,7 @@ kt-menu__item--active
 				<div class="container" id="WaitModalPEProveedor">
 					<div class="row">
 						<div class="col-md-1">
-							<a type="button" id="BtnHojaLiberacion" class="btn btn-danger btn-elevate btn-pill btn-elevate-air btn-sm BtnHojaLiberacion" target="_blank" style="display:none"><i class="fa fa-download" disabled></i></a>
+							<a type="button" id="BtnHojaLiberacion" style="color:white" class="btn btn-danger btn-elevate btn-pill btn-elevate-air btn-sm BtnHojaLiberacion" target="_blank" style="display:none" title="Hoja de liberacion"><i class="fa fa-download" disabled></i></a>
 						</div>
 						<div class="col-md-11">
 							<label class="h5" id="HojaLiberacion"></label>
@@ -76,10 +78,13 @@ kt-menu__item--active
 				 </div><br><br>
 				</div>
 			</div>
-{% elif Rol != "Proveedor" %}
+			{% endif %}
+
+			{% if request.user.roles == "MesaControl" %}
 		 	<div id="divTablaPendientesEnviar">
 					{% include "TablaEvidenciasMesaControl.html" %}
 			</div>
+
 <!-- Modal validar evidencias digitales -->
 			<div class="modal fade" id="ModalValidarEvidencias" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
 				<div class="modal-dialog modal-lg" role="document" id="WaitModalEP">
@@ -144,10 +149,7 @@ kt-menu__item--active
 					</div>
 				</div>
 
-
-
-
-{% endif %}
+			{% endif %}
 {% endblock %}
 
 

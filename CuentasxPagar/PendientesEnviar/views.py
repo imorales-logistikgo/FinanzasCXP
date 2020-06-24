@@ -8,16 +8,21 @@ from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.shortcuts import redirect
 
 
 @login_required
 def GetPendientesEnviar(request):
 	#PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0 AND Moneda = %s", ['FINALIZADO', 'MXN'])
-	PendingToSend = View_PendientesEnviarCxP.objects.filter(Status = 'FINALIZADO', IsEvidenciaDigital = 1, IsEvidenciaFisica = 1, IsFacturaProveedor = 0, Moneda = 'MXN', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
-	ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
-	Proveedores = Proveedor.objects.all()
-	ListPendientes = PendientesToList(PendingToSend)
-	return render(request, 'PendienteEnviar.html', {'Pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles, 'IDUsuraio_': request.user.idusuario})
+	print(request.user.roles)
+	if request.user.roles == 'MesaControl':
+		return redirect('EvidenciasProveedor')
+	else:
+		PendingToSend = View_PendientesEnviarCxP.objects.filter(Status = 'FINALIZADO', IsEvidenciaDigital = 1, IsEvidenciaFisica = 1, IsFacturaProveedor = 0, Moneda = 'MXN', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
+		ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
+		Proveedores = Proveedor.objects.all()
+		ListPendientes = PendientesToList(PendingToSend)
+		return render(request, 'PendienteEnviar.html', {'Pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles, 'IDUsuraio_': request.user.idusuario})
 
 
 def PendientesToList(PendingToSend):
