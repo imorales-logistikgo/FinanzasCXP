@@ -106,3 +106,14 @@ def SaveComplementosPago(request):
 	Pago.RutaXML = jParams['RutaXML']
 	Pago.save()
 	return HttpResponse("")
+
+def GetFacturasxPago(request):
+	IDPago = request.GET["IDPago"]
+	GetIDRelacion = RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago)
+	DataBD = list()
+	for Factura in GetIDRelacion:
+		Data = {}
+		Data['IdDocumento'] = Factura.IDFactura.UUID
+		Data['ImpPagado'] = Factura.IDPagoxFactura.Total
+		DataBD.append(Data)
+	return JsonResponse({"DataBD":DataBD})

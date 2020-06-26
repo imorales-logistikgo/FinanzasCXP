@@ -1,5 +1,5 @@
 var idPag;
-var btn;
+var btn,valComp;
 $(document).ready(function(){
   var idPago;
   formatDataTable();
@@ -78,6 +78,7 @@ $(document).ready(function(){
  $('#ModalComplementos').on('shown.bs.modal', function(){
    $('#ComplementosPagos').data("rutaarchivoPDF", null);
    $('#ComplementosPagos').data("rutaarchivoXML", null);
+   valComp == null;
  });
 
 
@@ -353,7 +354,7 @@ var fnGetDetallePago = function () {
   });
 }
 
-function subirComplementoPagoProveedor(totalPago)
+async function subirComplementoPagoProveedor(totalPago)
 {
   // plugin para subir los archivos del proveedor
   "use strict";
@@ -373,7 +374,7 @@ function subirComplementoPagoProveedor(totalPago)
         const GoogleDrive = Uppy.GoogleDrive;
 
         // Private functions
-        var initUppy1 = function(){
+        async function initUppy1(){
           var id = '#ComplementosPagos';
 
           var options = {
@@ -432,26 +433,25 @@ function subirComplementoPagoProveedor(totalPago)
              $('#ComplementosPagos').data("rutaarchivoPDF", urlPDF)
              document.querySelector('.uploaded-files-ComplemetoPagos').innerHTML +=
              `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaPDF">${fileName}</a></li></ol>`
-
                  }
                  else
                  {
-
-                   // const urlXMLCheck = response.body
-                   // var to = leerXMLTransportista(urlXMLCheck)
-                   // if(to != totalPago)
-                   // {
-                   //   alertToastError("El total del pago no coincide con el total calculado del sistema")
-                   //    //uppyDashboard.reset()
-                   //    uppyDashboard.cancelAll()
-                   //  }
-                   //  else
-                   //  {
+                   const urlXMLCheck = response.body
+                   const ValidarXML = GetIdDocumentoAndImpPagado(urlXMLCheck);
+                   console.log(valComp)
+                   if(valComp || valComp == null || valComp == undefined)
+                   {
+                     alertToastError("El total y las facturas no coinciden con el sistema")
+                      //uppyDashboard.reset()
+                      uppyDashboard.cancelAll()
+                    }
+                    else
+                    {
                      const urlPDF = response.body
                      $('#ComplementosPagos').data("rutaarchivoXML", urlPDF)
                      document.querySelector('.uploaded-files-ComplemetoPagos').innerHTML +=
                      `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
-                    // }
+                    }
                   }
                   // if($('#ComplementosPagos').data("rutaarchivoXML") != null && $('#ComplementosPagos').data("rutaarchivoPDF") != null || $('#ComplementosPagos').data("rutaarchivoXML") != undefined && $('#ComplementosPagos').data("rutaarchivoPDF") != undefined)
                   // {
@@ -460,8 +460,6 @@ function subirComplementoPagoProveedor(totalPago)
                   //   WaitMe_Show('#waitModalPago');
                   //   SaveComplementosPago(pdf, xml);
                   // }
-
-
    });
     }
         return {
@@ -477,3 +475,8 @@ function subirComplementoPagoProveedor(totalPago)
       });
 
 }
+
+
+
+
+//{IdDocumento: "782C084B-25AE-4E98-BDF4-D43FCCEAD080", ImpPagado: "18093.52"}

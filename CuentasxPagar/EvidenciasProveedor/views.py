@@ -18,11 +18,14 @@ def EvidenciasProveedor(request):
         EvidenciasxAprobar = XD_Viajes.objects.filter(Status = 'FINALIZADO').exclude(Status = 'CANCELADO')
         EvidenciasxAprobarBKG = Bro_Viajes.objects.filter(StatusProceso = 'FINALIZADO').exclude(StatusProceso = 'CANCELADO')
         Evidencias = chain(EvidenciasxAprobar, EvidenciasxAprobarBKG)
-        return render(request, 'EvidenciasProveedor.html', {'EvidenciasxAprobar': Evidencias})
+        SinEvidenciaDigitalXD = XD_Viajes.objects.filter(IsEvidenciaPedidos = False).count()
+        SinEvidenciaDigitalBKG = Bro_Viajes.objects.filter(IsEvidenciasDigitales = False).count()
+        SinEvidenciaDigital = SinEvidenciaDigitalXD+SinEvidenciaDigitalBKG
+        return render(request, 'EvidenciasProveedor.html', {'EvidenciasxAprobar': Evidencias, 'EvidenciaDigital': SinEvidenciaDigital})
     elif request.user.roles == 'Proveedor':
-        SinEvidenciaDigital = XD_Viajes.objects.filter(IsEvidencia = False).count()
-        SinEvidenciaFisica = XD_Viajes.objects.filter(IsEvidenciaFisica = False).count()
-        return render(request, 'EvidenciasProveedor.html', {'EvidenciaDigital': SinEvidenciaDigital, 'EvidenciaFisica': SinEvidenciaFisica, 'Rol': request.user.roles})
+        # SinEvidenciaDigital = XD_Viajes.objects.filter(IsEvidencia = False).count()
+        # SinEvidenciaFisica = XD_Viajes.objects.filter(IsEvidenciaFisica = False).count()
+        return render(request, 'EvidenciasProveedor.html')
 
 def FindFolioProveedor(request):
     Folio = request.GET["Folio"]

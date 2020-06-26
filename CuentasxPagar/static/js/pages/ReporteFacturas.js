@@ -87,7 +87,7 @@ function getReportes(params) {
     formatTableReporteFacturas();
     WaitMe_Hide('#TbPading');
   }).catch(function(ex){
-    console.log("no success!");
+    console.log(ex);
   });
 }
 

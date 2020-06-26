@@ -7,12 +7,12 @@ kt-menu__item--active
 
 {% block ContadoresEvidenciasProveedor %}
 
-{% if request.user.roles == "MesaControl" %}
+{% if request.user.roles == "MesaControl" or "Admin" %}
 <div class="kt-subheader kt-grid__item">
 	<div class="kt-container  kt-container--fluid ">
 		<div>
-			<span class="badge badge-pill badge-success">Sin Evidencias Fisicas<span class="badge badge-pill badge-secondary"><strong>{{EvidenciaFisica}}</strong></span></span>
-			<span class="badge badge-pill badge-warning">Sin Evidencias Digitales<span class="badge badge-pill badge-secondary"><strong>{{EvidenciaDigital}}</strong></span></span>
+			<!-- <span class="badge badge-pill badge-success">Sin Evidencias Fisicas<span class="badge badge-pill badge-secondary"><strong>{{EvidenciaFisica}}</strong></span></span> -->
+			<span class="badge badge-pill badge-danger">Sin Evidencias<span class="badge badge-pill badge-secondary"><strong>{{EvidenciaDigital}}</strong></span></span>
 		</div>
 	</div>
 </div>
@@ -80,7 +80,7 @@ kt-menu__item--active
 			</div>
 			{% endif %}
 
-			{% if request.user.roles == "MesaControl" %}
+			{% if request.user.roles == "MesaControl" or "Admin" %}
 		 	<div id="divTablaPendientesEnviar">
 					{% include "TablaEvidenciasMesaControl.html" %}
 			</div>

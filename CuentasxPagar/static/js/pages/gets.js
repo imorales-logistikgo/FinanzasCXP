@@ -176,7 +176,7 @@ var GetEvidenciaMesaControl = function(IDViaje,Folio){
         $('#VerEvidencia').append(`
             <div class="col-md-4">
               <div class="card bg-light mb-3" style="max-width: 25rem;">
-                <div class="card-header">${data.Evidencias[i].Delivery}</div>
+                <div class="card-header" id="${data.Evidencias[i].Delivery}">${data.Evidencias[i].Delivery}</div>
                 <div class="card-body">
                   <a href="${data.Evidencias[i].URLEvidencia}" target="_blank"><embed src='${data.Evidencias[i].URLEvidencia}' height="150px" width="220px"></a>
                 </div>
@@ -188,6 +188,8 @@ var GetEvidenciaMesaControl = function(IDViaje,Folio){
               </div>
             </div>
           `)
+
+          $(`#${data.Evidencias[i].Delivery}`).append(`<a href="${data.Evidencias[i].URLEvidencia}" target="_blank"><i class="fa fa-eye"></i></a>`);
       }
       WaitMe_Hide('#TbPading');
     }
@@ -319,3 +321,64 @@ var GetHojaLiberacion = function(IDViaje, Proyecto){
     console.log(ex);
   });
 }
+
+async function GetIdDocumentoAndImpPagado (xml){
+  try{
+      const proxyURL = "https://cors-anywhere.herokuapp.com/";
+      var newXML = proxyURL + xml;
+      var arrDataXML = [];
+      var req = new XMLHttpRequest();
+         req.open('GET', newXML, false);
+         req.send(null);
+         if (req.status == 200){
+             var resp = req.responseXML;
+             var obNodos = resp.children[0].attributes;
+             var rest = obNodos.Folio ? obNodos.Folio.nodeValue: obNodos.Serie.nodeValue;
+             var obNodosUI = resp.getElementsByTagName("cfdi:Complemento")[0];
+             var TimbreFiscal = obNodosUI.getElementsByTagName('pago10:Pago')[0]
+             var each = TimbreFiscal.getElementsByTagName('pago10:DoctoRelacionado')
+             for (var i=0; i<each.length; i++){
+               var idDocumento = each[i].getAttribute('IdDocumento')
+               var ImpPagado = each[i].getAttribute('ImpPagado')
+               arrDataXML.push({"IdDocumento":idDocumento, "ImpPagado":ImpPagado})
+             }
+          }
+      const a = await GetFacturasxPago(idPag,arrDataXML);
+      // return arrDataXML;
+  }
+  catch(error){
+    alertToastError('Ocurrio un error al leer el archivo xml');
+    console.error(error);
+  }
+}
+
+var GetFacturasxPago =  function(Pago, arrXML){
+  $.ajax({
+        url: `/ReportePagos/GetFacturasxPago?IDPago=${Pago}`,
+        type: 'GET',
+        async:false,
+        contentType: "application/json; charset=utf-8",
+        // beforeSend: fnBeforeSend,
+        success: function(data){
+              var Comprobacion = [];
+              loop1:
+               for (var i=0;i<data.DataBD.length;i++){
+              loop2:
+                  for (var j=0; j<arrXML.length;j++){
+                    if (data.DataBD[i].IdDocumento == arrXML[j].IdDocumento && truncarDecimales(data.DataBD[i].ImpPagado,2) == arrXML[j].ImpPagado){
+                      Comprobacion.push('true');
+                    }
+                    else{
+                      Comprobacion.push('false');
+                    break loop1;
+                    }
+                  }
+                }
+              valComp = Comprobacion.includes('false');
+        },
+        error: function(request, status, error){
+          alertToastError("Ocurrio un problema");
+          console.log(error);
+        }
+    });
+ }

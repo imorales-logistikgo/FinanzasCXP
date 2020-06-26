@@ -6,4 +6,5 @@ urlpatterns = [
     path('CancelarPago', views.CancelarPago, name='CancelarPago'),
     path('GetDetallesPago', views.GetDetallesPago, name='GetDetallesPago'),
     path('SaveComplementosPago', views.SaveComplementosPago, name='SaveComplementosPago'),
+    path('GetFacturasxPago', views.GetFacturasxPago, name='GetFacturasxPago'),
 ]
