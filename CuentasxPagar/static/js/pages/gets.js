@@ -373,7 +373,7 @@ var GetFacturasxPago =  function(Pago, arrXML){
                   }
                   Comprobacion.push(indicador)
                 }
-              valComp = Comprobacion.includes('false');
+              valComp = Comprobacion.includes(false);
         },
         error: function(request, status, error){
           alertToastError("Ocurrio un problema");

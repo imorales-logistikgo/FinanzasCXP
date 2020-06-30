@@ -1,6 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from PendientesEnviar.models import FacturasxProveedor, RelacionFacturaProveedorxPartidas, RelacionConceptoxProyecto
+from PendientesEnviar.models import FacturasxProveedor, RelacionFacturaProveedorxPartidas, RelacionConceptoxProyecto, View_ReporteFacturasCXP
 from usersadmon.models import Proveedor
 from django.template.loader import render_to_string
 import json, datetime
@@ -9,17 +9,17 @@ from django.contrib.auth.decorators import login_required
 
 def ReporteFacturas(request):
 	if request.user.roles == 'Proveedor':
-		Facturas = FacturasxProveedor.objects.filter(IDProveedor = request.user.IDTransportista)
-		listFacturas = FacturasToList(Facturas)
+		Facturas = View_ReporteFacturasCXP.objects.filter(IDProveedor = request.user.IDTransportista)
+		# listFacturas = FacturasToList(Facturas)
 		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
 		Proveedores = Proveedor.objects.all()
-		return render(request, 'ReporteFacturas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'Rol': request.user.roles})
+		return render(request, 'ReporteFacturas.html', {'Facturas': Facturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'Rol': request.user.roles})
 	else:
-		Facturas = FacturasxProveedor.objects.filter(FechaFactura__month = datetime.datetime.now().month, FechaFactura__year = datetime.datetime.now().year)
-		listFacturas = FacturasToList(Facturas)
+		Facturas = View_ReporteFacturasCXP.objects.all()
+		# listFacturas = FacturasToList(Facturas)
 		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
 		Proveedores = Proveedor.objects.all()
-		return render(request, 'ReporteFacturas.html', {'Facturas': listFacturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'Rol': request.user.roles})
+		return render(request, 'ReporteFacturas.html', {'Facturas': Facturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'ContadorPendientes': ContadorPendientes, 'Rol': request.user.roles})
 
 
 

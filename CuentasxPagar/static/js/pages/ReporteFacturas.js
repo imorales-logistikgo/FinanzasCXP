@@ -146,9 +146,11 @@ else
 {
   $("#TableReporteFacturas").DataTable({
     "scrollX": true,
+    "scrollY": "450px",
     "language": {
       "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
     },
+    "lengthMenu": [200],
     "responsive": false,
     "paging": true,
     "dom": 'Bfrtip',

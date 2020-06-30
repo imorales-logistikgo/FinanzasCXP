@@ -142,3 +142,24 @@ class RelacionFacturaProveedorxPartidas(models.Model):
 
     class Meta:
         db_table = "RelacionFacturaProveedorxPartidas"
+
+
+
+class View_ReporteFacturasCXP(models.Model):
+    IDFactura = models.IntegerField(primary_key=True)
+    Folio = models.CharField(db_column='Folio', max_length=50)
+    Proveedor = models.CharField(max_length=100)
+    IDProveedor = models.IntegerField()
+    FechaFactura = models.DateTimeField()
+    Moneda = models.CharField(max_length=10)
+    Subtotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    IVA = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    Retencion = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    Total = models.DecimalField(default=0, max_digits=30, decimal_places=5)
+    Status = models.CharField(max_length=15)
+    ComentarioBaja = models.CharField(max_length=500)
+    Viajes = models.CharField(max_length=150)
+
+    class Meta:
+        db_table = "View_ReporteFacturasCXP"
+        managed = False
