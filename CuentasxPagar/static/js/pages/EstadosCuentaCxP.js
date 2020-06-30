@@ -669,8 +669,8 @@ function showDatosObtenidos(){
      var Balance = +datos[i][2].replace(/(\$)|(,)/g,'') * tipoCambio;
      var tot = +datos[i][1].replace(/(\$)|(,)/g,'');
      totConv = Balance;
-      // datos[i].push(tot);
-      total = total + Balance;
+     datos[i].push(tot);
+     total = total + Balance;
     }
   }
 
@@ -706,7 +706,7 @@ function showDatosObtenidos(){
     "targets": 4,
     "width": "150px",
     "mRender": function (data, type, full) {
-     return (full[3] === 'MXN' ? `$ <input class="col-md-6 col-sm-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}" min="0" pattern="^[0-9]+" required>` : '$ <input type="number" class="col-md-6 col-sm-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="'+totConv+'" min="0" pattern="^[0-9]+">');
+     return (full[3] === 'MXN' ? `$ <input class="col-md-6 col-sm-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}" min="0" pattern="^[0-9]+" required>` : `$ <input type="number" class="col-md-6 col-sm-6 text-right valCobro" data-idfact="'+ full[5] +'" name="totalPago" id="valCobro" value="${totConv}" min="0" pattern="^[0-9]+">`);
    }
  },
 

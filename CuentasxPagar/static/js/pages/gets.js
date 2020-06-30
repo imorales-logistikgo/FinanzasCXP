@@ -340,7 +340,7 @@ async function GetIdDocumentoAndImpPagado (xml){
              for (var i=0; i<each.length; i++){
                var idDocumento = each[i].getAttribute('IdDocumento')
                var ImpPagado = each[i].getAttribute('ImpPagado')
-               arrDataXML.push({"IdDocumento":idDocumento, "ImpPagado":ImpPagado})
+               arrDataXML.push({"IdDocumento":idDocumento.toUpperCase(), "ImpPagado":ImpPagado})
              }
           }
       const a = await GetFacturasxPago(idPag,arrDataXML);
@@ -363,16 +363,15 @@ var GetFacturasxPago =  function(Pago, arrXML){
               var Comprobacion = [];
               loop1:
                for (var i=0;i<data.DataBD.length;i++){
-              loop2:
+                var indicador = false
+                loop2:
                   for (var j=0; j<arrXML.length;j++){
-                    if (data.DataBD[i].IdDocumento == arrXML[j].IdDocumento && truncarDecimales(data.DataBD[i].ImpPagado,2) == arrXML[j].ImpPagado){
-                      Comprobacion.push('true');
-                    }
-                    else{
-                      Comprobacion.push('false');
-                    break loop1;
+                    if (data.DataBD[i].IdDocumento.toUpperCase() == arrXML[j].IdDocumento && truncarDecimales(data.DataBD[i].ImpPagado,2) == arrXML[j].ImpPagado){
+                      indicador = true
+                      break loop2;
                     }
                   }
+                  Comprobacion.push(indicador)
                 }
               valComp = Comprobacion.includes('false');
         },

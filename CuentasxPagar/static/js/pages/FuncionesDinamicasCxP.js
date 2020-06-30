@@ -643,7 +643,48 @@ var uploadEvidences = function(idU, ver){
 }
 
 
-
+var FolioViajeXML = function(xml){
+  try {
+    const proxyURL = "https://cors-anywhere.herokuapp.com/";
+    var newXML = proxyURL + xml;
+    var FolioTrueOrFalse;
+    var req = new XMLHttpRequest();
+       req.open('GET', newXML, false);
+       req.send(null);
+       console.log(req);
+       if (req.status == 200)
+       {
+         var resp = req.responseXML;
+         var obNodos = resp.children[0].attributes;
+         var rest = obNodos.Folio ? obNodos.Folio.nodeValue: obNodos.Serie.nodeValue;
+         var obNodosUI = resp.getElementsByTagName("cfdi:Concepto")[0];
+         var folio = obNodosUI.getAttribute('Descripcion');
+         var withoutBR = folio.replace(/\n|\r/g, " ")
+         var newArrFolio = withoutBR.split(" ")
+         var buscarFolio =  newArrFolio.indexOf("FTLREC150120CH000240")
+         if (buscarFolio != -1){
+          newArrFolio[buscarFolio] == 'FTLREC150120CH000240' ? FolioTrueOrFalse=true:FolioTrueOrFalse= false;
+          console.log(FolioTrueOrFalse)
+         }
+         else{
+          var folio1 = obNodosUI.getAttribute('NoIdentificacion');
+          var withoutBR1 = folio1.replace(/\n|\r/g, " ")
+          var newArrFolio1 = withoutBR1.split(" ")
+          var buscarFolio1 =  newArrFolio1.indexOf("FTLT1N290520BC005827")
+          buscarFolio1 != -1 ? newArrFolio1[buscarFolio1] == "FTLT1N290520BC005827" ?( FolioTrueOrFalse = true, console.log(FolioTrueOrFalse)): FolioTrueOrFalse = false : FolioTrueOrFalse = false;
+         }
+       }
+       else
+       {
+           FolioTrueOrFalse = false;
+       }
+    return rest;
+  } catch (e) {
+    alertToastError("Ocurrio un error al leer el archivo xml");
+    console.log(e);
+    FolioTrueOrFalse = false;
+  }
+}
 
 
 //
