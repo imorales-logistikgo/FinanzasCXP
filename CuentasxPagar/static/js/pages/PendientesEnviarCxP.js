@@ -3,7 +3,7 @@ var moneda;
 var Ev;
 var EvDigital;
 var EvFisica;
-var idprov;
+var idprov, folioCheck;
 var table;
 var subtotal = 0, Tiva=0, TRetencion=0, total=0;
 var totalViaje = 0;
@@ -21,6 +21,7 @@ $(document).on( 'change', 'input[name="checkPE"]', function () {
   var btnSubir = '#btnSubirFacturaPendientesEnviar';
   if($(this).is(':checked'))
   {
+    folioCheck = table.row($(this).parents('tr')).data()[1];
     FiltroCheckboxProveedor();
     adddatos();
     ContadorCheck(input, btnSubir);
@@ -323,6 +324,7 @@ function LimpiarModalSF()
   $('#kt_uppy_1').data("rutaarchivoXML", null);
   $('#kt_uppy_1').data("rutaarchivoPDF", null);
   uuid = '';
+  folioCheck = "";
 }
 
 
@@ -416,7 +418,8 @@ function LimpiarModalSF()
                {
                  const urlXMLCheck = response.body
                  totalXML = leerxml(urlXMLCheck)
-                 if(+totalXML > (Number(total.toFixed(2)) + 1) || totalXML == null)
+                 var folioInFactura = FolioViajeXML(urlXMLCheck, folioCheck)
+                 if(+totalXML > (Number(total.toFixed(2)) + 1) || totalXML == null || !folioInFactura)
                  {
                    $("#btnGuardarFactura").prop("disabled", true)
                    alertToastError(`El total de la factura no coincide con el total calculado del sistema $${total.toFixed(2)}`)
@@ -740,6 +743,7 @@ function SavePartidasxFactura(IDFactura) {
         timer: 1500
       })
       uuid = '';
+      folioCheck = "";
       $('#divTablaPendientesEnviar').html(data.htmlRes)
       formatDataTable();
     }
@@ -862,6 +866,7 @@ function BuscarFolioProveedor() {
       totalViaje = +data.Total;
       proveedor = data.Proveedor;
       idprov = data.IDProveedor;
+      folioCheck = data.Folio;
       $('#FolioConcepto').html(data.Folio);
       $('#ProveedorConcepto').html(data.Proveedor);
       $('#FechaConcepto').html(data.FechaDescarga);
@@ -1046,9 +1051,10 @@ function archivosproveedor()
            {
              const urlXMLCheck = response.body
              totalXMLProveedor = leerXMLTransportista(urlXMLCheck)
-             if(+totalXMLProveedor > (Number(totalViaje.toFixed(2)) + 1) || totalXMLProveedor == null)
+             var folioInFactura = FolioViajeXML(urlXMLCheck, folioCheck)
+             if(+totalXMLProveedor > (Number(totalViaje.toFixed(2)) + 1) || totalXMLProveedor == null || !folioInFactura)
              {
-               alertToastError(`El total de la factura no coincide con el total calculado del sistema`)
+               alertToastError(`La factura no coincide con el sistema, por favor intente de nuevo.`)
                       //uppyDashboard.reset()
                uppyDashboard.cancelAll()
                $('.uploaded-files-proveedor ol').remove();
@@ -1091,4 +1097,5 @@ function archivosproveedor()
       $('#inputBuscarFolioProveedor').val('');
       $('#txtFolioFacturaP').val('');
       $('#txtComentariosP').val('');
+      folioCheck="";
     }
