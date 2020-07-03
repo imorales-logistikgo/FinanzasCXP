@@ -178,7 +178,7 @@ var GetEvidenciaMesaControl = function(IDViaje,Folio){
               <div class="card bg-light mb-3" style="max-width: 25rem;">
                 <div class="card-header" id="${data.Evidencias[i].Delivery}">${data.Evidencias[i].Delivery}</div>
                 <div class="card-body">
-                  <a href="${data.Evidencias[i].URLEvidencia}" target="_blank"><embed src='${data.Evidencias[i].URLEvidencia}' height="150px" width="220px"></a>
+                  <a href="${data.Evidencias[i].URLEvidencia}" target="_blank"><iframe src='${data.Evidencias[i].URLEvidencia}' height="150px" width="220px"></iframe></a>
                 </div>
                 <div class="card-footer">
                 <button class="btn btn-outline-success btn-elevate btn-circle btn-icon AprobarEvidencia" title="Aprobar" data-idviaje="${data.Evidencias[i].XD_IDViaje}" data-idevidenciaaprobar="${data.Evidencias[i].IDEvidencia}" data-tipoevidencia="${data.Evidencias[i].TipoEvidencia}" ><i class="fa fa-check"></i></button>

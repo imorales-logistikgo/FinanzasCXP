@@ -216,6 +216,9 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
         });
 
       }
+      else{
+        WaitMe_Hide('#WaitModalEP')
+      }
     });
   });
 

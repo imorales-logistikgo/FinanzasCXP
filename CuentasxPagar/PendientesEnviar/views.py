@@ -17,6 +17,8 @@ def GetPendientesEnviar(request):
 	print(request.user.roles)
 	if request.user.roles == 'MesaControl':
 		return redirect('EvidenciasProveedor')
+	# elif request.user.roles == 'Proveedor':
+	# 	return redirect('Actualizacion')
 	else:
 		PendingToSend = View_PendientesEnviarCxP.objects.filter(Status = 'FINALIZADO', IsEvidenciaDigital = 1, IsEvidenciaFisica = 1, IsFacturaProveedor = 0, Moneda = 'MXN', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
 		ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
@@ -171,6 +173,8 @@ def GetProveedorByID(request):
 	IsAmericano = Proveedor.IsAmericano
 	return JsonResponse({'IsAmericano': IsAmericano})
 
+def Actualizacion(request):
+	return render(request, 'update.html')
 
 # def CrearUsuariosTranportistas(request):
 # #editar un usuario

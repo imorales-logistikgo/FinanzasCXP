@@ -15,7 +15,7 @@ def ReporteFacturas(request):
 		Proveedores = Proveedor.objects.all()
 		return render(request, 'ReporteFacturas.html', {'Facturas': Facturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'Rol': request.user.roles})
 	else:
-		Facturas = View_ReporteFacturasCXP.objects.all()
+		Facturas = View_ReporteFacturasCXP.objects.exclude(Status = 'CANCELADA')
 		# listFacturas = FacturasToList(Facturas)
 		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
 		Proveedores = Proveedor.objects.all()
@@ -47,7 +47,7 @@ def FacturasToList(Facturas):
 
 
 def GetContadores():
-	AllFacturas = list(FacturasxProveedor.objects.values("Status").all())
+	AllFacturas = list(View_ReporteFacturasCXP.objects.values("Status").all())
 	ContadorPendientes = len(list(filter(lambda x: x["Status"] == "PENDIENTE", AllFacturas)))
 	ContadorPagadas = len(list(filter(lambda x: x["Status"] == "PAGADA", AllFacturas)))
 	ContadorAbonadas = len(list(filter(lambda x: x["Status"] == "ABONADA", AllFacturas)))
@@ -62,15 +62,15 @@ def GetFacturasByFilters(request):
 	if "Year" in request.GET:
 		arrMonth = json.loads(request.GET["arrMonth"])
 		Year = request.GET["Year"]
-		Facturas = FacturasxProveedor.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year)
+		Facturas = View_ReporteFacturasCXP.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year)
 	else:
-		Facturas = FacturasxProveedor.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')])
+		Facturas = View_ReporteFacturasCXP.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')])
 	if Proveedores:
 		Facturas = Facturas.filter(NombreCortoProveedor__in = Proveedores)
 	if Moneda:
 		Facturas = Facturas.filter(Moneda__in = Moneda)
 	if Status:
 		Facturas = Facturas.filter(Status__in = Status)
-	listFacturas = FacturasToList(Facturas)
-	htmlRes = render_to_string('TablaReporteFacturas.html', {'Facturas':listFacturas}, request = request,)
+	# listFacturas = FacturasToList(Facturas)
+	htmlRes = render_to_string('TablaReporteFacturas.html', {'Facturas':Facturas}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})

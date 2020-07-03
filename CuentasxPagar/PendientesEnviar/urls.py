@@ -11,7 +11,7 @@ urlpatterns = [
 	# path("CrearUsuariosTranportistas", views.CrearUsuariosTranportistas, name='CrearUsuariosTranportistas'),
     path("GetSerieProveedor", views.GetSerieProveedor, name='GetSerieProveedor'),
     path("GetProveedorByID", views.GetProveedorByID, name='GetProveedorByID'),
-    #path("leerExcel", views.leerExcel, name='leerExcel'),
+    path("Actualizacion", views.Actualizacion, name='Actualizacion'),
 
 
 ]

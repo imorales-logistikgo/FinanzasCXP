@@ -7,7 +7,7 @@ kt-menu__item--active
 
 {% block ContadoresEvidenciasProveedor %}
 
-{% if request.user.roles == "MesaControl" or "Admin" %}
+{% if request.user.roles == "MesaControl" %}
 <div class="kt-subheader kt-grid__item">
 	<div class="kt-container  kt-container--fluid ">
 		<div>
@@ -23,7 +23,7 @@ kt-menu__item--active
 {% endblock %}
 
 {% block EvidenciasProveedor %}
-{% if Rol == "Proveedor" %}
+{% if request.user.roles == "Proveedor" %}
 <form id="ValidateInput">
 	<div class="container py-4">
 		<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
@@ -80,7 +80,7 @@ kt-menu__item--active
 			</div>
 			{% endif %}
 
-			{% if request.user.roles == "MesaControl" or "Admin" %}
+			{% if request.user.roles == "MesaControl"%}
 		 	<div id="divTablaPendientesEnviar">
 					{% include "TablaEvidenciasMesaControl.html" %}
 			</div>

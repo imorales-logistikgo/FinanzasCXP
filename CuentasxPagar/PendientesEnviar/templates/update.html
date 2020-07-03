@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            box-sizing: border-box;
+            height: 80%;
+            background-color: #F6F2F2;
+            background-image: url('https://static.vecteezy.com/system/resources/previews/000/300/337/non_2x/engineering-theme-background-design-with-gears-vector.jpg');
+            background-repeat: no-repeat;
+            background-size:1600px;
+            font-family: 'Inconsolata', Helvetica, sans-serif;
+            font-size: 35px;
+            color: black;
+        }
+        #imgMonito{
+            display:block;
+            padding-top: 10px;
+            position: relative;
+            left: 160px;
+            width: 400px;
+            height: 400px;
+        }
+        #logo{
+            display:block;
+            padding-top: 10px;
+            position: relative;
+            left: 311px;
+            top: 70px;
+            width: 39px;
+            height: 39px;
+            z-index: 1;
+        }
+        .clean-danger{
+            border:solid 2px #e7d109;
+            background:#e7d109;
+            color:#222222;
+            padding:4px;
+            text-align:center;
+            size: 100px;
+            width:30%;
+            border-radius: 20px;
+            position: relative;
+            left: 80px;
+        }
+        .returnPage{
+          color: black;
+          font-size: 25px;
+
+        }
+
+    </style>
+    <title>Actualizando</title>
+</head>
+<body>
+  <a href="{% url 'PendienteEnviar' %}" class="returnPage">Pagina principal</a>
+    <div>
+        <img src='{% static "img/LogistiKGO-06.ico" %}' id="logo">
+    </div>
+    <div style="text-align: right">
+        <img src="https://ozonosur.cl/img/monito-2_d600.png" alt="" id="imgMonito">
+    </div>
+    <br>
+   <div class="clean-danger">Actualizando sistema, por favor intentelo de nuevo más tarde.</div>
+</body>
+</html>

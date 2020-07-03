@@ -249,10 +249,12 @@ def EvidenciasToList(Evidencia):
 def SaveAprobarEvidencia(request):
     jParams = json.loads(request.body.decode('utf-8'))
     try:
+        print(jParams)
         with transaction.atomic(using = 'XD_ViajesDB'):
             with transaction.atomic(using='bkg_viajesDB'):
                 with transaction.atomic(using='users'):
                     if jParams['TipoEvidencia'] == 'Pedido':
+                        print('yes')
                         SaveEvidenciaxPedido = XD_EvidenciasxPedido.objects.get(IDEvidenciaxPedido = jParams['IDSaveEvidencia'])
                         SaveEvidenciaxPedido.IsValidada = True
                         SaveEvidenciaxPedido.Observaciones = jParams['Comentarios']
@@ -261,6 +263,7 @@ def SaveAprobarEvidencia(request):
                         SaveBanderaPedidoxviaje = XD_PedidosxViajes.objects.get(XD_IDPedido = SaveEvidenciaxPedido.IDXD_Pedido, XD_IDViaje = SaveEvidenciaxPedido.XD_IDViaje)
                         SaveBanderaPedidoxviaje.IsEvidenciaPedidoxViaje = True
                         SaveBanderaPedidoxviaje.save()
+                        print('yes2')
                         IsXpress = IsViajeXpress(SaveEvidenciaxPedido.IDXD_Pedido, SaveEvidenciaxPedido.XD_IDViaje)
                         if IsXpress:
                             GetAllIDEvidenciasPedidos = XD_PedidosxViajes.objects.filter(XD_IDPedido = SaveEvidenciaxPedido.IDXD_Pedido)
@@ -562,7 +565,7 @@ def IsViajeXpress(IDPedido,ViajeID):
     PedidosWithEvDig = list()
     ListaPedidosWithEvDig = list()
     for GetTipoTransporte in GetTipoViaje:
-        if GetTipoTransporte.XD_IDViaje.TipoViaje == 'XPRESS' or 'DIRECTO':
+        if GetTipoTransporte.XD_IDViaje.TipoViaje == 'XPRESS':
             jsonTipo = {}
             jsonTipo['XD_IDPedido'] = GetTipoTransporte.XD_IDPedido.XD_IDPedido
             jsonTipo['XD_IDViaje'] = GetTipoTransporte.XD_IDViaje.XD_IDViaje
@@ -570,13 +573,14 @@ def IsViajeXpress(IDPedido,ViajeID):
             jsonTipo['TipoTransporte'] = GetTipoTransporte.XD_IDViaje.TipoViaje
             jsonTipo['IsEvidenciaDigital'] = GetTipoTransporte.IsEvidenciaPedidoxViaje
             PedidosWithEvDig.append(jsonTipo)
+    print(PedidosWithEvDig)
     if len(PedidosWithEvDig) == 2:
         for i in PedidosWithEvDig:
             if i['XD_IDPedido'] == IDPedido and i['XD_IDViaje'] != ViajeID:
                 ListaPedidosWithEvDig.append(i['IsEvidenciaDigital'])
         IsValido = False if( False in ListaPedidosWithEvDig) else True
     else:
-        IsValido = True
+        IsValido = False
     return IsValido
 
 def VerificarSaveViajePE(IDPedido):
