@@ -518,13 +518,14 @@ def FindFolioEvidenciaBGK(Folio, Transportista):
 
 
 def readJson(Remisiones):
-    with open('static/json/EvidenciasxDefault.json') as file:
-        data = json.load(file)
-        NewJson = list()
-        for EvidenciaPrincipal in data['Principales']:
-            AddDataToJson = {}
-            AddDataToJson['Delivery'] = EvidenciaPrincipal['titulo']
-            NewJson.append(AddDataToJson)
+    # with open('static/json/EvidenciasxDefault.json') as file:
+    #     data = json.load(file)
+    GetDataEvidencias = JsonEvidenciasBKG()
+    NewJson = list()
+    for EvidenciaPrincipal in GetDataEvidencias['Principales']:
+        AddDataToJson = {}
+        AddDataToJson['Delivery'] = EvidenciaPrincipal['titulo']
+        NewJson.append(AddDataToJson)
         if Remisiones != 0:
             TotalRemisiones = GetEachRemision(Remisiones)
             for addNewRemision in TotalRemisiones:
@@ -612,6 +613,47 @@ def DescargarHojaLiberacion(request):
         GetRutaHojaLiberacion = XD_Viajes.objects.get(XD_IDViaje = IDViaje)
         HojaLiberacion = GetRutaHojaLiberacion.RutaHojaEmbarqueCosto
     return JsonResponse({'HojaLiberacion':HojaLiberacion})
+
+
+def JsonEvidenciasBKG():
+    JsonData = {
+        "Principales":
+        [
+        {
+          "titulo": "CUSTOMS ENTRY",
+          "tipo": "EVIDENCIA"
+        },
+        {
+          "titulo": "FISCAL STAMP",
+          "tipo": "EVIDENCIA"
+        },
+        {
+          "titulo": "LEFT SIDE",
+          "tipo": "EVIDENCIA"
+        },
+        {
+          "titulo": "RIGHT SIDE",
+          "tipo": "EVIDENCIA"
+        },
+        {
+          "titulo": "REMISSION",
+          "tipo": "EVIDENCIA"
+        },
+        {
+          "titulo": "LOAD EVIDENCE",
+          "tipo": "EVIDENCIA"
+        },
+        {
+          "titulo": "BILL OF LADING",
+          "tipo": "EVIDENCIA"
+        },
+        {
+          "titulo": "REAR SIDE",
+          "tipo": "EVIDENCIA"
+        }
+        ]
+    }
+    return JsonData
 
     # try:
     #     if GetTipoViaje.TipoViaje == 'XPRESS':
