@@ -657,16 +657,19 @@ var FolioViajeXML = function(xml, folioB){
          var obNodosUI = resp.getElementsByTagName("cfdi:Concepto")[0];
          var folio = obNodosUI.getAttribute('Descripcion');
          var withoutBR = folio.replace(/\n|\r/g, " ")
-         var newArrFolio = withoutBR.split(" ")
+         var withoutComa = withoutBR.replace(/,/g, "")
+         var withoutPunto = withoutComa.replace(/\./g,'')
+         var newArrFolio = withoutPunto.split(" ")
          var buscarFolio =  newArrFolio.indexOf(folioB)
          if (buscarFolio != -1){
           newArrFolio[buscarFolio] == folioB ? FolioTrueOrFalse=true:FolioTrueOrFalse= false;
-          console.log(FolioTrueOrFalse)
          }
          else{
           var folio1 = obNodosUI.getAttribute('NoIdentificacion');
           var withoutBR1 = folio1.replace(/\n|\r/g, " ")
-          var newArrFolio1 = withoutBR1.split(" ")
+          var withoutComa1 = withoutBR1.replace(/,/g, "")
+          var withoutPunto1 = withoutComa1.replace(/\./g,'')
+          var newArrFolio1 = withoutPunto1.split(" ")
           var buscarFolio1 =  newArrFolio1.indexOf(folioB)
           buscarFolio1 != -1 ? newArrFolio1[buscarFolio1] == folioB ?( FolioTrueOrFalse = true, console.log(FolioTrueOrFalse)): FolioTrueOrFalse = false : FolioTrueOrFalse = false;
          }
