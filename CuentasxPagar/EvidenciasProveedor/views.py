@@ -249,12 +249,10 @@ def EvidenciasToList(Evidencia):
 def SaveAprobarEvidencia(request):
     jParams = json.loads(request.body.decode('utf-8'))
     try:
-        print(jParams)
         with transaction.atomic(using = 'XD_ViajesDB'):
             with transaction.atomic(using='bkg_viajesDB'):
                 with transaction.atomic(using='users'):
                     if jParams['TipoEvidencia'] == 'Pedido':
-                        print('yes')
                         SaveEvidenciaxPedido = XD_EvidenciasxPedido.objects.get(IDEvidenciaxPedido = jParams['IDSaveEvidencia'])
                         SaveEvidenciaxPedido.IsValidada = True
                         SaveEvidenciaxPedido.Observaciones = jParams['Comentarios']
@@ -263,7 +261,6 @@ def SaveAprobarEvidencia(request):
                         SaveBanderaPedidoxviaje = XD_PedidosxViajes.objects.get(XD_IDPedido = SaveEvidenciaxPedido.IDXD_Pedido, XD_IDViaje = SaveEvidenciaxPedido.XD_IDViaje)
                         SaveBanderaPedidoxviaje.IsEvidenciaPedidoxViaje = True
                         SaveBanderaPedidoxviaje.save()
-                        print('yes2')
                         IsXpress = IsViajeXpress(SaveEvidenciaxPedido.IDXD_Pedido, SaveEvidenciaxPedido.XD_IDViaje)
                         if IsXpress:
                             GetAllIDEvidenciasPedidos = XD_PedidosxViajes.objects.filter(XD_IDPedido = SaveEvidenciaxPedido.IDXD_Pedido)
@@ -436,10 +433,12 @@ def SaveEvidenciaFisica(request):
                             SaveEvidenciaPedidosxViaje.IsEvidenciaFisicaPedidoxViaje = True
                         SaveEvidenciaPedidosxViaje.save()
                         if jParams["TipoEvidencia"] != 'FOLIO' or jParams["TipoEvidencia"] != 'CORREO':
-                            GetIDPE = RelacionConceptoxProyecto.objects.get(IDConcepto = jParams['IDPedido'])
-                            SaveEVFisPE = PendientesEnviar.objects.get(IDPendienteEnviar = GetIDPE.IDPendienteEnviar.IDPendienteEnviar)
-                            SaveEVFisPE.IsEvidenciaFisica = True
-                            SaveEVFisPE.save()
+                            IsExpress = XD_Viajes.objects.get(XD_IDViaje = jParams['IDViaje'])
+                            if IsExpress.TipoViaje == 'XPRESS':
+                                GetIDPE = RelacionConceptoxProyecto.objects.get(IDConcepto = jParams['IDPedido'])
+                                SaveEVFisPE = PendientesEnviar.objects.get(IDPendienteEnviar = GetIDPE.IDPendienteEnviar.IDPendienteEnviar)
+                                SaveEVFisPE.IsEvidenciaFisica = True
+                                SaveEVFisPE.save()
                         SaveXD_Viajes = ValidarEvidenciaXD_Viajea(jParams['IDViaje'])
                         if SaveXD_Viajes:
                             SaveBanderasXD_Viajes = XD_Viajes.objects.get(XD_IDViaje = jParams['IDViaje'])
