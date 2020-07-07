@@ -8,7 +8,7 @@ var totalIncialNoReajuste;
 var ivaProcentaje = 0.16;
 var retencionProcentaje = 0.04;
 var diferenciaReajuste = 0;
-var idFacturaReajuste, valorAnterioInputs, valorAnterioInputsRepartos, indexRowReajuste, showBtnA;
+var idFacturaReajuste, valorAnterioInputs, valorAnterioInputsRepartos, indexRowReajuste, showBtnA, statusAprobarFacturaIndex;
 var costoRepartoDefault, costoAccesoriosDefault, costoRecoleccionDefault, costoViajeDefault, tipoViaje;
 $(document).ready(function()
 {
@@ -86,6 +86,8 @@ $(document).on( 'click', '.btnEliminarFactura', function () {
 
 //Aprobar factura subida por el proveedor
 $(document).on('click', '.btnAprobarFactura',function(){
+  var tableIndex = $('#TableEstadosdeCuenta').DataTable();
+  statusAprobarFacturaIndex = tableIndex.row($(this).parents('tr')).index();
   Swal.fire({
    title: '¿Estas Seguro?',
    text: "Validaras una factura importante",
@@ -994,20 +996,9 @@ function ValidarFactura(IDFactura, btn) {
     },
     body: JSON.stringify(jParams)
   }).then(function(response, data){
-
     if(response.status == 200)
     {
-      Swal.fire({
-        type: 'success',
-        title: 'La factura ha sido validada correctamente',
-        showConfirmButton: true,
-        timer: 2500
-      })
-      var trBtnAprovar= $(btn).closest('tr');
-      var findInput = $(trBtnAprovar).find('input[name="checkEC"]')[0];
-      $(findInput).css('display', 'block');
-      $(btn).remove();
-      WaitMe_Hide('#TbPading');
+      return response.clone().json();
     }
     else if(response.status == 500)
     {
@@ -1020,6 +1011,20 @@ function ValidarFactura(IDFactura, btn) {
       WaitMe_Hide('#TbPading');
     }
 
+  }).then(function(data){
+    Swal.fire({
+      type: 'success',
+      title: 'La factura ha sido validada correctamente',
+      showConfirmButton: true,
+      timer: 2500
+    })
+    var tablaIndexChange = $('#TableEstadosdeCuenta').DataTable();
+    tablaIndexChange.cell(statusAprobarFacturaIndex,10).data(data.Status);
+    var trBtnAprovar= $(btn).closest('tr');
+    var findInput = $(trBtnAprovar).find('input[name="checkEC"]')[0];
+    $(findInput).css('display', 'block');
+    $(btn).remove();
+    WaitMe_Hide('#TbPading');
   }).catch(function(ex){
     console.log(ex);
   });

@@ -24,7 +24,7 @@ def EstadosdeCuenta(request):
 	if request.user.roles == 'Proveedor':
 		 return render(request, '404.html')
 	else:
-		result = View_FacturasxProveedor.objects.filter(Status__in = ("PENDIENTE", "ABONADA"), FechaFactura__month = datetime.datetime.now().month, FechaFactura__year = datetime.datetime.now().year)
+		result = View_FacturasxProveedor.objects.filter(Status__in = ("PENDIENTE", "ABONADA", 'APROBADA'), FechaFactura__month = datetime.datetime.now().month, FechaFactura__year = datetime.datetime.now().year)
 		#result = View_FacturasxProveedor.objects.filter(Q(Status = "PENDIENTE") | Q(Status = "ABONADA") & Q(FechaFactura__month = datetime.datetime.now().month))
 		ListaFacturas = FacturasToList(result)
 		#Folios = list()
@@ -36,9 +36,9 @@ def EstadosdeCuenta(request):
 		#			FoliosPago += Pago.IDPago.Folio + ", "
 		#	FoliosPago = FoliosPago[:-2]
 		#	Folios.append(FoliosPago) 'Folios':Folios,
-		ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas = GetContadores()
+		ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas, ContadoresAprobada = GetContadores()
 		Proveedores = Proveedor.objects.all()
-		return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Proveedores': Proveedores, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas, 'Rol': request.user.username})
+		return render(request, 'EstadosdeCuenta.html', {'Facturas': ListaFacturas, 'Proveedores': Proveedores, 'ContadoresPendientes': ContadoresPendientes, 'ContadoresAbonadas': ContadoresAbonadas, 'ContadoresPagadas': ContadoresPagadas, 'ContadoresCanceladas': ContadoresCanceladas, 'ContadoresAprobada':ContadoresAprobada ,'Rol': request.user.username})
 
 
 def GetDataReajuste(request):
@@ -178,7 +178,8 @@ def GetContadores():
 	ContadoresAbonadas = len(list(filter(lambda x: x["Status"] == "ABONADA", AllFacturas)))
 	ContadoresPagadas = len(list(filter(lambda x: x["Status"] == "PAGADA", AllFacturas)))
 	ContadoresCanceladas = len(list(filter(lambda x: x["Status"] == "CANCELADA", AllFacturas)))
-	return ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas
+	ContadoresAprobada = len(list(filter(lambda x: x["Status"] == "APROBADA", AllFacturas)))
+	return ContadoresPendientes, ContadoresAbonadas, ContadoresPagadas, ContadoresCanceladas, ContadoresAprobada
 
 
 
@@ -336,8 +337,10 @@ def ValidarFactura(request):
 	Factura = FacturasxProveedor.objects.get(IDFactura = IDFactura)
 	if Factura:
 		Factura.IsAutorizada = True
+		Factura.Status = 'APROBADA'
 		Factura.save()
-	return HttpResponse('')
+	Status = Factura.Status
+	return JsonResponse({"Status":Status})
 
 
 

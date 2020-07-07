@@ -12,6 +12,7 @@ kt-menu__item--active
 		<div>
 			<p>{{UserName}}</p>
 			<span class="badge badge-pill badge-primary">Pendientes<span class="badge badge-pill badge-secondary"><strong>{{ContadoresPendientes}}</strong></span></span>
+			<span class="badge badge-pill badge-info">Aprobadas<span class="badge badge-pill badge-secondary"><strong>{{ContadoresAprobada}}</strong></span></span>
 			<span class="badge badge-pill badge-warning">Abonadas<span class="badge badge-pill badge-secondary"><strong>{{ContadoresAbonadas}}</strong></span></span>
 			<span class="badge badge-pill badge-success">Pagadas<span class="badge badge-pill badge-secondary"><strong>{{ContadoresPagadas}}</strong></span></span>
 			<span class="badge badge-pill badge-danger">Rechazadas<span class="badge badge-pill badge-secondary"><strong>{{ContadoresCanceladas}}</strong></span></span>
@@ -90,6 +91,7 @@ kt-menu__item--active
 					<div class="container">
 						<select class="selectpicker" id="cboStatus" multiple name="Status" title="Selecciona un estatus" data-width="100%" data-live-search="true">
 							<option>PENDIENTE</option>
+							<option>APROBADA</option>
 							<option>ABONADA</option>
 							<option>PAGADA</option>
 							<option>CANCELADA</option>
