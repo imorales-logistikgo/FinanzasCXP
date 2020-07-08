@@ -265,10 +265,12 @@ def SaveAprobarEvidencia(request):
                         if IsXpress:
                             GetAllIDEvidenciasPedidos = XD_PedidosxViajes.objects.filter(XD_IDPedido = SaveEvidenciaxPedido.IDXD_Pedido)
                             for SaveEachPedidoPE in  GetAllIDEvidenciasPedidos:
-                                GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = SaveEachPedidoPE.XD_IDPedido.XD_IDPedido)
-                                SaveBanderaPendientesEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = GetIDPendientesEnviar[0].IDPendienteEnviar.IDPendienteEnviar)
-                                SaveBanderaPendientesEnviar.IsEvidenciaDigital = True
-                                SaveBanderaPendientesEnviar.save()
+                                GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = SaveEachPedidoPE.XD_IDPedido.XD_IDPedido).values('IDPendienteEnviar')
+                                for VerificarTipoConcepto in GetIDPendientesEnviar:
+                                    SaveBanderaPendientesEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = VerificarTipoConcepto['IDPendienteEnviar'])
+                                    if SaveBanderaPendientesEnviar['TipoConcepto'] == 'PEDIDO':
+                                        SaveBanderaPendientesEnviar.IsEvidenciaDigital = True
+                                        SaveBanderaPendientesEnviar.save()
                         SaveXD_EDigital = EvidenciaDigitalCompleta("",SaveBanderaPedidoxviaje.XD_IDViaje.XD_IDViaje)
                         if SaveXD_EDigital:
                             SaveXD_EDigital = XD_Viajes.objects.get(XD_IDViaje = SaveBanderaPedidoxviaje.XD_IDViaje.XD_IDViaje)
@@ -278,10 +280,12 @@ def SaveAprobarEvidencia(request):
                             if VerificarEvidenciaT1yT2:
                                 VerificarValidacionesEvidencias = VerificarSaveViajePE(SaveBanderaPedidoxviaje.XD_IDPedido.XD_IDPedido)
                                 for EachViaje in VerificarValidacionesEvidencias:
-                                    GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = EachViaje)
-                                    SaveBanderaPendientesEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = GetIDPendientesEnviar[0].IDPendienteEnviar.IDPendienteEnviar)
-                                    SaveBanderaPendientesEnviar.IsEvidenciaDigital = True
-                                    SaveBanderaPendientesEnviar.save()
+                                    GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = EachViaje).values('IDPendienteEnviar')
+                                    for VerificarTipoConcepto in GetIDPendientesEnviar:
+                                        SaveBanderaPendientesEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = VerificarTipoConcepto['IDPendienteEnviar'])
+                                        if SaveBanderaPendientesEnviar['TipoConcepto'] == 'VIAJE':
+                                            SaveBanderaPendientesEnviar.IsEvidenciaDigital = True
+                                            SaveBanderaPendientesEnviar.save()
                     if jParams['TipoEvidencia'] == 'Maniobras' or jParams['TipoEvidencia'] == 'Custodia':
                         SaveEvidenciaxManiobra = XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje = jParams['IDSaveEvidencia'])
                         SaveEvidenciaxManiobra.IsValidada = True
@@ -299,10 +303,12 @@ def SaveAprobarEvidencia(request):
                             SaveXD_EDigital.IsEvidenciaPedidos = True
                             SaveXD_EDigital.save()
                             if jParams['TipoEvidencia'] == 'Custodia':
-                                GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = SaveXD_EDigital.XD_IDViaje)
-                                SaveBanderaPendientesEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = GetIDPendientesEnviar[0].IDPendienteEnviar.IDPendienteEnviar)
-                                SaveBanderaPendientesEnviar.IsEvidenciaDigital = True
-                                SaveBanderaPendientesEnviar.save()
+                                GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = SaveXD_EDigital.XD_IDViaje).values('IDPendienteEnviar')
+                                for TC in GetIDPendientesEnviar:
+                                    SaveBanderaPendientesEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = TC['IDPendienteEnviar'])
+                                    if SaveBanderaPendientesEnviar['TipoConcepto'] == 'VIAJE':
+                                        SaveBanderaPendientesEnviar.IsEvidenciaDigital = True
+                                        SaveBanderaPendientesEnviar.save()
                     if jParams['TipoEvidencia'] == 'BKG':
                         SaveAprobarEvidencia = Bro_EvidenciasxViaje.objects.get(IDBro_EvidenciaxViaje = jParams['IDSaveEvidencia'])
                         SaveAprobarEvidencia.IsValidada = True
@@ -435,20 +441,24 @@ def SaveEvidenciaFisica(request):
                         if jParams["TipoEvidencia"] != 'FOLIO' or jParams["TipoEvidencia"] != 'CORREO':
                             IsExpress = XD_Viajes.objects.get(XD_IDViaje = jParams['IDViaje'])
                             if IsExpress.TipoViaje == 'XPRESS':
-                                GetIDPE = RelacionConceptoxProyecto.objects.get(IDConcepto = jParams['IDPedido'])
-                                SaveEVFisPE = PendientesEnviar.objects.get(IDPendienteEnviar = GetIDPE.IDPendienteEnviar.IDPendienteEnviar)
-                                SaveEVFisPE.IsEvidenciaFisica = True
-                                SaveEVFisPE.save()
+                                GetIDPE = RelacionConceptoxProyecto.objects.filter(IDConcepto = jParams['IDPedido']).values("IDPendienteEnviar")
+                                for Conceptos in GetIDPE:
+                                    SaveEVFisPE = PendientesEnviar.objects.get(IDPendienteEnviar = Conceptos["IDPendienteEnviar"])
+                                    if SaveEVFisPE.TipoConcepto == 'PEDIDO':
+                                        SaveEVFisPE.IsEvidenciaFisica = True
+                                        SaveEVFisPE.save()
                         SaveXD_Viajes = ValidarEvidenciaXD_Viajea(jParams['IDViaje'])
                         if SaveXD_Viajes:
                             SaveBanderasXD_Viajes = XD_Viajes.objects.get(XD_IDViaje = jParams['IDViaje'])
                             SaveBanderasXD_Viajes.IsEvidenciaFisica = True
                             SaveBanderasXD_Viajes.Status = 'COMPLETO'
                             SaveBanderasXD_Viajes.save()
-                            GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.get(IDConcepto = jParams['IDViaje'])
-                            SaveEvFisicaAdmon = PendientesEnviar.objects.get(IDPendienteEnviar = GetIDPendientesEnviar.IDPendienteEnviar.IDPendienteEnviar)
-                            SaveEvFisicaAdmon.IsEvidenciaFisica = True
-                            SaveEvFisicaAdmon.save()
+                            GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = jParams['IDViaje']).values('IDPendienteEnviar')
+                            for conceptos in GetIDPendientesEnviar:
+                                SaveEvFisicaAdmon = PendientesEnviar.objects.get(IDPendienteEnviar = conceptos['IDPendienteEnviar'])
+                                if SaveEvFisicaAdmon.TipoConcepto == 'VIAJE':
+                                    SaveEvFisicaAdmon.IsEvidenciaFisica = True
+                                    SaveEvFisicaAdmon.save()
                     return HttpResponse(status = 200)
     except Exception as e:
         transaction.rollback(using = 'XD_ViajesDB')

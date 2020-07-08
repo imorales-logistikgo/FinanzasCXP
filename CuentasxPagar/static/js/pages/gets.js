@@ -77,7 +77,7 @@ var GetFolioEvidencias = function(Folio){
           $('#BtnHojaLiberacion').data('IDViajeHL', data.Folios[i].IDViaje)
           $('#BtnHojaLiberacion').data('TipoEvidenciaHL', data.Folios[i].TipoEvidencia)
           data.Folios[i].Status == 'Pendiente' || data.Folios[i].Status == 'Rechazada' ? uploadEvidences(`#uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}`, `${data.Folios[i].Delivery.replace(/ /g, "")}`) : ($(`#uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}`).append(`<div class="row">
-            <div class="col-md-4"><embed src="${data.Folios[i].RutaArchivo}"></div>
+            <div class="col-md-4"><iframe src="${data.Folios[i].RutaArchivo}"></iframe></div>
           </div>`)/*, $('#btnGuardarEvidenciasP').prop('disabled', true), $('#HojaLiberacion').html('<strong>Hoja de liberacion lista para descargar</strong>')*/);
           arrStatus.push(data.Folios[i].Status)
       }
