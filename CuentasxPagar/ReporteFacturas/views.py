@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 def ReporteFacturas(request):
 	if request.user.roles == 'Proveedor':
-		Facturas = View_ReporteFacturasCXP.objects.filter(IDProveedor = request.user.IDTransportista)
+		Facturas = View_ReporteFacturasCXP.objects.filter(IDProveedor = request.user.IDTransportista).exclude(Status = 'DEPURADO')
 		# listFacturas = FacturasToList(Facturas)
 		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
 		Proveedores = Proveedor.objects.all()

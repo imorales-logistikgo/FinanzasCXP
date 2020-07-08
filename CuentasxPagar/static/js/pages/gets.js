@@ -273,7 +273,7 @@ var GetIsEvidenciaDigitalCompleta = function(IDViaje, TipoEv){
     else if(response.status == 500){
       Swal.fire({
         type: 'error',
-        title: 'Ocurrio un error',
+        title: 'Ocurrio un error prueba',
         showConfirmButton: false,
         timer: 2500
       });

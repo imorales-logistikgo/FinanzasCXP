@@ -14,11 +14,10 @@ from django.shortcuts import redirect
 @login_required
 def GetPendientesEnviar(request):
 	#PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0 AND Moneda = %s", ['FINALIZADO', 'MXN'])
-	print(request.user.roles)
 	if request.user.roles == 'MesaControl':
 		return redirect('EvidenciasProveedor')
-	elif request.user.roles == 'Proveedor':
-		return redirect('Actualizacion')
+	# elif request.user.roles == 'Proveedor':
+	# 	return redirect('Actualizacion')
 	else:
 		PendingToSend = View_PendientesEnviarCxP.objects.filter(Status = 'FINALIZADO', IsEvidenciaDigital = 1, IsEvidenciaFisica = 1, IsFacturaProveedor = 0, Moneda = 'MXN', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
 		ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()

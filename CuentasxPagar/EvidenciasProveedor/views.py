@@ -268,7 +268,7 @@ def SaveAprobarEvidencia(request):
                                 GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = SaveEachPedidoPE.XD_IDPedido.XD_IDPedido).values('IDPendienteEnviar')
                                 for VerificarTipoConcepto in GetIDPendientesEnviar:
                                     SaveBanderaPendientesEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = VerificarTipoConcepto['IDPendienteEnviar'])
-                                    if SaveBanderaPendientesEnviar['TipoConcepto'] == 'PEDIDO':
+                                    if SaveBanderaPendientesEnviar.TipoConcepto == 'PEDIDO':
                                         SaveBanderaPendientesEnviar.IsEvidenciaDigital = True
                                         SaveBanderaPendientesEnviar.save()
                         SaveXD_EDigital = EvidenciaDigitalCompleta("",SaveBanderaPedidoxviaje.XD_IDViaje.XD_IDViaje)
@@ -283,7 +283,7 @@ def SaveAprobarEvidencia(request):
                                     GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = EachViaje).values('IDPendienteEnviar')
                                     for VerificarTipoConcepto in GetIDPendientesEnviar:
                                         SaveBanderaPendientesEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = VerificarTipoConcepto['IDPendienteEnviar'])
-                                        if SaveBanderaPendientesEnviar['TipoConcepto'] == 'VIAJE':
+                                        if SaveBanderaPendientesEnviar.TipoConcepto == 'VIAJE':
                                             SaveBanderaPendientesEnviar.IsEvidenciaDigital = True
                                             SaveBanderaPendientesEnviar.save()
                     if jParams['TipoEvidencia'] == 'Maniobras' or jParams['TipoEvidencia'] == 'Custodia':
@@ -469,7 +469,7 @@ def SaveEvidenciaFisica(request):
 
 
 def EvidenciaDigitalCompleta(request, viaje=""):
-    IDViaje = request.GET["XD_IDViaje"] if(viaje =="") else viaje
+    IDViaje = request.GET["IDViaje"] if(viaje =="") else viaje
     TieneEvidenciaDigital = XD_PedidosxViajes.objects.filter(XD_IDViaje = IDViaje)
     ListaTieneEvidenciaDigital = list()
     for TieneEvi in TieneEvidenciaDigital:
