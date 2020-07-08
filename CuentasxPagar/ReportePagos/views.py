@@ -6,20 +6,22 @@ from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.shortcuts import redirect
 @login_required
 
 def ReportePagos(request):
 	if request.user.roles == 'Proveedor':
-		Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA").filter(IDProveedor = request.user.IDTransportista)
-		Folios = list()
-		for Pago in Pagos:
-			FoliosFactura = ""
-			for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago).select_related('IDFactura'):
-				FoliosFactura += Factura.IDFactura.Folio + ", "
-			FoliosFactura = FoliosFactura[:-2]
-			Folios.append(FoliosFactura)
-		Proveedores = Proveedor.objects.all()
-		return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores, 'Rol': request.user.roles});
+		return redirect('Actualizacion')
+		# Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA").filter(IDProveedor = request.user.IDTransportista)
+		# Folios = list()
+		# for Pago in Pagos:
+		# 	FoliosFactura = ""
+		# 	for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago).select_related('IDFactura'):
+		# 		FoliosFactura += Factura.IDFactura.Folio + ", "
+		# 	FoliosFactura = FoliosFactura[:-2]
+		# 	Folios.append(FoliosFactura)
+		# Proveedores = Proveedor.objects.all()
+		# return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores, 'Rol': request.user.roles});
 	else:
 		Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA").filter(FechaPago__month = datetime.datetime.now().month, FechaPago__year = datetime.datetime.now().year)
 		Folios = list()
