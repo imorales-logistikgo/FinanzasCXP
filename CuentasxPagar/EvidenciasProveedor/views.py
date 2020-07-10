@@ -451,8 +451,14 @@ def SaveEvidenciaFisica(request):
                         if SaveXD_Viajes:
                             SaveBanderasXD_Viajes = XD_Viajes.objects.get(XD_IDViaje = jParams['IDViaje'])
                             SaveBanderasXD_Viajes.IsEvidenciaFisica = True
-                            SaveBanderasXD_Viajes.Status = 'COMPLETO'
+                            # SaveBanderasXD_Viajes.Status = 'COMPLETO'
                             SaveBanderasXD_Viajes.save()
+                            PedidoStatus = XD_PedidosxViajes.objects.filter(XD_IDViaje = jParams['IDViaje'])
+                            if len(PedidoStatus) != 0:
+                                for GetPedidoStatus in PedidoStatus:
+                                    SavePedidoStatus = XD_PedidosxViajes.objects.get(XD_IDPedido = GetPedidoStatus.XD_IDPedido, XD_IDViaje = GetPedidoStatus.XD_IDViaje)
+                                    SavePedidoStatus.StatusPedido = 'COMPLETO'
+                                    SavePedidoStatus.save()
                             GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = jParams['IDViaje']).values('IDPendienteEnviar')
                             for conceptos in GetIDPendientesEnviar:
                                 SaveEvFisicaAdmon = PendientesEnviar.objects.get(IDPendienteEnviar = conceptos['IDPendienteEnviar'])

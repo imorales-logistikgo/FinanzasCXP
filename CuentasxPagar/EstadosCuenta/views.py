@@ -16,7 +16,7 @@ from django.db import transaction, DatabaseError
 import json
 from string import digits
 from django.conf import settings
-#import pandas as pd
+import pandas as pd
 
 
 @login_required
@@ -425,24 +425,76 @@ def FixIDProveedor(request):
 # 			print(e)
 
 def leerExcel(reques):
-	archivo_excel = pd.read_excel('static/json/CorreosProvedeoresValidados.xlsx')
-# 	# values = archivo_excel['Folio'].values
-	for i in archivo_excel.index:
-		separador = ";"
-		print(archivo_excel['CxP'][i])
-		if archivo_excel['CxP'][i] != 'nan':
-			NewData = archivo_excel['CxP'][i].split(separador)
-			for correo in NewData:
-				try:
-					InsertCorreo = AdmonCorreosxTransportista()
-					InsertCorreo.IDTransportista = Proveedor.objects.get(IDTransportista = archivo_excel['IDTransportista'][i])
-					InsertCorreo.Correo = correo.replace(" ", "")
-					InsertCorreo.IsEnviarCorreo = 0
-					InsertCorreo.save()
-				except Exception as e:
-					print(e)
-		else:
-			print(archivo_excel['IDTransportista'][i])
+	archivo_excel = pd.read_excel('static/json/S.I.xlsx')
+ 	# values = archivo_excel['Folio']
+	b = list()
+	try:
+		for i in archivo_excel.index:
+			a = View_PendientesEnviarCxP.objects.get(Folio = archivo_excel['Folio'][i])
+			fac = FacturasxProveedor()
+			fac.Folio = archivo_excel['Factura'][i]
+			fac.NombreCortoProveedor =a.NombreProveedor
+			fac.FechaFactura = '2020-01-01'
+			fac.FechaRevision = '2020-01-01'
+			fac.FechaVencimiento = '2020-02-01'
+			fac.Moneda = a.Moneda
+			fac.Subtotal = a.Subtotal
+			fac.IVA = a.IVA
+			fac.Retencion = a.Retencion
+			fac.Total = a.Total
+			fac.Saldo = a.Total
+			fac.IsAutorizada = False
+			fac.RutaXML = ''
+			fac.RutaPDF = ''
+			fac.TipoCambio = 1
+			fac.Comentarios = ''
+			fac.TotalConvertido = 0
+			fac.Status = 'PENDIENTE'
+			fac.IDUsuraioAlta = 152
+			fac.IDProveedor = a.IDProveedor
+			fac.save()
+			pr = PartidaProveedor()
+			pr.FechaAlta = '2020-07-09'
+			pr.Subtotal = a.Subtotal
+			pr.IVA = a.IVA
+			pr.Retencion = a.Retencion
+			pr.Total = a.Total
+			pr.IsActiva = True
+			pr.save()
+			RF = RelacionFacturaProveedorxPartidas()
+			RF.IDFacturaxProveedor = FacturasxProveedor.objects.get(IDFactura = fac.IDFactura)
+			RF.IDPartida = PartidaProveedor.objects.get(IDPartida = pr.IDPartida)
+			RF.IDPendienteEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = a.IDPendienteEnviar)
+			RF.save()
+			print(a.IDPendienteEnviar)
+			# f = RelacionFacturaProveedorxPartidas.objects.get(IDPendienteEnviar = a.IDPendienteEnviar)
+
+	except Exception as e:
+		print(e)
+
+	# 	z = {}
+	# 	z['Folio'] = a.Folio
+	# 	z['FechaDescarga'] = a.FechaDescarga
+	# 	z['IsFacturaProveedor'] = a.IsFacturaProveedor
+	# 	b.append(z)
+	# 	print(a.IsFacturaProveedor)
+	# print(b)
+
+		# separador = ";"
+		# print(archivo_excel['CxP'][i])
+		# if archivo_excel['CxP'][i] != 'nan':
+		# 	NewData = archivo_excel['CxP'][i].split(separador)
+		# 	for correo in NewData:
+		# 		try:
+		# 			InsertCorreo = AdmonCorreosxTransportista()
+		# 			InsertCorreo.IDTransportista = Proveedor.objects.get(IDTransportista = archivo_excel['IDTransportista'][i])
+		# 			InsertCorreo.Correo = correo.replace(" ", "")
+		# 			InsertCorreo.IsEnviarCorreo = 0
+		# 			InsertCorreo.save()
+		# 		except Exception as e:
+		# 			print(e)
+		# else:
+		# 	print(archivo_excel['IDTransportista'][i])
 
 # 		try:
 # 			with transaction.atomic(using='users'):

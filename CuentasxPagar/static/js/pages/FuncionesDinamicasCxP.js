@@ -659,7 +659,8 @@ var FolioViajeXML = function(xml, folioB){
          var withoutBR = folio.replace(/\n|\r/g, " ")
          var withoutComa = withoutBR.replace(/,/g, "")
          var withoutPunto = withoutComa.replace(/\./g,'')
-         var newArrFolio = withoutPunto.split(" ")
+         var withoutSlash = withoutPunto.replace(/\//g,'')
+         var newArrFolio = withoutSlash.split(" ")
          var buscarFolio =  newArrFolio.indexOf(folioB)
          if (buscarFolio != -1){
           newArrFolio[buscarFolio] == folioB ? FolioTrueOrFalse=true:FolioTrueOrFalse= false;
@@ -669,9 +670,10 @@ var FolioViajeXML = function(xml, folioB){
           var withoutBR1 = folio1.replace(/\n|\r/g, " ")
           var withoutComa1 = withoutBR1.replace(/,/g, "")
           var withoutPunto1 = withoutComa1.replace(/\./g,'')
-          var newArrFolio1 = withoutPunto1.split(" ")
+          var withoutSlash1 = withoutPunto1.replace(/\//g,'')
+          var newArrFolio1 = withoutSlash1.split(" ")
           var buscarFolio1 =  newArrFolio1.indexOf(folioB)
-          buscarFolio1 != -1 ? newArrFolio1[buscarFolio1] == folioB ?( FolioTrueOrFalse = true, console.log(FolioTrueOrFalse)): FolioTrueOrFalse = false : FolioTrueOrFalse = false;
+          buscarFolio1 != -1 ? newArrFolio1[buscarFolio1] == folioB ?( FolioTrueOrFalse = true, console.log(FolioTrueOrFalse)): FolioTrueOrFalse = false : FolioTrueOrFalse = FolioInEtiquetaParte(resp, folioB);
          }
        }
        else
@@ -685,6 +687,39 @@ var FolioViajeXML = function(xml, folioB){
     return FolioTrueOrFalse = false;
   }
 }
+
+
+var FolioInEtiquetaParte = function(resp,folioB){
+  var FolioTrueOrFalse;
+  try {
+    var obNodosUI = resp.getElementsByTagName("cfdi:Parte")[0];
+    var folio = obNodosUI.getAttribute('Descripcion');
+    var withoutBR = folio.replace(/\n|\r/g, " ")
+    var withoutComa = withoutBR.replace(/,/g, "")
+    var withoutPunto = withoutComa.replace(/\./g,'')
+    var withoutSlash = withoutPunto.replace(/\//g,'')
+    var newArrFolio = withoutSlash.split(" ")
+    var buscarFolio =  newArrFolio.indexOf(folioB)
+    if (buscarFolio != -1){
+     newArrFolio[buscarFolio] == folioB ? FolioTrueOrFalse=true:FolioTrueOrFalse= false;
+    }
+    else{
+     var folio1 = obNodosUI.getAttribute('NoIdentificacion');
+     var withoutBR1 = folio1.replace(/\n|\r/g, " ")
+     var withoutComa1 = withoutBR1.replace(/,/g, "")
+     var withoutPunto1 = withoutComa1.replace(/\./g,'')
+     var withoutSlash1 = withoutPunto1.replace(/\//g,'')
+     var newArrFolio1 = withoutSlash1.split(" ")
+     var buscarFolio1 =  newArrFolio1.indexOf(folioB)
+     buscarFolio1 != -1 ? newArrFolio1[buscarFolio1] == folioB ?( FolioTrueOrFalse = true, console.log(FolioTrueOrFalse)): FolioTrueOrFalse = false : FolioTrueOrFalse = false;
+    }
+    return FolioTrueOrFalse
+  } catch (e) {
+     var FolioTrueOrFalse = false
+     return FolioTrueOrFalse
+  }
+}
+
 
 var RFCRecerptor = function(xml){
   try {
