@@ -337,7 +337,25 @@ kt-menu__item--active
 																		<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Viajes</a>
 																	</li>
 
-																	<div class="form-group row justify-content-end" id="VerTotalModal">
+																	{% if request.user.username == "cxp1@logistikgo" or request.user.username == "jcastillo@logistikgo" or request.user.username == "jfraga@logistikgo" %}
+																		<div class=" form-group row" id="EDP">
+																			<label class="col-6 col-form-label"><strong>Depurado</strong></label>
+																			<div class="col-3">
+																				<span class="kt-switch kt-switch--danger kt-switch--sm">
+																					<label>
+																						<input type="checkbox" id="Depurado">
+																						<span></span>
+																					</label>
+																				</span>
+																			</div>
+																		</div>
+																	{% endif %}
+
+																	{% if request.user.username == "cxp1@logistikgo" or request.user.username == "jcastillo@logistikgo" or request.user.username == "jfraga@logistikgo" %}
+																	<div class="form-group row justify-content-end" id="VerTotalModal" style="padding-left: 150px; padding-top: 10px;">
+																	{% else %}
+																	<div class="form-group row justify-content-end" id="VerTotalModal" style="padding-left: 400px; padding-top: 10px;">
+																	{% endif %}
 																		<label class="col-6 col-form-label kt-badge kt-badge--warning kt-badge--inline kt-badge--pill kt-badge--rounded">Total:</label>
 																		<div class="col-3" id="verTotalPE">
 																		</div>

@@ -1,15 +1,15 @@
 var idPag;
-var btn,valComp, lgkRFC = 'LKM021004ERA';
+var btn,valComp, lgkRFC = 'LKM021004ERA', FP;
 $(document).ready(function(){
 $(document).keydown(function(e){
     if(e.which === 123){
        return false;
     }
 });
-
 $(document).bind("contextmenu",function(e) {
  e.preventDefault();
 });
+
   var idPago;
   formatDataTable();
 
@@ -448,7 +448,8 @@ async function subirComplementoPagoProveedor(totalPago)
                    const urlXMLCheck = response.body
                    const ValidarXML = GetIdDocumentoAndImpPagado(urlXMLCheck);
                    const ValidarRFC = RFCRecerptor(urlXMLCheck);
-                   if(valComp || valComp == null || valComp == undefined || ValidarRFC != lgkRFC || ValidarRFC == null)
+                   GetFechaPagoAndTipoComplemento(urlXMLCheck);
+                   if(valComp || valComp == null || valComp == undefined || ValidarRFC != lgkRFC || ValidarRFC == null || !FP)
                    {
                      alertToastError("El total y las facturas no coinciden con el sistema")
                       //uppyDashboard.reset()

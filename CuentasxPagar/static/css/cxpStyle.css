@@ -85,8 +85,13 @@ input[name="checkEC"]:checked
 {
   display: none;
 }
-#VerTotalModal{
-  padding-left: 400px;
+/* #VerTotalModal{
+  padding-left: 150px;
+  padding-top: 10px;
+} */
+
+#EDP{
+  padding-left: 180px;
 }
 
 

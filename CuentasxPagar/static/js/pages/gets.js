@@ -381,3 +381,45 @@ var GetFacturasxPago =  function(Pago, arrXML){
         }
     });
  }
+
+
+var GetFechaPagoAndTipoComplemento = function(xml){
+  try{
+      const proxyURL = "https://cors-anywhere.herokuapp.com/";
+      var newXML = proxyURL + xml;
+      var arrDataXML = [];
+      var req = new XMLHttpRequest();
+         req.open('GET', newXML, false);
+         req.send(null);
+         if (req.status == 200){
+             var resp = req.responseXML;
+             var obNodos = resp.getElementsByTagName("cfdi:Complemento")
+             var etiquetaFecha = obNodos[0].getElementsByTagName("pago10:Pagos")
+             var etiquetafecha2 = etiquetaFecha[0].getElementsByTagName("pago10:Pago")
+             var atributoFechaPago = etiquetafecha2[0].getAttribute('FechaPago')
+             var findTipoComprobante = resp.getElementsByTagName("cfdi:Comprobante")
+             var TipoCom= findTipoComprobante[0].getAttribute('TipoDeComprobante')
+             var ValidacionFechaAndComp = GetFechaPago(atributoFechaPago,TipoCom)
+          }
+  }
+  catch(error){
+    alertToastError('Ocurrio un error al leer el archivo xml');
+    console.error(error);
+  }
+}
+
+var GetFechaPago = function(Fecha,TipoComp){
+  $.ajax({
+        url: `/ReportePagos/GetFechaPago?IDPago=${654}&FechaXML=${Fecha}&TComplemento=${TipoComp}`,
+        type: 'GET',
+        async:false,
+        contentType: "application/json; charset=utf-8",
+        success: function(data){
+          FP = data.Fecha
+        },
+        error: function(request, status, error){
+          alertToastError("Ocurrio un problema");
+          console.log(error);
+        }
+    });
+}

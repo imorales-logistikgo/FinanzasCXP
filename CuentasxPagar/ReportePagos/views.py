@@ -7,6 +7,7 @@ import json, datetime
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import redirect
+from datetime import datetime as dt
 @login_required
 
 def ReportePagos(request):
@@ -119,3 +120,13 @@ def GetFacturasxPago(request):
 		Data['ImpPagado'] = Factura.IDPagoxFactura.Total
 		DataBD.append(Data)
 	return JsonResponse({"DataBD":DataBD})
+
+def GetFechaPago(request):
+	IDPago = request.GET["IDPago"]
+	FechaXML = request.GET["FechaXML"]
+	Complemento = request.GET["TComplemento"]
+	GetFecha = PagosxProveedor.objects.get(IDPago = IDPago)
+	Fecha = GetFecha.FechaPago
+	NewFecha = Fecha.strftime('%Y-%m-%d')
+	AprobadaORNo = True if NewFecha==FechaXML[:10] and Complemento == "P" else False
+	return JsonResponse({"Fecha":AprobadaORNo})

@@ -36,7 +36,11 @@
 						<th></th>
 						<th></th>
 						<th></th>
+						{% if request.user.username == "cxp1@logistikgo" or request.user.username == "jfraga@logistikgo" %}
 						<th></th>
+						{% else %}
+						<th style="display:none"></th>
+						{% endif %}
 						<th></th>
 					</tr>
 				</thead>
@@ -58,7 +62,11 @@
 						<td><input name="EvidenciaXML" type="hidden" data-facturaid="{{Factura.IDFactura|safe}}"  data-evidenciaxml="{{Factura.RutaXML|safe}}" data-isautorizada = "{{Factura.IsAutorizada}}"></td>
 						<td></td>
 						<td></td>
+						{% if request.user.username == "cxp1@logistikgo" or request.user.username == "jfraga@logistikgo" %}
 						<td></td>
+						{% else %}
+						<td style="display:none"></td>
+						{% endif %}
 						<td>{{Factura.TotalXML|default:0}}</td>
 					</tr>
 					{%endfor%}

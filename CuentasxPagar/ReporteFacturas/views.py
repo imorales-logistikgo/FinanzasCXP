@@ -15,7 +15,7 @@ def ReporteFacturas(request):
 		Proveedores = Proveedor.objects.all()
 		return render(request, 'ReporteFacturas.html', {'Facturas': Facturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'Rol': request.user.roles})
 	else:
-		Facturas = View_ReporteFacturasCXP.objects.exclude(Status = 'CANCELADA')
+		Facturas = View_ReporteFacturasCXP.objects.exclude(Status__in= ('CANCELADA','DEPURADO'))
 		# listFacturas = FacturasToList(Facturas)
 		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
 		Proveedores = Proveedor.objects.all()
@@ -62,15 +62,15 @@ def GetFacturasByFilters(request):
 	if "Year" in request.GET:
 		arrMonth = json.loads(request.GET["arrMonth"])
 		Year = request.GET["Year"]
-		Facturas = View_ReporteFacturasCXP.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year)
+		Facturas = View_ReporteFacturasCXP.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year).exclude(Status = 'DEPURADO')
 	else:
-		Facturas = View_ReporteFacturasCXP.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')])
+		Facturas = View_ReporteFacturasCXP.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')]).exclude(Status = 'DEPURADO')
 	if Proveedores:
 		Facturas = Facturas.filter(NombreCortoProveedor__in = Proveedores)
 	if Moneda:
 		Facturas = Facturas.filter(Moneda__in = Moneda)
 	if Status:
-		Facturas = Facturas.filter(Status__in = Status)
+		Facturas = Facturas.filter(Status__in = Status).exclude(Status = 'DEPURADO')
 	# listFacturas = FacturasToList(Facturas)
 	htmlRes = render_to_string('TablaReporteFacturas.html', {'Facturas':Facturas}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})

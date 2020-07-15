@@ -452,7 +452,10 @@ function getFolioXML(xml)
            var resp = req.responseXML;
            var obNodos = resp.children[0].attributes;
            var fol = obNodos.Folio ? obNodos.Folio.nodeValue : obNodos.Serie.nodeValue;
-           rest = fol.replace(/^0+/, '');
+           var withoutCero = fol.replace(/^0+/, '');
+           var withouSignos = withoutCero.replace(/[^\w ]/, '')
+           var NewFolioFactura = withouSignos.replace(/^[a-zA-Z]+/g, '')
+           rest = NewFolioFactura
        }
        else
        {
@@ -660,7 +663,8 @@ var FolioViajeXML = function(xml, folioB){
          var withoutComa = withoutBR.replace(/,/g, "")
          var withoutPunto = withoutComa.replace(/\./g,'')
          var withoutSlash = withoutPunto.replace(/\//g,'')
-         var newArrFolio = withoutSlash.split(" ")
+         var withoutguion = withoutSlash.replace(/\-/g,'')
+         var newArrFolio = withoutguion.split(" ")
          var buscarFolio =  newArrFolio.indexOf(folioB)
          if (buscarFolio != -1){
           newArrFolio[buscarFolio] == folioB ? FolioTrueOrFalse=true:FolioTrueOrFalse= false;
@@ -671,7 +675,8 @@ var FolioViajeXML = function(xml, folioB){
           var withoutComa1 = withoutBR1.replace(/,/g, "")
           var withoutPunto1 = withoutComa1.replace(/\./g,'')
           var withoutSlash1 = withoutPunto1.replace(/\//g,'')
-          var newArrFolio1 = withoutSlash1.split(" ")
+          var withoutguion1 = withoutSlash1.replace(/\-/g,'')
+          var newArrFolio1 = withoutguion1.split(" ")
           var buscarFolio1 =  newArrFolio1.indexOf(folioB)
           buscarFolio1 != -1 ? newArrFolio1[buscarFolio1] == folioB ?( FolioTrueOrFalse = true, console.log(FolioTrueOrFalse)): FolioTrueOrFalse = false : FolioTrueOrFalse = FolioInEtiquetaParte(resp, folioB);
          }
@@ -747,52 +752,3 @@ var RFCRecerptor = function(xml){
     return RFCInXML = null;
   }
 }
-
-//
-// var EvidenciasCustodia = function(){
-//   var TipoEvidencia = [
-//     {
-//       "Titulo": "CORREO",
-//       "Tipo": "EVCUSTODIAF"
-//     },
-//     {
-//       "Titulo": "FOLIO",
-//       "Tipo": "EVCUSTODIAF"
-//     },
-//   ]
-//   return TipoEvidencia;
-// }
-//
-// var SubirEvidenciasCustodia = function(status,delivery,XD_IDPedido,IDViaje,TipoEvidencia,RutaArchivo){
-//   var item = EvidenciasCustodia();
-//   for (var i=0; i<item.length; i++){
-//     $('#allEvidences').append(`<div class="col-sm-4 col-lg-4 col-md-4">
-//                           <div class="kt-portlet kt-portlet--height-fluid">
-//                           <h5>Estatus: <strong>${status}</strong></h5>
-//                             <div class="kt-portlet__head" id="headUppyTitulo">
-//                               <div class="kt-portlet__head-label">
-//                                 <h3 class="kt-portlet__head-title" id='${delivery.replace(/ /g, "")}' data-status="${status}">
-//                                   ${delivery.replace(/ /g, "")}
-//                                 </h3>
-//                               </div>
-//                             </div>
-//                               <div class="kt-portlet__body">
-//                                 <div class="row" id="prueba">
-//                                 </div>
-//                                 <div class="kt-uppy verificar" id="uploadEvidencesProveedor${delivery.replace(/ /g, "")}">
-//                                   <div  class="kt-uppy__dashboard"></div>
-//                                   <div class="kt-uppy__progress"></div>
-//                                 </div>
-//                                 <input type="text" id="ComentarioEvidencia" class="form-control" placeholder="Comentario" disabled>
-//                               </div>
-//                           </div>
-//                         </div>`);
-//
-//     $(`#${delivery.replace(/ /g, "")}`).data('idpedido', XD_IDPedido)
-//     $(`#${delivery.replace(/ /g, "")}`).data('idviaje', IDViaje)
-//     $(`#${delivery.replace(/ /g, "")}`).data('tipoevidencia', TipoEvidencia)
-//     status == 'Pendiente' || status == 'Rechazada' ? uploadEvidences(`#uploadEvidencesProveedor${delivery.replace(/ /g, "")}`, `${delivery.replace(/ /g, "")}`) : ($(`#uploadEvidencesProveedor${delivery.replace(/ /g, "")}`).append(`<div class="row">
-//       <div class="col-md-4"><embed src="${RutaArchivo}"></div>
-//     </div>`)/*, $('#btnGuardarEvidenciasP').prop('disabled', true)*/);
-//   }
-// }

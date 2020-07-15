@@ -541,12 +541,12 @@ def readJson(Remisiones):
         AddDataToJson = {}
         AddDataToJson['Delivery'] = EvidenciaPrincipal['titulo']
         NewJson.append(AddDataToJson)
-        if Remisiones != 0:
-            TotalRemisiones = GetEachRemision(Remisiones)
-            for addNewRemision in TotalRemisiones:
-                NewRemision = {}
-                NewRemision['Delivery'] = 'Remision'+'-'+addNewRemision
-                NewJson.append(NewRemision)
+    if Remisiones != 0:
+        TotalRemisiones = GetEachRemision(Remisiones)
+        for addNewRemision in TotalRemisiones:
+            NewRemision = {}
+            NewRemision['Delivery'] = 'Remision'+'-'+addNewRemision
+            NewJson.append(NewRemision)
     return NewJson
 
 def GetEachRemision(Remision):

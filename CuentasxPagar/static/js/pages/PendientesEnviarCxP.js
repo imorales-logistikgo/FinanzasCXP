@@ -11,6 +11,15 @@ var idPend, uuid;
 var totalXML=0, totalXMLProveedor=0;
 
 $(document).ready(function() {
+  $(document).keydown(function(e){
+      if(e.which === 123){
+         return false;
+      }
+  });
+  $(document).bind("contextmenu",function(e) {
+   e.preventDefault();
+  });
+
 //Tabla Pendientes de enviar
 formatDataTable();
 $('#TablePendientesEnviar').css("display", "block");
