@@ -320,6 +320,8 @@ function leerXMLTransportista(xml)
          if (req.status == 200)
          {
              var resp = req.responseXML;
+             // var obNodos = resp.getElementsByTagName("cfdi:Comprobante")[0]
+             // var total = obNodos.getAttribute('Total')
              var obNodos = resp.children[0].attributes;
              var total = obNodos.Total;
              (total != undefined) ? rest = total.nodeValue : rest = 0;

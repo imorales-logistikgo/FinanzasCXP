@@ -23,7 +23,7 @@ function removeItemFromArr (arr, item) {
 //OBTENER EL FOLIO PARA SUBIR LAS EVIDENCIAS A XD DESDE EL USUARIO DEL PROVEEDOR
 var GetFolioEvidencias = function(Folio){
   WaitMe_Show('#TbPading');
-  fetch(`/EvidenciasProveedor/FindFolioProveedor?Folio=${Folio}`, {
+  fetch(`/EvidenciasProveedor/FindFolioProveedorE?Folio=${Folio}`, {
     method: "GET",
     credentials: "same-origin",
     headers: {

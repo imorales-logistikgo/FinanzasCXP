@@ -27,7 +27,7 @@ def EvidenciasProveedor(request):
         # SinEvidenciaFisica = XD_Viajes.objects.filter(IsEvidenciaFisica = False).count()
         return render(request, 'EvidenciasProveedor.html')
 
-def FindFolioProveedor(request):
+def FindFolioProveedorE(request):
     Folio = request.GET["Folio"]
     try:
         arrFoliosEvidencias = list()
