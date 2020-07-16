@@ -106,6 +106,7 @@ def SaveFacturaxProveedor(request):
 	newFactura.IDProveedor =  jParams["IDProveedor"]
 	newFactura.TotalXML = jParams["TotalXML"]
 	newFactura.UUID = jParams["UUID"]
+	newFactura.Status = 'DEPURADO' if(jParams["Estado"] == 'YU') else 'PENDIENTE'
 	newFactura.save()
 	return HttpResponse(newFactura.IDFactura)
 

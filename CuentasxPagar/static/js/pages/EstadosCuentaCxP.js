@@ -552,6 +552,7 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
   }
   $('input#valCobro').each(function(){
    calculo = calculo + parseFloat($(this).val());
+   calculo.toFixed(2)
  });
   $('#AddCosto').val(truncarDecimales(calculo, 2));
   calculo = 0;

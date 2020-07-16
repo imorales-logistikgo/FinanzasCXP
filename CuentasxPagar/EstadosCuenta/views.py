@@ -425,19 +425,18 @@ def FixIDProveedor(request):
 # 			print(e)
 
 def leerExcel(reques):
-	archivo_excel = pd.read_excel('static/json/UUID.xlsx')
- 	# values = archivo_excel['Folio']
-	b = list()
+	archivo_excel = pd.read_excel('static/json/WithoutUUID.xlsx')
+	# values = archivo_excel['Factura']
 	try:
 		for i in archivo_excel.index:
-			a = FacturasxProveedor.objects.filter(Folio = archivo_excel['SF'][i]).exclude(Status = 'CANCELADA').get()
+			a = FacturasxProveedor.objects.filter(IDFactura = archivo_excel['IDFactura'][i]).exclude(Status = 'CANCELADA').get()
 			if a.UUID is None:
 				# a.UUID = archivo_excel['UUID'][i]
 				# a.save()
 				print(a.Folio)
 	except Exception as e:
+		print(archivo_excel['IDFactura'][i])
 		print(e)
-		pass
 
 	# 	z = {}
 	# 	z['Folio'] = a.Folio
