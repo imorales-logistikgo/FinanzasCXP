@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from XD_Viajes.models import XD_Viajes, XD_PedidosxViajes, XD_Pedidos, XD_AccesoriosxViajes, XD_EvidenciasxPedido, XD_EvidenciasxViaje
 from PendientesEnviar.models import PendientesEnviar, RelacionConceptoxProyecto
-from usersadmon.models import AdmonUsuarios
+from usersadmon.models import AdmonUsuarios,Proveedor
 from bkg_viajes.models import Bro_Viajes, Bro_EvidenciasxViaje
 import json, datetime
 from django.db import transaction
@@ -15,13 +15,14 @@ import requests
 @login_required
 def EvidenciasProveedor(request):
     if request.user.roles != 'Proveedor':
-        EvidenciasxAprobar = XD_Viajes.objects.filter(Status = 'FINALIZADO').exclude(Status = 'CANCELADO')
-        EvidenciasxAprobarBKG = Bro_Viajes.objects.filter(StatusProceso = 'FINALIZADO').exclude(StatusProceso = 'CANCELADO')
+        EvidenciasxAprobar = XD_Viajes.objects.filter(Status = 'FINALIZADO', FechaDespacho__month = datetime.datetime.now().month, FechaDespacho__year = datetime.datetime.now().year).exclude(Status = 'CANCELADO')
+        EvidenciasxAprobarBKG = Bro_Viajes.objects.filter(StatusProceso = 'FINALIZADO', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year).exclude(StatusProceso = 'CANCELADO')
         Evidencias = chain(EvidenciasxAprobar, EvidenciasxAprobarBKG)
         SinEvidenciaDigitalXD = XD_Viajes.objects.filter(IsEvidenciaPedidos = False).count()
         SinEvidenciaDigitalBKG = Bro_Viajes.objects.filter(IsEvidenciasDigitales = False).count()
         SinEvidenciaDigital = SinEvidenciaDigitalXD+SinEvidenciaDigitalBKG
-        return render(request, 'EvidenciasProveedor.html', {'EvidenciasxAprobar': Evidencias, 'EvidenciaDigital': SinEvidenciaDigital})
+        Proveedores = Proveedor.objects.all()
+        return render(request, 'EvidenciasProveedor.html', {'EvidenciasxAprobar': Evidencias, 'EvidenciaDigital': SinEvidenciaDigital, 'Proveedores':Proveedores})
     elif request.user.roles == 'Proveedor':
         # SinEvidenciaDigital = XD_Viajes.objects.filter(IsEvidencia = False).count()
         # SinEvidenciaFisica = XD_Viajes.objects.filter(IsEvidenciaFisica = False).count()
@@ -81,15 +82,25 @@ def FindFolioProveedorE(request):
             for Maniobras in XD_AccesoriosxViajes.objects.filter(XD_IDViaje = XDFolio.XD_IDViaje, Descripcion__in = ('Maniobras de descarga', 'Maniobras de carga')):
                 if Maniobras:
                     GetManiobras = XD_EvidenciasxViaje.objects.filter(IDXD_Viaje = Maniobras.XD_IDViaje, Titulo__in = ('Maniobras de descarga', 'Maniobras de carga'))
-                    for GetEachManiobra in GetManiobras:
+                    if len(GetManiobras) == 0:
                         newDelivery = {}
-                        newDelivery['XD_IDPedido'] = Maniobras.XD_IDAccesorioxViaje if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada or len(GetManiobras) ==0) else  GetEachManiobra.IDEvidenciaxViaje
-                        newDelivery['Delivery'] = Maniobras.Descripcion if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada or len(GetManiobras) >= 1) else  GetEachManiobra.Titulo
-                        newDelivery['IDViaje'] = Maniobras.XD_IDViaje if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada or len(GetManiobras) >= 1) else GetEachManiobra.IDXD_Viaje
+                        newDelivery['XD_IDPedido'] = Maniobras.XD_IDAccesorioxViaje #if(len(GetManiobras) == 0) else Maniobras.XD_IDAccesorioxViaje if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else GetEachManiobra.IDEvidenciaxViaje
+                        newDelivery['Delivery'] = Maniobras.Descripcion #if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else Maniobras.Descripcion if(len(GetManiobras) == 0) else GetEachManiobra.Titulo
+                        newDelivery['IDViaje'] = Maniobras.XD_IDViaje #if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else Maniobras.XD_IDViaje if(len(GetManiobras) == 0) else GetEachManiobra.IDXD_Viaje
                         newDelivery['TipoEvidencia'] = 'Maniobras'
-                        newDelivery['RutaArchivo'] = '' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else GetEachManiobra.RutaArchivo if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else GetEachManiobra.RutaArchivo
-                        newDelivery['Status'] = 'Rechazada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else 'Aprobada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsValidada) else 'Pendiente' if len(GetManiobras) == 0 else "Enviada" if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else "Otro"
+                        newDelivery['RutaArchivo'] = '' #if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else GetEachManiobra.RutaArchivo if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else GetEachManiobra.RutaArchivo
+                        newDelivery['Status'] = 'Pendiente' #if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else 'Aprobada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsValidada) else 'Pendiente' if len(GetManiobras) == 0 else "Enviada" if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else "Otro"
                         arrFoliosEvidencias.append(newDelivery)
+                    else:
+                        for GetEachManiobra in GetManiobras:
+                            newDelivery = {}
+                            newDelivery['XD_IDPedido'] =GetEachManiobra.IDEvidenciaxViaje
+                            newDelivery['Delivery'] = Maniobras.Descripcion if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else Maniobras.Descripcion if(len(GetManiobras) == 0) else GetEachManiobra.Titulo
+                            newDelivery['IDViaje'] = GetEachManiobra.IDXD_Viaje
+                            newDelivery['TipoEvidencia'] = 'Maniobras'
+                            newDelivery['RutaArchivo'] = '' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else GetEachManiobra.RutaArchivo if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else GetEachManiobra.RutaArchivo
+                            newDelivery['Status'] = 'Rechazada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else 'Aprobada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsValidada) else 'Pendiente' if len(GetManiobras) == 0 else "Enviada" if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else "Otro"
+                            arrFoliosEvidencias.append(newDelivery)
         elif 'FTL' in Folio:
             GetEviBKG = FindFolioEvidenciaBGK(Folio, request.user.IDTransportista)
             for i in GetEviBKG['ListaEvidencias']:
@@ -670,14 +681,30 @@ def JsonEvidenciasBKG():
     }
     return JsonData
 
-    # try:
-    #     if GetTipoViaje.TipoViaje == 'XPRESS':
-    #         GetPedidosXpress = XD_PedidosxViajes.filter(XD_IDViaje = GetTipoViaje.XD_IDViaje, IsEvidenciaPedidoxViaje = 1)
-    #         for EachPedido in GetPedidosXpress:
-    #             PedidosWithEvDig.append(EachPedido.IsEvidenciaPedidoxViaje)
-    #         IsValido = False if( False in PedidosWithEvDig) else True
-    #         return IsValido
-    # except Exception as e:
-    #     print(e)
-    #     return False
-# hojaembaruecosto --> xd hoja liberacion
+def FilterBy(request):
+    Proveedores = json.loads(request.GET["Proveedor"])
+    Proyectos = json.loads(request.GET["Proyecto"])
+    if "Year" in request.GET:
+        arrMonth = json.loads(request.GET["arrMonth"])
+        Year = request.GET["Year"]
+        if "BKG" in Proyectos and "XD" in Proyectos:
+            Evidencias = Bro_Viajes.objects.filter(FechaDescarga__month__in = arrMonth, FechaDescarga__year = Year)
+            Evidencias = XD_Viajes.objects.filter(FechaDespacho__month__in = arrMonth, FechaDespacho__year = Year)
+        elif "BKG" in Proyectos and "XD" not in Proyectos:
+            Evidencias = Bro_Viajes.objects.filter(FechaDescarga__month__in = arrMonth, FechaDescarga__year = Year)
+        elif "XD" in Proyectos and "BKG" not in Proyectos:
+            Evidencias = XD_Viajes.objects.filter(FechaDespacho__month__in = arrMonth, FechaDespacho__year = Year)
+    else:
+        if "BKG" in Proyectos and "XD" in Proyectos:
+            Evidencias = Bro_Viajes.objects.filter(FechaDescarga__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')])
+            Evidencias = XD_Viajes.objects.filter(FechaDespacho__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')])
+        elif "BKG" in Proyectos and "XD" not in Proyectos:
+            Evidencias = Bro_Viajes.objects.filter(FechaDescarga__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')])
+        elif "XD" in Proyectos and "BKG" not in Proyectos:
+            Evidencias = XD_Viajes.objects.filter(FechaDespacho__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')])
+        # Evidencias = Bro_Viajes.objects.filter(FechaDescarga__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')]).exclude(StatusFacturaProveedor = 'DEPURADO')
+    if Proveedores:
+        Evidencias = Bro_Viajes.filter(IDTransportista__in = Proveedores)
+    # ListData = PEToList(Evidencias)
+    htmlRes = render_to_string('TablaEvidenciasMesaControl.html', {'EvidenciasProveedor':Evidencias}, request = request,)
+    return JsonResponse({'htmlRes' : htmlRes})

@@ -17,4 +17,5 @@ urlpatterns = [
     path('GetEachRemision', views.GetEachRemision, name='GetEachRemision'),
     path('DescargarHojaLiberacion', views.DescargarHojaLiberacion, name='DescargarHojaLiberacion'),
     path('JsonEvidenciasBKG', views.JsonEvidenciasBKG, name='JsonEvidenciasBKG'),
+    path('FilterBy', views.FilterBy, name='FilterBy'),
 ]

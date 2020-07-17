@@ -410,7 +410,7 @@ var GetFechaPagoAndTipoComplemento = function(xml){
 
 var GetFechaPago = function(Fecha,TipoComp){
   $.ajax({
-        url: `/ReportePagos/GetFechaPago?IDPago=${654}&FechaXML=${Fecha}&TComplemento=${TipoComp}`,
+        url: `/ReportePagos/GetFechaPago?IDPago=${idPag}&FechaXML=${Fecha}&TComplemento=${TipoComp}`,
         type: 'GET',
         async:false,
         contentType: "application/json; charset=utf-8",

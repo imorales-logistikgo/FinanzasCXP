@@ -69,7 +69,7 @@ def CancelarPago(request):
 			for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = IDPago).select_related('IDFactura'):
 				Factura.IDFactura.Saldo += (Factura.IDPagoxFactura.Total/Factura.IDPago.TipoCambio) if (Factura.IDFactura.Moneda == 'USD') else Factura.IDPagoxFactura.Total
 				if Factura.IDFactura.Saldo == Factura.IDFactura.Total:
-					Factura.IDFactura.Status = "PENDIENTE"
+					Factura.IDFactura.Status = "APROBADA"
 				else:
 					Factura.IDFactura.Status = "ABONADA"
 				Factura.IDFactura.save()

@@ -16,7 +16,7 @@ class Bro_Viajes(models.Model):
     StatusProceso = models.CharField(max_length=200)
     IsEvidenciasDigitales = models.BooleanField()
     IsEvidenciasFisicas = models.BooleanField()
-    FechaDespacho = models.DateTimeField(db_column = 'FechaDescarga')
+    FechaDescarga = models.DateTimeField(db_column = 'FechaDescarga')
     IDTransportista = models.IntegerField()
     RutaHojaLiberacion = models.CharField(max_length=500)
 

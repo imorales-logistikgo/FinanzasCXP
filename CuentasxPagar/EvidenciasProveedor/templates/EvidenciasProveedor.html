@@ -15,11 +15,121 @@ kt-menu__item--active
 			<span class="badge badge-pill badge-danger">Sin Evidencias<span class="badge badge-pill badge-secondary"><strong>{{EvidenciaDigital}}</strong></span></span>
 		</div>
 	</div>
+	<div class="kt-header__topbar-item kt-header__topbar-item--quick-panel" data-toggle="kt-tooltip" title="Filtros" data-placement="right">
+		<span class="kt-header__topbar-icon" id="kt_quick_panel_toggler_btn">
+			<button type="button" class="btn btn-brand btn-elevate btn-pill btn-elevate-air btn-sm" id="BtnOpenFiltrosEV">Filtros</button>
+		</span>
+	</div>
 </div>
 {% endif %}
 {% endblock %}
 
 {% block FiltrosEvidenciasProveedor %}
+{% if request.user.roles == "MesaControl" %}
+<div id="kt_quick_panel" class="kt-quick-panel">
+	<!--<a href="#" class="kt-quick-panel__close" id="kt_quick_panel_close_btn"><i class="flaticon2-delete"></i></a>-->
+
+	<div class="kt-quick-panel__content">
+		<div class="tab-content">
+			<div class="tab-pane fade show kt-scroll active" id="kt_quick_panel_tab_notifications" role="tabpanel">
+				<div class="kt-notification" id="filtroSize">
+					<div class="container">
+						<div class="form-group row">
+							<label class="col-8 col-form-label"><strong>Fecha por mes y año</strong></label>
+							<div class="col-sm-12 col-md-4 col-lg-3">
+								<span class="kt-switch kt-switch--outline kt-switch--icon kt-switch--info">
+									<label>
+										<input type="checkbox" id="chkMonthYear" name="fechaxMesyAño">
+										<span></span>
+									</label>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="container" id="filtroxMesyAno">
+						<div class="row form-group">
+							<div class="col-md-7">
+								<label><strong>Mes:</strong></label>
+								<select class="selectpicker btn-xs btn" id="filtroxMes" multiple title="Mes" data-width="100%" data-live-search="true">
+									<option value="1">Enero</option>
+									<option value="2">Febrero</option>
+									<option value="3">Marzo</option>
+									<option value="4">Abril</option>
+									<option value="5">Mayo</option>
+									<option value="6">Junio</option>
+									<option value="7">Julio</option>
+									<option value="8">Agosto</option>
+									<option value="9">Septiembre</option>
+									<option value="10">Octubre</option>
+									<option value="11">Noviembre</option>
+									<option value="12">Diciembre</option>
+								</select>
+
+							</div>
+							<div class="col-md-5">
+								<label><strong>Año:</strong></label>
+								<select class="selectpicker btn-xs btn" id="filtroxAno" title="Año" data-width="100%" data-live-search="true">
+									<option value="2020">2020</option>
+									<option value="2019">2019</option>
+									<option value="2018">2018</option>
+									<option value="2017">2017</option>
+									<option value="2016">2016</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="kt-subheader__main" id="fechaRango">
+						<label class="col-form-label col-lg-3 col-sm-12"><strong>Fecha: </strong></label>
+						<div class="col-lg-12 col-md-8 col-sm-12">
+							<div class="kt-input-icon pull-right" id='kt_daterangepicker_2_modal'>
+								<input type="text" class="form-control " placeholder="Desde - Hasta" name="FiltroFecha" id="cboFechaDescarga" autocomplete="off">
+								<span class="kt-input-icon__icon kt-input-icon__icon--right" id="iconoFecha"><span><i class="la la-calendar-check-o"></i></span></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="container">
+						<label class="col-form-label col-lg-3 col-sm-12"><strong>Proveedor: </strong></label>
+						<div>
+							<select class="selectpicker" id="cboProveedor" multiple name="Cliente" title="Selecciona un proveedor" data-width="100%" data-live-search="true">
+								{% for Proveedor in Proveedores %}
+									<option style="width: 270px;" value="{{Proveedor.IDTransportista}}">{{Proveedor.NombreComercial}}</option>
+								{%endfor%}
+							</select>
+						</div>
+					</div></br>
+
+					<div class="container">
+						<label class="col-form-label col-lg-3 col-sm-12"><strong>Proyecto: </strong></label>
+						<div>
+							<select class="selectpicker" id="cboProyecto" multiple name="Proyecto" title="Selecciona un proyecto" data-width="100%" data-live-search="true">
+									<option style="width: 270px;" value="BKG">BKG</option>
+									<option style="width: 270px;" value="XD">XD</option>
+									<!-- <option style="width: 270px;" value="ALM">ALM</option> -->
+							</select>
+						</div>
+					</div></br>
+
+
+
+					<div class="container py-4">
+						<div class="row justify-content-between">
+							<div class="col-4">
+							<button type="Submit" name="button" class="btn btn-brand btn-elevate btn-pill btn-elevate-air btn-sm float-right" id="btnAplicarFiltro">Aplicar</button>
+							</div>
+							<div class="col-4">
+							<button type="button" name="button" class="btn btn-danger btn-elevate btn-pill btn-elevate-air btn-sm" id="kt_quick_panel_close_btn">Cancelar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane kt-quick-panel__content-padding-x fade kt-scroll" id="kt_quick_panel_tab_settings" role="tabpanel">
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block EvidenciasProveedor %}

@@ -28,11 +28,12 @@
 					{% for Evidencias in EvidenciasxAprobar %}
 					<tr data-idviaje ="{{Evidencias.XD_IDViaje}}" data-idviajebkg = "{{Evidencias.IDBro_Viaje}}" data-folio = "{{Evidencias.Folio}}">
 						<td>{{Evidencias.Folio}}</td>
-						<td>{{Evidencias.FechaDespacho|date:'Y/m/d'|safe}}</td>
 						{% if "FTL" in Evidencias.Folio %}
+						<td>{{Evidencias.FechaDescarga|date:'Y/m/d'|safe}}</td>
 						<td>{{Evidencias.IsEvidenciasDigitales}}</td>
 						<td>{{Evidencias.IsEvidenciasFisicas}}</td>
 						{% else %}
+						<td>{{Evidencias.FechaDespacho|date:'Y/m/d'|safe}}</td>
 						<td>{{Evidencias.IsEvidenciaPedidos}}</td>
 						<td>{{Evidencias.IsEvidenciaFisica}}</td>
 						{% endif %}

@@ -1,50 +1,9 @@
 var btn, IDViaje;
 $(document).ready(function(){
 $.fn.modal.Constructor.prototype._enforceFocus = function() {};
-  $('#TableEvidenciasProveedor').DataTable({
-    "scrollX": true,
-    'scrollY': '400px',
-    "language": {
-      "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
-    },
-    "responsive": false,
-    "paging": false,
-    "dom": 'Bfrtip',
-    "buttons": [
-    {
-      extend: 'excel',
-      text: '<i class="fas fa-file-excel fa-lg"></i>',
-      exportOptions: {
-        columns: [0,1,2,3]
-      }
-    }
-    ],
-    columnDefs: [
-      {
-        "targets": 0,
-        "className": "text-center bold",
-      },
-      {
-        "targets": 1,
-        "className": "text-center",
-      },
-      {
-        "targets": 2,
-        "className": "text-center bold",
-        "mRender": function (data, type, full) {
-          return (full[2] == 'True' ? '<button type="button" class="btn btn-success btn-elevate btn-pill btn-sm" id="btnAprovarEvidencias" disabled><i class="fa fa-check"></i></button>':'<button type="button" class="btn btn-primary btn-elevate btn-pill btn-sm" id="btnAprovarEvidencias"><i class="fa fa-clock"></i></button>');
-        }
-      },
-      {
-        "targets": 3,
-        "className": "text-center bold",
-        "mRender": function (data, type, full) {
-          return (full[3] == 'True' ? '<button type="button" class="btn btn-success btn-elevate btn-pill btn-sm" id="btnEvidenciasFisicas" disabled><i class="fa fa-check"></i></button>': '<button type="button" class="btn btn-primary btn-elevate btn-pill btn-sm" id="btnEvidenciasFisicas"><i class="fa fa-clock"></i></button>');
-        }
-      }
-     ]
-  });
 
+  formatDataTable();
+  $('#btnAplicarFiltro').on('click', fnGetEvidenciasByFilter);
   $("#inputBuscarViajeProveedor").keypress(function(e) {
     if (e.which == 13) {
         return false;
@@ -70,6 +29,54 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
 
   $('#btnGuardarEvidenciasP').on('click', function(){
     validarGuardarEvidencias();
+  });
+
+  //filtro de fecha solo por mes y año
+  $(document).on( 'change', 'input[name="fechaxMesyAño"]', function () {
+    if($(this).is(':checked')){
+      $('#filtroxMesyAno').css("display", "block");
+      $('#fechaRango').hide();
+    }
+    else
+    {
+      $('#filtroxMesyAno').css("display", "none");
+      $('#fechaRango').show();
+    }
+  });
+
+  $('input[name="FiltroFecha"]').daterangepicker({
+   autoUpdateInput: false,
+   showDropdowns:true,
+   autoApply:true,
+   locale: {
+         daysOfWeek: [
+             "Do",
+             "Lu",
+             "Ma",
+             "Mi",
+             "Ju",
+             "Vi",
+             "Sa"
+         ],
+         monthNames: [
+             "Enero",
+             "Febrero",
+             "Marzo",
+             "Abril",
+             "Mayo",
+             "Junio",
+             "Julio",
+             "Agosto",
+             "Septiembre",
+             "Octubre",
+             "Noviembre",
+             "Diciembre"
+         ],
+     }
+  });
+
+  $('input[name="FiltroFecha"]').on('apply.daterangepicker', function(ev, picker) {
+    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
 
@@ -384,5 +391,87 @@ var saveEvidencias = function(){
   }).catch(function(ex){
     console.log(ex);
     WaitMe_Hide('#uploadEvidenciasModal');
+  });
+}
+
+var fnGetEvidenciasByFilter = function () {
+  arrProveedor = $('#cboProveedor').val();
+  arrStatus = $('#cboStatus').val();
+  arrProyectos = $('#cboProyecto').val();
+  WaitMe_Show('#TbPading');
+  if($('#chkMonthYear').is(':checked')){
+    arrMonth = $('#filtroxMes').val();
+    Year = $('#filtroxAno').val();
+    getEvidenciasByFilter("arrMonth="+ JSON.stringify(arrMonth) +"&Year="+ Year +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Status="+ JSON.stringify(arrStatus) +"&Proyecto="+ JSON.stringify(arrProyectos));
+  }
+  else{
+    startDate = ($('#cboFechaDescarga').data('daterangepicker').startDate._d).toLocaleDateString('en-US');
+    endDate = ($('#cboFechaDescarga').data('daterangepicker').endDate._d).toLocaleDateString('en-US');
+    getEvidenciasByFilter("FechaFacturaDesde="+ startDate +"&FechaFacturaHasta="+ endDate +"&Proveedor="+ JSON.stringify(arrProveedor) +"&Status="+ JSON.stringify(arrStatus) +"&Proyecto="+ JSON.stringify(arrProyectos));
+  }
+}
+
+function getEvidenciasByFilter(params){
+  fetch("/EvidenciasProveedor/FilterBy?" + params, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    return response.clone().json();
+  }).then(function(data){
+    $('#divTablaPendientesEnviar').html(data.htmlRes);
+    formatDataTable();
+    $('#TableEvidenciasProveedor').css("display", "block");
+  }).catch(function(ex){
+    console.log(ex);
+  });
+}
+
+function formatDataTable(){
+  $('#TableEvidenciasProveedor').DataTable({
+    "scrollX": true,
+    'scrollY': '400px',
+    "language": {
+      "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+    },
+    "responsive": false,
+    "paging": false,
+    "dom": 'Bfrtip',
+    "buttons": [
+    {
+      extend: 'excel',
+      text: '<i class="fas fa-file-excel fa-lg"></i>',
+      exportOptions: {
+        columns: [0,1,2,3]
+      }
+    }
+    ],
+    columnDefs: [
+      {
+        "targets": 0,
+        "className": "text-center bold",
+      },
+      {
+        "targets": 1,
+        "className": "text-center",
+      },
+      {
+        "targets": 2,
+        "className": "text-center bold",
+        "mRender": function (data, type, full) {
+          return (full[2] == 'True' ? '<button type="button" class="btn btn-success btn-elevate btn-pill btn-sm" id="btnAprovarEvidencias" disabled><i class="fa fa-check"></i></button>':'<button type="button" class="btn btn-primary btn-elevate btn-pill btn-sm" id="btnAprovarEvidencias"><i class="fa fa-clock"></i></button>');
+        }
+      },
+      {
+        "targets": 3,
+        "className": "text-center bold",
+        "mRender": function (data, type, full) {
+          return (full[3] == 'True' ? '<button type="button" class="btn btn-success btn-elevate btn-pill btn-sm" id="btnEvidenciasFisicas" disabled><i class="fa fa-check"></i></button>': '<button type="button" class="btn btn-primary btn-elevate btn-pill btn-sm" id="btnEvidenciasFisicas"><i class="fa fa-clock"></i></button>');
+        }
+      }
+     ]
   });
 }
