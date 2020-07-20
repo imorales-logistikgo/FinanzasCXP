@@ -424,7 +424,7 @@ function getEvidenciasByFilter(params){
   }).then(function(data){
     $('#divTablaPendientesEnviar').html(data.htmlRes);
     formatDataTable();
-    $('#TableEvidenciasProveedor').css("display", "block");
+    // $('#TableEvidenciasProveedor').css("display", "block");
   }).catch(function(ex){
     console.log(ex);
   });

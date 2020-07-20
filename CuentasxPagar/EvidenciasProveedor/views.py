@@ -11,6 +11,7 @@ from django.db.models import Q
 import json
 from itertools import chain
 import requests
+from django.template.loader import render_to_string
 
 @login_required
 def EvidenciasProveedor(request):
@@ -57,7 +58,7 @@ def FindFolioProveedorE(request):
                         newDelivery['Status'] = 'Pendiente'
                         arrFoliosEvidencias.append(newDelivery)
             else:
-                GetDelivery = XD_PedidosxViajes.objects.filter(XD_IDViaje = XDFolio.XD_IDViaje, StatusPedido = 'ENTREGADO')#, StatusPedido = 'ENTREGADO')
+                GetDelivery = XD_PedidosxViajes.objects.filter(XD_IDViaje = XDFolio.XD_IDViaje, StatusPedido__in = ('ENTREGADO', 'COMPLETO'))#, StatusPedido = 'ENTREGADO')
                 if GetDelivery:
                     for Delivery in GetDelivery:
                         if len(XD_EvidenciasxPedido.objects.filter(IDXD_Pedido = Delivery.XD_IDPedido.XD_IDPedido, XD_IDViaje = Delivery.XD_IDViaje.XD_IDViaje)) >= 1:
@@ -634,10 +635,23 @@ def DescargarHojaLiberacion(request):
     Proyecto = request.GET["Proyecto"]
     if Proyecto == 'BKG':
         GetRutaHojaLiberacion = Bro_Viajes.objects.get(IDBro_Viaje = IDViaje)
-        HojaLiberacion = GetRutaHojaLiberacion.RutaHojaLiberacion
+        if not GetRutaHojaLiberacion.IsDescargaHojaLiberacion or GetRutaHojaLiberacion.IsDescargaHojaLiberacion is None:
+            HojaLiberacion = GetRutaHojaLiberacion.RutaHojaLiberacion
+            if HojaLiberacion is not None:
+                GetRutaHojaLiberacion.IsDescargaHojaLiberacion = True
+                GetRutaHojaLiberacion.save()
+        else:
+            HojaLiberacion = False
     else:
         GetRutaHojaLiberacion = XD_Viajes.objects.get(XD_IDViaje = IDViaje)
-        HojaLiberacion = GetRutaHojaLiberacion.RutaHojaEmbarqueCosto
+        if not GetRutaHojaLiberacion.IsDescargaHojaLiberacion or GetRutaHojaLiberacion.IsDescargaHojaLiberacion is None:
+            HojaLiberacion = GetRutaHojaLiberacion.RutaHojaEmbarqueCosto
+            if HojaLiberacion is not None:
+                GetRutaHojaLiberacion.IsDescargaHojaLiberacion = True
+                GetRutaHojaLiberacion.save()
+        else:
+            HojaLiberacion = False
+        # HojaLiberacion = GetRutaHojaLiberacion.RutaHojaEmbarqueCosto
     return JsonResponse({'HojaLiberacion':HojaLiberacion})
 
 
@@ -687,7 +701,7 @@ def FilterBy(request):
     if "Year" in request.GET:
         arrMonth = json.loads(request.GET["arrMonth"])
         Year = request.GET["Year"]
-        if "BKG" in Proyectos and "XD" in Proyectos:
+        if ("BKG" in Proyectos and "XD" in Proyectos) or Proyectos == []:
             Evidencias = Bro_Viajes.objects.filter(FechaDescarga__month__in = arrMonth, FechaDescarga__year = Year)
             Evidencias = XD_Viajes.objects.filter(FechaDespacho__month__in = arrMonth, FechaDespacho__year = Year)
         elif "BKG" in Proyectos and "XD" not in Proyectos:
@@ -704,7 +718,18 @@ def FilterBy(request):
             Evidencias = XD_Viajes.objects.filter(FechaDespacho__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')])
         # Evidencias = Bro_Viajes.objects.filter(FechaDescarga__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')]).exclude(StatusFacturaProveedor = 'DEPURADO')
     if Proveedores:
-        Evidencias = Bro_Viajes.filter(IDTransportista__in = Proveedores)
+        if ("BKG" in Proveedores and "XD" in Proveedores) or Proveedores == []:
+            Evidencias = Bro_Viajes.objects.filter(IDTransportista__in = Proveedores)
+            Evidencias = XD_Viajes.objects.filter(IDTransportista__in = Proveedores)
+        elif "BKG" in Proveedores and "XD" not in Proveedores:
+            Evidencias = Bro_Viajes.objects.filter(IDTransportista__in = Proveedores)
+        elif "XD" in Proveedores and "BKG" not in Proveedores:
+            Evidencias = XD_Viajes.objects.filter(IDTransportista__in = Proveedores)
     # ListData = PEToList(Evidencias)
-    htmlRes = render_to_string('TablaEvidenciasMesaControl.html', {'EvidenciasProveedor':Evidencias}, request = request,)
+    htmlRes = render_to_string('TablaEvidenciasMesaControl.html', {'EvidenciasxAprobar':Evidencias}, request = request,)
     return JsonResponse({'htmlRes' : htmlRes})
+
+# def descarga(request):
+#     url = "https://lgklataforma.blob.core.windows.net/pdfcartaporte/3eec0dda-9a0d-442f-ac88-bb4eec56c2e2.pdf"
+#     content = open(url).read()
+#     return HttpResponse(content, content_type='application/pdf')

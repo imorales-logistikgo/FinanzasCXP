@@ -190,11 +190,11 @@ def GetFacturasByFilters(request):
 	if "Year" in request.GET:
 		arrMonth = json.loads(request.GET["arrMonth"])
 		Year = request.GET["Year"]
-		Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year).exclude(Status = 'DEPURADO')
+		Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year, Status__in = Status)#.exclude(Status = 'DEPURADO')
 	else:
-		Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')]).exclude(Status = 'DEPURADO')
-	if Status:
-		Facturas = Facturas.filter(Status__in = Status)
+		Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')], Status__in = Status)#.exclude(Status = 'DEPURADO')
+	# if Status:
+	# 	Facturas = Facturas.filter(Status__in = Status)
 	if Proveedores:
 		Facturas = Facturas.filter(Proveedor__in = Proveedores)
 	if Moneda:
@@ -425,15 +425,18 @@ def FixIDProveedor(request):
 # 			print(e)
 
 def leerExcel(reques):
-	archivo_excel = pd.read_excel('static/json/WithoutUUID.xlsx')
+	archivo_excel = pd.read_excel('static/json/UUIDErrorMAriel.xlsx')
 	# values = archivo_excel['Factura']
 	try:
 		for i in archivo_excel.index:
 			a = FacturasxProveedor.objects.filter(IDFactura = archivo_excel['IDFactura'][i]).exclude(Status = 'CANCELADA').get()
-			if a.UUID is None:
+			a.UUID = archivo_excel['Correcto'][i]
+			a.save()
+			print(a.IDFactura)
+			# if a.UUID is None:
 				# a.UUID = archivo_excel['UUID'][i]
 				# a.save()
-				print(a.Folio)
+				# print(a.Folio)
 	except Exception as e:
 		print(archivo_excel['IDFactura'][i])
 		print(e)

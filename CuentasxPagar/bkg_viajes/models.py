@@ -19,6 +19,7 @@ class Bro_Viajes(models.Model):
     FechaDescarga = models.DateTimeField(db_column = 'FechaDescarga')
     IDTransportista = models.IntegerField()
     RutaHojaLiberacion = models.CharField(max_length=500)
+    IsDescargaHojaLiberacion = models.BooleanField()
 
     class Meta:
         managed = False

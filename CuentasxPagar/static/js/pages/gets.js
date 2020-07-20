@@ -314,9 +314,30 @@ var GetHojaLiberacion = function(IDViaje, Proyecto){
       WaitMe_HideBtn('#BtnHojaLiberacion')
     }
   }).then(function(data){
-    $('#BtnHojaLiberacion').attr('href', data.HojaLiberacion);
-    window.open(data.HojaLiberacion, '_blank');
+    if(data.HojaLiberacion == null){
+      Swal.fire({
+        type: 'error',
+        title: 'Hoja de liberacion no disponible',
+        showConfirmButton: false,
+        timer: 2500
+      });
+      WaitMe_HideBtn('#BtnHojaLiberacion')
+    }
+    else if(!data.HojaLiberacion){
+      Swal.fire({
+      type: 'error',
+      title: 'Solo se puede descargar la hoja de liberacion 1 vez',
+      showConfirmButton: false,
+      timer: 2500
+    });
     WaitMe_HideBtn('#BtnHojaLiberacion')
+    }
+    else{
+      $('#BtnHojaLiberacion').attr('href', data.HojaLiberacion);
+      window.open(data.HojaLiberacion, '_blank');
+      $('#BtnHojaLiberacion').removeAttr('href');
+      WaitMe_HideBtn('#BtnHojaLiberacion')
+    }
   }).catch(function(ex){
     console.log(ex);
   });
