@@ -32,12 +32,20 @@ def PEToList(Facturas):
 		Reporte["IsFacturaCliente"] = Fact.IsFacturaCliente
 		Reporte["FolioFactCliente"] = Fact.FolioFactCliente
 		Reporte["StatusFacturaCliente"] = Fact.StatusFacturaCliente
+		Reporte["SubtotalFacturaCliente"] = Fact.SubtotalFacturaCliente
+		Reporte["IvaFacturaCliente"] = Fact.IvaFacturaCliente
+		Reporte["RetencionFactura"] = Fact.RetencionFactura
+		Reporte["TotalFacturaCliente"] = Fact.SubtotalFacturaCliente
 		Reporte["SubtotalC"] = Fact.SubtotalC
 		Reporte["IVAC"] = Fact.IVAC
 		Reporte["RetencionC"] = Fact.RetencionC
 		Reporte["TotalC"] = Fact.TotalC
 		Reporte["IsFacturaProveedor"] = Fact.IsFacturaProveedor
 		Reporte["FolioFactProveedor"] = Fact.FolioFactProveedor
+		Reporte["SubtotalFacturaProveedor"] = Fact.SubtotalFacturaProveedor
+		Reporte["IvaFacturaProveedor"] = Fact.IvaFacturaProveedor
+		Reporte["RetencionFacturaProveedor"] = Fact.RetencionFacturaProveedor
+		Reporte["TotalFacturaProveedor"] = Fact.SubtotalFacturaProveedor
 		Reporte["StatusFacturaProveedor"] = 'RECHAZADA' if(Fact.StatusFacturaProveedor == 'CANCELADA') else Fact.StatusFacturaProveedor
 		Reporte["MOP"] = Fact.MOP
 		Reporte["Subtotal"] = Fact.Subtotal
