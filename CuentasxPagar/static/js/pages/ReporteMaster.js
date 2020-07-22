@@ -152,22 +152,22 @@ columnDefs: [
     }
 },
 {
-    "targets": [12],
+    "targets": [11,12],
     "className": "dt-head-center dt-body-right",
 },
 {
-    "targets": [13,14,15,16],
+    "targets": [13,14,15,16,17,18,19,20,21],
     "className": "dt-head-center dt-body-right",
 },
 {
-    "targets": 17,
+    "targets": 22,
     "className": "dt-head-center dt-body-center",
     "mRender": function (data, type, full) {
-      return (full[17] == 'True' ? "Si":"No");
+      return (full[22] == 'True' ? "Si":"No");
     }
 },
 {
-    "targets": [18,19,20,21,22,23,24],
+    "targets": [24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44],
     "className": "dt-head-center dt-body-right",
 },
 ]

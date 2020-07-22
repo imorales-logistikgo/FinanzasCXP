@@ -387,7 +387,7 @@ var GetFacturasxPago =  function(Pago, arrXML){
                 var indicador = false
                 loop2:
                   for (var j=0; j<arrXML.length;j++){
-                    if (data.DataBD[i].IdDocumento.toUpperCase() == arrXML[j].IdDocumento && truncarDecimales(data.DataBD[i].ImpPagado,2) == arrXML[j].ImpPagado){
+                    if (data.DataBD[i].IdDocumento.toUpperCase() == arrXML[j].IdDocumento && parseFloat(data.DataBD[i].ImpPagado).toFixed(2) == parseFloat(arrXML[j].ImpPagado).toFixed(2)){
                       indicador = true
                       break loop2;
                     }

@@ -17,5 +17,5 @@ urlpatterns = [
     path('saveReajuste', views.saveReajuste, name='saveReajuste'),
     # path('leerExcel', views.leerExcel, name='leerExcel')
     # path('InsertSerieProveedor', views.InsertSerieProveedor, name='InsertSerieProveedor')
-    # path('FixIDProveedor', views.FixIDProveedor, name='FixIDProveedor')
+    path('pruebaexcel', views.pruebaexcel, name='pruebaexcel')
 ]

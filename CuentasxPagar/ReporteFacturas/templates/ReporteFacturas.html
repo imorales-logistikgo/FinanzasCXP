@@ -151,6 +151,7 @@ kt-menu__item--active
 <div class="kt-subheader   kt-grid__item" id="kt_subheader">
 	<div class="kt-container  kt-container--fluid ">
 		<div class="kt-subheader__toolbar">
+
 			<div class="kt-subheader__wrapper">
 				<h3>Reporte de facturas</h3>
 			</div>
@@ -161,6 +162,12 @@ kt-menu__item--active
 <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
 		<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+			<div class="btn-group show" id="DivReporteTotales">
+					<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="BtnReporteTotales"><i class="la la-download"></i>Reporte Totales</button>
+					<div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
+						<a href="#">prueba</a>
+					</div>
+			</div>
 			{% include "TablaReporteFacturas.html" %}
 		</div>
 	</div>

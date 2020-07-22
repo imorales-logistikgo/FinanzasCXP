@@ -210,7 +210,7 @@ def Actualizacion(request):
 
 	# Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-	# Proveedores = Proveedor.objects.filter(RFC='EOTA7911291K6')
+	# Proveedores = Proveedor.objects.filter(RFC='TFA 170518 161')
 	# for prov in Proveedores:
 	# 	try:
 	# 		oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)

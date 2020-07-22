@@ -1089,7 +1089,7 @@ function archivosproveedor()
                 $('#archivosProveedor').data("rutaarchivoXML", urlPDF)
                 document.querySelector('.uploaded-files-proveedor').innerHTML +=
                 `<ol><li id="listaArchivos"><a href="${urlPDF}" target="_blank" name="url" id="RutaXML">${fileName}</a></li></ol>`
-                getSerieProveedor(idprov).then((response) =>  (response.Serie + getFolioXML(urlXMLCheck), uppyDashboard, "Proveedor")).catch((e) => (uppyDashboard.cancelAll(), $('.uploaded-files ol').remove(), alertToastError("Algo salio mal :(")));
+                getSerieProveedor(idprov).then((response) => fnCheckFolio(response.Serie + getFolioXML(urlXMLCheck), uppyDashboard, "Proveedor")).catch((e) => (uppyDashboard.cancelAll(), $('.uploaded-files ol').remove(), alertToastError("Algo salio mal :(")));
              }
             }
           });
