@@ -325,13 +325,13 @@ var validarGuardarEvidencias = function (){
       $(this).data('status') == 'Aprobada' ? '': $(this).prop('id').includes('Remision') && ($(this).data('status') == 'Rechazada' || $(this).data('status') == 'Pendiente') ? arrCompleteEvidencesRemission.push($(this).find('a')[0] == undefined ? 'false':'true') : $(this).prop('id') !='Remision' && $(this).data('status') == 'Rechazada' || $(this).data('status') == 'Pendiente' ? arrCompleteEvidences.push($(this).find('a')[0] == undefined ? 'false':'true') : "";
     }
     else{
-       $(this).data('status') == 'Aprobada' ? '': arrCompleteEvidences.push($(this).find('a')[0] == undefined ? 'false':'true');
+       $(this).data('status') == 'Aprobada' ? '': $(this).data('status') == 'Pendiente' || $(this).data('status') == 'Rechazada' ? arrCompleteEvidences.push($(this).find('a')[0] == undefined ? 'false':'true'):'';
     }
   });
   if($('.kt-portlet__head-title').data('evidencia') == 'BKG'){
     arrCompleteEvidencesRemission.includes("false") ? alertToastError("Debes subir todas las evidencias") : arrCompleteEvidences.length != 0 ? arrCompleteEvidences.includes("true") ? saveEvidencias() : alertToastError("Debes subir todas las evidencias"): saveEvidencias();
   }else{
-    arrCompleteEvidences.includes("false") ? alertToastError("Debes subir todas las evidencias"):saveEvidencias();
+    arrCompleteEvidences.includes("true") ?saveEvidencias(): alertToastError("Debes subir todas las evidencias");
   }
 }
 
