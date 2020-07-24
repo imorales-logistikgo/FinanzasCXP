@@ -101,7 +101,7 @@ select.selectpicker {
   width: auto !important;
 }
 .bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
-  width: 220px;
+  width: 140px;
 }
 .bootstrap-select > select.mobile-device:focus + .dropdown-toggle,
 .bootstrap-select .dropdown-toggle:focus {

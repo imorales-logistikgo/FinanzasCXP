@@ -14,6 +14,17 @@ $(document).ready(function(){
     }
   });
 
+  $(document).on('click','#DescargarReporteTotales', function(){
+    var arrStatusReporte = []
+    $('input[name="StatusReprote"]:checked').each(function() {
+      arrStatusReporte.push($(this).val())
+    });
+
+    arrStatusReporte.length == 0 || arrStatusReporte.length >=3 ? alertToastError('Selecciona al menos una opcion') : DownloadReporteByTotales(arrStatusReporte)
+  })
+
+
+
 //rago fecha para el Filtro
 $('input[name="filtroFechaReporteFacturas"]').daterangepicker({
  autoUpdateInput: false,
@@ -196,3 +207,6 @@ else
 
 }
 });
+
+
+var DownloadReporteByTotales = (params) => window.open(`/ReporteFacturas/GetReporteTotales/${params}/`)

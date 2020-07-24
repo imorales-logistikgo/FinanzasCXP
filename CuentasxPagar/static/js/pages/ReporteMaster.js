@@ -105,7 +105,7 @@ $('#TablaReporteMaster').DataTable({
  "language": {
    "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
   },
- "lengthMenu": [200],
+ "lengthMenu": [1000],
  "paging": true,
  "dom": 'Bfrtip',
  "buttons": [

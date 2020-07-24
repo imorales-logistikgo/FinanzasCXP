@@ -58,7 +58,7 @@ def FindFolioProveedorE(request):
                         newDelivery['Status'] = 'Pendiente'
                         arrFoliosEvidencias.append(newDelivery)
             else:
-                GetDelivery = XD_PedidosxViajes.objects.filter(XD_IDViaje = XDFolio.XD_IDViaje, StatusPedido__in = ('ENTREGADO', 'COMPLETO'))#, StatusPedido = 'ENTREGADO')
+                GetDelivery = XD_PedidosxViajes.objects.filter(XD_IDViaje = XDFolio.XD_IDViaje)#, StatusPedido = 'ENTREGADO')
                 if GetDelivery:
                     for Delivery in GetDelivery:
                         if len(XD_EvidenciasxPedido.objects.filter(IDXD_Pedido = Delivery.XD_IDPedido.XD_IDPedido, XD_IDViaje = Delivery.XD_IDViaje.XD_IDViaje)) >= 1:

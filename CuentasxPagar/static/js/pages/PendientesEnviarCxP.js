@@ -586,7 +586,8 @@ function getDatos(){
       Comentarios: $('#txtComentariosP').val(),
       IDProveedor: idprov,
       TotalXML: +totalXMLProveedor,
-      UUID: uuid
+      UUID: uuid,
+      Estado: $('#Depurado').is(':checked') ? "YU":'NU'
     }
 
     fetch("/PendientesEnviar/SaveFactura", {

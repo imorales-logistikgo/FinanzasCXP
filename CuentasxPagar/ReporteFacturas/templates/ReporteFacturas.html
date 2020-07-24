@@ -151,9 +151,77 @@ kt-menu__item--active
 <div class="kt-subheader   kt-grid__item" id="kt_subheader">
 	<div class="kt-container  kt-container--fluid ">
 		<div class="kt-subheader__toolbar">
-
 			<div class="kt-subheader__wrapper">
 				<h3>Reporte de facturas</h3>
+				{% if request.user.roles == "users" %}
+
+				<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalReporteTotales" data-backdrop="static" data-keyboard="false">
+  Reporte Totales
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalReporteTotales" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+	<div class="modal-dialog modal-md" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" >Reporte solo totales</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label>Estatus</label>
+					<span></span>
+					<div class="kt-checkbox-inline">
+						<label class="kt-checkbox">
+							<input type="checkbox" name="StatusReprote" value="PENDIENTE"> PENDIENTE
+							<span></span>
+						</label>
+						<label class="kt-checkbox">
+							<input type="checkbox" name="StatusReprote" value="APROBADA"> APROBADA
+							<span></span>
+						</label>
+						{% if request.user.username == "cxp1@logistikgo" or request.user.username == "jcastillo@logistikgo" or request.user.username == "jfraga@logistikgo" %}
+						<label class="kt-checkbox">
+							<input type="checkbox" name="StatusReprote" value="DEPURADO"> DEPURADO
+							<span></span>
+						</label>
+						{%endif%}
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" id="DescargarReporteTotales">Descargar</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+	</div>
+
+				<!-- <div class="form-group">
+					<label>Reporte de Totales</label>
+					<div class="kt-checkbox-inline">
+						<label class="kt-checkbox">
+							<input type="checkbox" name="StatusReprote" value="PENDIENTE"> PENDIENTE
+							<span></span>
+						</label>
+						<label class="kt-checkbox">
+							<input type="checkbox" name="StatusReprote" value="APROBADA"> APROBADA
+							<span></span>
+						</label>
+						{% if request.user.username == "cxp1@logistikgo" or request.user.username == "jcastillo@logistikgo" or request.user.username == "jfraga@logistikgo" %}
+						<label class="kt-checkbox">
+							<input type="checkbox" name="StatusReprote" value="DEPURADO"> DEPURADO
+							<span></span>
+						</label>
+						{%endif%}
+						<button type="button" class="btn btn-success" id="DescargarReporteTotales">Descargar</button>
+					</div>
+					<span class="form-text text-muted">Some help text goes here</span>
+				</div> -->
+				{% endif %}
 			</div>
 		</div>
 	</div>
@@ -162,12 +230,6 @@ kt-menu__item--active
 <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
 		<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
-			<div class="btn-group show" id="DivReporteTotales">
-					<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="BtnReporteTotales"><i class="la la-download"></i>Reporte Totales</button>
-					<div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
-						<a href="#">prueba</a>
-					</div>
-			</div>
 			{% include "TablaReporteFacturas.html" %}
 		</div>
 	</div>

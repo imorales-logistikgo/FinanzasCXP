@@ -5,6 +5,10 @@ from usersadmon.models import Proveedor
 from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
+from openpyxl import Workbook
+from openpyxl.styles import Font, Fill, PatternFill, Alignment
+
+
 @login_required
 
 def ReporteFacturas(request):
@@ -74,3 +78,53 @@ def GetFacturasByFilters(request):
 	# listFacturas = FacturasToList(Facturas)
 	htmlRes = render_to_string('TablaReporteFacturas.html', {'Facturas':Facturas}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
+
+
+def GetReporteTotales(request, **kwargs):
+	StatusIN = kwargs.get('Status', None), kwargs.get('Status2', None)
+	Facturas = FacturasxProveedor.objects.values('IDProveedor','NombreCortoProveedor').distinct()
+		# print(datetime.datetime.now().strftime('%Y-%m-%d') > Factura.FechaVencimiento.strftime('%Y-%m-%d'))
+	wb = Workbook()
+	ws = wb.active
+	ws['A1'] = 'Proveedor'
+	ws['B1'] = 'Total Vencido'
+	ws['C1'] = 'Total por Vencer'
+	ws['D1'] = 'Total'
+	ws['A1'].font = Font(bold=True, size=12, color="FFFFFF")
+	ws['B1'].font = Font(bold=True, size=12, color="FFFFFF")
+	ws['C1'].font = Font(bold=True, size=12, color="FFFFFF")
+	ws['D1'].font = Font(bold=True, size=12, color="FFFFFF")
+	ws['A1'].fill = PatternFill(bgColor="0C46B7", fill_type = "solid")
+	ws['B1'].fill = PatternFill(bgColor="0C46B7", fill_type = "solid")
+	ws['C1'].fill = PatternFill(bgColor="0C46B7", fill_type = "solid")
+	ws['D1'].fill = PatternFill(bgColor="0C46B7", fill_type = "solid")
+	ws.column_dimensions['A'].width = 30
+	ws.column_dimensions['B'].width = 20
+	ws.column_dimensions['C'].width = 22
+	ws.column_dimensions['D'].width = 20
+	ws['A1'].alignment = Alignment(horizontal='center')
+	ws['B1'].alignment = Alignment(horizontal='center')
+	ws['C1'].alignment = Alignment(horizontal='center')
+	ws['D1'].alignment = Alignment(horizontal='center')
+	cont=2
+	for Factura in Facturas:
+		Total = 0
+		TotalVencido = 0
+		TotalPorVencer = 0
+		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN) :
+			Total = Total + TotalesFacturas.Total
+			if datetime.datetime.now().strftime('%Y-%m-%d') > TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d'):
+				TotalVencido = TotalVencido + TotalesFacturas.Total
+			if datetime.datetime.now().strftime('%Y-%m-%d') < TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d'):
+				TotalPorVencer = TotalPorVencer + TotalesFacturas.Total
+		ws.cell(row=cont,column=1).value = Factura['NombreCortoProveedor']
+		ws.cell(row=cont,column=2).value = '$' + str(round(TotalVencido,2))
+		ws.cell(row=cont,column=3).value = '$' + str(round(TotalPorVencer,2))
+		ws.cell(row=cont,column=4).value = '$' + str(round(Total,2))
+		cont = cont + 1
+	nombre_archivo ="ReporteFacturas.xlsx"
+	response = HttpResponse(content_type="application/ms-excel")
+	contenido = "attachment; filename={0}".format(nombre_archivo)
+	response["Content-Disposition"] = contenido
+	wb.save(response)
+	return response
