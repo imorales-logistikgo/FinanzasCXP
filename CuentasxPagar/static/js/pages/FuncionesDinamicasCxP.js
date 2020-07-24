@@ -578,7 +578,7 @@ var uploadEvidences = function(idU, ver){
         //const Webcam = Uppy.Webcam;
         // Private functions
         var initUppy1 = function(){
-          var id = idU;
+          var id = idU.replace(/\./g,"");
           var options = {
             proudlyDisplayPoweredByUppy: false,
             target: id,
@@ -625,11 +625,11 @@ var uploadEvidences = function(idU, ver){
           uppyDashboard.on('upload-success', (file, response) => {
 
            //$(`.uppy-DashboardItem-previewLink`).prop('href', `${response.body}`);
-           $(`#${ver}`).append(`<a class="uppy-DashboardItem-previewLink" href="${response.body}" target="_blank" rel="noreferrer noopener"></a>`)
-           $(`#${ver}`).append('<i class="fa fa-eye"></i>');
-           $(`#${ver}`).css('color', 'green');
-           $(`#${ver}`).data('urlEvidencia', response.body);
-           $(`#${ver}`).data('nombrearchivo', file.name);
+           $(`#${ver.replace(/\./g,"")}`).append(`<a class="uppy-DashboardItem-previewLink" href="${response.body}" target="_blank" rel="noreferrer noopener"></a>`)
+           $(`#${ver.replace(/\./g,"")}`).append('<i class="fa fa-eye"></i>');
+           $(`#${ver.replace(/\./g,"")}`).css('color', 'green');
+           $(`#${ver.replace(/\./g,"")}`).data('urlEvidencia', response.body);
+           $(`#${ver.replace(/\./g,"")}`).data('nombrearchivo', file.name);
 
           });
         }

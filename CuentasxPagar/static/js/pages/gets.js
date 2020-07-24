@@ -49,20 +49,21 @@ var GetFolioEvidencias = function(Folio){
       // $('#StatusEvidencias').append(`Estatus: <strong>Pendiente</strong> <i class="fa fa-clock fa-1x"></i>`)
       for(var i=0; i<data.Folios.length; i++)
       {
+        var deliv = data.Folios[i].Delivery.replace(/\./g,"")
           $('#allEvidences').append(`<div class="col-sm-4 col-lg-4 col-md-4">
                               	<div class="kt-portlet kt-portlet--height-fluid">
                                 <h5>Estatus: <strong>${data.Folios[i].Status}</strong></h5>
                               		<div class="kt-portlet__head" id="headUppyTitulo">
                               			<div class="kt-portlet__head-label">
-                              				<h3 class="kt-portlet__head-title" id='${data.Folios[i].Delivery.replace(/ /g, "")}' data-status="${data.Folios[i].Status}" data-evidencia="${data.Folios[i].TipoEvidencia}">
-                              					${data.Folios[i].Delivery.replace(/ /g, "")}
+                              				<h3 class="kt-portlet__head-title" id='${deliv.replace(/ /g, "")}' data-status="${data.Folios[i].Status}" data-evidencia="${data.Folios[i].TipoEvidencia}">
+                              					${deliv.replace(/ /g, "")}
                               				</h3>
                               			</div>
                               		</div>
                               			<div class="kt-portlet__body">
                               				<div class="row" id="prueba">
                               				</div>
-                              				<div class="kt-uppy verificar" id="uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}">
+                              				<div class="kt-uppy verificar" id="uploadEvidencesProveedor${deliv.replace(/ /g, "")}">
                               					<div  class="kt-uppy__dashboard"></div>
                               					<div class="kt-uppy__progress"></div>
                               				</div>
@@ -76,12 +77,11 @@ var GetFolioEvidencias = function(Folio){
           $(`#${data.Folios[i].Delivery.replace(/ /g, "")}`).data('tipoevidencia', data.Folios[i].TipoEvidencia)
           $('#BtnHojaLiberacion').data('IDViajeHL', data.Folios[i].IDViaje)
           $('#BtnHojaLiberacion').data('TipoEvidenciaHL', data.Folios[i].TipoEvidencia)
-          data.Folios[i].Status == 'Pendiente' || data.Folios[i].Status == 'Rechazada' ? uploadEvidences(`#uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}`, `${data.Folios[i].Delivery.replace(/ /g, "")}`) : ($(`#uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}`).append(`<div class="row">
+          data.Folios[i].Status == 'Pendiente' || data.Folios[i].Status == 'Rechazada' ? uploadEvidences(`#uploadEvidencesProveedor${deliv.replace(/ /g, "")}`, `${deliv.replace(/ /g, "")}`) : ($(`#uploadEvidencesProveedor${deliv.replace(/ /g, "")}`).append(`<div class="row">
             <div class="col-md-4"><iframe src="${data.Folios[i].RutaArchivo}"></iframe></div>
           </div>`)/*, $('#btnGuardarEvidenciasP').prop('disabled', true), $('#HojaLiberacion').html('<strong>Hoja de liberacion lista para descargar</strong>')*/);
           arrStatus.push(data.Folios[i].Status)
       }
-      console.log(arrStatus.includes('Rechazada'))
       if(arrStatus.includes('Pendiente') || arrStatus.includes('Rechazada') || arrStatus.includes('Otro') || arrStatus.includes('Enviada')){
         $('.BtnHojaLiberacion').css('display', 'none');
         arrStatus.includes('Pendiente') || arrStatus.includes('Rechazada') ? "": $('#btnGuardarEvidenciasP').prop('disabled', true);
