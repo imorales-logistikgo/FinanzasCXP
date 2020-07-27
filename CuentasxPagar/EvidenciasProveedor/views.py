@@ -65,7 +65,7 @@ def FindFolioProveedorE(request):
                             TieneEvidencia = XD_EvidenciasxPedido.objects.get(IDXD_Pedido = Delivery.XD_IDPedido.XD_IDPedido, XD_IDViaje = Delivery.XD_IDViaje.XD_IDViaje)
                             newDelivery = {}
                             newDelivery['XD_IDPedido'] = Delivery.XD_IDPedido.XD_IDPedido
-                            newDelivery['Delivery'] = Delivery.XD_IDPedido.Delivery
+                            newDelivery['Delivery'] = Delivery.XD_IDPedido.Delivery.replace(".","")
                             newDelivery['IDViaje'] = Delivery.XD_IDViaje.XD_IDViaje
                             newDelivery['TipoEvidencia'] = 'Pedido'
                             newDelivery['RutaArchivo'] = '' if(TieneEvidencia.IsEnviada and TieneEvidencia.IsRechazada ) else TieneEvidencia.RutaArchivo
@@ -74,7 +74,7 @@ def FindFolioProveedorE(request):
                         else:
                             newDelivery = {}
                             newDelivery['XD_IDPedido'] = Delivery.XD_IDPedido.XD_IDPedido
-                            newDelivery['Delivery'] = Delivery.XD_IDPedido.Delivery
+                            newDelivery['Delivery'] = Delivery.XD_IDPedido.Delivery.replace(".","")
                             newDelivery['IDViaje'] = Delivery.XD_IDViaje.XD_IDViaje
                             newDelivery['TipoEvidencia'] = 'Pedido'
                             newDelivery['RutaArchivo'] = "" if(GetDelivery[0].IsEvidenciaPedidoxViaje == 1 or GetDelivery[0].IsEvidenciaFisicaPedidoxViaje == 1) else ""
@@ -142,7 +142,6 @@ def SaveEvidencias(request):
                     return HttpResponse(status = 200)
                 elif Evidencias['Status'] == 'Pendiente':
                     if Evidencias['TipoEvidencia'] == 'BKG':
-                        print("yes")
                         SaveEvidenciaBKG = Bro_EvidenciasxViaje()
                         SaveEvidenciaBKG.IDBro_Viaje = Bro_Viajes.objects.get(IDBro_Viaje = Evidencias['IDViaje'])
                         SaveEvidenciaBKG.FechaCaptura = datetime.datetime.now()
@@ -215,7 +214,7 @@ def GetEvidenciasMesaControl(request):
                     AddEvidencia = {}
                     AddEvidencia['IDEvidencia'] = GetEvidenciaxPedido.IDEvidenciaxPedido
                     AddEvidencia['URLEvidencia'] = GetEvidenciaxPedido.RutaArchivo
-                    AddEvidencia['Delivery'] = GetDelivery.Delivery
+                    AddEvidencia['Delivery'] = GetDelivery.Delivery.replace('.',"")
                     AddEvidencia['TipoEvidencia'] = 'Pedido'
                     AddEvidencia['IDViaje'] = GetEvidenciaxPedido.XD_IDViaje
                     ListEvidencias.append(AddEvidencia)
@@ -622,9 +621,9 @@ def GetAllEvidecesDigitalsT1yT2(IDViaje):
     GetPedidos = XD_PedidosxViajes.objects.filter(XD_IDViaje = IDViaje)
     ListaPedidos = list()
     for i  in GetPedidos:
-        a = XD_PedidosxViajes.objects.filter(XD_IDPedido = i.XD_IDPedido)
-        for j in a:
-            ListaPedidos.append(j.IsEvidenciaPedidoxViaje)
+        # a = XD_PedidosxViajes.objects.filter(XD_IDPedido = i.XD_IDPedido)
+        # for j in a:
+        ListaPedidos.append(i.IsEvidenciaPedidoxViaje)
     TrueORFALSE = False if False in ListaPedidos else True
     print(TrueORFALSE)
     return TrueORFALSE
