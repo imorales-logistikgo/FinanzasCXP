@@ -82,8 +82,7 @@ def GetFacturasByFilters(request):
 
 def GetReporteTotales(request, **kwargs):
 	StatusIN = kwargs.get('Status', None), kwargs.get('Status2', None)
-	Facturas = FacturasxProveedor.objects.values('IDProveedor','NombreCortoProveedor').distinct()
-		# print(datetime.datetime.now().strftime('%Y-%m-%d') > Factura.FechaVencimiento.strftime('%Y-%m-%d'))
+	Facturas = FacturasxProveedor.objects.values('IDProveedor').distinct()
 	wb = Workbook()
 	ws = wb.active
 	ws['A1'] = 'Proveedor'
@@ -108,19 +107,20 @@ def GetReporteTotales(request, **kwargs):
 	ws['D1'].alignment = Alignment(horizontal='center')
 	cont=2
 	for Factura in Facturas:
+		NombreProv = Proveedor.objects.get(IDTransportista = Factura['IDProveedor'])
 		Total = 0
 		TotalVencido = 0
 		TotalPorVencer = 0
-		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN) :
+		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN):
 			Total = Total + TotalesFacturas.Total
 			if datetime.datetime.now().strftime('%Y-%m-%d') > TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d'):
 				TotalVencido = TotalVencido + TotalesFacturas.Total
 			if datetime.datetime.now().strftime('%Y-%m-%d') < TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d'):
 				TotalPorVencer = TotalPorVencer + TotalesFacturas.Total
-		ws.cell(row=cont,column=1).value = Factura['NombreCortoProveedor']
-		ws.cell(row=cont,column=2).value = '$' + str(round(TotalVencido,2))
-		ws.cell(row=cont,column=3).value = '$' + str(round(TotalPorVencer,2))
-		ws.cell(row=cont,column=4).value = '$' + str(round(Total,2))
+		ws.cell(row=cont,column=1).value = NombreProv.RazonSocial
+		ws.cell(row=cont,column=2).value = round(TotalVencido,2)
+		ws.cell(row=cont,column=3).value = round(TotalPorVencer,2)
+		ws.cell(row=cont,column=4).value = round(Total,2)
 		cont = cont + 1
 	nombre_archivo ="ReporteFacturas.xlsx"
 	response = HttpResponse(content_type="application/ms-excel")
