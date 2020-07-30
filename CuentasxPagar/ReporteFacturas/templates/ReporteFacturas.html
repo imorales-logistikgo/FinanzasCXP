@@ -5,7 +5,7 @@ kt-menu__item--active
 {% endblock %}
 
 {% block ContadoresReporteFacturas %}
-{% if Rol != "Proveedor" %}
+{% if request.user.roles != "Proveedor" or request.user.roles != "Contabilidad" %}
 <div class="kt-subheader kt-grid__item">
 	<div class="kt-container  kt-container--fluid ">
 		<div>
@@ -26,6 +26,7 @@ kt-menu__item--active
 
 
 {% block FiltrosReporteFacturas %}
+{% if request.user.roles != "Contabilidad" %}
 <div id="kt_quick_panel" class="kt-quick-panel">
 	<div class="kt-quick-panel__content">
 		<div class="tab-content">
@@ -145,89 +146,78 @@ kt-menu__item--active
 		</div>
 	</div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block ReporteFacturas %}
-
+{% if request.user.roles != "Contabilidad" %}
 <div class="kt-subheader   kt-grid__item" id="kt_subheader">
 	<div class="kt-container  kt-container--fluid ">
 		<div class="kt-subheader__toolbar">
 			<div class="kt-subheader__wrapper">
 				<h3>Reporte de facturas</h3>
-				{% if request.user.roles == "users" %}
+		{% if request.user.roles == "users" %}
 
 				<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalReporteTotales" data-backdrop="static" data-keyboard="false">
-  Reporte Totales
-</button>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalReporteTotales" data-backdrop="static" data-keyboard="false">
+		  Reporte Totales
+		</button>
 
-<!-- Modal -->
-<div class="modal fade" id="ModalReporteTotales" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" >Reporte solo totales</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="form-group">
-					<label>Estatus</label>
-					<span></span>
-					<div class="kt-checkbox-inline">
-						<label class="kt-checkbox">
-							<input type="checkbox" name="StatusReprote" value="PENDIENTE"> PENDIENTE
+		<!-- Modal -->
+		<div class="modal fade" id="ModalReporteTotales" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+			<div class="modal-dialog modal-md" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" >Reporte solo totales</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label>Estatus</label>
 							<span></span>
-						</label>
-						<label class="kt-checkbox">
-							<input type="checkbox" name="StatusReprote" value="APROBADA"> APROBADA
+							<div class="kt-checkbox-inline">
+								<label class="kt-checkbox">
+									<input type="checkbox" name="StatusReprote" value="PENDIENTE"> PENDIENTE
+									<span></span>
+								</label>
+								<label class="kt-checkbox">
+									<input type="checkbox" name="StatusReprote" value="APROBADA"> APROBADA
+									<span></span>
+								</label>
+								{% if request.user.username == "cxp1@logistikgo" or request.user.username == "jcastillo@logistikgo" or request.user.username == "jfraga@logistikgo" %}
+								<label class="kt-checkbox">
+									<input type="checkbox" name="StatusReprote" value="DEPURADO"> DEPURADO
+									<span></span>
+								</label>
+								{%endif%}
+							</div>
+						</div>
+						<div class="form-group">
+							<label>Moneda</label>
 							<span></span>
-						</label>
-						{% if request.user.username == "cxp1@logistikgo" or request.user.username == "jcastillo@logistikgo" or request.user.username == "jfraga@logistikgo" %}
-						<label class="kt-checkbox">
-							<input type="checkbox" name="StatusReprote" value="DEPURADO"> DEPURADO
-							<span></span>
-						</label>
-						{%endif%}
+							<div class="kt-checkbox-inline">
+								<label class="kt-checkbox">
+									<input type="checkbox" name="MonedaReprote" value="MXN" checked disabled> MXN
+									<span></span>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" id="DescargarReporteTotales">Descargar</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
 					</div>
 				</div>
 			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" id="DescargarReporteTotales">Descargar</button>
-				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
 			</div>
-		</div>
-	</div>
-	</div>
-
-				<!-- <div class="form-group">
-					<label>Reporte de Totales</label>
-					<div class="kt-checkbox-inline">
-						<label class="kt-checkbox">
-							<input type="checkbox" name="StatusReprote" value="PENDIENTE"> PENDIENTE
-							<span></span>
-						</label>
-						<label class="kt-checkbox">
-							<input type="checkbox" name="StatusReprote" value="APROBADA"> APROBADA
-							<span></span>
-						</label>
-						{% if request.user.username == "cxp1@logistikgo" or request.user.username == "jcastillo@logistikgo" or request.user.username == "jfraga@logistikgo" %}
-						<label class="kt-checkbox">
-							<input type="checkbox" name="StatusReprote" value="DEPURADO"> DEPURADO
-							<span></span>
-						</label>
-						{%endif%}
-						<button type="button" class="btn btn-success" id="DescargarReporteTotales">Descargar</button>
-					</div>
-					<span class="form-text text-muted">Some help text goes here</span>
-				</div> -->
 				{% endif %}
 			</div>
 		</div>
 	</div>
 </div>
-
+{% if request.user.roles != "Contabilidad" %}
 <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
 		<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
@@ -235,7 +225,10 @@ kt-menu__item--active
 		</div>
 	</div>
 </div>
+{% endif %}
+{% endif %}
 {% endblock %}
+
 
 {% block scripts %}
 <script src='{% static "js/pages/ReporteFacturas.js" %}' type="text/javascript"></script>

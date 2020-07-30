@@ -8,7 +8,7 @@ var table;
 var subtotal = 0, Tiva=0, TRetencion=0, total=0;
 var totalViaje = 0;
 var idPend, uuid;
-var totalXML=0, totalXMLProveedor=0;
+var totalXML=0, totalXMLProveedor=0, valCFDIAndOther;
 
 $(document).ready(function() {
   $(document).keydown(function(e){
@@ -347,6 +347,7 @@ function LimpiarModalSF()
   folioCheck = "";
   $('#Depurado').prop('checked', false);
   $('#btnGuardarFactura').prop('disabled',true)
+  valCFDIAndOthe = ""
 }
 
 
@@ -441,7 +442,8 @@ function LimpiarModalSF()
                  const urlXMLCheck = response.body
                  totalXML = leerxml(urlXMLCheck)
                  var folioInFactura = FolioViajeXML(urlXMLCheck, folioCheck)
-                 if(+totalXML > (Number(total.toFixed(2)) + 1) || totalXML == null || !folioInFactura)
+                 GetValidacionCFDIAndOther(urlXMLCheck)
+                 if(+totalXML > (Number(total.toFixed(2)) + 1) || totalXML == null || !folioInFactura || !valCFDIAndOther)
                  {
                    $("#btnGuardarFactura").prop("disabled", true)
                    alertToastError(`El total de la factura no coincide con el total calculado del sistema $${total.toFixed(2)}`)
@@ -1076,10 +1078,10 @@ function archivosproveedor()
              const urlXMLCheck = response.body
              totalXMLProveedor = leerXMLTransportista(urlXMLCheck)
              var folioInFactura = FolioViajeXML(urlXMLCheck, folioCheck)
-             if(+totalXMLProveedor > (Number(totalViaje.toFixed(2)) + 1) || totalXMLProveedor == null || !folioInFactura)
+             GetValidacionCFDIAndOther(urlXMLCheck)
+             if(+totalXMLProveedor > (Number(totalViaje.toFixed(2)) + 1) || totalXMLProveedor == null || !folioInFactura || !valCFDIAndOther)
              {
                alertToastError(`La factura no coincide con el sistema, por favor intente de nuevo.`)
-                      //uppyDashboard.reset()
                uppyDashboard.cancelAll()
                $('.uploaded-files-proveedor ol').remove();
              }
@@ -1122,4 +1124,5 @@ function archivosproveedor()
       $('#txtFolioFacturaP').val('');
       $('#txtComentariosP').val('');
       folioCheck="";
+      valCFDIAndOthe=""
     }

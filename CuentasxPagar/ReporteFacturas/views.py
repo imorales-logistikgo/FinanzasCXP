@@ -82,6 +82,7 @@ def GetFacturasByFilters(request):
 
 def GetReporteTotales(request, **kwargs):
 	StatusIN = kwargs.get('Status', None), kwargs.get('Status2', None)
+	Moneda = kwargs.get('Moneda', None)
 	Facturas = FacturasxProveedor.objects.values('IDProveedor').distinct()
 	wb = Workbook()
 	ws = wb.active
@@ -112,11 +113,12 @@ def GetReporteTotales(request, **kwargs):
 		TotalVencido = 0
 		TotalPorVencer = 0
 		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN):
-			Total = Total + TotalesFacturas.Total
-			if datetime.datetime.now().strftime('%Y-%m-%d') > TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d'):
-				TotalVencido = TotalVencido + TotalesFacturas.Total
-			if datetime.datetime.now().strftime('%Y-%m-%d') < TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d'):
-				TotalPorVencer = TotalPorVencer + TotalesFacturas.Total
+			if Moneda == "MXN":
+				Total = Total + TotalesFacturas.Total if TotalesFacturas.Moneda == 'MXN' else Total + (TotalesFacturas.Total*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else Total + TotalesFacturas.Total
+			if datetime.datetime.now().strftime('%Y-%m-%d') > TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') and Moneda == "MXN":
+				TotalVencido = TotalVencido + TotalesFacturas.Total if TotalesFacturas.Moneda == 'MXN' else TotalVencido + (TotalesFacturas.Total*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalVencido + TotalesFacturas.Total
+			if datetime.datetime.now().strftime('%Y-%m-%d') < TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') and Moneda == "MXN":
+				TotalPorVencer = TotalPorVencer + TotalesFacturas.Total if TotalesFacturas.Moneda == 'MXN' else TotalPorVencer + (TotalesFacturas.Total*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalPorVencer + TotalesFacturas.Total
 		ws.cell(row=cont,column=1).value = NombreProv.RazonSocial
 		ws.cell(row=cont,column=2).value = round(TotalVencido,2)
 		ws.cell(row=cont,column=3).value = round(TotalPorVencer,2)

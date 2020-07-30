@@ -12,6 +12,7 @@ urlpatterns = [
     path("GetSerieProveedor", views.GetSerieProveedor, name='GetSerieProveedor'),
     path("GetProveedorByID", views.GetProveedorByID, name='GetProveedorByID'),
     path("Actualizacion", views.Actualizacion, name='Actualizacion'),
+    path("GetValidacionesCFDIAndOther", views.GetValidacionesCFDIAndOther, name='GetValidacionesCFDIAndOther'),
 
 
 ]

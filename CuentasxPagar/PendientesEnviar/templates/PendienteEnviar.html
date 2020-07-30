@@ -143,7 +143,7 @@ kt-menu__item--active
 
 <!-- bloque para usuarios de logistik-->
 
-{% if Rol != "Proveedor" %}
+{% if request.user.roles != "Proveedor" and request.user.roles != "Contabilidad" %}
 <div class="kt-subheader kt-grid__item" id="kt_subheader">
 	<div class="kt-container  kt-container--fluid ">
 
@@ -313,7 +313,7 @@ kt-menu__item--active
 										{% endblock %}
 
 										{% block PendientesEnviar %}
-											{% if Rol != "Proveedor" %}
+											{% if request.user.roles != "Proveedor" and request.user.roles != "Contabilidad" %}
 												<div id="divTablaPendientesEnviar">
 													{% include "TablaPendientes.html" %}
 												</div>

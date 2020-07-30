@@ -9,13 +9,16 @@ import json, datetime
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import redirect
-
+from xml.dom import minidom
+import urllib
 
 @login_required
 def GetPendientesEnviar(request):
 	#PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0 AND Moneda = %s", ['FINALIZADO', 'MXN'])
 	if request.user.roles == 'MesaControl':
 		return redirect('EvidenciasProveedor')
+	elif request.user.roles == 'Contabilidad':
+		return redirect('ReportePagos')
 	# elif request.user.roles == 'Proveedor':
 	# 	return redirect('Actualizacion')
 	else:
@@ -176,6 +179,31 @@ def GetProveedorByID(request):
 def Actualizacion(request):
 	return render(request, 'update.html')
 
+def GetValidacionesCFDIAndOther(request):
+	try:
+		ListOfTagData = list()
+		xml = urllib.request.urlopen("http://lgklataforma.blob.core.windows.net/evidencias/b57f3fa2-40a2-4be2-bfdf-d4d96ab57e20.xml")
+		XMLReadyToRead = minidom.parse(xml)
+		TagComprobante = XMLReadyToRead.getElementsByTagName('cfdi:Comprobante')
+		FormaPago = TagComprobante[0].attributes['FormaPago'].value
+		SameFormaPago = True if FormaPago == '99' else False
+		ListOfTagData.append(SameFormaPago)
+		TipoDeComprobante = TagComprobante[0].attributes['TipoDeComprobante'].value
+		SameTipoDeComprobante = True if TipoDeComprobante == "I" else False
+		ListOfTagData.append(SameTipoDeComprobante)
+		MetodoPago = TagComprobante[0].attributes['MetodoPago'].value
+		SameMetodoPago = True if MetodoPago == 'PPD' else False
+		ListOfTagData.append(SameMetodoPago)
+		TagRFCReceptor = XMLReadyToRead.getElementsByTagName('cfdi:Receptor')
+		UsoCFDI = TagRFCReceptor[0].attributes['UsoCFDI'].value
+		SameUsoCFDI = True if UsoCFDI == "G03" else False
+		ListOfTagData.append(SameUsoCFDI)
+		ResponseTagData = True if False not in ListOfTagData else False
+		return JsonResponse({"Response": ResponseTagData})
+	except Exception as e:
+		return JsonResponse({"Response": False})
+
+
 # def CrearUsuariosTranportistas(request):
 # #editar un usuario
 #
@@ -210,7 +238,7 @@ def Actualizacion(request):
 
 	# Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-	# Proveedores = Proveedor.objects.filter(RFC='TFA 170518 161')
+	# Proveedores = Proveedor.objects.filter(RFC='TMI 941223 LQ6')
 	# for prov in Proveedores:
 	# 	try:
 	# 		oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)

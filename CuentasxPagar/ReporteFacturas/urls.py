@@ -6,6 +6,6 @@ from django.conf.urls import url
 urlpatterns = [
     path('', views.ReporteFacturas, name='ReporteFacturas'),
     path('FilterBy', views.GetFacturasByFilters, name='GetFacturasByFilters'),
-    url(r'^GetReporteTotales/(?P<Status>[\w-]+),(?P<Status2>[\w-]+)/$', views.GetReporteTotales),
-    url(r'^GetReporteTotales/(?P<Status>[\w-]+)/$', views.GetReporteTotales,),
+    url(r'^GetReporteTotales/(?P<Status>[\w-]+),(?P<Status2>[\w-]+),(?P<Moneda>[\w-]+)/$', views.GetReporteTotales),
+    url(r'^GetReporteTotales/(?P<Status>[\w-]+),(?P<Moneda>[\w-]+)/$', views.GetReporteTotales),
 ]

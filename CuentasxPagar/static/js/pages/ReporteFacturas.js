@@ -19,8 +19,8 @@ $(document).ready(function(){
     $('input[name="StatusReprote"]:checked').each(function() {
       arrStatusReporte.push($(this).val())
     });
-
-    arrStatusReporte.length == 0 || arrStatusReporte.length >=3 ? alertToastError('Selecciona al menos una opcion') : DownloadReporteByTotales(arrStatusReporte)
+    arrStatusReporte.push($('input[name="MonedaReprote"]').val())
+    arrStatusReporte.length == 1 || arrStatusReporte.length >=4 ? alertToastError('Selecciona al menos una opcion') : DownloadReporteByTotales(arrStatusReporte)
   })
 
 

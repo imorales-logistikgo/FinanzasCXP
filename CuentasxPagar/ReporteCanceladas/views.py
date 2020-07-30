@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 
 def ReporteCanceladas(request):
-	if request.user.roles == 'Proveedor':
+	if request.user.roles == 'Proveedor' or request.user.roles == "Contabilidad":
 	    return render(request, '404.html')
 	else:
 		Canceladas = FacturasxProveedor.objects.defer("IDUsuarioAlta").filter(Status = 'CANCELADA').select_related('IDUsuarioBaja')

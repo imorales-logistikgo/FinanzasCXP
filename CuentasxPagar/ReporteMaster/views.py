@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 
 @login_required
 def GetReporteMaster(request):
-	if request.user.roles == 'Proveedor':
+	if request.user.roles == 'Proveedor' or request.user.roles == 'Contabilidad':
 		 return render(request, '404.html')
 	else:
 		ReporteMaster = View_Master_Proveedor.objects.filter(FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)

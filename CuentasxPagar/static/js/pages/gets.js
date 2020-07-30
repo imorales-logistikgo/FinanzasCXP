@@ -444,3 +444,34 @@ var GetFechaPago = function(Fecha,TipoComp){
         }
     });
 }
+
+
+var GetValidacionCFDIAndOther = function(XML){
+  return fetch("/PendientesEnviar/GetValidacionesCFDIAndOther?XML=" + XML, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+  }).then(function(response){
+    if (response.status == 200)
+    {
+      return response.json();
+    }
+    else
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'Error al leer el xml',
+        showConfirmButton: false,
+        timer: 2500
+      })
+    }
+  }).then(function(data){
+    valCFDIAndOther = data.Response;
+  }).catch(function(ex){
+    valCFDIAndOthe = false
+    console.log(ex);
+  });
+}

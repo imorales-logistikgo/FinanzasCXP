@@ -551,10 +551,9 @@ $('#tableAddPago').on("keyup change", 'input[name="totalPago"]', function(){
       }
   }
   $('input#valCobro').each(function(){
-   calculo = calculo + parseFloat($(this).val());
-   calculo.toFixed(2)
+   calculo = calculo + parseFloat($(this).val()).toFixed(2);
  });
-  $('#AddCosto').val(truncarDecimales(calculo, 2));
+  $('#AddCosto').val(truncarDecimales(calculo,2));
   calculo = 0;
 });
 
@@ -662,9 +661,9 @@ function showDatosObtenidos(){
  {
    if(datos[i][3] == 'MXN')
    {
-     var Balance = +datos[i][2].replace(/(\$)|(,)/g,'');
+     var Balance = parseFloat(datos[i][2].replace(/(\$)|(,)/g,'')).toFixed(2);
      var tot = +datos[i][1].replace(/(\$)|(,)/g,'');
-     total = total + Balance;
+     total = +(total.toFixed(2)) + (+Balance);
    }
    if(datos[i][3] == 'USD')
    {
@@ -709,14 +708,14 @@ function showDatosObtenidos(){
     "targets": 4,
     "width": "150px",
     "mRender": function (data, type, full) {
-     return (full[3] === 'MXN' ? `$ <input class="col-md-6 col-sm-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[2].replace(/(\$)|(,)/g,'')}" min="0" pattern="^[0-9]+" required>` : `$ <input type="number" class="col-md-6 col-sm-6 text-right valCobro" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[7]}" min="0" pattern="^[0-9]+">`);
+     return (full[3] === 'MXN' ? `$ <input class="col-md-6 col-sm-6 text-right valCobro" type="number" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${parseFloat(full[2].replace(/(\$)|(,)/g,'')).toFixed(2)}" min="0" pattern="^[0-9]+" required>` : `$ <input type="number" class="col-md-6 col-sm-6 text-right valCobro" data-idfact="${full[5]}" name="totalPago" id="valCobro" value="${full[7]}" min="0" pattern="^[0-9]+">`);
    }
  },
 
  ]
 });
 
-  $('#AddCosto').val(total.toFixed(2));
+  $('#AddCosto').val(truncarDecimales(total,2));
 }
 
 var fnGetFacturas = function () {
