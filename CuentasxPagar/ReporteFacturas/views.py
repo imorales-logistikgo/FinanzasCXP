@@ -115,15 +115,18 @@ def GetReporteTotales(request, **kwargs):
 		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN):
 			if Moneda == "MXN":
 				Total = Total + TotalesFacturas.Total if TotalesFacturas.Moneda == 'MXN' else Total + (TotalesFacturas.Total*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else Total + TotalesFacturas.Total
-			if datetime.datetime.now().strftime('%Y-%m-%d') > TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') and Moneda == "MXN":
+			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') <= datetime.datetime.now().strftime('%Y-%m-%d') and Moneda == "MXN":
 				TotalVencido = TotalVencido + TotalesFacturas.Total if TotalesFacturas.Moneda == 'MXN' else TotalVencido + (TotalesFacturas.Total*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalVencido + TotalesFacturas.Total
-			if datetime.datetime.now().strftime('%Y-%m-%d') < TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') and Moneda == "MXN":
+			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') > datetime.datetime.now().strftime('%Y-%m-%d')  and Moneda == "MXN":
 				TotalPorVencer = TotalPorVencer + TotalesFacturas.Total if TotalesFacturas.Moneda == 'MXN' else TotalPorVencer + (TotalesFacturas.Total*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalPorVencer + TotalesFacturas.Total
 		ws.cell(row=cont,column=1).value = NombreProv.RazonSocial
 		ws.cell(row=cont,column=2).value = round(TotalVencido,2)
 		ws.cell(row=cont,column=3).value = round(TotalPorVencer,2)
 		ws.cell(row=cont,column=4).value = round(Total,2)
 		cont = cont + 1
+		Total = 0
+		TotalVencido = 0
+		TotalPorVencer = 0
 	nombre_archivo ="ReporteFacturas.xlsx"
 	response = HttpResponse(content_type="application/ms-excel")
 	contenido = "attachment; filename={0}".format(nombre_archivo)

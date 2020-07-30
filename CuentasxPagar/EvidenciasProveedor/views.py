@@ -46,6 +46,7 @@ def FindFolioProveedorE(request):
                         newDelivery['TipoEvidencia'] = 'Custodia'
                         newDelivery['RutaArchivo'] = '' if(DataEvidenciaxManiobra.IsEnviada and DataEvidenciaxManiobra.IsRechazada ) else DataEvidenciaxManiobra.RutaArchivo
                         newDelivery['Status'] = 'Rechazada' if(DataEvidenciaxManiobra.IsEnviada and DataEvidenciaxManiobra.IsRechazada) else 'Aprobada' if(DataEvidenciaxManiobra.IsValidada) else  "Enviada" if (DataEvidenciaxManiobra.IsEnviada and not DataEvidenciaxManiobra.IsRechazada and not DataEvidenciaxManiobra.IsValidada) else "Otro"
+                        newDelivery['ComentarioRechazo'] = DataEvidenciaxManiobra.ComentarioRechazo
                         arrFoliosEvidencias.append(newDelivery)
                 else:
                     for i in range(2):
@@ -56,6 +57,7 @@ def FindFolioProveedorE(request):
                         newDelivery['TipoEvidencia'] = 'Custodia'
                         newDelivery['RutaArchivo'] = ''
                         newDelivery['Status'] = 'Pendiente'
+                        newDelivery['ComentarioRechazo'] = ""
                         arrFoliosEvidencias.append(newDelivery)
             else:
                 GetDelivery = XD_PedidosxViajes.objects.filter(XD_IDViaje = XDFolio.XD_IDViaje)#, StatusPedido = 'ENTREGADO')
@@ -70,6 +72,7 @@ def FindFolioProveedorE(request):
                             newDelivery['TipoEvidencia'] = 'Pedido'
                             newDelivery['RutaArchivo'] = '' if(TieneEvidencia.IsEnviada and TieneEvidencia.IsRechazada ) else TieneEvidencia.RutaArchivo
                             newDelivery['Status'] = 'Rechazada' if(TieneEvidencia.IsEnviada and TieneEvidencia.IsRechazada) else 'Aprobada' if(TieneEvidencia.IsValidada) else  "Enviada" if (TieneEvidencia.IsEnviada and not TieneEvidencia.IsRechazada and not TieneEvidencia.IsValidada) else "Otro"
+                            newDelivery['ComentarioRechazo'] = TieneEvidencia.ComentarioRechazo
                             arrFoliosEvidencias.append(newDelivery)
                         else:
                             newDelivery = {}
@@ -79,6 +82,7 @@ def FindFolioProveedorE(request):
                             newDelivery['TipoEvidencia'] = 'Pedido'
                             newDelivery['RutaArchivo'] = "" if(GetDelivery[0].IsEvidenciaPedidoxViaje == 1 or GetDelivery[0].IsEvidenciaFisicaPedidoxViaje == 1) else ""
                             newDelivery['Status'] = 'Otro' if(GetDelivery[0].IsEvidenciaPedidoxViaje == 1 or GetDelivery[0].IsEvidenciaFisicaPedidoxViaje == 1) else 'Pendiente'
+                            newDelivery['ComentarioRechazo'] = ""
                             arrFoliosEvidencias.append(newDelivery)
             for Maniobras in XD_AccesoriosxViajes.objects.filter(XD_IDViaje = XDFolio.XD_IDViaje, Descripcion__in = ('Maniobras de descarga', 'Maniobras de carga')):
                 if Maniobras:
@@ -91,6 +95,7 @@ def FindFolioProveedorE(request):
                         newDelivery['TipoEvidencia'] = 'Maniobras'
                         newDelivery['RutaArchivo'] = '' #if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else GetEachManiobra.RutaArchivo if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else GetEachManiobra.RutaArchivo
                         newDelivery['Status'] = 'Pendiente' #if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else 'Aprobada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsValidada) else 'Pendiente' if len(GetManiobras) == 0 else "Enviada" if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else "Otro"
+                        newDelivery['ComentarioRechazo'] = ""
                         arrFoliosEvidencias.append(newDelivery)
                     else:
                         for GetEachManiobra in GetManiobras:
@@ -101,6 +106,7 @@ def FindFolioProveedorE(request):
                             newDelivery['TipoEvidencia'] = 'Maniobras'
                             newDelivery['RutaArchivo'] = '' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else GetEachManiobra.RutaArchivo if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else GetEachManiobra.RutaArchivo
                             newDelivery['Status'] = 'Rechazada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else 'Aprobada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsValidada) else 'Pendiente' if len(GetManiobras) == 0 else "Enviada" if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else "Otro"
+                            newDelivery['ComentarioRechazo'] = GetEachManiobra.ComentarioRechazo
                             arrFoliosEvidencias.append(newDelivery)
         elif 'FTL' in Folio:
             GetEviBKG = FindFolioEvidenciaBGK(Folio, request.user.IDTransportista)
@@ -524,6 +530,7 @@ def FindFolioEvidenciaBGK(Folio, Transportista):
                 AddNewDataToJdon['TipoEvidencia'] = 'BKG'
                 AddNewDataToJdon['RutaArchivo'] = ""
                 AddNewDataToJdon['Status'] = 'Pendiente'
+                AddNewDataToJdon['ComentarioRechazo'] = ""
         else:
             newlist = list()
             GetEvidencias = Bro_EvidenciasxViaje.objects.filter(IDBro_Viaje = GetIDViaje.IDBro_Viaje)
@@ -535,6 +542,7 @@ def FindFolioEvidenciaBGK(Folio, Transportista):
                 AddNewDataToJdon['TipoEvidencia'] = 'BKG'
                 AddNewDataToJdon['RutaArchivo'] = Evidencias.RutaArchivo
                 AddNewDataToJdon['Status'] = 'Enviada' if(Evidencias.IsEnviada and not Evidencias.IsRechazada and not Evidencias.IsValidada) else 'Rechazada' if(Evidencias.IsEnviada and Evidencias.IsRechazada) else 'Aprobada' if(Evidencias.IsEnviada and Evidencias.IsValidada) else 'Otro'
+                AddNewDataToJdon['ComentarioRechazo'] = Evidencias.ComentarioRechazo
                 newlist.append(AddNewDataToJdon)
             ListaEvidencias = newlist
         return {'ListaEvidencias': ListaEvidencias}

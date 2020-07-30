@@ -171,7 +171,7 @@ def GetSerieProveedor(request):
 
 
 def GetProveedorByID(request):
-	IDProveedor = request.Get["IDProveedor"]
+	IDProveedor = request.GET["IDProveedor"]
 	Proveedor = Proveedor.objects.get(IDTransportista = IDProveedor)
 	IsAmericano = Proveedor.IsAmericano
 	return JsonResponse({'IsAmericano': IsAmericano})
@@ -180,9 +180,10 @@ def Actualizacion(request):
 	return render(request, 'update.html')
 
 def GetValidacionesCFDIAndOther(request):
+	File = request.GET["XML"]
 	try:
 		ListOfTagData = list()
-		xml = urllib.request.urlopen("http://lgklataforma.blob.core.windows.net/evidencias/b57f3fa2-40a2-4be2-bfdf-d4d96ab57e20.xml")
+		xml = urllib.request.urlopen(File)
 		XMLReadyToRead = minidom.parse(xml)
 		TagComprobante = XMLReadyToRead.getElementsByTagName('cfdi:Comprobante')
 		FormaPago = TagComprobante[0].attributes['FormaPago'].value

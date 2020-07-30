@@ -66,7 +66,7 @@ var GetFolioEvidencias = function(Folio){
                               					<div  class="kt-uppy__dashboard"></div>
                               					<div class="kt-uppy__progress"></div>
                               				</div>
-                                      <input type="text" id="ComentarioEvidencia" class="form-control" placeholder="Comentario" disabled>
+                                      <input type="text" id="ComentarioEvidencia" class="form-control" placeholder="Comentario" disabled value="${data.Folios[i].ComentarioRechazo}">
                               			</div>
                               	</div>
                               </div>`);
@@ -447,31 +447,18 @@ var GetFechaPago = function(Fecha,TipoComp){
 
 
 var GetValidacionCFDIAndOther = function(XML){
-  return fetch("/PendientesEnviar/GetValidacionesCFDIAndOther?XML=" + XML, {
-    method: "GET",
-    credentials: "same-origin",
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json"
-    }
-  }).then(function(response){
-    if (response.status == 200)
-    {
-      return response.json();
-    }
-    else
-    {
-      Swal.fire({
-        type: 'error',
-        title: 'Error al leer el xml',
-        showConfirmButton: false,
-        timer: 2500
-      })
-    }
-  }).then(function(data){
-    valCFDIAndOther = data.Response;
-  }).catch(function(ex){
-    valCFDIAndOthe = false
-    console.log(ex);
-  });
+  $.ajax({
+        url: `/PendientesEnviar/GetValidacionesCFDIAndOther?XML=${XML}`,
+        type: 'GET',
+        async:false,
+        contentType: "application/json; charset=utf-8",
+        success: function(data){
+          valCFDIAndOther = data.Response;
+        },
+        error: function(request, status, error){
+          alertToastError("Ocurrio un error al leer el archivo xml");
+          valCFDIAndOthe = false
+          console.log(error);
+        }
+    });
 }
