@@ -883,7 +883,7 @@ function BuscarFolioProveedor() {
       WaitMe_Hide('#TbPading');
     }
     else {
-      moneda = "MXN"
+      moneda = data.Moneda
       subtotal = data.Subtotal;
       Tiva = data.IVA;
       TRetencion = data.Retencion;

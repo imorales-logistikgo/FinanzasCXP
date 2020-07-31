@@ -241,22 +241,28 @@ def FacturasToList(Facturas):
 
 
 def CancelarFactura(request):
-	IDFactura = json.loads(request.body.decode('utf-8'))["IDFactura"]
-	Motivo = json.loads(request.body.decode('utf-8'))["MotivoEliminacion"]
-	conRelacionFacturaProveedorxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = IDFactura)
-	if conRelacionFacturaProveedorxPartidas:
-		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.Status = 'CANCELADA'
-		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.IDUsuarioBaja = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
-		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.ComentarioBaja = Motivo
-		conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.save()
-		for Partida in conRelacionFacturaProveedorxPartidas:
-			Partida.IDPartida.IsActiva = False
-			Partida.IDPartida.FechaBaja = datetime.datetime.now()
-			Ext_Costo = Ext_PendienteEnviar_Costo.objects.get(IDPendienteEnviar = Partida.IDPendienteEnviar)
-			Ext_Costo.IsFacturaProveedor = False
-			Ext_Costo.save()
-			Partida.IDPartida.save()
-	return HttpResponse("")
+	try:
+		with transaction.atomic(using = 'users'):
+			IDFactura = json.loads(request.body.decode('utf-8'))["IDFactura"]
+			Motivo = json.loads(request.body.decode('utf-8'))["MotivoEliminacion"]
+			conRelacionFacturaProveedorxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = IDFactura)
+			if conRelacionFacturaProveedorxPartidas:
+				conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.Status = 'CANCELADA'
+				conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.IDUsuarioBaja = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
+				conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.ComentarioBaja = Motivo
+				conRelacionFacturaProveedorxPartidas[0].IDFacturaxProveedor.save()
+				for Partida in conRelacionFacturaProveedorxPartidas:
+					Partida.IDPartida.IsActiva = False
+					Partida.IDPartida.FechaBaja = datetime.datetime.now()
+					Ext_Costo = Ext_PendienteEnviar_Costo.objects.get(IDPendienteEnviar = Partida.IDPendienteEnviar)
+					Ext_Costo.IsFacturaProveedor = False
+					Ext_Costo.save()
+					Partida.IDPartida.save()
+			return HttpResponse(status = 200)
+	except Exception as e:
+		transaction.rollback(using = 'users')
+		return HttpResponse(status = 500)
+
 
 
 
@@ -335,14 +341,20 @@ def SavePagoxFactura(request):
 
 
 def ValidarFactura(request):
-	IDFactura = json.loads(request.body.decode('utf-8'))["IDFactura"]
-	Factura = FacturasxProveedor.objects.get(IDFactura = IDFactura)
-	if Factura:
-		Factura.IsAutorizada = True
-		Factura.Status = 'APROBADA'
-		Factura.save()
-	Status = Factura.Status
-	return JsonResponse({"Status":Status})
+	try:
+		with transaction.atomic(using='users'):
+			IDFactura = json.loads(request.body.decode('utf-8'))["IDFactura"]
+			Factura = FacturasxProveedor.objects.get(IDFactura = IDFactura)
+			if Factura:
+				Factura.IsAutorizada = True
+				Factura.Status = 'APROBADA'
+				Factura.save()
+			Status = Factura.Status
+			return JsonResponse({"Status":Status})
+	except Exception as e:
+		transaction.rollback(using='users')
+		return HttpResponse(status = 500)
+
 
 
 

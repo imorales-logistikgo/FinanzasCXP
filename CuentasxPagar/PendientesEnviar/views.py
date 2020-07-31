@@ -101,7 +101,7 @@ def SaveFacturaxProveedor(request):
 	newFactura.Total = jParams["Total"]
 	newFactura.Saldo = jParams["Total"]
 	newFactura.Retencion = jParams["Retencion"]
-	newFactura.TipoCambio = jParams["TipoCambio"]
+	newFactura.TipoCambio = jParams["TipoCambio"] if jParams["Moneda"] == "MXN" else GetTipoCambioXML(jParams["RutaXML"]) if jParams["Moneda"] == "USD" else jParams["TipoCambio"]
 	newFactura.Comentarios = jParams["Comentarios"]
 	newFactura.RutaXML = jParams["RutaXML"]
 	newFactura.RutaPDF = jParams["RutaPDF"]
@@ -152,7 +152,7 @@ def FindFolioProveedor(request):
 	try:
 		PendienteEnviar = View_PendientesEnviarCxP.objects.filter(Folio = Folio, IsFacturaProveedor = False, IsEvidenciaFisica = True, IsEvidenciaDigital = True, IDProveedor = request.user.IDTransportista, Status= 'FINALIZADO').last()
 		if PendienteEnviar.IsControlDesk != 0:
-			return JsonResponse({'Found' : True, 'Folio' : PendienteEnviar.Folio, 'Proveedor' : PendienteEnviar.NombreProveedor, 'FechaDescarga' : PendienteEnviar.FechaDescarga, 'IDPendienteEnviar' : PendienteEnviar.IDPendienteEnviar, 'IDProveedor' : PendienteEnviar.IDProveedor, 'Subtotal': PendienteEnviar.Subtotal, 'IVA': PendienteEnviar.IVA, 'Retencion': PendienteEnviar.Retencion, 'Total' : PendienteEnviar.Total})
+			return JsonResponse({'Found' : True, 'Folio' : PendienteEnviar.Folio, 'Proveedor' : PendienteEnviar.NombreProveedor, 'FechaDescarga' : PendienteEnviar.FechaDescarga, 'IDPendienteEnviar' : PendienteEnviar.IDPendienteEnviar, 'IDProveedor' : PendienteEnviar.IDProveedor, 'Subtotal': PendienteEnviar.Subtotal, 'IVA': PendienteEnviar.IVA, 'Retencion': PendienteEnviar.Retencion, 'Total' : PendienteEnviar.Total, 'Moneda' : PendienteEnviar.Moneda})
 		else:
 			return JsonResponse({'Found' : False})
 	except:
@@ -203,6 +203,14 @@ def GetValidacionesCFDIAndOther(request):
 		return JsonResponse({"Response": ResponseTagData})
 	except Exception as e:
 		return JsonResponse({"Response": False})
+
+
+def GetTipoCambioXML(File):
+	xml = urllib.request.urlopen(File)
+	XMLReadyToRead = minidom.parse(xml)
+	TagComprobante = XMLReadyToRead.getElementsByTagName('cfdi:Comprobante')
+	TipoCambio = TagComprobante[0].attributes['TipoCambio'].value
+	return TipoCambio
 
 
 # def CrearUsuariosTranportistas(request):
