@@ -150,13 +150,13 @@ kt-menu__item--active
 {% endblock %}
 
 {% block ReporteFacturas %}
-{% if request.user.roles != "Contabilidad" %}
+{% if request.user.roles != "MesaControl" %}
 <div class="kt-subheader   kt-grid__item" id="kt_subheader">
 	<div class="kt-container  kt-container--fluid ">
 		<div class="kt-subheader__toolbar">
 			<div class="kt-subheader__wrapper">
 				<h3>Reporte de facturas</h3>
-		{% if request.user.roles == "users" %}
+		{% if request.user.username == "cxp1@logistikgo" or request.user.username == "jcastillo@logistikgo" or request.user.username == "ccontabilidad@logistikgo" or request.user.username == "jfraga@logistikgo" %}
 
 				<!-- Button trigger modal -->
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalReporteTotales" data-backdrop="static" data-keyboard="false">
@@ -217,7 +217,7 @@ kt-menu__item--active
 		</div>
 	</div>
 </div>
-{% if request.user.roles != "Contabilidad" %}
+{% if request.user.roles != "MesaControl" %}
 <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
 		<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">

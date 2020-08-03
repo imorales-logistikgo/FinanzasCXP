@@ -1,0 +1,54 @@
+{%extends "Base.html"%}
+{% load static %}
+
+{% block activateCartaNoAdeudo %}
+    kt-menu__item--active
+{% endblock %}
+
+{% block ContadoresEstadosCuenta %}
+    <div class="kt-portlet kt-portlet--tabs">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-toolbar">
+                <ul class="nav nav-tabs nav-tabs-line nav-tabs-line-success nav-tabs-line-2x" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#kt_portlet_base_demo_1_1_tab_content" role="tab">
+                            <i class="la la-cloud-upload"></i> Enviar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#kt_portlet_base_demo_1_2_tab_content" role="tab" id="DownloadCartaNoAdeudo">
+                            <i class="la la-cloud-download"></i> Descargar
+                        </a>
+                    </li>
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" data-toggle="tab" href="#kt_portlet_base_demo_1_3_tab_content" role="tab">-->
+<!--                            <i class="la la-bell-o"></i>Logs-->
+<!--                        </a>-->
+<!--                    </li>-->
+                </ul>
+            </div>
+        </div>
+        <div class="kt-portlet__body">
+            <div class="tab-content">
+                <div class="tab-pane active" id="kt_portlet_base_demo_1_1_tab_content" role="tabpanel">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <input class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-outline-success btn-elevate btn-circle btn-icon"><i class="la la-cloud-upload"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="kt_portlet_base_demo_1_2_tab_content" role="tabpanel">
+<!--                    <button class="btn btn-outline-brand btn-elevate btn-pill"><i class="flaticon-download"></i>Descargar</button>-->
+                </div>
+<!--                <div class="tab-pane" id="kt_portlet_base_demo_1_3_tab_content" role="tabpanel">-->
+<!--                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged-->
+<!--                </div>-->
+            </div>
+        </div>
+    </div>
+{% endblock %}

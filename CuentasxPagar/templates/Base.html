@@ -83,7 +83,7 @@ end:: Header Mobile -->
 							<h4 class="kt-menu__section-text">Reportes</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
-						{% if request.user.roles == "users" or request.user.roles == "Proveedor" %}
+						{% if request.user.roles == "users" or request.user.roles == "Proveedor" or request.user.roles == 'Contabilidad'%}
 						<li class="kt-menu__item {% block activateReporteFacturas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteFacturas' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-file-invoice-dollar"></i><span class="kt-menu__link-text">Facturas</span></a></li>
 						{% endif %}
 						<li class="kt-menu__item {% block activateReportePagos %} {% endblock %}"  aria-haspopup="true"><a href="{% url 'ReportePagos' %}" class="kt-menu__link"><i class="kt-menu__link-icon flaticon2-checkmark"></i><span class="kt-menu__link-text">Pagos</span></a></li>
@@ -99,6 +99,13 @@ end:: Header Mobile -->
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
 						<li class="kt-menu__item {% block activateEvidenciasProveedor %} {% endblock %}" aria-haspopup="true"><a href="{% url 'EvidenciasProveedor' %}" class="kt-menu__link"><i class="kt-menu__link-icon flaticon2-telegram-logo"></i><span class="kt-menu__link-text">Evidencias</span></a></li>
+						{% endif %}
+						{% if request.user.roles == "Proveedor"%}
+						<li class="kt-menu__section ">
+							<h4 class="kt-menu__section-text">Carta No Adeudo</h4>
+							<i class="kt-menu__section-icon flaticon-more-v2"></i>
+						</li>
+						<li class="kt-menu__item {% block activateCartaNoAdeudo %} {% endblock %}" aria-haspopup="true"><a href="{% url 'CartaNoAdeudo' %}" class="kt-menu__link"><i class="kt-menu__link-icon flaticon-list"></i><span class="kt-menu__link-text">Carta No Adeudo</span></a></li>
 						{% endif %}
 					</ul>
 				</div>
@@ -254,6 +261,9 @@ end:: Header Mobile -->
 			{% endblock %}
 
 			{% block EvidenciasProveedor %}
+			{% endblock %}
+
+			{% block CartaNoAdeudo %}
 			{% endblock %}
 
 			<!--end contenido-->

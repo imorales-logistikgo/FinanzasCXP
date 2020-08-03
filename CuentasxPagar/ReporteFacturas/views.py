@@ -83,6 +83,7 @@ def GetFacturasByFilters(request):
 def GetReporteTotales(request, **kwargs):
 	StatusIN = kwargs.get('Status', None), kwargs.get('Status2', None)
 	Moneda = kwargs.get('Moneda', None)
+	Mes = datetime.date.today()
 	Facturas = FacturasxProveedor.objects.values('IDProveedor').distinct()
 	wb = Workbook()
 	ws = wb.active
@@ -112,7 +113,7 @@ def GetReporteTotales(request, **kwargs):
 		Total = 0
 		TotalVencido = 0
 		TotalPorVencer = 0
-		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN):
+		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN).exclude(FechaFactura__month = Mes.month):
 			if Moneda == "MXN":
 				Total = Total + TotalesFacturas.Total if TotalesFacturas.Moneda == 'MXN' else Total + (TotalesFacturas.Total*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else Total + TotalesFacturas.Total
 			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') <= datetime.datetime.now().strftime('%Y-%m-%d') and Moneda == "MXN":

@@ -13,6 +13,6 @@ urlpatterns = [
     path("GetProveedorByID", views.GetProveedorByID, name='GetProveedorByID'),
     path("Actualizacion", views.Actualizacion, name='Actualizacion'),
     path("GetValidacionesCFDIAndOther", views.GetValidacionesCFDIAndOther, name='GetValidacionesCFDIAndOther'),
-
+    path("CreatePDFCartaNoAdeudo", views.CreatePDFCartaNoAdeudo, name='CreatePDFCartaNoAdeudo')
 
 ]
