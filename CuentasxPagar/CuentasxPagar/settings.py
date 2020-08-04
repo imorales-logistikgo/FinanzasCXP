@@ -111,7 +111,7 @@ DATABASES = {
     },
     'users': {
         'ENGINE': "sql_server.pyodbc",
-        'NAME': "LogistikGO_Admon",
+        'NAME': "LogistikGO_Admon_Copiar_01",
         'HOST': "logistikgo.database.windows.net",
         'USER': "QUR3n5qk4F33",
         'PASSWORD': "Hi0p68To45lzXp0klf",

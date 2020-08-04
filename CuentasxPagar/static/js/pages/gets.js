@@ -353,8 +353,8 @@ async function GetIdDocumentoAndImpPagado (xml){
          req.send(null);
          if (req.status == 200){
              var resp = req.responseXML;
-             var obNodos = resp.children[0].attributes;
-             var rest = obNodos.Folio ? obNodos.Folio.nodeValue: obNodos.Serie.nodeValue;
+//             var obNodos = resp.children[0].attributes;
+//             var rest = obNodos.Folio ? obNodos.Folio.nodeValue: obNodos.Serie.nodeValue;
              var obNodosUI = resp.getElementsByTagName("cfdi:Complemento")[0];
              var TimbreFiscal = obNodosUI.getElementsByTagName('pago10:Pago')[0]
              var each = TimbreFiscal.getElementsByTagName('pago10:DoctoRelacionado')
@@ -387,7 +387,7 @@ var GetFacturasxPago =  function(Pago, arrXML){
                 var indicador = false
                 loop2:
                   for (var j=0; j<arrXML.length;j++){
-                    if (data.DataBD[i].IdDocumento.toUpperCase() == arrXML[j].IdDocumento && parseFloat(data.DataBD[i].ImpPagado).toFixed(2) == parseFloat(arrXML[j].ImpPagado).toFixed(2)){
+                    if (data.DataBD[i].IdDocumento.toUpperCase().trim() == arrXML[j].IdDocumento.toUpperCase().trim() && parseFloat(data.DataBD[i].ImpPagado).toFixed(2) == parseFloat(arrXML[j].ImpPagado).toFixed(2)){
                       indicador = true
                       break loop2;
                     }

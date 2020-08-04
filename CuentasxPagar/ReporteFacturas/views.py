@@ -125,9 +125,6 @@ def GetReporteTotales(request, **kwargs):
 		ws.cell(row=cont,column=3).value = round(TotalPorVencer,2)
 		ws.cell(row=cont,column=4).value = round(Total,2)
 		cont = cont + 1
-		Total = 0
-		TotalVencido = 0
-		TotalPorVencer = 0
 	nombre_archivo ="ReporteFacturas.xlsx"
 	response = HttpResponse(content_type="application/ms-excel")
 	contenido = "attachment; filename={0}".format(nombre_archivo)

@@ -3,4 +3,6 @@ from . import views
 
 urlpatterns = [
     path("", views.CartaNoAdeudo, name="CartaNoAdeudo"),
+    path("GetCartaNoAdeudo", views.GetCartaNoAdeudo, name="GetCartaNoAdeudo")
+
 ]
