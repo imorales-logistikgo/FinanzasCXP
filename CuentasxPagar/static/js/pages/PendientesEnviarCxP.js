@@ -8,7 +8,7 @@ var table;
 var subtotal = 0, Tiva=0, TRetencion=0, total=0;
 var totalViaje = 0;
 var idPend, uuid;
-var totalXML=0, totalXMLProveedor=0, valCFDIAndOther;
+var totalXML=0, totalXMLProveedor=0, valCFDIAndOther, FViaje;
 
 $(document).ready(function() {
   $(document).keydown(function(e){
@@ -1077,9 +1077,10 @@ function archivosproveedor()
            {
              const urlXMLCheck = response.body
              totalXMLProveedor = leerXMLTransportista(urlXMLCheck)
-             var folioInFactura = FolioViajeXML(urlXMLCheck, folioCheck)
+//             var folioInFactura = FolioViajeXML(urlXMLCheck, folioCheck)
+             GetFolioViajeXML(urlXMLCheck, folioCheck)
              GetValidacionCFDIAndOther(urlXMLCheck)
-             if(+totalXMLProveedor > (Number(totalViaje.toFixed(2)) + 1) || totalXMLProveedor == null || !folioInFactura || !valCFDIAndOther)
+             if(+totalXMLProveedor > (Number(totalViaje.toFixed(2)) + 1) || totalXMLProveedor == null || !FViaje || !valCFDIAndOther)
              {
                alertToastError(`La factura no coincide con el sistema, por favor intente de nuevo.`)
                uppyDashboard.cancelAll()

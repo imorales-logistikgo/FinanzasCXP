@@ -462,3 +462,19 @@ var GetValidacionCFDIAndOther = function(XML){
         }
     });
 }
+
+var GetFolioViajeXML = function(XML,Folio){
+  $.ajax({
+        url: `/PendientesEnviar/GetFolioViajeXML?XML=${XML}&Folio=${Folio}`,
+        type: 'GET',
+        async:false,
+        contentType: "application/json; charset=utf-8",
+        success: function(data){
+          FViaje = data.Folio;
+        },
+        error: function(request, status, error){
+          alertToastError("Ocurrio un error al leer el archivo xml");
+          console.log(error);
+        }
+    });
+}

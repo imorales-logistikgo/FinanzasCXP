@@ -11,14 +11,7 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from xml.dom import minidom
 import urllib
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from pytz import timezone
-from io import BytesIO
-from reportlab.platypus import Paragraph
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
-from reportlab.lib.units import inch
+import re
 
 @login_required
 def GetPendientesEnviar(request):
@@ -207,6 +200,9 @@ def GetValidacionesCFDIAndOther(request):
 		UsoCFDI = TagRFCReceptor[0].attributes['UsoCFDI'].value
 		SameUsoCFDI = True if UsoCFDI == "G03" else False
 		ListOfTagData.append(SameUsoCFDI)
+		RFCReceptor = TagRFCReceptor[0].attributes['Rfc'].value
+		SameRFC = True if RFCReceptor == "LKM021004ERA" else False
+		ListOfTagData.append(SameRFC)
 		ResponseTagData = True if False not in ListOfTagData else False
 		return JsonResponse({"Response": ResponseTagData})
 	except Exception as e:
@@ -220,54 +216,60 @@ def GetTipoCambioXML(File):
 	TipoCambio = TagComprobante[0].attributes['TipoCambio'].value
 	return TipoCambio
 
-def CreatePDFCartaNoAdeudo(request):
-	w, h = A4
-	print(h)
-	date = datetime.datetime.now()
-	months = (
-	"Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre",
-	"Diciembre")
-	day = date.day
-	month = months[date.month - 1]
-	year = date.year
-	messsage = "{} de {} del {}".format(day, month, year)
-	bufferMemoria = BytesIO()
-	c = canvas.Canvas(bufferMemoria, pagesize=A4)
-	p = ParagraphStyle('test')
-	# p.textColor = 'black'
-	# p.borderColor = 'black'
-	# p.borderWidth = 1
-	p.alignment = TA_JUSTIFY
-	p.fontSize = 13
-	p.leading = 20
+def GetFolioViajeXML(request):
+	try:
+		XMLFile = request.GET["XML"]
+		FolioToCheck = request.GET["Folio"]
+		xml = urllib.request.urlopen(XMLFile)
+		XMLToRead = minidom.parse(xml)
+		TagConcepto = XMLToRead.getElementsByTagName('cfdi:Concepto')
+		FolioViaje = TagConcepto[0].attributes['Descripcion'].value
+		FindFolioInXML = re.search(FolioToCheck, FolioViaje)
+		if FindFolioInXML is not None:
+			indexstart = FindFolioInXML.start()
+			indexend = FindFolioInXML.end()
+			FolioInXML = FolioViaje[indexstart:indexend]
+			SameFolio = True if FolioInXML == FolioToCheck else False
+		else:
+			TagNoIdentificacion = XMLToRead.getElementsByTagName('cfdi:Concepto')
+			if 'NoIdentificacion' in TagNoIdentificacion[0].attributes:
+				FolioViajeInTagNoIdentificacion = TagNoIdentificacion[0].attributes['NoIdentificacion'].value
+				FindFolioInTagNoIdentificacion = re.search(FolioToCheck, FolioViajeInTagNoIdentificacion)
+				if FolioViajeInTagNoIdentificacion is not None:
+					indexstart = FindFolioInTagNoIdentificacion.start()
+					indexend = FindFolioInTagNoIdentificacion.end()
+					FolioInXML = FolioViajeInTagNoIdentificacion[indexstart:indexend]
+					SameFolio = True if FolioInXML == FolioToCheck else False
+			else:
+				TagUnidad = XMLToRead.getElementsByTagName('cfdi:Concepto')
+				FolioViajeInTagUnidad = TagUnidad[0].attributes['Unidad'].value
+				FindFolioInTagUnidad = re.search(FolioToCheck, FolioViajeInTagUnidad)
+				if FindFolioInTagUnidad is not None:
+					indexstart = FindFolioInTagUnidad.start()
+					indexend = FindFolioInTagUnidad.end()
+					FolioInXML = FolioViajeInTagUnidad[indexstart:indexend]
+					SameFolio = True if FolioInXML == FolioToCheck else False
+				else:
+					if XMLToRead.getElementsByTagName('cfdi:Parte') != []:
+						TagParte = XMLToRead.getElementsByTagName('cfdi:Parte')
+						FolioViajeInTagParte = TagParte[0].attributes['Descripcion'].value
+						FindFolioInTagParte = re.search(FolioToCheck, FolioViajeInTagParte)
+						if FindFolioInTagParte is not None:
+							indexstart = FindFolioInTagParte.start()
+							indexend = FindFolioInTagParte.end()
+							FolioInXML = FolioViajeInTagParte[indexstart:indexend]
+							SameFolio = True if FolioInXML == FolioToCheck else False
+						else:
+							SameFolio = False
+					else:
+						SameFolio = False
+		return JsonResponse({"Folio":SameFolio})
+	except Exception as e:
+		return JsonResponse({"Folio":False})
 
-	c.drawImage('static/img/F.png', -1,5, 600, 841)
-	c.drawString(300, 690, "San Luis Potosí, S.L.P. a "+ str(messsage))
-	c.drawString(100, 640, "Logisti-k de México SA de CV")
-	c.drawString(100, 620, "Av. Chapultepec #1385 3er. Piso")
-	c.drawString(100, 600, "Privadas del Pedregal, S.L.P.")
-	c.drawString(100, 550, "ATENCION:")
-	c.drawString(100, 520, "C.P. Judith Castillo Zavala")
-	c.drawString(100, 500, "Gerente de Finanzas")
-	para = Paragraph(
-		"Por medio de la presente me dirijo a usted para informar que no existen pendientes de facturar y/o cobrar "
-		"por parte de NOMBRE PROVEEDOR anteriores a MES Y AÑO, quedando pendiente por conciliar el periodo PERIODO, para conciliar "
-		"satisfactoriamente y cerrar el ejercicio AÑO.", p)
-	para.wrapOn(c, 420, 600)
-	para.drawOn(c, 100, 350)
-	c.drawString(100, 300, "Sin más por el momento reciba un cordial saludo.")
-	c.drawString(250, 200, "ATENTAMENTE:")
-	c.line(200, 142, 390, 142)
-	c.drawString(250, 130, "(Nombre y firma)")
-	c.drawString(200, 100, "NOMBRE DEL PROVEEDOR")
-	c.showPage()
-	c.save()
-	pdf = bufferMemoria.getvalue()
-	bufferMemoria.close()
-	response = HttpResponse(content_type="application/pdf")
-	response['Content-Disposition'] = 'attachment; filename="CartaNoAdeudo.pdf"'
-	response.write(pdf)
-	return response
+
+	# b = linearSearch('XDDT2N0907203M007476',FolioViaje)
+	# print(b)
 
 
 	# wget.download('CuentasxPagar/CartaNoAdeudo.pdf')
@@ -305,7 +307,7 @@ def CreatePDFCartaNoAdeudo(request):
 
 	# Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-	# Proveedores = Proveedor.objects.filter(RFC='TMI 941223 LQ6')
+	# Proveedores = Proveedor.objects.filter(RFC='DAU-050222-EY4')
 	# for prov in Proveedores:
 	# 	try:
 	# 		oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
