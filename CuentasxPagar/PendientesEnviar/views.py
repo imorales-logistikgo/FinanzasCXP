@@ -12,6 +12,7 @@ from django.shortcuts import redirect
 from xml.dom import minidom
 import urllib
 import re
+from azure.storage.blob import BlobClient, BlobServiceClient
 
 @login_required
 def GetPendientesEnviar(request):
@@ -235,11 +236,22 @@ def GetFolioViajeXML(request):
 			if 'NoIdentificacion' in TagNoIdentificacion[0].attributes:
 				FolioViajeInTagNoIdentificacion = TagNoIdentificacion[0].attributes['NoIdentificacion'].value
 				FindFolioInTagNoIdentificacion = re.search(FolioToCheck, FolioViajeInTagNoIdentificacion)
-				if FolioViajeInTagNoIdentificacion is not None:
+				if FindFolioInTagNoIdentificacion is not None:
 					indexstart = FindFolioInTagNoIdentificacion.start()
 					indexend = FindFolioInTagNoIdentificacion.end()
 					FolioInXML = FolioViajeInTagNoIdentificacion[indexstart:indexend]
 					SameFolio = True if FolioInXML == FolioToCheck else False
+				else:
+					TagUnidad = XMLToRead.getElementsByTagName('cfdi:Concepto')
+					FolioViajeInTagUnidad = TagUnidad[0].attributes['Unidad'].value
+					FindFolioInTagUnidad = re.search(FolioToCheck, FolioViajeInTagUnidad)
+					if FindFolioInTagUnidad is not None:
+						indexstart = FindFolioInTagUnidad.start()
+						indexend = FindFolioInTagUnidad.end()
+						FolioInXML = FolioViajeInTagUnidad[indexstart:indexend]
+						SameFolio = True if FolioInXML == FolioToCheck else False
+					else:
+						SameFolio = GetFolioInTagParte(XMLToRead,FolioToCheck)
 			else:
 				TagUnidad = XMLToRead.getElementsByTagName('cfdi:Concepto')
 				FolioViajeInTagUnidad = TagUnidad[0].attributes['Unidad'].value
@@ -250,27 +262,54 @@ def GetFolioViajeXML(request):
 					FolioInXML = FolioViajeInTagUnidad[indexstart:indexend]
 					SameFolio = True if FolioInXML == FolioToCheck else False
 				else:
-					if XMLToRead.getElementsByTagName('cfdi:Parte') != []:
-						TagParte = XMLToRead.getElementsByTagName('cfdi:Parte')
-						FolioViajeInTagParte = TagParte[0].attributes['Descripcion'].value
-						FindFolioInTagParte = re.search(FolioToCheck, FolioViajeInTagParte)
-						if FindFolioInTagParte is not None:
-							indexstart = FindFolioInTagParte.start()
-							indexend = FindFolioInTagParte.end()
-							FolioInXML = FolioViajeInTagParte[indexstart:indexend]
-							SameFolio = True if FolioInXML == FolioToCheck else False
-						else:
-							SameFolio = False
-					else:
-						SameFolio = False
+					SameFolio = GetFolioInTagParte(XMLToRead,FolioToCheck)
 		return JsonResponse({"Folio":SameFolio})
 	except Exception as e:
+		print(e)
 		return JsonResponse({"Folio":False})
 
 
-	# b = linearSearch('XDDT2N0907203M007476',FolioViaje)
-	# print(b)
+def GetFolioInTagParte(XMLToRead,FolioToCheck):
+	try:
+		if XMLToRead.getElementsByTagName('cfdi:Parte') != []:
+			TagParte = XMLToRead.getElementsByTagName('cfdi:Parte')
+			FolioViajeInTagParte = TagParte[0].attributes['Descripcion'].value
+			FindFolioInTagParte = re.search(FolioToCheck, FolioViajeInTagParte)
+			if FindFolioInTagParte is not None:
+				indexstart = FindFolioInTagParte.start()
+				indexend = FindFolioInTagParte.end()
+				FolioInXML = FolioViajeInTagParte[indexstart:indexend]
+				SameFolio = True if FolioInXML == FolioToCheck else False
+			else:
+				TagParte1 = XMLToRead.getElementsByTagName('cfdi:Parte')
+				FolioViajeInTagParteNoIdentificacion = TagParte1[0].attributes['NoIdentificacion'].value
+				FindFolioInTagParteNoIdentificacion = re.search(FolioToCheck, FolioViajeInTagParteNoIdentificacion)
+				if FindFolioInTagParteNoIdentificacion is not None:
+					indexstart = FindFolioInTagParteNoIdentificacion.start()
+					indexend = FindFolioInTagParteNoIdentificacion.end()
+					FolioInXML = FolioViajeInTagParteNoIdentificacion[indexstart:indexend]
+					SameFolio = True if FolioInXML == FolioToCheck else False
+				else:
+					SameFolio = False
+		else:
+			SameFolio = False
+		return SameFolio
+	except Exception as e:
+		print(e)
+		SameFolio = False
+		return SameFolio
 
+
+
+# def uploadEvidences(salf):
+# 	connection_string = "DefaultEndpointsProtocol=http;AccountName=lgklataforma;AccountKey=SpHagQjk7C4dBPv1cse9w36zmAtweXIMjcw9DWve7ipgXgf2Fa5l+vw2k57EM8uinlUOkfxt34BQpC9FBHE+Yg==;EndpointSuffix=core.windows.net"
+# 	service = BlobClient.from_connection_string(conn_str=connection_string, container_name="lgklataforma", blob_name="lgklataforma")
+# 	with open("CartaNoAdeudo.pdf", "rb") as data:
+# 		service.upload_blob(data)
+# 	with open("CartaNoAdeudo.pdf", "wb") as my_blob:
+# 		blob_data = service.download_blob()
+# 		blob_data.readinto(my_blob)
+# 		print(blob_data)
 
 	# wget.download('CuentasxPagar/CartaNoAdeudo.pdf')
 # def CrearUsuariosTranportistas(request):
@@ -307,7 +346,7 @@ def GetFolioViajeXML(request):
 
 	# Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-	# Proveedores = Proveedor.objects.filter(RFC='DAU-050222-EY4')
+	# Proveedores = Proveedor.objects.filter(RFC='GUDL 720217 298')
 	# for prov in Proveedores:
 	# 	try:
 	# 		oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
