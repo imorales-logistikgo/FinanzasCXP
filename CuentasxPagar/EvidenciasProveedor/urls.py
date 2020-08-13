@@ -18,5 +18,6 @@ urlpatterns = [
     path('DescargarHojaLiberacion', views.DescargarHojaLiberacion, name='DescargarHojaLiberacion'),
     path('JsonEvidenciasBKG', views.JsonEvidenciasBKG, name='JsonEvidenciasBKG'),
     path('FilterBy', views.FilterBy, name='FilterBy'),
+    path("uploadEvidencias", views.uploadEvidencias, name="uploadEvidencias"),
     # path('descarga', views.descarga, name='descarga'),
 ]

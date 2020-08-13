@@ -1,3 +1,6 @@
+import uuid
+
+from azure.storage.blob import BlobClient
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from XD_Viajes.models import XD_Viajes, XD_PedidosxViajes, XD_Pedidos, XD_AccesoriosxViajes, XD_EvidenciasxPedido, XD_EvidenciasxViaje
@@ -735,6 +738,19 @@ def FilterBy(request):
     # ListData = PEToList(Evidencias)
     htmlRes = render_to_string('TablaEvidenciasMesaControl.html', {'EvidenciasxAprobar':Evidencias}, request = request,)
     return JsonResponse({'htmlRes' : htmlRes})
+
+def uploadEvidencias(request):
+    if request.POST['type'] == 'application/pdf':
+        namefile = str(uuid.uuid4()) + ".pdf"
+    elif request.POST['type'] == 'text/xml':
+        namefile = str(uuid.uuid4()) + ".xml"
+    container_client = "evidencias"
+    blob_service_client = BlobClient.from_connection_string(conn_str="DefaultEndpointsProtocol=http;AccountName=lgklataforma;AccountKey=SpHagQjk7C4dBPv1cse9w36zmAtweXIMjcw9DWve7ipgXgf2Fa5l+vw2k57EM8uinlUOkfxt34BQpC9FBHE+Yg==",container_name=container_client, blob_name=namefile)
+    blob_service_client.upload_blob(request.FILES['files[]'])
+    urlFile = "http://lgklataforma.blob.core.windows.net/evidencias/"+namefile
+    print("http://lgklataforma.blob.core.windows.net/evidencias/"+namefile)
+    return JsonResponse({"url":urlFile})
+
 
 # def descarga(request):
 #     url = "https://lgklataforma.blob.core.windows.net/pdfcartaporte/3eec0dda-9a0d-442f-ac88-bb4eec56c2e2.pdf"

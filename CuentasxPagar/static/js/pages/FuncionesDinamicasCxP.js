@@ -620,15 +620,16 @@ var uploadEvidences = function(idU, ver){
            }
          });
          uppyDashboard.use(Dashboard, options);
-         uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
+         uppyDashboard.use(XHRUpload, { endpoint: 'uploadEvidencias', method: 'post', headers:{"X-CSRFToken": getCookie("csrftoken")}, metaFields: null, timeout: 0});
+         //uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
           uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
           uppyDashboard.on('upload-success', (file, response) => {
 
            //$(`.uppy-DashboardItem-previewLink`).prop('href', `${response.body}`);
-           $(`#${ver}`).append(`<a class="uppy-DashboardItem-previewLink" href="${response.body}" target="_blank" rel="noreferrer noopener"></a>`)
+           $(`#${ver}`).append(`<a class="uppy-DashboardItem-previewLink" href="${response.body.url}" target="_blank" rel="noreferrer noopener"></a>`)
            $(`#${ver}`).append('<i class="fa fa-eye"></i>');
            $(`#${ver}`).css('color', 'green');
-           $(`#${ver}`).data('urlEvidencia', response.body);
+           $(`#${ver}`).data('urlEvidencia', response.body.url);
            $(`#${ver}`).data('nombrearchivo', file.name);
 
           });
