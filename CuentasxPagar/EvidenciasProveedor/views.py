@@ -765,8 +765,23 @@ def uploadEvidencias(request):
 
 
 def descarga(IDViaje):
-    jsonParams = {'IDConcepto': IDViaje, 'Proyecto':"XD"}
-    respose = requests.post("http://api-admon-demo.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion",
-                            headers={'content-type': 'application/json'}, json=jsonParams)
-    print(respose.text)
-    return "ok"
+    sendAPI = CheckAllEvidenciaFisicaPedidoTrue(IDViaje)
+    if sendAPI:
+        jsonParams = {'IDConcepto': IDViaje, 'Proyecto':"XD"}
+        respose = requests.post("http://api-admon-demo.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion",
+                                headers={'content-type': 'application/json'}, json=jsonParams)
+        print(respose.text)
+        return "ok"
+    else:
+        print("Sin todas las evidencias fisicas")
+        return "ok"
+
+def CheckAllEvidenciaFisicaPedidoTrue(IDViaje):
+    GetEvidenciasFisicas = XD_PedidosxViajes.objects.filter(XD_IDViaje = IDViaje)
+    Listevidencias = list()
+    for EachPedido in GetEvidenciasFisicas:
+        itHasEvidencias = True if EachPedido.IsEvidenciaFisicaPedidoxViaje else False
+        Listevidencias.append(itHasEvidencias)
+    print(Listevidencias)
+    AllEvidencesInTrue = True if False not in Listevidencias else False
+    return AllEvidencesInTrue
