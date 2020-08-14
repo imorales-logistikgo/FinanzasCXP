@@ -77,7 +77,7 @@ var GetFolioEvidencias = function(Folio){
           $('#BtnHojaLiberacion').data('IDViajeHL', data.Folios[i].IDViaje)
           $('#BtnHojaLiberacion').data('TipoEvidenciaHL', data.Folios[i].TipoEvidencia)
           data.Folios[i].Status == 'Pendiente' || data.Folios[i].Status == 'Rechazada' ? uploadEvidences(`#uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}`, `${data.Folios[i].Delivery.replace(/ /g, "")}`) : ($(`#uploadEvidencesProveedor${data.Folios[i].Delivery.replace(/ /g, "")}`).append(`<div class="row">
-            <div class="col-md-4"><iframe src="${data.Folios[i].RutaArchivo}"></iframe></div>
+            <div class="col-md-4" ><img src="/static/img/pdf-2.png" height="150px" width="150px" style="position:relative; left:70px; bottom:20px"></div>
           </div>`)/*, $('#btnGuardarEvidenciasP').prop('disabled', true), $('#HojaLiberacion').html('<strong>Hoja de liberacion lista para descargar</strong>')*/);
           arrStatus.push(data.Folios[i].Status)
       }
@@ -178,7 +178,7 @@ var GetEvidenciaMesaControl = function(IDViaje,Folio){
               <div class="card bg-light mb-3" style="max-width: 25rem;">
                 <div class="card-header" id="${data.Evidencias[i].Delivery}">${data.Evidencias[i].Delivery}</div>
                 <div class="card-body">
-                  <a href="${data.Evidencias[i].URLEvidencia}" target="_blank"><iframe src='${data.Evidencias[i].URLEvidencia}' height="150px" width="220px"></iframe></a>
+                  <a href="${data.Evidencias[i].URLEvidencia}" target="_blank"><img src='/static/img/pdf-2.png' height="150px" width="200px"></img></a>
                 </div>
                 <div class="card-footer">
                 <button class="btn btn-outline-success btn-elevate btn-circle btn-icon AprobarEvidencia" title="Aprobar" data-idviaje="${data.Evidencias[i].XD_IDViaje}" data-idevidenciaaprobar="${data.Evidencias[i].IDEvidencia}" data-tipoevidencia="${data.Evidencias[i].TipoEvidencia}" ><i class="fa fa-check"></i></button>
@@ -344,33 +344,47 @@ var GetHojaLiberacion = function(IDViaje, Proyecto){
 }
 
 async function GetIdDocumentoAndImpPagado (xml){
-  try{
-      const proxyURL = "https://cors-anywhere.herokuapp.com/";
-      var newXML = proxyURL + xml;
-      var arrDataXML = [];
-      var req = new XMLHttpRequest();
-         req.open('GET', newXML, false);
-         req.send(null);
-         if (req.status == 200){
-             var resp = req.responseXML;
-//             var obNodos = resp.children[0].attributes;
-//             var rest = obNodos.Folio ? obNodos.Folio.nodeValue: obNodos.Serie.nodeValue;
-             var obNodosUI = resp.getElementsByTagName("cfdi:Complemento")[0];
-             var TimbreFiscal = obNodosUI.getElementsByTagName('pago10:Pago')[0]
-             var each = TimbreFiscal.getElementsByTagName('pago10:DoctoRelacionado')
-             for (var i=0; i<each.length; i++){
-               var idDocumento = each[i].getAttribute('IdDocumento')
-               var ImpPagado = each[i].getAttribute('ImpPagado')
-               arrDataXML.push({"IdDocumento":idDocumento.toUpperCase(), "ImpPagado":ImpPagado})
-             }
-          }
-      const a = await GetFacturasxPago(idPag,arrDataXML);
-      // return arrDataXML;
-  }
-  catch(error){
-    alertToastError('Ocurrio un error al leer el archivo xml');
-    console.error(error);
-  }
+  $.ajax({
+        url: `/ReportePagos/GetUUIDEachFactura?XML=${xml}`,
+        type: 'GET',
+        async:false,
+        contentType: "application/json; charset=utf-8",
+        // beforeSend: fnBeforeSend,
+        success: function(data){
+            GetFacturasxPago(idPag,data.arrDataXML)
+        },
+        error: function(request, status, error){
+          alertToastError("Ocurrio un problema al leer el xml");
+          console.log(error);
+        }
+    });
+//  try{
+//      const proxyURL = "https://cors-anywhere.herokuapp.com/";
+//      var newXML = proxyURL + xml;
+//      var arrDataXML = [];
+//      var req = new XMLHttpRequest();
+//         req.open('GET', newXML, false);
+//         req.send(null);
+//         if (req.status == 200){
+//             var resp = req.responseXML;
+////             var obNodos = resp.children[0].attributes;
+////             var rest = obNodos.Folio ? obNodos.Folio.nodeValue: obNodos.Serie.nodeValue;
+//             var obNodosUI = resp.getElementsByTagName("cfdi:Complemento")[0];
+//             var TimbreFiscal = obNodosUI.getElementsByTagName('pago10:Pago')[0]
+//             var each = TimbreFiscal.getElementsByTagName('pago10:DoctoRelacionado')
+//             for (var i=0; i<each.length; i++){
+//               var idDocumento = each[i].getAttribute('IdDocumento')
+//               var ImpPagado = each[i].getAttribute('ImpPagado')
+//               arrDataXML.push({"IdDocumento":idDocumento.toUpperCase(), "ImpPagado":ImpPagado})
+//             }
+//          }
+//      const a = await GetFacturasxPago(idPag,arrDataXML);
+//      // return arrDataXML;
+//  }
+//  catch(error){
+//    alertToastError('Ocurrio un error al leer el archivo xml');
+//    console.error(error);
+//  }
 }
 
 var GetFacturasxPago =  function(Pago, arrXML){
@@ -477,4 +491,32 @@ var GetFolioViajeXML = function(XML,Folio){
           console.log(error);
         }
     });
+}
+
+
+var RFCRecerptor = function(xml){
+  try {
+    const proxyURL = "https://cors-anywhere.herokuapp.com/";
+    var newXML = proxyURL + xml;
+    var RFCInXML;
+    var req = new XMLHttpRequest();
+       req.open('GET', newXML, false);
+       req.send(null);
+       if (req.status == 200)
+       {
+         var resp = req.responseXML;
+         var obNodosUI = resp.getElementsByTagName("cfdi:Receptor")[0];
+         var rfc = obNodosUI.getAttribute('Rfc');
+         RFCInXML = rfc;
+       }
+       else
+       {
+           RFCInXML = null;
+       }
+    return RFCInXML;
+  } catch (e) {
+    alertToastError("Ocurrio un error al leer el archivo xml");
+    console.log(e);
+    return RFCInXML = null;
+  }
 }

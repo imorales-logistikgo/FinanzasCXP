@@ -280,6 +280,7 @@ def SaveAprobarEvidencia(request):
                         SaveEvidenciaxPedido.save()
                         SaveBanderaPedidoxviaje = XD_PedidosxViajes.objects.get(XD_IDPedido = SaveEvidenciaxPedido.IDXD_Pedido, XD_IDViaje = SaveEvidenciaxPedido.XD_IDViaje)
                         SaveBanderaPedidoxviaje.IsEvidenciaPedidoxViaje = True
+                        SaveBanderaPedidoxviaje.IDUsuarioEvDigital = request.user.idusuario
                         SaveBanderaPedidoxviaje.save()
                         IsXpress = IsViajeXpress(SaveEvidenciaxPedido.IDXD_Pedido, SaveEvidenciaxPedido.XD_IDViaje)
                         if IsXpress:
@@ -311,6 +312,7 @@ def SaveAprobarEvidencia(request):
                         SaveEvidenciaxManiobra.IsValidada = True
                         SaveEvidenciaxManiobra.Observaciones = jParams['Comentarios']
                         SaveEvidenciaxManiobra.FechaValidacion = datetime.datetime.now()
+                        SaveEvidenciaxManiobra.IDUsuarioEvDigital = request.user.idusuario
                         SaveEvidenciaxManiobra.save()
                             # if jParams['TipoEvidencia'] == 'Custodia': #las maniobras no se guardan la evidencia digital como bandera en cxp o cxc
                             #     GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = SaveEvidenciaxManiobra.IDXD_Viaje)
@@ -334,6 +336,7 @@ def SaveAprobarEvidencia(request):
                         SaveAprobarEvidencia.IsValidada = True
                         SaveAprobarEvidencia.Observaciones = jParams['Comentarios']
                         SaveAprobarEvidencia.FechaValidacion = datetime.datetime.now()
+                        SaveAprobarEvidencia.IDUsuarioEvDigital = request.user.idusuario
                         SaveAprobarEvidencia.save()
                         SaveEvidenciaDigitalViaje = EvidenciaDigitalCompletaBKG("",SaveAprobarEvidencia.IDBro_Viaje.IDBro_Viaje)
                         if SaveEvidenciaDigitalViaje:
@@ -441,6 +444,7 @@ def SaveEvidenciaFisica(request):
                     if jParams["TipoEvidencia"] == "BKG":
                         SaveEvFisica = Bro_EvidenciasxViaje.objects.get(IDBro_EvidenciaxViaje = jParams['IDPedido'])
                         SaveEvFisica.IsEvidenciaFisicaAprobada = True
+                        SaveEvFisica.IDUsuarioEvFisica = request.user.idusuario
                         SaveEvFisica.save()
                         allEvFisicaTrue = EvidenciaFisicaCompletaBKG(SaveEvFisica.IDBro_Viaje.IDBro_Viaje)
                         if allEvFisicaTrue:
@@ -451,12 +455,15 @@ def SaveEvidenciaFisica(request):
                             SaveEvFisicaAdmon = PendientesEnviar.objects.get(IDPendienteEnviar = str(GetIDPendientesEnviar.IDPendienteEnviar))
                             SaveEvFisicaAdmon.IsEvidenciaFisica = True
                             SaveEvFisicaAdmon.save()
+                            #request.get("http://api-admon-demo.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion", params = {"IDConcepto":SaveEvFisica.IDBro_Viaje.IDBro_Viaje, "Proyecto":"BKG"})
                     else:
                         SaveEvidenciaPedidosxViaje = XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje = jParams['IDPedido']) if(jParams["TipoEvidencia"] == 'FOLIO' or jParams["TipoEvidencia"] == 'CORREO') else XD_PedidosxViajes.objects.get(XD_IDPedido = jParams['IDPedido'], XD_IDViaje = jParams['IDViaje'])
                         if jParams["TipoEvidencia"] == 'FOLIO' or jParams["TipoEvidencia"] == 'CORREO':
                             SaveEvidenciaPedidosxViaje.IsEvidenciaFisicaAprobada = True
                         else:
                             SaveEvidenciaPedidosxViaje.IsEvidenciaFisicaPedidoxViaje = True
+                        SaveEvidenciaPedidosxViaje.IDUsuarioEvFisica = request.user.idusuario
+                        SaveEvidenciaPedidosxViaje.FechaEvidenciaFisicaxPedidoxViaje = datetime.datetime.now()
                         SaveEvidenciaPedidosxViaje.save()
                         if jParams["TipoEvidencia"] != 'FOLIO' or jParams["TipoEvidencia"] != 'CORREO':
                             IsExpress = XD_Viajes.objects.get(XD_IDViaje = jParams['IDViaje'])
@@ -485,7 +492,12 @@ def SaveEvidenciaFisica(request):
                                 if SaveEvFisicaAdmon.TipoConcepto == 'VIAJE':
                                     SaveEvFisicaAdmon.IsEvidenciaFisica = True
                                     SaveEvFisicaAdmon.save()
-                    return HttpResponse(status = 200)
+                transaction.commit(using="users")
+            transaction.commit(using="bkg_viajesDB")
+        transaction.commit(using="XD_ViajesDB")
+        descarga(jParams['IDViaje'])
+        return HttpResponse(status = 200)
+
     except Exception as e:
         transaction.rollback(using = 'XD_ViajesDB')
         transaction.rollback(using='bkg_viajesDB')
@@ -747,12 +759,14 @@ def uploadEvidencias(request):
     container_client = "evidencias"
     blob_service_client = BlobClient.from_connection_string(conn_str="DefaultEndpointsProtocol=http;AccountName=lgklataforma;AccountKey=SpHagQjk7C4dBPv1cse9w36zmAtweXIMjcw9DWve7ipgXgf2Fa5l+vw2k57EM8uinlUOkfxt34BQpC9FBHE+Yg==",container_name=container_client, blob_name=namefile)
     blob_service_client.upload_blob(request.FILES['files[]'])
-    urlFile = "http://lgklataforma.blob.core.windows.net/evidencias/"+namefile
-    print("http://lgklataforma.blob.core.windows.net/evidencias/"+namefile)
+    urlFile = blob_service_client.url
+    print(urlFile)
     return JsonResponse({"url":urlFile})
 
 
-# def descarga(request):
-#     url = "https://lgklataforma.blob.core.windows.net/pdfcartaporte/3eec0dda-9a0d-442f-ac88-bb4eec56c2e2.pdf"
-#     content = open(url).read()
-#     return HttpResponse(content, content_type='application/pdf')
+def descarga(IDViaje):
+    jsonParams = {'IDConcepto': IDViaje, 'Proyecto':"XD"}
+    respose = requests.post("http://api-admon-demo.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion",
+                            headers={'content-type': 'application/json'}, json=jsonParams)
+    print(respose.text)
+    return "ok"

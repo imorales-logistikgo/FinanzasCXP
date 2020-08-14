@@ -64,6 +64,9 @@ class XD_PedidosxViajes(models.Model):
     IsEvidenciaFisicaPedidoxViaje = models.BooleanField()
     StatusPedido = models.CharField(max_length = 100)
     TipoTransporte = models.CharField(max_length = 100)
+    IDUsuarioEvDigital = models.IntegerField()
+    IDUsuarioEvFisica = models.IntegerField()
+    FechaEvidenciaFisicaxPedidoxViaje = models.DateTimeField()
 
     class Meta:
         managed = False
@@ -113,6 +116,9 @@ class XD_EvidenciasxViaje(models.Model):
     IsProyectoEspecial = models.BooleanField()
     IsEnviada = models.BooleanField()
     IsEvidenciaFisicaAprobada = models.BooleanField(default = 0)
+    IDUsuarioEvDigital = models.IntegerField()
+    IDUsuarioEvFisica = models.IntegerField()
+    FechaEvidenciaFisicaxPedidoxViaje = models.DateTimeField()
 
     class Meta:
         managed = False

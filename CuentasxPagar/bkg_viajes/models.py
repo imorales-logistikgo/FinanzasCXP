@@ -83,6 +83,8 @@ class Bro_EvidenciasxViaje(models.Model):
     IsProyectoEspecial = models.BooleanField(default=0)
     IsEnviada = models.BooleanField()
     IsEvidenciaFisicaAprobada = models.BooleanField(default = 0)
+    IDUsuarioEvDigital = models.IntegerField()
+    IDUsuarioEvFisica = models.IntegerField()
 
     class Meta:
         managed = False

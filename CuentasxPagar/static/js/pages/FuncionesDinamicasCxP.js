@@ -593,7 +593,7 @@ var uploadEvidences = function(idU, ver){
          var uppyDashboard = Uppy.Core({
            autoProceed: false,
            restrictions: {
-              maxFileSize: 4200000, // 5mb
+              maxFileSize: 22000000, // 5mb
               maxNumberOfFiles: 1,
               minNumberOfFiles: 1,
               allowedFileTypes:['.pdf', 'image/*']
