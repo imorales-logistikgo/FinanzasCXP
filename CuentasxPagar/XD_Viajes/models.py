@@ -20,6 +20,8 @@ class XD_Viajes(models.Model):
     IDTransportista = models.IntegerField()
     RutaHojaEmbarqueCosto= models.CharField(max_length=500)
     IsDescargaHojaLiberacion = models.BooleanField()
+    FechaEvidenciaDigital = models.DateTimeField()
+    FechaEvidenciaFisica = models.DateTimeField()
 
     class Meta:
         managed = False
