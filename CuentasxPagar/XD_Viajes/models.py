@@ -93,6 +93,7 @@ class XD_EvidenciasxPedido(models.Model):
     IsRemplazada = models.BooleanField(default=0)
     IsProyectoEspecial = models.BooleanField(default=0)
     IsEnviada = models.BooleanField()
+    IDUsuarioRechaza = models.IntegerField()
 
     class Meta:
         managed = False
@@ -121,6 +122,7 @@ class XD_EvidenciasxViaje(models.Model):
     IDUsuarioEvDigital = models.IntegerField()
     IDUsuarioEvFisica = models.IntegerField()
     FechaEvidenciaFisicaxPedidoxViaje = models.DateTimeField()
+    IDUsuarioRechaza = models.IntegerField()
 
     class Meta:
         managed = False

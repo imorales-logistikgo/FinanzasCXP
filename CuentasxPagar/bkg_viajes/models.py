@@ -20,6 +20,8 @@ class Bro_Viajes(models.Model):
     IDTransportista = models.IntegerField()
     RutaHojaLiberacion = models.CharField(max_length=500)
     IsDescargaHojaLiberacion = models.BooleanField()
+    FechaRecEviFisicas = models.DateTimeField()
+    FechaRecEviDigitales = models.DateTimeField()
 
     class Meta:
         managed = False
@@ -83,8 +85,11 @@ class Bro_EvidenciasxViaje(models.Model):
     IsProyectoEspecial = models.BooleanField(default=0)
     IsEnviada = models.BooleanField()
     IsEvidenciaFisicaAprobada = models.BooleanField(default = 0)
+    IDUsuarioAlta = models.IntegerField()
     IDUsuarioEvDigital = models.IntegerField()
     IDUsuarioEvFisica = models.IntegerField()
+    IDUsuarioRechaza = models.IntegerField()
+    FechaEvFisica = models.DateTimeField()
 
     class Meta:
         managed = False

@@ -136,7 +136,7 @@ def SaveEvidencias(request):
                         SaveEvidenciasxBKG.IsRechazada = False
                         SaveEvidenciasxBKG.IsEnviada = True
                         SaveEvidenciasxBKG.IsRemplazada = True
-                        SaveEvidenciasxBKG.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
+                        SaveEvidenciasxBKG.IDUsuarioAlta = request.user.idusuario
                         SaveEvidenciasxBKG.save()
                     else:
                         SaveEvidenciaxPedido = XD_EvidenciasxPedido.objects.get(IDXD_Pedido = Evidencias['IDPedido'], XD_IDViaje = Evidencias['IDViaje']) if(Evidencias['TipoEvidencia'] == 'Pedido') else XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje =Evidencias['IDPedido'], IDXD_Viaje = Evidencias['IDViaje']) if(Evidencias['TipoEvidencia'] == 'Maniobras' or 'Custodia') else ""
@@ -159,6 +159,7 @@ def SaveEvidencias(request):
                         SaveEvidenciaBKG.NombreArchivo = Evidencias['NombreArchivo']
                         SaveEvidenciaBKG.RutaArchivo = Evidencias['Evidencia']
                         SaveEvidenciaBKG.IsEnviada = True
+                        SaveEvidenciaBKG.IDUsuarioAlta = request.user.idusuario
                         SaveEvidenciaBKG.save()
                     else:
                         if Evidencias['TipoEvidencia'] == 'Custodia':
@@ -351,6 +352,7 @@ def SaveAprobarEvidencia(request):
                         if SaveEvidenciaDigitalViaje:
                             GetEvDViaje = Bro_Viajes.objects.get(IDBro_Viaje = SaveAprobarEvidencia.IDBro_Viaje.IDBro_Viaje)
                             GetEvDViaje.IsEvidenciasDigitales = True
+                            GetEvDViaje.FechaRecEviDigitales = datetime.datetime.now()
                             GetEvDViaje.save()
                             GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.get(IDConcepto = SaveAprobarEvidencia.IDBro_Viaje.IDBro_Viaje)
                             GetEvDAdmon = PendientesEnviar.objects.get(IDPendienteEnviar = str(GetIDPendientesEnviar.IDPendienteEnviar))
@@ -372,6 +374,7 @@ def RechazarEvidencias(request):
         RechazarEvidenciaxPedido.IsRechazada = True
         RechazarEvidenciaxPedido.Observaciones = jParams['Comentarios']
         RechazarEvidenciaxPedido.ComentarioRechazo = jParams['ComentarioRechazo']
+        RechazarEvidenciaxPedido.IDUsuarioRechaza = request.user.idusuario
         RechazarEvidenciaxPedido.FechaRechazo = datetime.datetime.now()
         RechazarEvidenciaxPedido.save()
     elif jParams['TipoEvidencia'] == 'Maniobras' or jParams['TipoEvidencia'] == 'Custodia':
@@ -379,6 +382,7 @@ def RechazarEvidencias(request):
         RechazarEvidenciaManiobra.IsRechazada = True
         RechazarEvidenciaManiobra.Observaciones = jParams['Comentarios']
         RechazarEvidenciaManiobra.ComentarioRechazo = jParams['ComentarioRechazo']
+        RechazarEvidenciaManiobra.IDUsuarioRechaza = request.user.idusuario
         RechazarEvidenciaManiobra.FechaRechazo = datetime.datetime.now()
         RechazarEvidenciaManiobra.save()
     elif jParams['TipoEvidencia'] == "BKG":
@@ -386,6 +390,7 @@ def RechazarEvidencias(request):
         RechazarEvidenciaBKG.IsRechazada = True
         RechazarEvidenciaBKG.Observaciones = jParams['Comentarios']
         RechazarEvidenciaBKG.ComentarioRechazo = jParams['ComentarioRechazo']
+        RechazarEvidenciaBKG.IDUsuarioRechaza = request.user.idusuario
         RechazarEvidenciaBKG.FechaRechazo = datetime.datetime.now()
         RechazarEvidenciaBKG.save()
     return HttpResponse("")
@@ -454,11 +459,13 @@ def SaveEvidenciaFisica(request):
                         SaveEvFisica = Bro_EvidenciasxViaje.objects.get(IDBro_EvidenciaxViaje = jParams['IDPedido'])
                         SaveEvFisica.IsEvidenciaFisicaAprobada = True
                         SaveEvFisica.IDUsuarioEvFisica = request.user.idusuario
+                        SaveEvFisica.FechaEvFisica = datetime.datetime.now()
                         SaveEvFisica.save()
                         allEvFisicaTrue = EvidenciaFisicaCompletaBKG(SaveEvFisica.IDBro_Viaje.IDBro_Viaje)
                         if allEvFisicaTrue:
                             SaveEvFisicaViajes = Bro_Viajes.objects.get(IDBro_Viaje = SaveEvFisica.IDBro_Viaje.IDBro_Viaje)
                             SaveEvFisicaViajes.IsEvidenciasFisicas = True
+                            SaveEvFisicaViajes.FechaRecEviFisicas = datetime.datetime.now()
                             SaveEvFisicaViajes.save()
                             GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.get(IDConcepto = SaveEvFisica.IDBro_Viaje.IDBro_Viaje)
                             SaveEvFisicaAdmon = PendientesEnviar.objects.get(IDPendienteEnviar = str(GetIDPendientesEnviar.IDPendienteEnviar))
@@ -765,8 +772,10 @@ def FilterBy(request):
 def uploadEvidencias(request):
     if request.POST['type'] == 'application/pdf':
         namefile = str(uuid.uuid4()) + ".pdf"
-    elif request.POST['type'] == 'text/xml':
-        namefile = str(uuid.uuid4()) + ".xml"
+    elif request.POST['type'] == 'image/jpeg':
+        namefile = str(uuid.uuid4()) + ".jpg"
+    elif request.POST['type'] == 'image/png':
+        namefile = str(uuid.uuid4()) + ".png"
     container_client = "evidencias"
     blob_service_client = BlobClient.from_connection_string(conn_str="DefaultEndpointsProtocol=http;AccountName=lgklataforma;AccountKey=SpHagQjk7C4dBPv1cse9w36zmAtweXIMjcw9DWve7ipgXgf2Fa5l+vw2k57EM8uinlUOkfxt34BQpC9FBHE+Yg==",container_name=container_client, blob_name=namefile)
     blob_service_client.upload_blob(request.FILES['files[]'])
