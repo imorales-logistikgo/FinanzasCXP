@@ -513,7 +513,7 @@ def SaveEvidenciaFisica(request):
                 transaction.commit(using="users")
             transaction.commit(using="bkg_viajesDB")
         transaction.commit(using="XD_ViajesDB")
-        descarga(jParams['IDViaje'])
+        descarga(jParams['IDViaje'], jParams["TipoEvidencia"])
         return HttpResponse(status = 200)
 
     except Exception as e:
@@ -784,10 +784,13 @@ def uploadEvidencias(request):
     return JsonResponse({"url":urlFile})
 
 
-def descarga(IDViaje):
-    sendAPI = CheckAllEvidenciaFisicaPedidoTrue(IDViaje)
+def descarga(IDViaje, Proyecto):
+    print(Proyecto)
+    print(IDViaje)
+    sendAPI = CheckAllEvidenciaFisicaPedidoTrue(IDViaje) if Proyecto != "BKG" else CheckAllEvidenciaFisicaTrue(IDViaje)
     if sendAPI:
-        jsonParams = {'IDConcepto': IDViaje, 'Proyecto':"XD"}
+        Project = "BKG" if Proyecto == "BKG" else "XD"
+        jsonParams = {'IDConcepto': IDViaje, 'Proyecto':Project}
         respose = requests.post("http://api-admon-demo.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion",
                                 headers={'content-type': 'application/json'}, json=jsonParams)
         print(respose.text)
@@ -802,6 +805,14 @@ def CheckAllEvidenciaFisicaPedidoTrue(IDViaje):
     for EachPedido in GetEvidenciasFisicas:
         itHasEvidencias = True if EachPedido.IsEvidenciaFisicaPedidoxViaje else False
         Listevidencias.append(itHasEvidencias)
-    print(Listevidencias)
+    AllEvidencesInTrue = True if False not in Listevidencias else False
+    return AllEvidencesInTrue
+
+def CheckAllEvidenciaFisicaTrue(IDViaje):
+    GetEvidenciasFisicas = Bro_EvidenciasxViaje.objects.filter(IDBro_Viaje = IDViaje)
+    Listevidencias = list()
+    for EachEvidencia in GetEvidenciasFisicas:
+        itHasEvidencias = True if EachEvidencia.IsEvidenciaFisicaAprobada else False
+        Listevidencias.append(itHasEvidencias)
     AllEvidencesInTrue = True if False not in Listevidencias else False
     return AllEvidencesInTrue
