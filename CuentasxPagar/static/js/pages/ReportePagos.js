@@ -1,4 +1,4 @@
-var idPag;
+var idPag, IsAmericano;
 var btn,valComp, lgkRFC = 'LKM021004ERA', FP;
 $(document).ready(function(){
 $(document).keydown(function(e){
@@ -228,6 +228,9 @@ $('#TableReportePagos').DataTable({
     {
       extend: 'excel',
       text: '<i class="fas fa-file-excel fa-lg"></i>',
+      exportOptions: {
+       columns: [0,1,2,3,4,5,6,7]
+     }
     }
     ],
     columnDefs: [
@@ -259,8 +262,18 @@ $('#TableReportePagos').DataTable({
       "className": "dt-head-center dt-body-right"
     },
     {
-      "targets": [6,7],
-      "visible": false
+      "targets": [6],
+      "visible": false,
+      "mRender": function (data, type, full) {
+        return $(full[11]).data("americano") == "True" ? 'IsAmericano': full[6];
+      }
+    },
+     {
+      "targets": [7],
+      "visible": false,
+      "mRender": function (data, type, full) {
+        return  $(full[11]).data("americano") == "True" ? 'IsAmericano': full[7];
+      }
     },
     {
       "targets": 8,
@@ -286,7 +299,7 @@ $('#TableReportePagos').DataTable({
         if(UserRol == "Contabilidad")
           return '';
         else
-          return (full[6] != "" ? '':`<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-totalpago="${full[3]}" data-vercomplementoxml="${full[6]}" data-vercomplementopdf="${full[7]}" data-idpagocomplementos="`+idPago+`" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`);
+          return (full[6] != "" || $(full[11]).data("americano") == "True" ? '':`<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-totalpago="${full[3]}" data-vercomplementoxml="${full[6]}" data-vercomplementopdf="${full[7]}" data-idpagocomplementos="`+idPago+`" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`);
       }
     },
     {
@@ -429,12 +442,12 @@ async function subirComplementoPagoProveedor(totalPago)
          });
 
 
-           uppyDashboard.use(Dashboard, options);
-           uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
+            uppyDashboard.use(Dashboard, options);
+            uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
           //uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
           //uppyDashboard.use(Webcam, {target: Dashboard});
-          uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
-          uppyDashboard.on('upload-success', (file, response) => {
+            uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
+            uppyDashboard.on('upload-success', (file, response) => {
             const fileName = file.name
             if (file.extension === 'pdf')
             {

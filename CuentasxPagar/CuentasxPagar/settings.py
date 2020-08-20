@@ -25,7 +25,7 @@ SECRET_KEY = '72%&=!1sfmlmq22xb=^=ucc5t32fbh1p=o2h26wj3y(u4g0%1z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'users',
     'usersadmon',
     'bkg_viajes',
-    'XD_Viajes'
+    'XD_Viajes',
+    # 'urlcrypt '
 ]
 
 MIDDLEWARE = [
@@ -160,6 +161,7 @@ DATABASE_ROUTERS = ['users.router.AuthRouter',]
 
 AUTHENTICATION_BACKENDS = (
     'users.backends.EmailBackend',
+    # 'urlcrypt.auth_backends.UrlCryptBackend'
     )
 
 
@@ -215,3 +217,4 @@ EMAIL_HOST_USER = 'pagos.proveedores@logistikgo.com'
 EMAIL_HOST_PASSWORD = 'LogistiK20.1'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+

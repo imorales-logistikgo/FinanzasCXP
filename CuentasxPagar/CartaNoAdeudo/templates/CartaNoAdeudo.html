@@ -6,75 +6,90 @@
 {% endblock %}
 
 {% block ContadoresEstadosCuenta %}
-    <div class="kt-portlet kt-portlet--tabs">
-        <div class="kt-portlet__head">
-            <div class="kt-portlet__head-toolbar">
-                <ul class="nav nav-tabs nav-tabs-line nav-tabs-line-success nav-tabs-line-2x" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#kt_portlet_base_demo_1_1_tab_content" role="tab">
-                            <i class="la la-cloud-upload"></i> Enviar
-                        </a>
-                    </li>
-<!--                    <li class="nav-item">-->
-<!--                        <a class="nav-link" data-toggle="tab" href="#kt_portlet_base_demo_1_2_tab_content" role="tab" id="DownloadCartaNoAdeudo">-->
-<!--                            <i class="la la-cloud-download"></i> Descargar-->
-<!--                        </a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <a class="nav-link" data-toggle="tab" href="#kt_portlet_base_demo_1_3_tab_content" role="tab">-->
-<!--                            <i class="la la-bell-o"></i>Logs-->
-<!--                        </a>-->
-<!--                    </li>-->
-                </ul>
+    {% if request.user.roles == "Proveedor" %}
+    <div class="container">
+        <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+            <div class="kt-container  kt-container--fluid ">
+                <div class="kt-subheader__toolbar">
+                    <div class="kt-subheader__wrapper">
+                        <h3>Carta de No Adeudo</h3>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="kt-portlet__body">
-            <div class="tab-content">
-                <div class="tab-pane active" id="kt_portlet_base_demo_1_1_tab_content" role="tabpanel">
-                    <div class="container">
-                        <div class="row justify-content-end">
-                            <div class="col">
-                                <button class="btn btn-outline-brand btn-elevate btn-pill" id="DescargarCartaNoAdeudo" style="position:relative; left: 50px; top:20px"><i class="flaticon-download"></i>Descargar</button>
+        <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                    <div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+                        <div class="tab-content" id="WaitmeSaveCarta">
+                            <div class="tab-pane active" id="kt_portlet_base_demo_1_1_tab_content" role="tabpanel">
+                                <div class="container">
+                                    <div class="row justify-content-end">
+                                        <div class="col">
+                                            {% if not IsDescargaCartaNoAdeudo %}
+                                            <button class="btn btn-outline-brand btn-elevate btn-pill" id="DescargarCartaNoAdeudo" style="position:relative; left: 50px; top:20px"><i class="flaticon-download"></i>Descargar</button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                                    <div class="col-sm-9 col-lg-9" style="position:relative; left: 130px;">
+                                        <div class="kt-portlet kt-portlet--height-fluid">
+                                            <div class="kt-portlet__head" id="headUppyTitulo">
+                                                <div class="kt-portlet__head-label">
+                                                    <h3 class="kt-portlet__head-title">
+                                                        PDF
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                            <div class="kt-portlet__body">
+                                                <div class="kt-uppy" id="CartaNoAdeudo">
+                                                    <div  class="kt-uppy__dashboard"></div>
+                                                    <div class="kt-uppy__progress"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--ver archivos subidos (PDF y XML)-->
+                            <div class="container" style="position:relative;">
+                                <div class="uploaded-files-proveedor text-center">
+                                    <h5>Archivos Subidos:</h5>
+                                    <ol></ol>
+                                </div>
+                            </div>
+                             <div class="container">
+                                 <div class="row">
+                                     <button type="button" name="button" class="btn btn-success" id="btnGuardarCartaNoAdeudo" style="position:relative; left:800px">Enviar</button>
+                                 </div>
+                             </div>
                             </div>
                         </div>
                     </div>
-                    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-						<div class="col-sm-7 col-lg-7" style="position:relative; left: 250px; top:40px">
-							<div class="kt-portlet kt-portlet--height-fluid">
-								<div class="kt-portlet__head" id="headUppyTitulo">
-									<div class="kt-portlet__head-label">
-										<h3 class="kt-portlet__head-title">
-											PDF
-										</h3>
-									</div>
-								</div>
-								<div class="kt-portlet__body">
-									<div class="kt-uppy" id="CartaNoAdeudo">
-										<div  class="kt-uppy__dashboard"></div>
-										<div class="kt-uppy__progress"></div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<!--ver archivos subidos (PDF y XML)-->
-				<div class="container" style="position:relative; top:50px; left:">
-					<div class="uploaded-files-proveedor text-center">
-						<h5>Archivos Subidos:</h5>
-						<ol></ol>
-					</div>
                 </div>
-				 <div class="container">
-                     <div class="row">
-                         <button type="button" name="button" class="btn btn-success" id="btnGuardarCartaNoAdeudo" style="position:relative; left:850px">Enviar</button>
-                     </div>
-				 </div>
-
+        </div>
+    </div>
+    {% elif request.user.roles == "users" %}
+<!--    <div class="container">-->
+        <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+            <div class="kt-container  kt-container--fluid ">
+                <div class="kt-subheader__toolbar">
+                    <div class="kt-subheader__wrapper">
+                        <h3>Carta de No Adeudo</h3>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+            <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                <div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+                    {% include "TablacartaNoAdeudo.html" %}
+                </div>
+            </div>
+        </div>
+<!--    </div>-->
+    {% else %}
+    {% endif %}
 {% endblock %}
 {% block scripts %}
     <script src='{% static "js/pages/FuncionesDinamicasCxP.js" %}'></script>
@@ -83,3 +98,9 @@
     <script src='{% static "js/es_ES.min.js" %}'></script>
     <script src='{% static "js/bootstrap-datepicker.es.js" %}'></script>
 {% endblock %}
+
+
+
+
+
+

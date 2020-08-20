@@ -6,6 +6,8 @@ from django.template.loader import render_to_string
 import json, datetime
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+import urllib
+from xml.dom import minidom
 from django.shortcuts import redirect
 from datetime import datetime as dt
 @login_required
@@ -130,3 +132,19 @@ def GetFechaPago(request):
 	NewFecha = Fecha.strftime('%Y-%m-%d')
 	AprobadaORNo = True if NewFecha==FechaXML[:10] and Complemento == "P" else False
 	return JsonResponse({"Fecha":AprobadaORNo})
+
+'''def GetUUIDEachFactura(request):
+	GetXML = request.GET["XML"]
+	XML = urllib.request.urlopen(GetXML)
+	XMLToRead = minidom.parse(XML)
+	a = XMLToRead.getElementsByTagName('cfdi:Complemento')[0]
+	b = a.getElementsByTagName('pago10:Pagos')[0]
+	c = b.getElementsByTagName('pago10:Pago')[0]
+	each = c.getElementsByTagName('pago10:DoctoRelacionado')
+	NewListUUID = list()
+	for eachitem in each:
+		ListUUID = {}
+		ListUUID['IdDocumento'] = eachitem.attributes['IdDocumento'].value.upper()
+		ListUUID['ImpPagado'] = eachitem.attributes['ImpPagado'].value.upper()
+		NewListUUID.append(ListUUID)
+	return JsonResponse({"arrDataXML":NewListUUID})'''

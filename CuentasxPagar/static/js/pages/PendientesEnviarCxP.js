@@ -423,10 +423,9 @@ function LimpiarModalSF()
        });*/
 
 
-         uppyDashboard.use(Dashboard, options);
-         uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
-				//uppyDashboard.use(XHRUpload, { endpoint: 'http://localhost:63510/api/Viaje/SaveevidenciaTest', method: 'post'});
-				uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
+        uppyDashboard.use(Dashboard, options);
+        uppyDashboard.use(XHRUpload, { endpoint: 'https://api-bgk-debug.logistikgo.com/api/Viaje/SaveevidenciaTest', method: 'post'});
+		uppyDashboard.use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' });
         uppyDashboard.on('upload-success', (file, response) => {
           const fileName = file.name
           if (file.extension === 'pdf')
@@ -441,13 +440,14 @@ function LimpiarModalSF()
                {
                  const urlXMLCheck = response.body
                  totalXML = leerxml(urlXMLCheck)
-                 var folioInFactura = FolioViajeXML(urlXMLCheck, folioCheck)
+//                 var folioInFactura = FolioViajeXML(urlXMLCheck, folioCheck)
+                 GetFolioViajeXML(urlXMLCheck, folioCheck)
                  GetValidacionCFDIAndOther(urlXMLCheck)
-                 if(+totalXML > (Number(total.toFixed(2)) + 1) || totalXML == null || !folioInFactura || !valCFDIAndOther)
+                 if(+totalXML > (Number(total.toFixed(2)) + 1) || totalXML == null || !FViaje || !valCFDIAndOther)
                  {
                    $("#btnGuardarFactura").prop("disabled", true)
                    alertToastError(`El total de la factura no coincide con el total calculado del sistema $${total.toFixed(2)}`)
-                    uppyDashboard.cancelAll()
+                   uppyDashboard.cancelAll()
                   }
                   else
                   {
@@ -459,7 +459,7 @@ function LimpiarModalSF()
                    getSerieProveedor(idprov).then((response) =>  fnCheckFolio(response.Serie + getFolioXML(urlXMLCheck), uppyDashboard, "Lgk")).catch((e) => (uppyDashboard.cancelAll(), $('.uploaded-files ol').remove(), alertToastError("Algo salio mal :(")));
                  }
                  }
- });
+              });
 
       }
       return {

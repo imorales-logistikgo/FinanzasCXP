@@ -344,7 +344,28 @@ var GetHojaLiberacion = function(IDViaje, Proyecto){
 }
 
 async function GetIdDocumentoAndImpPagado (xml){
-  $.ajax({
+  try{
+      const proxyURL = "https://cors-anywhere.herokuapp.com/";
+      var newXML = proxyURL + xml;
+      var arrDataXML = [];
+      var req = new XMLHttpRequest();
+         req.open('GET', newXML, false);
+         req.send(null);
+         if (req.status == 200){
+             var resp = req.responseXML;
+             var obNodosUI = resp.getElementsByTagName("cfdi:Complemento")[0];
+             var TimbreFiscal = obNodosUI.getElementsByTagName('pago10:Pago')[0]
+             var each = TimbreFiscal.getElementsByTagName('pago10:DoctoRelacionado')
+             for (var i=0; i<each.length; i++){
+               var idDocumento = each[i].getAttribute('IdDocumento')
+               var ImpPagado = each[i].getAttribute('ImpPagado')
+               arrDataXML.push({"IdDocumento":idDocumento.toUpperCase(), "ImpPagado":ImpPagado})
+             }
+          }
+      const a = await GetFacturasxPago(idPag,arrDataXML);
+      // return arrDataXML;
+
+        /*$.ajax({
         url: `/ReportePagos/GetUUIDEachFactura?XML=${xml}`,
         type: 'GET',
         async:false,
@@ -357,34 +378,12 @@ async function GetIdDocumentoAndImpPagado (xml){
           alertToastError("Ocurrio un problema al leer el xml");
           console.log(error);
         }
-    });
-//  try{
-//      const proxyURL = "https://cors-anywhere.herokuapp.com/";
-//      var newXML = proxyURL + xml;
-//      var arrDataXML = [];
-//      var req = new XMLHttpRequest();
-//         req.open('GET', newXML, false);
-//         req.send(null);
-//         if (req.status == 200){
-//             var resp = req.responseXML;
-////             var obNodos = resp.children[0].attributes;
-////             var rest = obNodos.Folio ? obNodos.Folio.nodeValue: obNodos.Serie.nodeValue;
-//             var obNodosUI = resp.getElementsByTagName("cfdi:Complemento")[0];
-//             var TimbreFiscal = obNodosUI.getElementsByTagName('pago10:Pago')[0]
-//             var each = TimbreFiscal.getElementsByTagName('pago10:DoctoRelacionado')
-//             for (var i=0; i<each.length; i++){
-//               var idDocumento = each[i].getAttribute('IdDocumento')
-//               var ImpPagado = each[i].getAttribute('ImpPagado')
-//               arrDataXML.push({"IdDocumento":idDocumento.toUpperCase(), "ImpPagado":ImpPagado})
-//             }
-//          }
-//      const a = await GetFacturasxPago(idPag,arrDataXML);
-//      // return arrDataXML;
-//  }
-//  catch(error){
-//    alertToastError('Ocurrio un error al leer el archivo xml');
-//    console.error(error);
-//  }
+    });*/
+  }
+  catch(error){
+    alertToastError('Ocurrio un error al leer el archivo xml');
+    console.error(error);
+  }
 }
 
 var GetFacturasxPago =  function(Pago, arrXML){

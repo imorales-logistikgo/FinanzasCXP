@@ -30,6 +30,7 @@ class Proveedor(models.Model):
     Correo = models.CharField(db_column='Correo', max_length=200, blank=True, null=True)
     IsAmericano = models.BooleanField()
     Serie = models.CharField(max_length=15)
+    FechaDescargaCartaNoAdeudo = models.DateTimeField()
 
     class Meta:
         managed = False

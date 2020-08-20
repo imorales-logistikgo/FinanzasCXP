@@ -31,7 +31,7 @@
 			<td>{{Pago.RutaComprobante}}</td>
 			<td></td>
 			<td></td>
-			<td><input name="IDPago" type="hidden" data-pagoid="{{Pago.IDPago}}"></td>
+			<td><input name="IDPago" type="hidden" data-pagoid="{{Pago.IDPago}}" data-americano="{{Pago.IDProveedor.IsAmericano}}"></td>
 		</tr>
 		{%endfor%}
 	</tbody>
