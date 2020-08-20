@@ -1,0 +1,30 @@
+{% load humanize %}
+{% load Tags_EstadosCuenta %}
+<table class="table table-striped table-bordered" id="TablaCartaNoAdeudo">
+	<thead>
+		<tr>
+			<th class="text-center">Proveedor</th>
+            <th class="text-center">Fecha Alta</th>
+			<th class="text-center">Mes Carta No Adeudo</th>
+			<th class="text-center">Status</th>
+			<th class="text-center">Comentario Rechazo</th>
+			<th></th>
+			<th></th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+        {% for CartaByProveedor in CartaNoAdeudoByProveedor %}
+		<tr>
+			<td style="font-weight: bold;" class=" text-center bold">{{ CartaByProveedor.IDTransportista.RazonSocial }}</td>
+			<td class="text-center">{{ CartaByProveedor.FechaAlta|date:'Y/m/d' }}</td>
+			<td class="text-center">{{ CartaByProveedor.MesCartaNoAdeudo }}</td>
+			<td class="text-center">{{ CartaByProveedor.Status }}</td>
+			<td class="text-center">{{ CartaByProveedor.ComentarioRechazo|default:"" }}</td>
+			<td class="text-center"><a href="{{ CartaByProveedor.RutaCartaNoAdeudo }}" class="btn btn-primary btn-elevate btn-pill btn-sm" target="_blank" title="Carta no adeudo"><i class="fa fa-file-pdf"></i></a></td>
+			<th class="text-center">{%if CartaByProveedor.Status == "PENDIENTE" %}<button class="btn btn-success btn-elevate btn-pill btn-sm" title="Aprobar" id="BtnAprobarCarta" data-idcarta="{{CartaByProveedor.IDCartaNoAdeudo}}" name="AprobarCarta"><i class="fa fa-check"></i></button>{%endif%}</th>
+			<th class="text-center">{%if CartaByProveedor.Status == "PENDIENTE" %}<button class="btn btn-danger btn-elevate btn-pill btn-sm" title="Rechazar" id="BtnRechazarCarta" data-idcarta="{{CartaByProveedor.IDCartaNoAdeudo}}" name="RechazarCarta"><i class="fa fa-times"></i></button>{%endif%}</th>
+		</tr>
+        {% endfor %}
+	</tbody>
+</table>
