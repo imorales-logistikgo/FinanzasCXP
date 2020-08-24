@@ -9,7 +9,7 @@ kt-menu__item--active
 {% if request.user.roles == "Proveedor" %}
 {% now "d" as current_day_show %}
 
-{% if MostrarAlerta == current_day_show %}
+{% if MostrarAlerta %}
 <div class="alert alert-warning alert-dismissible fade show" role="alert">
 	<p class="h4">Estimado Proveedor le recordamos que el &uacute;ltimo d&iacute;a para subir sus facturas del <strong>Mes de {{MesAlerta}}</strong> ser&aacute; el d&iacute;a <strong>{{DiaShowAlert}}</strong>.</p>
 	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -19,7 +19,7 @@ kt-menu__item--active
 {% endif %}
 {% if bloquearLinkCarta %}
 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-	<p class="h4">Estimado Proveedor, se le recuerda que tiene hasta el día <strong>{{DiaAMostrarEnAlertaCarta}}</strong> para regularizar su situación de viajes pendientes de facturar con corte al <strong>31 de Agosto</strong>.</p>
+	<p class="h4">Estimado Proveedor, se le recuerda que tiene hasta el día <strong>{{DiaAMostrarEnAlertaCarta}}</strong> para regularizar su situación de viajes pendientes de facturar con corte al <strong>{{FechaCorteCarta}}</strong>.</p>
 	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 	    <span aria-hidden="true">&times;</span>
 	</button>
@@ -35,9 +35,9 @@ kt-menu__item--active
 				</div>
 					<div class="input-group mb-3">
 						{% now "d" as current_day %}
-					  <input type="text" class="form-control" placeholder="Buscar..." id="inputBuscarFolioProveedor" autocomplete="off" {% if BloquearFacturas != current_day and BloquearFacturasCarta is False %}{%else%}disabled{%endif%}>
+					  <input type="text" class="form-control" placeholder="Buscar..." id="inputBuscarFolioProveedor" autocomplete="off" {% if BloquearFacturas is False and BloquearFacturasCarta is False %}{%else%}disabled{%endif%}>
 					  <div class="input-group-append">
-						  {% if BloquearFacturas != current_day and BloquearFacturasCarta is False %}
+						  {% if BloquearFacturas is False and BloquearFacturasCarta is False %}
 					    <button class="btn btn-outline-primary" type="button" id="buscarFolioProveedor">Buscar</button>
 						  {% endif %}
 					  </div>

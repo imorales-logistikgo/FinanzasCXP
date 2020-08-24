@@ -30,10 +30,12 @@ def GetPendientesEnviar(request):
         PendingToSend = View_PendientesEnviarCxP.objects.filter(Status = 'FINALIZADO', IsEvidenciaDigital = 1, IsEvidenciaFisica = 1, IsFacturaProveedor = 0, Moneda = 'MXN', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
         ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
         DiasDelMesbloquear = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]-1
+        RangoBloquearFacturas = DiasDelMesbloquear <= datetime.datetime.now().day <=  calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
         DiaDelMesbloquearAlert = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]-2
         DiaDelMesMotrarAlerta = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1] - 7
-        MesAlerta=MesEnAlertaBloquearFacturas(datetime.datetime.now())
-        DiaAlerta = DiaEnAlertaBloquearFacturas(calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, DiasDelMesbloquear))
+        RangoDiasAlerta = DiaDelMesMotrarAlerta <= datetime.datetime.now().day <= calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
+        MesAlerta = MesEnAlertaBloquearFacturas(datetime.datetime.now())
+        DiaAlerta = DiaEnAlertaBloquearFacturas(calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, DiaDelMesbloquearAlert))
         DiaAMostrarEnAlerta = DiaAlerta + " " + str(DiaDelMesbloquearAlert)
         DiaAlertaCarta = DiaEnAlertaBloquearFacturas(calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, 8))
         DiaAMostrarEnAlertaCarta = DiaAlertaCarta + " " +"8"
@@ -41,7 +43,7 @@ def GetPendientesEnviar(request):
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
                 IDTransportista=request.user.IDTransportista).exclude(Status='RECHAZADA').last()
             if GetLastCartaUpload is None:
-                BloquearFacturasCarta = False
+                BloquearFacturasCarta = True
             else:
                 BloquearFacturasCarta = False if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(
                     datetime.datetime.now()) and GetLastCartaUpload.Status == "APROBADA" else True
@@ -49,8 +51,9 @@ def GetPendientesEnviar(request):
             BloquearFacturasCarta = False
         Proveedores = Proveedor.objects.all()
         ListPendientes = PendientesToList(PendingToSend)
-        bloquearLinkCarta = 1 <= datetime.datetime.now().day <= 18
-        return render(request, 'PendienteEnviar.html', {'bloquearLinkCarta':bloquearLinkCarta,'DiaAMostrarEnAlertaCarta':DiaAMostrarEnAlertaCarta,'Pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles, 'IDUsuraio_': request.user.idusuario, 'BloquearFacturas':DiasDelMesbloquear, 'MostrarAlerta':DiaDelMesMotrarAlerta, 'MesAlerta': MesAlerta, 'DiaShowAlert':DiaAMostrarEnAlerta, 'BloquearFacturasCarta':BloquearFacturasCarta})
+        bloquearLinkCarta = 1 <= datetime.datetime.now().day <= 8
+        FechaCorteCarta = str(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]) + " de " + MesEnAlertaBloquearFacturas(datetime.datetime.now())
+        return render(request, 'PendienteEnviar.html', {'FechaCorteCarta': FechaCorteCarta ,'bloquearLinkCarta':bloquearLinkCarta,'DiaAMostrarEnAlertaCarta':DiaAMostrarEnAlertaCarta,'Pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles, 'IDUsuraio_': request.user.idusuario, 'BloquearFacturas':RangoBloquearFacturas, 'MostrarAlerta':RangoDiasAlerta, 'MesAlerta': MesAlerta, 'DiaShowAlert':DiaAMostrarEnAlerta, 'BloquearFacturasCarta':BloquearFacturasCarta})
 
 def PendientesToList(PendingToSend):
     ListPendientes = list()
