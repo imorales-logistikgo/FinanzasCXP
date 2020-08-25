@@ -1,4 +1,4 @@
-var idPag, IsAmericano;
+var idPag, IsAmericano, ValidarMontoXML;
 var btn,valComp, lgkRFC = 'LKM021004ERA', FP;
 $(document).ready(function(){
 $(document).keydown(function(e){
@@ -462,7 +462,8 @@ async function subirComplementoPagoProveedor(totalPago)
                    const ValidarXML = GetIdDocumentoAndImpPagado(urlXMLCheck);
                    const ValidarRFC = RFCRecerptor(urlXMLCheck);
                    GetFechaPagoAndTipoComplemento(urlXMLCheck);
-                   if(valComp || valComp == null || valComp == undefined || ValidarRFC != lgkRFC || ValidarRFC == null || !FP)
+                   GetMontoPago(urlXMLCheck, idPag)
+                   if(valComp || valComp == null || valComp == undefined || ValidarRFC != lgkRFC || ValidarRFC == null || !FP || !ValidarMontoXML)
                    {
                      alertToastError("El total y las facturas no coinciden con el sistema")
                       //uppyDashboard.reset()

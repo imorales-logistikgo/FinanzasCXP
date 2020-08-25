@@ -493,29 +493,19 @@ var GetFolioViajeXML = function(XML,Folio){
 }
 
 
-var RFCRecerptor = function(xml){
-  try {
-    const proxyURL = "https://cors-anywhere.herokuapp.com/";
-    var newXML = proxyURL + xml;
-    var RFCInXML;
-    var req = new XMLHttpRequest();
-       req.open('GET', newXML, false);
-       req.send(null);
-       if (req.status == 200)
-       {
-         var resp = req.responseXML;
-         var obNodosUI = resp.getElementsByTagName("cfdi:Receptor")[0];
-         var rfc = obNodosUI.getAttribute('Rfc');
-         RFCInXML = rfc;
-       }
-       else
-       {
-           RFCInXML = null;
-       }
-    return RFCInXML;
-  } catch (e) {
-    alertToastError("Ocurrio un error al leer el archivo xml");
-    console.log(e);
-    return RFCInXML = null;
-  }
+var GetMontoPago = function(XML, IDPago){
+  $.ajax({
+        url: `/ReportePagos/GetMontoPagoXML?XML=${XML}&IDPago=${IDPago}`,
+        type: 'GET',
+        async:false,
+        contentType: "application/json; charset=utf-8",
+        success: function(data){
+          ValidarMontoXML = data.Response;
+        },
+        error: function(request, status, error){
+          alertToastError("Ocurrio un error al leer el archivo xml");
+          ValidarMontoXML = false
+          console.log(error);
+        }
+  });
 }

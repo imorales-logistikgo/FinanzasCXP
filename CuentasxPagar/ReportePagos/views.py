@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from EstadosCuenta.models import RelacionPagosFacturasxProveedor, PagosxProveedor, View_FacturasxProveedor, PagosxFacturas
@@ -132,6 +134,27 @@ def GetFechaPago(request):
 	NewFecha = Fecha.strftime('%Y-%m-%d')
 	AprobadaORNo = True if NewFecha==FechaXML[:10] and Complemento == "P" else False
 	return JsonResponse({"Fecha":AprobadaORNo})
+
+
+def GetMontoPagoXML(request):
+	try:
+		IDPago = request.GET["IDPago"]
+		XMLDoc = request.GET["XML"]
+		GetMontoTotalBD = PagosxProveedor.objects.get(IDPago=IDPago)
+		XML = urllib.request.urlopen(XMLDoc)
+		XMLToRead = minidom.parse(XML)
+		TagComplemento = XMLToRead.getElementsByTagName('cfdi:Complemento')[0]
+		TagPagos = TagComplemento.getElementsByTagName('pago10:Pagos')[0]
+		TagPago = TagPagos.getElementsByTagName('pago10:Pago')[0]
+		MontoXML = TagPago.attributes['Monto'].value
+		MontosIguales = True if Decimal(MontoXML) == round(GetMontoTotalBD.Total, 2) else False
+		print(Decimal(MontoXML))
+		print(round(GetMontoTotalBD.Total, 2))
+		return JsonResponse({'Response': MontosIguales})
+	except Exception as e:
+		print(e)
+		return JsonResponse({'Response': False})
+
 
 '''def GetUUIDEachFactura(request):
 	GetXML = request.GET["XML"]
