@@ -134,7 +134,7 @@ def SaveFacturaxProveedor(request):
     newFactura.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
     newFactura.IDProveedor =  jParams["IDProveedor"]
     newFactura.TotalXML = jParams["TotalXML"]
-    newFactura.UUID = jParams["UUID"]
+    newFactura.UUID = jParams["UUID"] if request.user.idusuario != 3126 else ""
     newFactura.Status = 'DEPURADO' if(jParams["Estado"] == 'YU') else 'PENDIENTE'
     newFactura.save()
     return HttpResponse(newFactura.IDFactura)
@@ -243,28 +243,40 @@ def GetTipoCambioXML(File):
 
 def GetFolioViajeXML(request):
     try:
-        XMLFile = request.GET["XML"]
-        FolioToCheck = request.GET["Folio"]
-        xml = urllib.request.urlopen(XMLFile)
-        XMLToRead = minidom.parse(xml)
-        TagConcepto = XMLToRead.getElementsByTagName('cfdi:Concepto')
-        FolioViaje = TagConcepto[0].attributes['Descripcion'].value
-        FindFolioInXML = re.search(FolioToCheck, FolioViaje)
-        if FindFolioInXML is not None:
-            indexstart = FindFolioInXML.start()
-            indexend = FindFolioInXML.end()
-            FolioInXML = FolioViaje[indexstart:indexend]
-            SameFolio = True if FolioInXML == FolioToCheck else False
-        else:
-            TagNoIdentificacion = XMLToRead.getElementsByTagName('cfdi:Concepto')
-            if 'NoIdentificacion' in TagNoIdentificacion[0].attributes:
-                FolioViajeInTagNoIdentificacion = TagNoIdentificacion[0].attributes['NoIdentificacion'].value
-                FindFolioInTagNoIdentificacion = re.search(FolioToCheck, FolioViajeInTagNoIdentificacion)
-                if FindFolioInTagNoIdentificacion is not None:
-                    indexstart = FindFolioInTagNoIdentificacion.start()
-                    indexend = FindFolioInTagNoIdentificacion.end()
-                    FolioInXML = FolioViajeInTagNoIdentificacion[indexstart:indexend]
-                    SameFolio = True if FolioInXML == FolioToCheck else False
+        if request.user.IDTransportista != 1241:
+            XMLFile = request.GET["XML"]
+            FolioToCheck = request.GET["Folio"]
+            xml = urllib.request.urlopen(XMLFile)
+            XMLToRead = minidom.parse(xml)
+            TagConcepto = XMLToRead.getElementsByTagName('cfdi:Concepto')
+            FolioViaje = TagConcepto[0].attributes['Descripcion'].value
+            FindFolioInXML = re.search(FolioToCheck, FolioViaje)
+            if FindFolioInXML is not None:
+                indexstart = FindFolioInXML.start()
+                indexend = FindFolioInXML.end()
+                FolioInXML = FolioViaje[indexstart:indexend]
+                SameFolio = True if FolioInXML == FolioToCheck else False
+            else:
+                TagNoIdentificacion = XMLToRead.getElementsByTagName('cfdi:Concepto')
+                if 'NoIdentificacion' in TagNoIdentificacion[0].attributes:
+                    FolioViajeInTagNoIdentificacion = TagNoIdentificacion[0].attributes['NoIdentificacion'].value
+                    FindFolioInTagNoIdentificacion = re.search(FolioToCheck, FolioViajeInTagNoIdentificacion)
+                    if FindFolioInTagNoIdentificacion is not None:
+                        indexstart = FindFolioInTagNoIdentificacion.start()
+                        indexend = FindFolioInTagNoIdentificacion.end()
+                        FolioInXML = FolioViajeInTagNoIdentificacion[indexstart:indexend]
+                        SameFolio = True if FolioInXML == FolioToCheck else False
+                    else:
+                        TagUnidad = XMLToRead.getElementsByTagName('cfdi:Concepto')
+                        FolioViajeInTagUnidad = TagUnidad[0].attributes['Unidad'].value
+                        FindFolioInTagUnidad = re.search(FolioToCheck, FolioViajeInTagUnidad)
+                        if FindFolioInTagUnidad is not None:
+                            indexstart = FindFolioInTagUnidad.start()
+                            indexend = FindFolioInTagUnidad.end()
+                            FolioInXML = FolioViajeInTagUnidad[indexstart:indexend]
+                            SameFolio = True if FolioInXML == FolioToCheck else False
+                        else:
+                            SameFolio = GetFolioInTagParte(XMLToRead,FolioToCheck)
                 else:
                     TagUnidad = XMLToRead.getElementsByTagName('cfdi:Concepto')
                     FolioViajeInTagUnidad = TagUnidad[0].attributes['Unidad'].value
@@ -276,17 +288,8 @@ def GetFolioViajeXML(request):
                         SameFolio = True if FolioInXML == FolioToCheck else False
                     else:
                         SameFolio = GetFolioInTagParte(XMLToRead,FolioToCheck)
-            else:
-                TagUnidad = XMLToRead.getElementsByTagName('cfdi:Concepto')
-                FolioViajeInTagUnidad = TagUnidad[0].attributes['Unidad'].value
-                FindFolioInTagUnidad = re.search(FolioToCheck, FolioViajeInTagUnidad)
-                if FindFolioInTagUnidad is not None:
-                    indexstart = FindFolioInTagUnidad.start()
-                    indexend = FindFolioInTagUnidad.end()
-                    FolioInXML = FolioViajeInTagUnidad[indexstart:indexend]
-                    SameFolio = True if FolioInXML == FolioToCheck else False
-                else:
-                    SameFolio = GetFolioInTagParte(XMLToRead,FolioToCheck)
+        else:
+            SameFolio = True
         return JsonResponse({"Folio":SameFolio})
     except Exception as e:
         print(e)
@@ -345,7 +348,7 @@ def DiaEnAlertaBloquearFacturas(Dia):
 
 
 
-#def CrearUsuariosTranportistas(request):
+# def CrearUsuariosTranportistas(request):
 # #editar un usuario
 #
 # 	#usuarios = User.User.objects.filter()
@@ -379,37 +382,37 @@ def DiaEnAlertaBloquearFacturas(Dia):
 
     # Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-    #Proveedores = Proveedor.objects.filter(RFC='CSH980507Q50')
-    #for prov in Proveedores:
-        #try:
-            #oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
-        #except AdmonUsuarios.DoesNotExist:
-            #newUser = AdmonUsuarios()
-            #newUser.nombre = prov.RazonSocial
-            #newUser.nombreusuario = prov.RFC
-            #newUser.correo = prov.Correo
-            #newUser.fechacambiocontrasena = datetime.datetime.now()
-            #newUser.hasbytes = 0
-            #newUser.saltbytes = 0
-            #newUser.periodo = 365
-            #newUser.statusreg = "ACTIVO"
-            #newUser.apepaterno = ""
-            #newUser .apematerno = ""
-            #newUser.save()
-            #prov.IDUsuarioAcceso = newUser.idusuario
-            #prov.save()
-            #try:
-                #DjangoUser = User.User.objects.get(username=prov.RFC)
-                #DjangoUser.IDTransportista = prov.IDTransportista
-                #DjangoUser.idusuario = newUser.idusuario
-            #except User.User.DoesNotExist:
-                #user = User.User(username=prov.RFC)
-                #user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
-                #user.email = newUser.correo
-                #user.idusuario = newUser.idusuario
-                #user.is_staff = True
-                #user.roles = "Proveedor"
-                #user.IDTransportista = prov.IDTransportista
-                #user.save()
+    # Proveedores = Proveedor.objects.filter(RFC='TIM040712JF8')
+    # for prov in Proveedores:
+    #     try:
+    #         oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
+    #     except AdmonUsuarios.DoesNotExist:
+    #         newUser = AdmonUsuarios()
+    #         newUser.nombre = prov.RazonSocial
+    #         newUser.nombreusuario = prov.RFC
+    #         newUser.correo = prov.Correo
+    #         newUser.fechacambiocontrasena = datetime.datetime.now()
+    #         newUser.hasbytes = 0
+    #         newUser.saltbytes = 0
+    #         newUser.periodo = 365
+    #         newUser.statusreg = "ACTIVO"
+    #         newUser.apepaterno = ""
+    #         newUser .apematerno = ""
+    #         newUser.save()
+    #         prov.IDUsuarioAcceso = newUser.idusuario
+    #         prov.save()
+    #         try:
+    #             DjangoUser = User.User.objects.get(username=prov.RFC)
+    #             DjangoUser.IDTransportista = prov.IDTransportista
+    #             DjangoUser.idusuario = newUser.idusuario
+    #         except User.User.DoesNotExist:
+    #             user = User.User(username=prov.RFC)
+    #             user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
+    #             user.email = newUser.correo
+    #             user.idusuario = newUser.idusuario
+    #             user.is_staff = True
+    #             user.roles = "Proveedor"
+    #             user.IDTransportista = prov.IDTransportista
+    #             user.save()
 
     # fin dar de alta un usuario

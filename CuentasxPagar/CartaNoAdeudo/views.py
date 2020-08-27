@@ -9,27 +9,26 @@ from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 import json, datetime
-
 from requests import Response
-
 from usersadmon.models import Proveedor
 from CartaNoAdeudo.models import CartaNoAdeudoTransportistas
 from django.db import transaction
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
-from django.contrib import messages
+
 
 
 
 def CartaNoAdeudo(request):
     if request.user.roles == "Proveedor":
-        FechaDescargaCarta = Proveedor.objects.get(IDTransportista = request.user.IDTransportista)
+        FechaDescargaCarta = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
+        CartasByProveedor = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista)
         if FechaDescargaCarta.FechaDescargaCartaNoAdeudo is not None:
             IsDescargaCartaNoAdeudo = True if FechaDescargaCarta.FechaDescargaCartaNoAdeudo.month -1 == datetime.datetime.now().month -1 else False
         else:
             IsDescargaCartaNoAdeudo = False
-        return render(request, 'CartaNoAdeudo.html',{"IsDescargaCartaNoAdeudo":IsDescargaCartaNoAdeudo})
+        return render(request, 'CartaNoAdeudo.html',{"IsDescargaCartaNoAdeudo":IsDescargaCartaNoAdeudo, "CartasByProveedor":CartasByProveedor})
     elif request.user.roles == "users":
-        CartaNoAdeudoByProveedor = CartaNoAdeudoTransportistas.objects.filter(FechaAlta__month = datetime.datetime.now().month, FechaAlta__year = datetime.datetime.now().year)
+        CartaNoAdeudoByProveedor = CartaNoAdeudoTransportistas.objects.filter(FechaAlta__month=datetime.datetime.now().month, FechaAlta__year=datetime.datetime.now().year)
         return render(request, 'CartaNoAdeudo.html', {"CartaNoAdeudoByProveedor": CartaNoAdeudoByProveedor})
     else:
         raise Http404()
@@ -79,7 +78,7 @@ def GetCartaNoAdeudo(request):
                     "Por medio de la presente me dirijo a usted para informar que no existen pendientes de facturar y/o cobrar "
                     "por parte de " + NombreProveedor.RazonSocial + " anteriores a " + months[
                         date.month - 2] + " " + str(year) + ", quedando pendiente por conciliar el periodo " + months[
-                        date.month - 1] + "-" + months[12 - 1] + " " + str(year) + ", para conciliar "
+                        date.month - 1] + "-" + months[12 - 1] + " " + str(year) + ", para concluir "
                     "satisfactoriamente y cerrar el ejercicio " + str(
                         year) + ".", p)
                 para.wrapOn(c, 420, 600)

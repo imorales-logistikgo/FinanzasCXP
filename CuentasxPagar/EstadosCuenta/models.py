@@ -58,12 +58,13 @@ class View_FacturasxProveedor(models.Model):
     Total = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     Saldo = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     RutaXML = models.CharField(max_length=300)
+    RutaPDF = models.CharField(max_length=300)
     Status = models.CharField(max_length=15)
     IsAutorizada = models.BooleanField()
     Moneda = models.CharField(max_length=10)
     TotalXML = models.DecimalField(default=0, max_digits=30, decimal_places=5)
-    FolioPago = models.CharField(max_length=50)
-    StatusPago = models.CharField(max_length=50)
+    # FolioPago = models.CharField(max_length=50)
+    # StatusPago = models.CharField(max_length=50)
 
     class Meta:
         db_table = "View_FacturasxProveedor"

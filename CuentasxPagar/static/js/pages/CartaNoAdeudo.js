@@ -4,7 +4,10 @@ $(document).ready(function(){
         window.open('/CartaNoAdeudo/GetCartaNoAdeudo')
     });
 
-    $("#TablaCartaNoAdeudo").DataTable();
+    $("#TablaCartaNoAdeudo").DataTable({
+        "scrollX": true
+    });
+    $("#TablaCartaNoAdeudoProveedor").DataTable();
 
     $("#btnGuardarCartaNoAdeudo").on('click', function(){
         $('#CartaNoAdeudo').data("rutaarchivoPDF") == undefined || $('#CartaNoAdeudo').data("rutaarchivoPDF") == null ? alertToastError("Ningun archivo ha sido cargado") : SaveCartaNoAdeudo();

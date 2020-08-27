@@ -861,10 +861,10 @@ function formatDataTableFacturas(){
       //"width": "5%",
       "className": "text-center bold",
       "targets": 11,
-      "mRender": function (data, type, full) {
-        idfac = $('input[name="EvidenciaXML"]').data("facturaid");
-        return (full[11] != "" ? `<a  href="#detallesPago" class="btnDetallePago" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-folio="${full[11]}" id="foliopagos">Ver Pagos</a>` : "");
-      }
+//      "mRender": function (data, type, full) {
+//        idfac = $('input[name="EvidenciaXML"]').data("facturaid");
+//        return (full[11] != "" ? `<a  href="#detallesPago" class="btnDetallePago" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-folio="${full[11]}" id="foliopagos">Ver Pagos</a>` : "");
+//      }
     },
     {
       "width": "3%",
@@ -901,7 +901,7 @@ function formatDataTableFacturas(){
       "className": "text-center",
       "targets": 15,
       "mRender": function (data, type, full) {
-          return ( full[10] === 'pendiente'.toUpperCase() || full[10] === 'APROBADA' ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" title="Eliminar"><i class="flaticon-delete"></i></button>':'');
+          return ( full[10] === 'pendiente'.toUpperCase() || full[10] === 'APROBADA' || full[10] === 'DEPURADO' ? '<button type ="button" class="btnEliminarFactura btn btn-danger btn-elevate btn-pill btn-sm" data-idfact="'+idfac+'" title="Eliminar"><i class="flaticon-delete"></i></button>':'');
       }
     },
     {

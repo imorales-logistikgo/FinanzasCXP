@@ -17,16 +17,43 @@
                 </div>
             </div>
         </div>
-        <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+
+
+        <!--begin::Portlet-->
+        <div class="kt-portlet kt-portlet--tabs">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-toolbar">
+                    <ul class="nav nav-tabs nav-tabs-line nav-tabs-line-danger nav-tabs-line-2x nav-tabs-line-right"
+                        role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#kt_portlet_base_demo_2_3_tab_content"
+                               role="tab">
+                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i>Subir Carta
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#kt_portlet_base_demo_2_2_tab_content"
+                               role="tab">
+                                <i class="fa fa-bar-chart" aria-hidden="true"></i>Estatus
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="kt-portlet__body">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="kt_portlet_base_demo_2_3_tab_content" role="tabpanel">
                         <div class="tab-content" id="WaitmeSaveCarta">
                             <div class="tab-pane active" id="kt_portlet_base_demo_1_1_tab_content" role="tabpanel">
                                 <div class="container">
                                     <div class="row justify-content-end">
                                         <div class="col">
                                             {% if not IsDescargaCartaNoAdeudo %}
-                                            <button class="btn btn-outline-brand btn-elevate btn-pill" id="DescargarCartaNoAdeudo" style="position:relative; left: 50px; top:20px"><i class="flaticon-download"></i>Descargar</button>
+                                            <button class="btn btn-outline-brand btn-elevate btn-pill"
+                                                    id="DescargarCartaNoAdeudo"
+                                                    style="position:relative; left: 50px; top:20px"><i
+                                                    class="flaticon-download"></i>Descargar
+                                            </button>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -43,7 +70,7 @@
                                             </div>
                                             <div class="kt-portlet__body">
                                                 <div class="kt-uppy" id="CartaNoAdeudo">
-                                                    <div  class="kt-uppy__dashboard"></div>
+                                                    <div class="kt-uppy__dashboard"></div>
                                                     <div class="kt-uppy__progress"></div>
                                                 </div>
                                             </div>
@@ -52,22 +79,51 @@
                                 </div>
 
                                 <!--ver archivos subidos (PDF y XML)-->
-                            <div class="container" style="position:relative;">
-                                <div class="uploaded-files-proveedor text-center">
-                                    <h5>Archivos Subidos:</h5>
-                                    <ol></ol>
+                                <div class="container" style="position:relative;">
+                                    <div class="uploaded-files-proveedor text-center">
+                                        <h5>Archivos Subidos:</h5>
+                                        <ol></ol>
+                                    </div>
                                 </div>
-                            </div>
-                             <div class="container">
-                                 <div class="row">
-                                     <button type="button" name="button" class="btn btn-success" id="btnGuardarCartaNoAdeudo" style="position:relative; left:800px">Enviar</button>
-                                 </div>
-                             </div>
+                                <div class="container">
+                                    <div class="row">
+                                        <button type="button" name="button" class="btn btn-success"
+                                                id="btnGuardarCartaNoAdeudo" style="position:relative; left:800px">
+                                            Enviar
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="tab-pane" id="kt_portlet_base_demo_2_2_tab_content" role="tabpanel">
+                        <div>
+                            <table class="table table-striped table-bordered" id="TablaCartaNoAdeudoProveedor">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">Mes</th>
+                                    <th class="text-center">Fecha Alta</th>
+                                    <th class="text-center">Estatus</th>
+                                    <th class="text-center">Comentario Rechazo</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for cartas in CartasByProveedor %}
+                                <tr>
+                                    <td class="text-center">{{cartas.MesCartaNoAdeudo|safe}}</td>
+                                    <td class="text-center">{{cartas.FechaAlta|date:'Y/m/d'|safe}}</td>
+                                    <td class="text-center">{{cartas.Status|safe}}</td>
+                                    <td class="text-center">{{cartas.ComentarioRechazo|default:""|safe}}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+            </div>
         </div>
+        <!--end::Portlet-->
     </div>
     {% elif request.user.roles == "users" %}
 <!--    <div class="container">-->

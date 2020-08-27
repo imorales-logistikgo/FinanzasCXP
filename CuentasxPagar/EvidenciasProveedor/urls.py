@@ -20,4 +20,6 @@ urlpatterns = [
     path('FilterBy', views.FilterBy, name='FilterBy'),
     path("uploadEvidencias", views.uploadEvidencias, name="uploadEvidencias"),
     path('descarga', views.descarga, name='descarga'),
+    path('fechaevidencias', views.fechaevidencias, name='fechaevidencias'),
+    path('fechaevdigital', views.fechaevdigital, name='fechaevdigital'),
 ]
