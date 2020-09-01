@@ -10,9 +10,21 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
     }
   });
 
+    $('#TableEvidenciasCXP').DataTable({
+        "scrollY":"400px"
+    });
+
   $('#buscarViajeProveedor').on('click', function(){
     $('#inputBuscarViajeProveedor').val() == "" ? validacionBuscarFolio() : GetFolioEvidencias($('#inputBuscarViajeProveedor').val());
   });
+
+
+    $(document).on('click',"#BtnShowEvidencia",function(){
+        var folio = $($(this).parents('tr')[0]).data('folio');
+        var IDViaje = $($(this).parents('tr')[0]).data('idviaje');
+//        folio.includes('FTL') ? IDViaje = $($(this).parents('tr')[0]).data('idviajebkg') : IDViaje = $($(this).parents('tr')[0]).data('idviaje');
+        GetEvidenciasForCXP(IDViaje, folio.trim())
+    });
 
 
   $('#btnCerrarDivProveedorEvidencias').on('click', function(){
@@ -293,6 +305,10 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
 // LIMPIAR MODAL AL CERRARLO
   $('#ModalValidarEvidencias').on('hidden.bs.modal', function(){
     $('#VerEvidencia').empty();
+  });
+
+  $('#ModalEvidenciasCXP').on('hidden.bs.modal', function(){
+    $('#VerEvidenciaCXP').empty();
   });
 
   $('#ModalValidarEvidenciasFisicas').on('hidden.bs.modal', function(){

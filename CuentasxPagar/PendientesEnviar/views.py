@@ -52,7 +52,7 @@ def GetPendientesEnviar(request):
         Proveedores = Proveedor.objects.all()
         ListPendientes = PendientesToList(PendingToSend)
         bloquearLinkCarta = 1 <= datetime.datetime.now().day <= 8
-        FechaCorteCarta = str(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]) + " de " + MesEnAlertaBloquearFacturas(datetime.datetime.now())
+        FechaCorteCarta = str(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month-1)[1]) + " de " + MesEnAlertaCarta(datetime.datetime.now())
         return render(request, 'PendienteEnviar.html', {'FechaCorteCarta': FechaCorteCarta ,'bloquearLinkCarta':bloquearLinkCarta,'DiaAMostrarEnAlertaCarta':DiaAMostrarEnAlertaCarta,'Pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles, 'IDUsuraio_': request.user.idusuario, 'BloquearFacturas':RangoBloquearFacturas, 'MostrarAlerta':RangoDiasAlerta, 'MesAlerta': MesAlerta, 'DiaShowAlert':DiaAMostrarEnAlerta, 'BloquearFacturasCarta':BloquearFacturasCarta})
 
 def PendientesToList(PendingToSend):
@@ -320,6 +320,7 @@ def GetFolioInTagParte(XMLToRead,FolioToCheck):
                     SameFolio = False
         else:
             SameFolio = False
+        print(SameFolio)
         return SameFolio
     except Exception as e:
         print(e)
@@ -338,6 +339,13 @@ def DiaEnAlertaBloquearFacturas(Dia):
     Dyas = ("Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo")
     dia = Dyas[Dia]
     return dia
+
+def MesEnAlertaCarta(Fecha):
+    months = (
+        "Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+        "Noviembre","Diciembre")
+    Mes = months[Fecha.month - 2]
+    return Mes
 
 
 

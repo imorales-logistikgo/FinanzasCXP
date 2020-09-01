@@ -509,3 +509,59 @@ var GetMontoPago = function(XML, IDPago){
         }
   });
 }
+
+var GetEvidenciasForCXP = function(IDViaje, Folio){
+    WaitMe_Show('#TbPading');
+  fetch(`/EvidenciasProveedor/GetEvidenciasCXP?XD_IDViaje=${IDViaje}&Folio=${Folio}`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    if(response.status == 200){
+      return response.clone().json();
+    }
+    else if(response.status == 500){
+      Swal.fire({
+        type: 'error',
+        title: 'Ocurrio un error al obtener las evidencias',
+        showConfirmButton: false,
+        timer: 2500
+      });
+    }
+  }).then(function(data){
+    if(data.Evidencias.length == 0) {
+      Swal.fire({
+        type: 'error',
+        title: 'El Folio aun no tiene evidencias',
+        showConfirmButton: false,
+        timer: 2500
+      });
+      WaitMe_Hide('#TbPading');
+    }
+    else {
+      $('#ModalEvidenciasCXP').modal({backdrop: 'static', keyboard: false, show: true});
+      for(var i=0; i<data.Evidencias.length; i++)
+      {
+        $('#VerEvidenciaCXP').append(`
+            <div class="col-md-4">
+              <div class="card bg-light mb-3" style="max-width: 25rem;">
+                <div class="card-header" >${data.Evidencias[i].Titulo}</div>
+                <div class="card-body">
+                  <a href="${data.Evidencias[i].RutaArchivo}" target="_blank"><img src='/static/img/pdf-2.png' height="150px" width="160px"></img></a>
+                </div>
+              </div>
+            </div>
+          `)
+
+          $(`#${data.Evidencias[i].Titulo}`).append(`<a href="${data.Evidencias[i].RutaArchivo}" target="_blank"><i class="fa fa-eye"></i></a>`);
+      }
+      WaitMe_Hide('#TbPading');
+    }
+  }).catch(function(ex){
+    console.log(ex);
+    WaitMe_Hide('#TbPading');
+  });
+}

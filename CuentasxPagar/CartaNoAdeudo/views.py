@@ -28,7 +28,7 @@ def CartaNoAdeudo(request):
             IsDescargaCartaNoAdeudo = False
         return render(request, 'CartaNoAdeudo.html',{"IsDescargaCartaNoAdeudo":IsDescargaCartaNoAdeudo, "CartasByProveedor":CartasByProveedor})
     elif request.user.roles == "users":
-        CartaNoAdeudoByProveedor = CartaNoAdeudoTransportistas.objects.filter(FechaAlta__month=datetime.datetime.now().month, FechaAlta__year=datetime.datetime.now().year)
+        CartaNoAdeudoByProveedor = CartaNoAdeudoTransportistas.objects.filter()
         return render(request, 'CartaNoAdeudo.html', {"CartaNoAdeudoByProveedor": CartaNoAdeudoByProveedor})
     else:
         raise Http404()
@@ -108,7 +108,7 @@ def GetCartaNoAdeudo(request):
 def SaveCartaNoAdeudo(request):
     try:
         jParams = json.loads(request.body.decode('utf-8'))
-        GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(IDTransportista = request.user.IDTransportista).exclude(Status = 'RECHAZADA').last()
+        GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(IDTransportista = request.user.IDTransportista).exclude(Status='RECHAZADA').last()
         if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
             return HttpResponse(status=500)
         else:

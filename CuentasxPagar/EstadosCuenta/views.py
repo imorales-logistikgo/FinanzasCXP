@@ -189,19 +189,31 @@ def GetFacturasByFilters(request):
 	Proveedores = json.loads(request.GET["Proveedor"])
 	Status = json.loads(request.GET["Status"])
 	Moneda = json.loads(request.GET["Moneda"])
+	print(Proveedores)
 	if "Year" in request.GET:
 		arrMonth = json.loads(request.GET["arrMonth"])
 		Year = request.GET["Year"]
-		Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year, Status__in = Status)#.exclude(Status = 'DEPURADO')
+		if Proveedores == []:
+			Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year, Status__in = Status, Moneda__in = Moneda)#.exclude(Status = 'DEPURADO')
+		else:
+			Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__month__in=arrMonth, FechaFactura__year=Year,
+															  Status__in=Status, Proveedor__in=Proveedores,
+															  Moneda__in=Moneda)
 	else:
-		Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')], Status__in = Status)#.exclude(Status = 'DEPURADO')
+		if Proveedores == []:
+			Facturas = View_FacturasxProveedor.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')], Status__in = Status, Moneda__in = Moneda)#.exclude(Status = 'DEPURADO')
+		else:
+			Facturas = View_FacturasxProveedor.objects.filter(
+				FechaFactura__range=[datetime.datetime.strptime(request.GET["FechaFacturaDesde"], '%m/%d/%Y'),
+									 datetime.datetime.strptime(request.GET["FechaFacturaHasta"], '%m/%d/%Y')],
+				Status__in=Status, Proveedor__in=Proveedores, Moneda__in=Moneda)
 	# if Status:
 	# 	Facturas = Facturas.filter(Status__in = Status)
-	if Proveedores:
-		Facturas = Facturas.filter(Proveedor__in = Proveedores)
-	if Moneda:
-		Facturas = Facturas.filter(Moneda__in = Moneda)
-	ListaFacturas = FacturasToList(Facturas)
+	# if Proveedores:
+	# 	Facturas = Facturas.filter(Proveedor__in = Proveedores)
+	# if Moneda:
+	# 	Facturas = Facturas.filter(Moneda__in = Moneda)
+	# ListaFacturas = FacturasToList(Facturas)
 	#Folios = list()
 	#for Factura in ListaFacturas:
 	#	FoliosPago= ""
@@ -209,7 +221,7 @@ def GetFacturasByFilters(request):
 	#		FoliosPago += Pago.IDPago.Folio + ", "
 	#	FoliosPago = FoliosPago[:-2]
 	#	Folios.append(FoliosPago)
-	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas': ListaFacturas}, request = request,)
+	htmlRes = render_to_string('TablaEstadosCuenta.html', {'Facturas': Facturas}, request = request,)
 	return JsonResponse({'htmlRes' : htmlRes})
 
 
@@ -366,12 +378,12 @@ def CheckFolioDuplicado(request):
 def EnviarCorreoProveedor(IDPagoEmail):
 	DatosPagoProveedor = PagosxProveedor.objects.get(IDPago = IDPagoEmail)
 	try:
-		CorreoProveedor = list(AdmonCorreosxTransportista.objects.filter(IDTransportista = DatosPagoProveedor.IDProveedor, IsEnviarCorreo = 1).values('Correo'))
+		CorreoProveedor = list(AdmonCorreosxTransportista.objects.filter(IDTransportista = DatosPagoProveedor.IDProveedor.IDTransportista, IsEnviarCorreo = 1).values('Correo'))
 		if CorreoProveedor != []:
 			SendEmail = list()
 			for new in CorreoProveedor:
 				SendEmail.append(new["Correo"], )
-			RS = Proveedor.objects.get(IDTransportista = DatosPagoProveedor.IDProveedor)
+			RS = Proveedor.objects.get(IDTransportista = DatosPagoProveedor.IDProveedor.IDTransportista)
 			context={
 				'nombre': RS.RazonSocial,
 				'folio' : DatosPagoProveedor.Folio,

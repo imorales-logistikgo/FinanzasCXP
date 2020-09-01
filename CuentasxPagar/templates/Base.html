@@ -93,7 +93,7 @@ end:: Header Mobile -->
 						<li class="kt-menu__item {% block activateReportePagosCancelados %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagosCancelados' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Pagos cancelados</span></a></li>
 						<li class="kt-menu__item {% block activateReporteMaster %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteMaster' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas flaticon-list-1"></i><span class="kt-menu__link-text">Master</span></a></li>
 						{% endif %}
-						{% if request.user.roles == "Proveedor" or request.user.roles == 'MesaControl' %}
+						{% if request.user.roles == "Proveedor" or request.user.roles == 'MesaControl' or request.user.roles == 'users' %}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Evidencias</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>

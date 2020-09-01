@@ -1,5 +1,8 @@
 from django.db import models
 
+from usersadmon.models import Proveedor
+
+
 class Bro_Viajes(models.Model):
     IDBro_Viaje = models.AutoField(db_column='IDBro_Viaje', primary_key=True)
     Folio = models.CharField(max_length=100)

@@ -1,0 +1,38 @@
+{% load humanize %}
+{% load static %}
+<div class="kt-subheader   kt-grid__item" id="kt_subheader">
+	<div class="kt-container  kt-container--fluid ">
+		<div class="kt-subheader__toolbar">
+			<div class="kt-subheader__wrapper">
+				<h3>Evidencias Proveedor</h3>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+		<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+			<table class="table table-striped table-bordered" id="TableEvidenciasCXP">
+				<thead>
+					<tr>
+						<th class="text-center">Folio</th>
+						<th class="text-center">Proveedor</th>
+						<th class="text-cener">Evidencia Digital</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for Evidencia in Evidencias %}
+					<tr data-idviaje ="{{Evidencia.IDViaje}}" data-folio = "{{Evidencia.Folio}}">
+						<td class="text-center">{{Evidencia.Folio}}</td>
+                        <td class="text-center">{{Evidencia.RazonSocial}}</td>
+						<td class="text-center">{% if Evidencia.IsEvidenciaDigital %} <button type="button" class="btn btn-success btn-elevate btn-pill btn-sm" id="BtnShowEvidencia"><i class="fa fa-check"></i></button>{%endif%}</td>
+					</tr>
+					{%endfor%}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

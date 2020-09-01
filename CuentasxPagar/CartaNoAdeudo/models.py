@@ -16,6 +16,6 @@ class CartaNoAdeudoTransportistas(models.Model):
     ComentarioRechazo = models.CharField(max_length=300, default=None)
 
     class Meta:
-        db_table="CartaNoAdeudoTransportistas"
+        db_table = "CartaNoAdeudoTransportistas"
         managed = False
 

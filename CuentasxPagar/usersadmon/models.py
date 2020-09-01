@@ -45,3 +45,16 @@ class AdmonCorreosxTransportista(models.Model):
     class Meta:
         managed = False
         db_table = 'AdmonCorreosxTransportista'
+
+
+class View_EvidenciasCxP(models.Model):
+    IDViaje = models.AutoField(primary_key=True)
+    Folio = models.CharField(max_length=100)
+    IDTransportista = models.IntegerField()
+    RazonSocial = models.CharField(max_length=500)
+    IsEvidenciaDigital = models.IntegerField()
+    IsEvidenciaFisica = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'View_EvidenciasCxP'

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from XD_Viajes.models import XD_Viajes, XD_PedidosxViajes, XD_Pedidos, XD_AccesoriosxViajes, XD_EvidenciasxPedido, XD_EvidenciasxViaje
 from PendientesEnviar.models import PendientesEnviar, RelacionConceptoxProyecto
-from usersadmon.models import AdmonUsuarios,Proveedor
+from usersadmon.models import AdmonUsuarios,Proveedor, View_EvidenciasCxP
 from bkg_viajes.models import Bro_Viajes, Bro_EvidenciasxViaje
 import json, datetime
 from django.db import transaction
@@ -18,7 +18,7 @@ from django.template.loader import render_to_string
 
 @login_required
 def EvidenciasProveedor(request):
-    if request.user.roles != 'Proveedor':
+    if request.user.roles == 'MesaControl':
         EvidenciasxAprobar = XD_Viajes.objects.filter(Status = 'FINALIZADO', FechaDespacho__month = datetime.datetime.now().month, FechaDespacho__year = datetime.datetime.now().year).exclude(Status = 'CANCELADO')
         EvidenciasxAprobarBKG = Bro_Viajes.objects.filter(StatusProceso = 'FINALIZADO', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year).exclude(StatusProceso = 'CANCELADO')
         Evidencias = chain(EvidenciasxAprobar, EvidenciasxAprobarBKG)
@@ -31,6 +31,13 @@ def EvidenciasProveedor(request):
         # SinEvidenciaDigital = XD_Viajes.objects.filter(IsEvidencia = False).count()
         # SinEvidenciaFisica = XD_Viajes.objects.filter(IsEvidenciaFisica = False).count()
         return render(request, 'EvidenciasProveedor.html')
+    elif request.user.roles == 'users':
+        Evidencias = View_EvidenciasCxP.objects.all()
+        # EvidenciasxAprobarBKG = Bro_Viajes.objects.filter(StatusProceso='FINALIZADO', IsEvidenciasDigitales=1, FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
+        # Evidencias = EvidenciasxAprobarXD.union(EvidenciasxAprobarBKG)
+        # Evidencias = chain(EvidenciasxAprobarXD, EvidenciasxAprobarBKG)
+        return render(request, 'EvidenciasProveedor.html', {'Evidencias': Evidencias})
+
 
 def FindFolioProveedorE(request):
     Folio = request.GET["Folio"]
@@ -871,3 +878,40 @@ def fechaevdigital(request):
             savev.FechaEvidenciaDigital = fecha.FechaValidacion
             savev.save()
 
+def GetEvidenciasCXP(request):
+    IDViaje = request.GET["XD_IDViaje"]
+    Folio = request.GET["Folio"]
+    ListEvidencias = list()
+    try:
+        if "FTL" in Folio:
+            getEvidencias = Bro_EvidenciasxViaje.objects.filter(IDBro_Viaje = IDViaje)
+            for evidencias in getEvidencias:
+                jsonevidencias = {}
+                jsonevidencias["Titulo"] = evidencias.Titulo
+                jsonevidencias["RutaArchivo"] = evidencias.RutaArchivo
+                ListEvidencias.append(jsonevidencias)
+            return JsonResponse({"Evidencias": ListEvidencias})
+        else:
+            getEvidenciaxPedido = XD_EvidenciasxPedido.objects.filter(XD_IDViaje = IDViaje)
+            for evidencias in getEvidenciaxPedido:
+                jsonevidencias = {}
+                TituloPedido = XD_PedidosxViajes.objects.get(XD_IDPedido = evidencias.IDXD_Pedido, XD_IDViaje = evidencias.XD_IDViaje)
+                jsonevidencias["Titulo"] = TituloPedido.XD_IDPedido.Delivery
+                jsonevidencias["RutaArchivo"] = evidencias.RutaArchivo
+                ListEvidencias.append(jsonevidencias)
+            getEvidenciaxCustodia= XD_EvidenciasxViaje.objects.filter(IDXD_Viaje = IDViaje, Tipo="EVCUSTODIAF", Titulo__in=('CORREO', 'FOLIO'))
+            for evidenciasCustodias in getEvidenciaxCustodia:
+                jsonevidencias = {}
+                jsonevidencias["Titulo"] = evidenciasCustodias.Titulo
+                jsonevidencias["RutaArchivo"] = evidenciasCustodias.RutaArchivo
+                ListEvidencias.append(jsonevidencias)
+            gerEvidenciasxManiobras = XD_EvidenciasxViaje.objects.filter(IDXD_Viaje=IDViaje, Tipo__in=("MESA CONTROL","EVIDENCIA ACCESORIOS"), Titulo__in=('Maniobras de carga', 'Maniobras de descarga'))
+            for EvidenciasManiobras in gerEvidenciasxManiobras:
+                jsonevidencias = {}
+                jsonevidencias["Titulo"] = EvidenciasManiobras.Titulo
+                jsonevidencias["RutaArchivo"] = EvidenciasManiobras.RutaArchivo
+                ListEvidencias.append(jsonevidencias)
+            return JsonResponse({"Evidencias": ListEvidencias})
+    except Exception as e:
+        print(e)
+        return HttpResponse(status=500)

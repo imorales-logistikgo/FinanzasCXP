@@ -7,25 +7,30 @@ kt-menu__item--active
 
 {% block ContadoresEvidenciasProveedor %}
 
-{% if request.user.roles == "MesaControl" %}
+{% if request.user.roles == "MesaControl" or request.user.roles == "users" %}
 <div class="kt-subheader kt-grid__item">
+
 	<div class="kt-container  kt-container--fluid ">
 		<div>
 			<!-- <span class="badge badge-pill badge-success">Sin Evidencias Fisicas<span class="badge badge-pill badge-secondary"><strong>{{EvidenciaFisica}}</strong></span></span> -->
+			{% if request.user.roles == "MesaControl" %}
 			<span class="badge badge-pill badge-danger">Sin Evidencias<span class="badge badge-pill badge-secondary"><strong>{{EvidenciaDigital}}</strong></span></span>
+			{% endif %}
 		</div>
 	</div>
+	{% if request.user.roles == "MesaControl" %}
 	<div class="kt-header__topbar-item kt-header__topbar-item--quick-panel" data-toggle="kt-tooltip" title="Filtros" data-placement="right">
 		<span class="kt-header__topbar-icon" id="kt_quick_panel_toggler_btn">
 			<button type="button" class="btn btn-brand btn-elevate btn-pill btn-elevate-air btn-sm" id="BtnOpenFiltrosEV" style="margin:20px">Filtros</button>
 		</span>
 	</div>
+	{% endif %}
 </div>
 {% endif %}
 {% endblock %}
 
 {% block FiltrosEvidenciasProveedor %}
-{% if request.user.roles == "MesaControl" %}
+{% if request.user.roles == "MesaControl" or request.user.roles == "users" %}
 <div id="kt_quick_panel" class="kt-quick-panel">
 	<!--<a href="#" class="kt-quick-panel__close" id="kt_quick_panel_close_btn"><i class="flaticon2-delete"></i></a>-->
 
@@ -260,6 +265,39 @@ kt-menu__item--active
 				</div>
 
 			{% endif %}
+
+{% if request.user.roles == "users" %}
+<div id="divTablaEvidenciaCXP">
+	{% include "TablaEvidenciasCXP.html" %}
+</div>
+
+<div class="modal fade" id="ModalEvidenciasCXP" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+	 aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document" id="WaitModalEP">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Evidencias</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" id="BtnCerrarModalCXP">
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="kt-scroll" data-scroll="true" id="kt-scroll">
+					<div class="row" id="VerEvidenciaCXP">
+
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<!-- <button type="button" id="btnGuardarFactura" disabled="true" class="btn btn-success btn-elevate">Guardar</button> -->
+				<button type="button" class="btn btn-danger btn-elevate " data-dismiss="modal"
+						id="cerrarModalEvidenciasCXP">Close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endif %}
 {% endblock %}
 
 

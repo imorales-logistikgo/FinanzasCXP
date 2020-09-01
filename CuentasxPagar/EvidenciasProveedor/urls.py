@@ -22,4 +22,5 @@ urlpatterns = [
     path('descarga', views.descarga, name='descarga'),
     path('fechaevidencias', views.fechaevidencias, name='fechaevidencias'),
     path('fechaevdigital', views.fechaevdigital, name='fechaevdigital'),
+    path('GetEvidenciasCXP', views.GetEvidenciasCXP, name='GetEvidenciasCXP'),
 ]

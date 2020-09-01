@@ -287,11 +287,19 @@ $('#TableReportePagos').DataTable({
       "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {
-        return  (full[6]!= "" && full[7]!= "" ? `<a href="${full[6]}" target="_blank" class="btn btn-primary btn-elevate btn-pill btn-sm"><i class="flaticon2-file"></i></a>`:'');
+        return  (full[6]!= "" && full[7]!= "" ? `<a href="${full[7]}" target="_blank" class="btn btn-primary btn-elevate btn-pill btn-sm" title="PDF"><i class="fa fa-file-pdf"></i></a>`:'');
       }
     },
     {
       "targets": 10,
+      "width": "2%",
+      "className": "dt-head-center dt-body-center",
+      "mRender": function (data, type, full) {
+        return  (full[6]!= "" && full[7]!= "" ? `<a href="${full[6]}" target="_blank" class="btn btn-primary btn-elevate btn-pill btn-sm" title="XML"><i class="flaticon2-file"></i></a>`:'');
+      }
+    },
+    {
+      "targets": 11,
       "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {
@@ -303,7 +311,7 @@ $('#TableReportePagos').DataTable({
       }
     },
     {
-      "targets": 11,
+      "targets": 12,
       "width": "2%",
       "className": "dt-head-center dt-body-center",
       "mRender": function (data, type, full) {

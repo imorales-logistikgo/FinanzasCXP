@@ -1,5 +1,6 @@
 from django.db import models
-from usersadmon.models import AdmonUsuarios
+from usersadmon.models import AdmonUsuarios, Proveedor
+
 
 class XD_Viajes(models.Model):
     XD_IDViaje = models.AutoField(db_column='XD_IDViaje', primary_key=True)
