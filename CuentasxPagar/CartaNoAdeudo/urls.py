@@ -8,5 +8,5 @@ urlpatterns = [
     path("AprobarCarta", views.AprobarCarta, name="AprobarCarta"),
     path("RechazarCarta", views.RechazarCarta, name="RechazarCarta"),
     path("upload", views.upload, name="upload"),
-    # path("desc", views.desc, name="desc"),
+    # path("readIMG", views.readIMG, name="readIMG"),
 ]

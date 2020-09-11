@@ -23,4 +23,5 @@ urlpatterns = [
     path('fechaevidencias', views.fechaevidencias, name='fechaevidencias'),
     path('fechaevdigital', views.fechaevdigital, name='fechaevdigital'),
     path('GetEvidenciasCXP', views.GetEvidenciasCXP, name='GetEvidenciasCXP'),
+    path('CreateCartaNoadeudoMC', views.CreateCartaNoadeudoMC, name='CreateCartaNoadeudoMC')
 ]

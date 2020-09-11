@@ -37,7 +37,7 @@ def ReportePagos(request):
 			FoliosFactura = FoliosFactura[:-2]
 			Folios.append(FoliosFactura)
 		Proveedores = Proveedor.objects.all()
-		return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores, 'Rol': request.user.roles});
+		return render(request, 'ReportePagos.html', {"Pagos": Pagos, "Folios" : Folios, 'Proveedores': Proveedores, 'Rol': request.user.roles, 'IDUsuraio_': request.user.idusuario});
 
 
 

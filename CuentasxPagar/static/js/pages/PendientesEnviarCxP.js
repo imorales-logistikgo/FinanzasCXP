@@ -1027,8 +1027,8 @@ function archivosproveedor()
   					note: 'Logisti-k',
            browserBackButtonClose: true,
          }
-         var filesMin = IDUsuraio_ != 3126 ? 2:1;
-         IDUsuraio_ != 3126 ? $('#txtFolioFacturaP').prop("disabled", true): $('#txtFolioFacturaP').prop("disabled", false);
+         var filesMin = IDUsuraio_ != 3227 ? 2:1;
+         IDUsuraio_ != 3227 ? $('#txtFolioFacturaP').prop("disabled", true): $('#txtFolioFacturaP').prop("disabled", false);
          var uppyDashboard = Uppy.Core({
            autoProceed: false,
            restrictions: {

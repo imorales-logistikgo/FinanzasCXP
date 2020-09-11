@@ -23,6 +23,7 @@ class XD_Viajes(models.Model):
     IsDescargaHojaLiberacion = models.BooleanField()
     FechaEvidenciaDigital = models.DateTimeField()
     FechaEvidenciaFisica = models.DateTimeField()
+    FechaAlta = models.DateTimeField()
 
     class Meta:
         managed = False

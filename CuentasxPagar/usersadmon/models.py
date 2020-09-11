@@ -31,6 +31,7 @@ class Proveedor(models.Model):
     IsAmericano = models.BooleanField()
     Serie = models.CharField(max_length=15)
     FechaDescargaCartaNoAdeudo = models.DateTimeField()
+    FechaAlta = models.DateTimeField()
 
     class Meta:
         managed = False

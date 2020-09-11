@@ -113,12 +113,12 @@ def GetReporteTotales(request, **kwargs):
 		Total = 0
 		TotalVencido = 0
 		TotalPorVencer = 0
-		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN, FechaFactura__lte = '2020-07-31'):
+		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN, FechaFactura__lte = '2020-09-03'):
 			if Moneda == "MXN":
 				Total = Total + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else Total + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else Total + TotalesFacturas.Saldo
-			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') <= "2020-07-31" and Moneda == "MXN":
+			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') <= "2020-09-03" and Moneda == "MXN":
 				TotalVencido = TotalVencido + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else TotalVencido + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalVencido + TotalesFacturas.Saldo
-			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') > "2020-07-31" and Moneda == "MXN":
+			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') > "2020-09-03" and Moneda == "MXN":
 				TotalPorVencer = TotalPorVencer + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else TotalPorVencer + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalPorVencer + TotalesFacturas.Saldo
 		ws.cell(row=cont,column=1).value = NombreProv.RazonSocial
 		ws.cell(row=cont,column=2).value = round(TotalVencido,2)

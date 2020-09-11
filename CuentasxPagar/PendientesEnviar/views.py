@@ -3,6 +3,8 @@ from django.shortcuts import render
 from PendientesEnviar.models import View_PendientesEnviarCxP, FacturasxProveedor, PartidaProveedor, RelacionFacturaProveedorxPartidas, PendientesEnviar, Ext_PendienteEnviar_Costo
 from usersadmon.models import Proveedor, AdmonUsuarios
 from CartaNoAdeudo.models import CartaNoAdeudoTransportistas
+from XD_Viajes.models import XD_Viajes
+from bkg_viajes.models import Bro_Viajes
 from users import models as User
 from django.core import serializers
 from django.template.loader import render_to_string
@@ -37,23 +39,52 @@ def GetPendientesEnviar(request):
         MesAlerta = MesEnAlertaBloquearFacturas(datetime.datetime.now())
         DiaAlerta = DiaEnAlertaBloquearFacturas(calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, DiaDelMesbloquearAlert))
         DiaAMostrarEnAlerta = DiaAlerta + " " + str(DiaDelMesbloquearAlert)
-        DiaAlertaCarta = DiaEnAlertaBloquearFacturas(calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, 8))
-        DiaAMostrarEnAlertaCarta = DiaAlertaCarta + " " +"8"
-        if request.user.roles == 'Proveedor' and datetime.datetime.now().day > 8:
-            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
-                IDTransportista=request.user.IDTransportista).exclude(Status='RECHAZADA').last()
-            if GetLastCartaUpload is None:
-                BloquearFacturasCarta = True
+        DiaAlertaCarta = DiaEnAlertaBloquearFacturas(calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, 20))
+        DiaAMostrarEnAlertaCarta = DiaAlertaCarta + " " +"20"
+
+        GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
+            IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA')
+
+        if request.user.roles == 'Proveedor' and datetime.datetime.now().day > 20 and GetTotalViajesEn1Mes(request.user.IDTransportista,1):
+            GetFechaAltaTransportista = Proveedor.objects.get(IDTransportista = request.user.IDTransportista)
+            if CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA').exists():
+                if GetFechaAltaTransportista.FechaAlta is None:
+                    BloquearFacturasCarta = True
+                else:
+                    BloquearFacturasCarta = True if GetFechaAltaTransportista.FechaAlta.month != datetime.datetime.now().month and GetFechaAltaTransportista.FechaAlta.year != datetime.datetime.now().year else False
             else:
                 BloquearFacturasCarta = False if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(
                     datetime.datetime.now()) and GetLastCartaUpload.Status == "APROBADA" else True
+            MesAlertaMotivoBloqueo = MesEnAlertaCarta(datetime.datetime.now())
+        elif request.user.roles == 'Proveedor' and GetTotalViajesEn1Mes(request.user.IDTransportista,2):
+            GetLastCartaUpload2 = CartaNoAdeudoTransportistas.objects.filter(
+                IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesCartaConAdeudo(datetime.datetime.now()), Status='APROBADA')
+            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesCartaConAdeudo(datetime.datetime.now()), Status='APROBADA').exists():
+                BloquearFacturasCarta = True
+            else:
+                if GetLastCartaUpload2.MesCartaNoAdeudo == MesCartaConAdeudo(datetime.datetime.now()) and GetLastCartaUpload.Status == "APROBADA":
+                    BloquearFacturasCarta = False
+                else :
+                    BloquearFacturasCarta = True
+            MesAlertaMotivoBloqueo = MesCartaConAdeudo(datetime.datetime.now())
         else:
             BloquearFacturasCarta = False
+            MesAlertaMotivoBloqueo = "null"
+
         Proveedores = Proveedor.objects.all()
         ListPendientes = PendientesToList(PendingToSend)
-        bloquearLinkCarta = 1 <= datetime.datetime.now().day <= 8
+        bloquearLinkCarta = 1 <= datetime.datetime.now().day <= 20
         FechaCorteCarta = str(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month-1)[1]) + " de " + MesEnAlertaCarta(datetime.datetime.now())
-        return render(request, 'PendienteEnviar.html', {'FechaCorteCarta': FechaCorteCarta ,'bloquearLinkCarta':bloquearLinkCarta,'DiaAMostrarEnAlertaCarta':DiaAMostrarEnAlertaCarta,'Pendientes':ListPendientes, 'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes, 'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias, 'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles, 'IDUsuraio_': request.user.idusuario, 'BloquearFacturas':RangoBloquearFacturas, 'MostrarAlerta':RangoDiasAlerta, 'MesAlerta': MesAlerta, 'DiaShowAlert':DiaAMostrarEnAlerta, 'BloquearFacturasCarta':BloquearFacturasCarta})
+    return render(request, 'PendienteEnviar.html',
+                  {'FechaCorteCarta': FechaCorteCarta, 'bloquearLinkCarta': bloquearLinkCarta,
+                   'DiaAMostrarEnAlertaCarta': DiaAMostrarEnAlertaCarta, 'Pendientes': ListPendientes,
+                   'Proveedores': Proveedores, 'contadorPendientes': ContadorPendientes,
+                   'contadorFinalizados': ContadorFinalizados, 'contadorConEvidencias': ContadorConEvidencias,
+                   'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles,
+                   'IDUsuraio_': request.user.idusuario, 'BloquearFacturas': RangoBloquearFacturas,
+                   'MostrarAlerta': RangoDiasAlerta, 'MesAlerta': MesAlerta, 'DiaShowAlert': DiaAMostrarEnAlerta,
+                   'BloquearFacturasCarta': BloquearFacturasCarta, 'MesAlertaMotivoBloqueo':MesAlertaMotivoBloqueo})
+
 
 def PendientesToList(PendingToSend):
     ListPendientes = list()
@@ -347,12 +378,22 @@ def MesEnAlertaCarta(Fecha):
     Mes = months[Fecha.month - 2]
     return Mes
 
+def MesCartaConAdeudo(Fecha):
+    months = (
+        "Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+        "Noviembre","Diciembre")
+    Mes1 = months[Fecha.month - 3]
+    return Mes1
 
 
 
-
-
-
+def GetTotalViajesEn1Mes(IDTransportista, RestarMes):
+    CountViajesEnXD = XD_Viajes.objects.exclude(Status='CANCELADO').filter(IDTransportista=IDTransportista,
+                                               FechaAlta__month=datetime.datetime.now().month - RestarMes).count()
+    CountViajesEnBKG = Bro_Viajes.objects.exclude(StatusProceso = 'CANCELADO').filter(IDTransportista=IDTransportista,
+                                                 FechaAlta__month=datetime.datetime.now().month - RestarMes).count()
+    TieneViajes = True if CountViajesEnXD >= 1 and CountViajesEnBKG >= 1 else False
+    return TieneViajes
 
 
 
@@ -390,7 +431,7 @@ def MesEnAlertaCarta(Fecha):
 
     # Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-    # Proveedores = Proveedor.objects.filter(RFC='TIM040712JF8')
+    # Proveedores = Proveedor.objects.filter(RFC='GAHN820801L68')
     # for prov in Proveedores:
     #     try:
     #         oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)

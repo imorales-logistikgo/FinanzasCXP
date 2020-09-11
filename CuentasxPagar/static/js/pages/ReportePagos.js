@@ -265,14 +265,14 @@ $('#TableReportePagos').DataTable({
       "targets": [6],
       "visible": false,
       "mRender": function (data, type, full) {
-        return $(full[11]).data("americano") == "True" ? 'IsAmericano': full[6];
+        return $(full[12]).data("americano") == "True" ? 'IsAmericano': full[6];
       }
     },
      {
       "targets": [7],
       "visible": false,
       "mRender": function (data, type, full) {
-        return  $(full[11]).data("americano") == "True" ? 'IsAmericano': full[7];
+        return  $(full[12]).data("americano") == "True" ? 'IsAmericano': full[7];
       }
     },
     {
@@ -307,7 +307,7 @@ $('#TableReportePagos').DataTable({
         if(UserRol == "Contabilidad")
           return '';
         else
-          return (full[6] != "" || $(full[11]).data("americano") == "True" ? '':`<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-totalpago="${full[3]}" data-vercomplementoxml="${full[6]}" data-vercomplementopdf="${full[7]}" data-idpagocomplementos="`+idPago+`" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`);
+          return (full[6] != "" || $(full[12]).data("americano") == "True" ? '':`<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-totalpago="${full[3]}" data-vercomplementoxml="${full[6]}" data-vercomplementopdf="${full[7]}" data-idpagocomplementos="`+idPago+`" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`);
       }
     },
     {
@@ -318,8 +318,10 @@ $('#TableReportePagos').DataTable({
         idPago = $('input[name="IDPago"]').data("pagoid");
         if(UserRol == "Proveedor" || UserRol == "Contabilidad")
           return  '';
-        else
+        else if ( IDUsuraio_ == 2829 || IDUsuraio_ == 2893 || IDUsuraio_ == 210)
           return '<button type ="button" class="btnEliminarPago btn btn-danger btn-elevate btn-pill btn-sm" data-idpago="'+idPago+'"><i class="flaticon-delete"></i></button>';
+        else
+        return '';
       }
     },
     ]

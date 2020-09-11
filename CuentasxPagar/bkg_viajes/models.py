@@ -25,6 +25,7 @@ class Bro_Viajes(models.Model):
     IsDescargaHojaLiberacion = models.BooleanField()
     FechaRecEviFisicas = models.DateTimeField()
     FechaRecEviDigitales = models.DateTimeField()
+    FechaAlta = models.DateTimeField()
 
     class Meta:
         managed = False

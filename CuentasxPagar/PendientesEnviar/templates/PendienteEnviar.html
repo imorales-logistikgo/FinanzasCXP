@@ -25,6 +25,14 @@ kt-menu__item--active
 	</button>
 </div>
 {% endif %}
+{% if BloquearFacturasCarta %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+	<p class="h4">Estimado proveedor, se le hace la atenta invitación a conciliar su Estado de Cuenta y que se regularice con la <strong>Carta No Adeudo</strong> del mes de <strong>{{MesAlertaMotivoBloqueo}}</strong>, esto con la finalidad de no afectar su facturación y que pueda seguir subiendo sus facturas al sistema.</p>
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	</button>
+</div>
+{% endif %}
 <!--bloque para usuarios de proveedores-->
 <div class="container py-4">
 	<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">

@@ -16,7 +16,7 @@ from django.db import transaction, DatabaseError
 import json
 from string import digits
 from django.conf import settings
-import pandas as pd
+#import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import Font, Fill, PatternFill, Alignment
 

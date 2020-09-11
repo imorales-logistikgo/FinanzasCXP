@@ -14,8 +14,9 @@ from usersadmon.models import Proveedor
 from CartaNoAdeudo.models import CartaNoAdeudoTransportistas
 from django.db import transaction
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
-
-
+from PIL import Image
+import pytesseract
+import calendar
 
 
 def CartaNoAdeudo(request):
@@ -76,7 +77,7 @@ def GetCartaNoAdeudo(request):
                 c.drawString(100, 500, "Gerente de Finanzas")
                 para = Paragraph(
                     "Por medio de la presente me dirijo a usted para informar que no existen pendientes de facturar y/o cobrar "
-                    "por parte de " + NombreProveedor.RazonSocial + " anteriores a " + months[
+                    "por parte de " + NombreProveedor.RazonSocial + " anteriores al " + str(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month-1)[1])+ " "+ months[
                         date.month - 2] + " " + str(year) + ", quedando pendiente por conciliar el periodo " + months[
                         date.month - 1] + "-" + months[12 - 1] + " " + str(year) + ", para concluir "
                     "satisfactoriamente y cerrar el ejercicio " + str(
@@ -173,7 +174,6 @@ def upload(request):
         if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
             return HttpResponse(status=500)
         else:
-            print("si entro")
             if request.POST['type'] == 'application/pdf':
                 namefile = str(uuid.uuid4()) + ".pdf"
             container_client = "evidencias"
@@ -185,3 +185,8 @@ def upload(request):
         print(e)
         return HttpResponse(status=500)
 
+# def readIMG(salf):
+#     # pytesseract.pytesseract.tesseract_cmd = r'C:\repositorioLGK\FinanzasCXP'
+#     imagen = Image.open("static/img/lgk-pdf.png")
+#     text = pytesseract.image_to_string(imagen)
+#     print(text)

@@ -1,8 +1,16 @@
 import uuid
+from io import BytesIO
 
 from azure.storage.blob import BlobClient
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from io import BytesIO
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+
 from XD_Viajes.models import XD_Viajes, XD_PedidosxViajes, XD_Pedidos, XD_AccesoriosxViajes, XD_EvidenciasxPedido, XD_EvidenciasxViaje
 from PendientesEnviar.models import PendientesEnviar, RelacionConceptoxProyecto
 from usersadmon.models import AdmonUsuarios,Proveedor, View_EvidenciasCxP
@@ -521,6 +529,7 @@ def SaveEvidenciaFisica(request):
                 transaction.commit(using='users')
             transaction.commit(using='bkg_viajesDB')
         transaction.commit(using='XD_ViajesDB')
+        print(jParams["TipoEvidencia"])
         api = descarga(jParams['IDViaje'], jParams["TipoEvidencia"])
         return HttpResponse(status=200)
     except Exception as e:
@@ -798,20 +807,38 @@ def descarga(IDViaje, Proyecto):
         jsonParams = {'IDConcepto': IDViaje, 'Proyecto':Project}
         respose = requests.post("http://api-admon-demo.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion",
                                 headers={'content-type': 'application/json'}, json=jsonParams)
-        print(respose.content)
         return respose.status_code
     else:
-        print("Sin todas las evidencias fisicas")
         return "ok"
 
 def CheckAllEvidenciaFisicaPedidoTrue(IDViaje):
-    GetEvidenciasFisicas = XD_PedidosxViajes.objects.filter(XD_IDViaje = IDViaje)
-    Listevidencias = list()
-    for EachPedido in GetEvidenciasFisicas:
-        itHasEvidencias = True if EachPedido.IsEvidenciaFisicaPedidoxViaje else False
-        Listevidencias.append(itHasEvidencias)
-    AllEvidencesInTrue = True if False not in Listevidencias else False
-    return AllEvidencesInTrue
+    GetEvidenciasFisicas = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
+    if len(GetEvidenciasFisicas) == 0:
+        GetEvidenciasFisicasCustodia = XD_EvidenciasxViaje.objects.filter(IDXD_Viaje=IDViaje,
+                                                                          Titulo__in=("FOLIO", "CORREO"))
+        Listevidencias = list()
+        for EachPedido in GetEvidenciasFisicasCustodia:
+            itHasEvidencias = True if EachPedido.IsEvidenciaFisicaAprobada else False
+            Listevidencias.append(itHasEvidencias)
+        AllEvidencesInTrue = True if len(Listevidencias) == 2 and False not in Listevidencias else False
+        return AllEvidencesInTrue
+    else:
+        Listevidencias = list()
+        for EachPedido in GetEvidenciasFisicas:
+            itHasEvidencias = True if EachPedido.IsEvidenciaFisicaPedidoxViaje else False
+            Listevidencias.append(itHasEvidencias)
+        AllEvidencesInTrue = True if False not in Listevidencias else False
+        return AllEvidencesInTrue
+    # else:
+    #     GetEvidenciasFisicasCustodia = XD_EvidenciasxViaje.objects.filter(IDXD_Viaje=IDViaje, Titulo__in=("FOLIO", "CORREO"))
+    #     Listevidencias = list()
+    #     for EachPedido in GetEvidenciasFisicasCustodia:
+    #         itHasEvidencias = True if EachPedido.IsEvidenciaFisicaAprobada else False
+    #         Listevidencias.append(itHasEvidencias)
+    #     print(len(Listevidencias))
+    #     print(Listevidencias)
+    #     AllEvidencesInTrue = True if len(Listevidencias) == 2 and False not in Listevidencias else False
+    #     return AllEvidencesInTrue
 
 def CheckAllEvidenciaFisicaTrue(IDViaje):
     GetEvidenciasFisicas = Bro_EvidenciasxViaje.objects.filter(IDBro_Viaje = IDViaje)
@@ -912,6 +939,66 @@ def GetEvidenciasCXP(request):
                 jsonevidencias["RutaArchivo"] = EvidenciasManiobras.RutaArchivo
                 ListEvidencias.append(jsonevidencias)
             return JsonResponse({"Evidencias": ListEvidencias})
+    except Exception as e:
+        print(e)
+        return HttpResponse(status=500)
+
+
+
+def CreateCartaNoadeudoMC(request):
+    try:
+        w, h = A4
+        date = datetime.datetime.now()
+        months = (
+            "Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+            "Noviembre",
+            "Diciembre")
+        day = date.day
+        NombreProveedor = Proveedor.objects.get(IDTransportista=455)
+        month = months[date.month - 1]
+        year = date.year
+        messsage = "{} de {} del {}".format(day, month, year)
+        bufferMemoria = BytesIO()
+        c = canvas.Canvas(bufferMemoria, pagesize=A4)
+        c.setTitle("CartaNoAdeudo.pdf")
+        p = ParagraphStyle('test')
+        p.alignment = TA_JUSTIFY
+        p.fontSize = 13
+        p.leading = 20
+        p1 = ParagraphStyle('test')
+        p1.alignment = TA_CENTER
+        p1.fontSize = 13
+        p1.leading = 15
+        c.drawImage('static/img/F.png', -1, 5, 600, 841)
+        c.drawString(300, 690, "San Luis Potosí, S.L.P. a " + str(messsage))
+        c.drawString(100, 640, "Logisti-k de México SA de CV")
+        c.drawString(100, 620, "Av. Chapultepec #1385 3er. Piso")
+        c.drawString(100, 600, "Privadas del Pedregal, S.L.P.")
+        c.drawString(100, 550, "ATENCION:")
+        c.drawString(100, 520, "C.P. Judith Castillo Zavala")
+        c.drawString(100, 500, "Gerente de Finanzas")
+        c.drawString(100, 450, "Asunto: Carta de no adeudo de hoja de liberación")
+        para = Paragraph(
+            "Por medio de la presente me dirijo a usted para informar que no existen viajes pendientes de Hoja de Liberación "
+            "por parte de Logisti-k a " + NombreProveedor.RazonSocial + " al 20 de " + months[
+                date.month - 2] + " del " + str(year) + ".", p)
+        para.wrapOn(c, 420, 600)
+        para.drawOn(c, 100, 350)
+        c.drawString(100, 300, "Sin más por el momento reciba un cordial saludo.")
+        c.drawString(250, 200, "ATENTAMENTE:")
+        c.line(200, 142, 390, 142)
+        c.drawString(250, 130, "(Nombre y firma)")
+        NomProv = Paragraph(NombreProveedor.RazonSocial, p1)
+        NomProv.wrapOn(c, 200, 40)
+        NomProv.drawOn(c, 200, 90)
+        c.showPage()
+        c.save()
+        pdf = bufferMemoria.getvalue()
+        bufferMemoria.close()
+        response = HttpResponse(content_type="application/pdf")
+        response['Content-Disposition'] = 'attachment; filename="CartaNoAdeudo.pdf"'
+        response.write(pdf)
+        return response
     except Exception as e:
         print(e)
         return HttpResponse(status=500)
