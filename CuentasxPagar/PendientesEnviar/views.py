@@ -58,14 +58,11 @@ def GetPendientesEnviar(request):
             MesAlertaMotivoBloqueo = MesEnAlertaCarta(datetime.datetime.now())
         elif request.user.roles == 'Proveedor' and GetTotalViajesEn1Mes(request.user.IDTransportista,2):
             GetLastCartaUpload2 = CartaNoAdeudoTransportistas.objects.filter(
-                IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesCartaConAdeudo(datetime.datetime.now()), Status='APROBADA')
-            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesCartaConAdeudo(datetime.datetime.now()), Status='APROBADA').exists():
+                IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo__in=(MesCartaConAdeudo(datetime.datetime.now()), MesEnAlertaCarta(datetime.datetime.now())), Status='APROBADA')
+            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo__in=(MesCartaConAdeudo(datetime.datetime.now()), MesEnAlertaCarta(datetime.datetime.now())), Status='APROBADA').exists():
                 BloquearFacturasCarta = True
             else:
-                if GetLastCartaUpload2.MesCartaNoAdeudo == MesCartaConAdeudo(datetime.datetime.now()) and GetLastCartaUpload.Status == "APROBADA":
-                    BloquearFacturasCarta = False
-                else :
-                    BloquearFacturasCarta = True
+                BloquearFacturasCarta = VerificarCartasStatusAprobada(GetLastCartaUpload2)
             MesAlertaMotivoBloqueo = MesCartaConAdeudo(datetime.datetime.now())
         else:
             BloquearFacturasCarta = False
@@ -396,6 +393,13 @@ def GetTotalViajesEn1Mes(IDTransportista, RestarMes):
     return TieneViajes
 
 
+def VerificarCartasStatusAprobada(GetLastCartaUpload2):
+    TieneCartaValidada = True
+    for CartaByMes in GetLastCartaUpload2:
+        if CartaByMes.MesCartaNoAdeudo == MesCartaConAdeudo(datetime.datetime.now()) and CartaByMes.Status == "APROBADA" or  CartaByMes.MesCartaNoAdeudo == MesEnAlertaCarta(datetime.datetime.now()) and CartaByMes.Status == "APROBADA":
+            TieneCartaValidada = False
+            break
+    return TieneCartaValidada
 
 # def CrearUsuariosTranportistas(request):
 # #editar un usuario
