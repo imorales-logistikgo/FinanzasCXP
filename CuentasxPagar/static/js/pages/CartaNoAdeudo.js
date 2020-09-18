@@ -5,7 +5,8 @@ $(document).ready(function(){
     });
 
     $("#TablaCartaNoAdeudo").DataTable({
-        "scrollX": true
+        "scrollX": true,
+        "scrollY": "400px"
     });
     $("#TablaCartaNoAdeudoProveedor").DataTable();
 
@@ -16,6 +17,7 @@ $(document).ready(function(){
     $(document).on('click',"#BtnAprobarCarta", function(){
         AprobarCarta($(this))
     });
+
 
     $(document).on('click',"#BtnRechazarCarta", function(){
         var button = $(this)

@@ -28,7 +28,9 @@ def GetPendientesEnviar(request):
         return redirect('ReportePagos')
     # elif request.user.roles == 'Proveedor':
     # 	return redirect('Actualizacion')
-    else:
+    elif request.user.roles == 'users':
+        return HttpResponse(status=403)
+    elif request.user.roles == 'Proveedor' or 'CXP' or request.user.is_superuser:
         PendingToSend = View_PendientesEnviarCxP.objects.filter(Status = 'FINALIZADO', IsEvidenciaDigital = 1, IsEvidenciaFisica = 1, IsFacturaProveedor = 0, Moneda = 'MXN', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
         ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
         DiasDelMesbloquear = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]-1
@@ -42,18 +44,18 @@ def GetPendientesEnviar(request):
         DiaAlertaCarta = DiaEnAlertaBloquearFacturas(calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, 20))
         DiaAMostrarEnAlertaCarta = DiaAlertaCarta + " " +"20"
 
-        GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
-            IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA')
-
-        if request.user.roles == 'Proveedor' and datetime.datetime.now().day > 20 and GetTotalViajesEn1Mes(request.user.IDTransportista,1):
-            GetFechaAltaTransportista = Proveedor.objects.get(IDTransportista = request.user.IDTransportista)
-            if CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA').exists():
+        if request.user.roles == 'Proveedor' and datetime.datetime.now().day > 13 and GetTotalViajesEn1Mes(request.user.IDTransportista,1):
+            GetFechaAltaTransportista = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
+            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA').exists():
                 if GetFechaAltaTransportista.FechaAlta is None:
                     BloquearFacturasCarta = True
                 else:
                     BloquearFacturasCarta = True if GetFechaAltaTransportista.FechaAlta.month != datetime.datetime.now().month and GetFechaAltaTransportista.FechaAlta.year != datetime.datetime.now().year else False
             else:
-                BloquearFacturasCarta = False if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(
+                GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.get(
+                    IDTransportista=request.user.IDTransportista,
+                    MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA')
+                BloquearFacturasCarta = False if GetLastCartaUpload.MesCartaNoAdeudo == MesEnAlertaCarta(
                     datetime.datetime.now()) and GetLastCartaUpload.Status == "APROBADA" else True
             MesAlertaMotivoBloqueo = MesEnAlertaCarta(datetime.datetime.now())
         elif request.user.roles == 'Proveedor' and GetTotalViajesEn1Mes(request.user.IDTransportista,2):
@@ -70,7 +72,7 @@ def GetPendientesEnviar(request):
 
         Proveedores = Proveedor.objects.all()
         ListPendientes = PendientesToList(PendingToSend)
-        bloquearLinkCarta = 1 <= datetime.datetime.now().day <= 20
+        bloquearLinkCarta = 1 <= datetime.datetime.now().day <= 13
         FechaCorteCarta = str(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month-1)[1]) + " de " + MesEnAlertaCarta(datetime.datetime.now())
     return render(request, 'PendienteEnviar.html',
                   {'FechaCorteCarta': FechaCorteCarta, 'bloquearLinkCarta': bloquearLinkCarta,
@@ -385,21 +387,22 @@ def MesCartaConAdeudo(Fecha):
 
 
 def GetTotalViajesEn1Mes(IDTransportista, RestarMes):
-    CountViajesEnXD = XD_Viajes.objects.exclude(Status='CANCELADO').filter(IDTransportista=IDTransportista,
-                                               FechaAlta__month=datetime.datetime.now().month - RestarMes).count()
-    CountViajesEnBKG = Bro_Viajes.objects.exclude(StatusProceso = 'CANCELADO').filter(IDTransportista=IDTransportista,
-                                                 FechaAlta__month=datetime.datetime.now().month - RestarMes).count()
-    TieneViajes = True if CountViajesEnXD >= 1 and CountViajesEnBKG >= 1 else False
+    CountViajesEnXD = XD_Viajes.objects.exclude(Status='CANCELADO').filter(IDTransportista=IDTransportista,FechaAlta__month=datetime.datetime.now().month - RestarMes).count()
+    CountViajesEnBKG = Bro_Viajes.objects.exclude(StatusProceso = 'CANCELADO').filter(IDTransportista=IDTransportista,FechaAlta__month=datetime.datetime.now().month - RestarMes).count()
+    TieneViajes = True if CountViajesEnXD >= 1 or CountViajesEnBKG >= 1 else False
     return TieneViajes
 
 
 def VerificarCartasStatusAprobada(GetLastCartaUpload2):
-    TieneCartaValidada = True
+    NoTieneCartaValidada = True
     for CartaByMes in GetLastCartaUpload2:
         if CartaByMes.MesCartaNoAdeudo == MesCartaConAdeudo(datetime.datetime.now()) and CartaByMes.Status == "APROBADA" or  CartaByMes.MesCartaNoAdeudo == MesEnAlertaCarta(datetime.datetime.now()) and CartaByMes.Status == "APROBADA":
-            TieneCartaValidada = False
+            NoTieneCartaValidada = False
             break
-    return TieneCartaValidada
+    return NoTieneCartaValidada
+
+
+
 
 # def CrearUsuariosTranportistas(request):
 # #editar un usuario
@@ -435,7 +438,7 @@ def VerificarCartasStatusAprobada(GetLastCartaUpload2):
 
     # Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-    # Proveedores = Proveedor.objects.filter(RFC='GAHN820801L68')
+    # Proveedores = Proveedor.objects.filter(RFC='ATG120912EX5')
     # for prov in Proveedores:
     #     try:
     #         oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)

@@ -2,6 +2,7 @@ import uuid
 from io import BytesIO
 
 from azure.storage.blob import BlobClient
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from io import BytesIO
@@ -26,7 +27,7 @@ from django.template.loader import render_to_string
 
 @login_required
 def EvidenciasProveedor(request):
-    if request.user.roles == 'MesaControl':
+    if request.user.roles == 'MesaControl' or request.user.is_superuser:
         EvidenciasxAprobar = XD_Viajes.objects.filter(Status = 'FINALIZADO', FechaDespacho__month = datetime.datetime.now().month, FechaDespacho__year = datetime.datetime.now().year).exclude(Status = 'CANCELADO')
         EvidenciasxAprobarBKG = Bro_Viajes.objects.filter(StatusProceso = 'FINALIZADO', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year).exclude(StatusProceso = 'CANCELADO')
         Evidencias = chain(EvidenciasxAprobar, EvidenciasxAprobarBKG)
@@ -34,12 +35,15 @@ def EvidenciasProveedor(request):
         SinEvidenciaDigitalBKG = Bro_Viajes.objects.filter(IsEvidenciasDigitales = False).count()
         SinEvidenciaDigital = SinEvidenciaDigitalXD+SinEvidenciaDigitalBKG
         Proveedores = Proveedor.objects.all()
-        return render(request, 'EvidenciasProveedor.html', {'EvidenciasxAprobar': Evidencias, 'EvidenciaDigital': SinEvidenciaDigital, 'Proveedores':Proveedores})
+        EvidenciasByWendo = View_EvidenciasCxP.objects.all()
+        return render(request, 'EvidenciasProveedor.html', {'Evidencias': EvidenciasByWendo,'EvidenciasxAprobar': Evidencias, 'EvidenciaDigital': SinEvidenciaDigital, 'Proveedores':Proveedores})
     elif request.user.roles == 'Proveedor':
         # SinEvidenciaDigital = XD_Viajes.objects.filter(IsEvidencia = False).count()
         # SinEvidenciaFisica = XD_Viajes.objects.filter(IsEvidenciaFisica = False).count()
         return render(request, 'EvidenciasProveedor.html')
     elif request.user.roles == 'users':
+        return HttpResponse(status=403)
+    elif request.user.roles == 'CXP' or request.user.is_superuser:
         Evidencias = View_EvidenciasCxP.objects.all()
         # EvidenciasxAprobarBKG = Bro_Viajes.objects.filter(StatusProceso='FINALIZADO', IsEvidenciasDigitales=1, FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
         # Evidencias = EvidenciasxAprobarXD.union(EvidenciasxAprobarBKG)
@@ -88,7 +92,7 @@ def FindFolioProveedorE(request):
                             newDelivery['Delivery'] = Delivery.XD_IDPedido.Delivery.replace(".","")
                             newDelivery['IDViaje'] = Delivery.XD_IDViaje.XD_IDViaje
                             newDelivery['TipoEvidencia'] = 'Pedido'
-                            newDelivery['RutaArchivo'] = '' if(TieneEvidencia.IsEnviada and TieneEvidencia.IsRechazada ) else TieneEvidencia.RutaArchivo
+                            newDelivery['RutaArchivo'] = '' if(TieneEvidencia.IsEnviada and TieneEvidencia.IsRechazada) else TieneEvidencia.RutaArchivo
                             newDelivery['Status'] = 'Rechazada' if(TieneEvidencia.IsEnviada and TieneEvidencia.IsRechazada) else 'Aprobada' if(TieneEvidencia.IsValidada) else  "Enviada" if (TieneEvidencia.IsEnviada and not TieneEvidencia.IsRechazada and not TieneEvidencia.IsValidada) else "Otro"
                             newDelivery['ComentarioRechazo'] = TieneEvidencia.ComentarioRechazo
                             arrFoliosEvidencias.append(newDelivery)
@@ -163,7 +167,7 @@ def SaveEvidencias(request):
                         SaveEvidenciaxPedido.IsRemplazada = True
                         SaveEvidenciaxPedido.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
                         SaveEvidenciaxPedido.save()
-                    return HttpResponse(status = 200)
+                    # return HttpResponse(status = 200)
                 elif Evidencias['Status'] == 'Pendiente':
                     if Evidencias['TipoEvidencia'] == 'BKG':
                         SaveEvidenciaBKG = Bro_EvidenciasxViaje()
@@ -690,26 +694,37 @@ def DescargarHojaLiberacion(request):
     IDViaje = request.GET["IDViaje"]
     Proyecto = request.GET["Proyecto"]
     if Proyecto == 'BKG':
-        GetRutaHojaLiberacion = Bro_Viajes.objects.get(IDBro_Viaje = IDViaje, IsEvidenciasDigitales = 1, IsEvidenciasFisicas = 1)
-        if not GetRutaHojaLiberacion.IsDescargaHojaLiberacion or GetRutaHojaLiberacion.IsDescargaHojaLiberacion is None:
-            HojaLiberacion = GetRutaHojaLiberacion.RutaHojaLiberacion
-            if HojaLiberacion is not None:
-                GetRutaHojaLiberacion.IsDescargaHojaLiberacion = True
-                GetRutaHojaLiberacion.save()
-        else:
-            HojaLiberacion = False
+        try:
+            GetRutaHojaLiberacion = Bro_Viajes.objects.get(IDBro_Viaje = IDViaje, IsEvidenciasDigitales = 1, IsEvidenciasFisicas = 1)
+            if not GetRutaHojaLiberacion.IsDescargaHojaLiberacion or GetRutaHojaLiberacion.IsDescargaHojaLiberacion is None:
+                HojaLiberacion = GetRutaHojaLiberacion.RutaHojaLiberacion
+                if HojaLiberacion is not None:
+                    GetRutaHojaLiberacion.IsDescargaHojaLiberacion = True
+                    GetRutaHojaLiberacion.save()
+            else:
+                HojaLiberacion = False
+            return JsonResponse({'HojaLiberacion': HojaLiberacion})
+        except GetRutaHojaLiberacion.DoesNotExist:
+            return HttpResponse(status=400)
+        except Exception as e:
+            return HttpResponse(status=500)
     else:
-        GetRutaHojaLiberacion = XD_Viajes.objects.get(XD_IDViaje=IDViaje, IsEvidenciaPedidos=1, IsEvidenciaFisica=1)
-        if not GetRutaHojaLiberacion.IsDescargaHojaLiberacion or GetRutaHojaLiberacion.IsDescargaHojaLiberacion is None:
-            HojaLiberacion = GetRutaHojaLiberacion.RutaHojaEmbarqueCosto
-            if HojaLiberacion is not None:
-                GetRutaHojaLiberacion.IsDescargaHojaLiberacion = True
-                GetRutaHojaLiberacion.save()
-        else:
-            HojaLiberacion = False
-        # HojaLiberacion = GetRutaHojaLiberacion.RutaHojaEmbarqueCosto
-    return JsonResponse({'HojaLiberacion':HojaLiberacion})
-
+        try:
+            GetRutaHojaLiberacion = XD_Viajes.objects.get(XD_IDViaje=IDViaje, IsEvidenciaPedidos=1, IsEvidenciaFisica=1)
+            if not GetRutaHojaLiberacion.IsDescargaHojaLiberacion or GetRutaHojaLiberacion.IsDescargaHojaLiberacion is None:
+                HojaLiberacion = GetRutaHojaLiberacion.RutaHojaEmbarqueCosto
+                if HojaLiberacion is not None:
+                    GetRutaHojaLiberacion.IsDescargaHojaLiberacion = True
+                    GetRutaHojaLiberacion.save()
+            else:
+                HojaLiberacion = False
+            # HojaLiberacion = GetRutaHojaLiberacion.RutaHojaEmbarqueCosto
+            return JsonResponse({'HojaLiberacion':HojaLiberacion})
+        except ObjectDoesNotExist:
+            return HttpResponse(status=400)
+        except Exception as e:
+            print(e)
+            return HttpResponse(status=500)
 
 def JsonEvidenciasBKG():
     JsonData = {
@@ -805,6 +820,8 @@ def descarga(IDViaje, Proyecto):
     if sendAPI:
         Project = "BKG" if Proyecto == "BKG" else "XD"
         jsonParams = {'IDConcepto': IDViaje, 'Proyecto':Project}
+        # respose = requests.post("http://api-admon.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion",
+        #                         headers={'content-type': 'application/json'}, json=jsonParams)
         respose = requests.post("http://api-admon-demo.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion",
                                 headers={'content-type': 'application/json'}, json=jsonParams)
         return respose.status_code

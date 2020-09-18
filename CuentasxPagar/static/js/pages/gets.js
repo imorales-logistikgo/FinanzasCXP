@@ -313,6 +313,15 @@ var GetHojaLiberacion = function(IDViaje, Proyecto){
       });
       WaitMe_HideBtn('#BtnHojaLiberacion')
     }
+    else if(response.status == 400){
+      Swal.fire({
+        type: 'error',
+        title: 'Las evidencias fisicas aún no estan validadas',
+        showConfirmButton: false,
+        timer: 3500
+      });
+      WaitMe_HideBtn('#BtnHojaLiberacion')
+    }
   }).then(function(data){
     if(data.HojaLiberacion == null){
       Swal.fire({
@@ -511,7 +520,7 @@ var GetMontoPago = function(XML, IDPago){
 }
 
 var GetEvidenciasForCXP = function(IDViaje, Folio){
-    WaitMe_Show('#TbPading');
+    WaitMe_Show('#TbPadingCXP');
   fetch(`/EvidenciasProveedor/GetEvidenciasCXP?XD_IDViaje=${IDViaje}&Folio=${Folio}`, {
     method: "GET",
     credentials: "same-origin",
@@ -539,7 +548,7 @@ var GetEvidenciasForCXP = function(IDViaje, Folio){
         showConfirmButton: false,
         timer: 2500
       });
-      WaitMe_Hide('#TbPading');
+      WaitMe_Hide('#TbPadingCXP');
     }
     else {
       $('#ModalEvidenciasCXP').modal({backdrop: 'static', keyboard: false, show: true});
@@ -558,10 +567,10 @@ var GetEvidenciasForCXP = function(IDViaje, Folio){
 
           $(`#${data.Evidencias[i].Titulo}`).append(`<a href="${data.Evidencias[i].RutaArchivo}" target="_blank"><i class="fa fa-eye"></i></a>`);
       }
-      WaitMe_Hide('#TbPading');
+      WaitMe_Hide('#TbPadingCXP');
     }
   }).catch(function(ex){
     console.log(ex);
-    WaitMe_Hide('#TbPading');
+    WaitMe_Hide('#TbPadingCXP');
   });
 }

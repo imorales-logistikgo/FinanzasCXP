@@ -63,14 +63,14 @@ end:: Header Mobile -->
 						{% if Rol != "Proveedor"%}
 						<!-- <li class="kt-menu__item {% block activateIndicadores %} {% endblock %}" aria-haspopup="true"><a href="{% url 'Indicadores' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon2-architecture-and-city"></i><span class="kt-menu__link-text">Indicadores</span></a></li> -->
 						{% endif %}
-						{% if request.user.roles == "users" or request.user.roles == "Proveedor"%}
+						{% if request.user.roles == "CXP" or request.user.roles == "Proveedor" or request.user.is_superuser%}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Facturas</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
 						<li class="kt-menu__item {% block activatePendientesEnviar %} {% endblock %}" aria-haspopup="true"><a href="{% url 'PendienteEnviar' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-file-invoice"></i><span class="kt-menu__link-text">Pendientes de enviar</span></a></li>
 						{% endif %}
-						{% if request.user.roles == "users"%}
+						{% if request.user.roles == "CXP" or request.user.is_superuser%}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Pagos</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
@@ -78,29 +78,29 @@ end:: Header Mobile -->
 						<li class="kt-menu__item {% block activateEstadosCuenta %} {% endblock %}" aria-haspopup="true"><a href="{% url 'EstadosCuenta' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-money-bill-wave"></i><span class="kt-menu__link-text">Estados de cuenta</span></a></li>
 						{% endif %}
 
-						{% if request.user.roles == "users" or request.user.roles == "Proveedor" or request.user.roles == 'Contabilidad' %}
+						{% if request.user.roles == "CXP" or request.user.roles == "Proveedor" or request.user.roles == 'Contabilidad' or request.user.is_superuser%}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Reportes</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
-						{% if request.user.roles == "users" or request.user.roles == "Proveedor" or request.user.roles == 'Contabilidad'%}
+						{% if request.user.roles == "CXP" or request.user.roles == "Proveedor" or request.user.roles == 'Contabilidad' or request.user.is_superuser%}
 						<li class="kt-menu__item {% block activateReporteFacturas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteFacturas' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-file-invoice-dollar"></i><span class="kt-menu__link-text">Facturas</span></a></li>
 						{% endif %}
 						<li class="kt-menu__item {% block activateReportePagos %} {% endblock %}"  aria-haspopup="true"><a href="{% url 'ReportePagos' %}" class="kt-menu__link"><i class="kt-menu__link-icon flaticon2-checkmark"></i><span class="kt-menu__link-text">Pagos</span></a></li>
 						{% endif %}
-						{% if request.user.roles == "users" %}
+						{% if request.user.roles == "CXP" or request.user.is_superuser %}
 						<li class="kt-menu__item {% block activateReporteCanceladas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteCanceladas' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Facturas Canceladas</span></a></li>
 						<li class="kt-menu__item {% block activateReportePagosCancelados %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagosCancelados' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Pagos cancelados</span></a></li>
 						<li class="kt-menu__item {% block activateReporteMaster %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteMaster' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas flaticon-list-1"></i><span class="kt-menu__link-text">Master</span></a></li>
 						{% endif %}
-						{% if request.user.roles == "Proveedor" or request.user.roles == 'MesaControl' or request.user.roles == 'users' %}
+						{% if request.user.roles == "Proveedor" or request.user.roles == 'MesaControl' or request.user.roles == 'CXP' or request.user.is_superuser %}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Evidencias</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
 						<li class="kt-menu__item {% block activateEvidenciasProveedor %} {% endblock %}" aria-haspopup="true"><a href="{% url 'EvidenciasProveedor' %}" class="kt-menu__link"><i class="kt-menu__link-icon flaticon2-telegram-logo"></i><span class="kt-menu__link-text">Evidencias</span></a></li>
 						{% endif %}
-						{% if request.user.roles == "Proveedor" or request.user.roles == "users"%}
+						{% if request.user.roles == "Proveedor" or request.user.roles == "CXP" or request.user.is_superuser %}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Carta No Adeudo</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
@@ -154,13 +154,13 @@ end:: Header Mobile -->
 
 						<div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-xl">
 							<div class="kt-notification">
-								<a href="#" class="kt-notification__item" target="_blank">
+								<a href="https://lgklataforma.blob.core.windows.net/evidencias/8774790a-02c0-4073-90c1-959b2b8c4c4d.pdf" class="kt-notification__item" target="_blank">
 									<div class="kt-notification__item-icon">
 										<i class="flaticon2-mail kt-font-warning"></i>
 									</div>
 									<div class="kt-notification__item-details">
 										<div class="kt-notification__item-title kt-font-bold">
-											Documentacion
+											Documentación
 										</div>
 
 									</div>
@@ -313,6 +313,7 @@ end:: Header Mobile -->
 <script type="text/javascript">
 	window.IDUsuraio_ = "{{IDUsuraio_}}";
 	window.UserRol = "{{Rol}}";
+	window.SupUsu = "{{SuperUser}}";
 	function getCookie(cname) {
 		var name = cname + "=";
 		var decodedCookie = decodeURIComponent(document.cookie);

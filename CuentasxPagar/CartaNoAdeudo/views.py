@@ -15,9 +15,11 @@ from CartaNoAdeudo.models import CartaNoAdeudoTransportistas
 from django.db import transaction
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 from PIL import Image
-import pytesseract
 import calendar
+from PendientesEnviar import views
+from django.contrib.auth.decorators import login_required
 
+@login_required
 
 def CartaNoAdeudo(request):
     if request.user.roles == "Proveedor":
@@ -28,23 +30,29 @@ def CartaNoAdeudo(request):
         else:
             IsDescargaCartaNoAdeudo = False
         return render(request, 'CartaNoAdeudo.html',{"IsDescargaCartaNoAdeudo":IsDescargaCartaNoAdeudo, "CartasByProveedor":CartasByProveedor})
-    elif request.user.roles == "users":
+    elif request.user.roles == "CXP" or request.user.is_superuser:
         CartaNoAdeudoByProveedor = CartaNoAdeudoTransportistas.objects.filter()
         return render(request, 'CartaNoAdeudo.html', {"CartaNoAdeudoByProveedor": CartaNoAdeudoByProveedor})
+    elif request.user.roles == "users":
+        return HttpResponse(status=403)
     else:
         raise Http404()
 
 def GetCartaNoAdeudo(request):
     try:
         FechaDescargaCarta = Proveedor.objects.get(IDTransportista = request.user.IDTransportista)
-        if FechaDescargaCarta.FechaDescargaCartaNoAdeudo is not None and FechaDescargaCarta.FechaDescargaCartaNoAdeudo.month -1 == datetime.datetime.now().month -1:
+        if not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1) and not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 2):
+            resp = '<h2>Carta no disponible</h2>'
+            return HttpResponse(resp)
+        elif FechaDescargaCarta.FechaDescargaCartaNoAdeudo is not None and FechaDescargaCarta.FechaDescargaCartaNoAdeudo.month -1 == datetime.datetime.now().month -1:
             resp = '<h2>Solo se puede descargar la carta una sola vez</h2>'
             return HttpResponse(resp)
         else:
             with transaction.atomic(using='users'):
+                GetViajesThisMonth = views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1)
                 FechaDescargaC = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
-                FechaDescargaC.FechaDescargaCartaNoAdeudo = datetime.datetime.now()
-                FechaDescargaC.save()
+                # FechaDescargaC.FechaDescargaCartaNoAdeudo = datetime.datetime.now()
+                # FechaDescargaC.save()
                 w, h = A4
                 date = datetime.datetime.now()
                 months = (
@@ -67,7 +75,12 @@ def GetCartaNoAdeudo(request):
                 p1.alignment = TA_CENTER
                 p1.fontSize = 13
                 p1.leading = 15
+                #local
                 c.drawImage('static/img/F.png', -1, 5, 600, 841)
+                #Demo
+                # c.drawImage('C:\inetpub\Proyects\WebApps\LogistikGO-Finanzas-Demo\CuentasxPagar\static\img\F.png', -1, 5, 600, 841)
+                #produccion
+                # c.drawImage('C:\inetpub\Proyects\WebApps\LogistikGO-Finanzas\CuentasxPagar\static\img\F.png', -1, 5, 600, 841)
                 c.drawString(300, 690, "San Luis Potosí, S.L.P. a " + str(messsage))
                 c.drawString(100, 640, "Logisti-k de México SA de CV")
                 c.drawString(100, 620, "Av. Chapultepec #1385 3er. Piso")
@@ -77,9 +90,9 @@ def GetCartaNoAdeudo(request):
                 c.drawString(100, 500, "Gerente de Finanzas")
                 para = Paragraph(
                     "Por medio de la presente me dirijo a usted para informar que no existen pendientes de facturar y/o cobrar "
-                    "por parte de " + NombreProveedor.RazonSocial + " anteriores al " + str(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month-1)[1])+ " "+ months[
-                        date.month - 2] + " " + str(year) + ", quedando pendiente por conciliar el periodo " + months[
-                        date.month - 1] + "-" + months[12 - 1] + " " + str(year) + ", para concluir "
+                    "por parte de " + NombreProveedor.RazonSocial + " anteriores al " + str(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month-1 if GetViajesThisMonth else datetime.datetime.now().month-2)[1])+ " "+ months[
+                        date.month - 2 if GetViajesThisMonth else date.month - 3] + " " + str(year) + ", quedando pendiente por conciliar el periodo " + months[
+                        date.month - 1 if GetViajesThisMonth else date.month - 2] + "-" + months[12 - 1] + " " + str(year) + ", para concluir "
                     "satisfactoriamente y cerrar el ejercicio " + str(
                         year) + ".", p)
                 para.wrapOn(c, 420, 600)
@@ -109,8 +122,17 @@ def GetCartaNoAdeudo(request):
 def SaveCartaNoAdeudo(request):
     try:
         jParams = json.loads(request.body.decode('utf-8'))
-        GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(IDTransportista = request.user.IDTransportista).exclude(Status='RECHAZADA').last()
-        if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
+        GetViajesThisMonth = views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1)
+        if GetViajesThisMonth:
+            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.get(IDTransportista = request.user.IDTransportista, Status__in = ('PENDIENTE','PROBADA'), MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(),2)).exists()
+        else:
+            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.get(
+                IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE','PROBADA'),
+                MesCartaNoAdeudo=MesCartaNoAdeudo(datetime.datetime.now(), 3)).exist()
+        # if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
+        if not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1) and not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 2):
+            return HttpResponse(status=500)
+        elif GetLastCartaUpload:
             return HttpResponse(status=500)
         else:
             with transaction.atomic(using='users'):
@@ -118,7 +140,10 @@ def SaveCartaNoAdeudo(request):
                 SaveCarta.IDTransportista = Proveedor.objects.get(IDTransportista = request.user.IDTransportista)
                 SaveCarta.IDUsuarioAlta = request.user.idusuario
                 SaveCarta.FechaAlta = datetime.datetime.now()
-                SaveCarta.MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now())
+                if GetViajesThisMonth:
+                    SaveCarta.MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(), 2)
+                else:
+                    SaveCarta.MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(), 3)
                 SaveCarta.RutaCartaNoAdeudo = jParams["RutaCartaNoAdeudo"]
                 SaveCarta.Status = 'PENDIENTE'
                 SaveCarta.save()
@@ -127,12 +152,12 @@ def SaveCartaNoAdeudo(request):
         print(e)
         return HttpResponse(status=500)
 
-def MesCartaNoAdeudo(Fecha):
+def MesCartaNoAdeudo(Fecha, restarMes):
     months = (
         "Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
         "Noviembre",
         "Diciembre")
-    MesCarta = months[Fecha.month - 2]
+    MesCarta = months[Fecha.month - restarMes]
     print(MesCarta)
     return MesCarta
 
@@ -169,9 +194,18 @@ def RechazarCarta(request):
 
 def upload(request):
     try:
-        GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
-            IDTransportista=request.user.IDTransportista).exclude(Status='RECHAZADA').last()
-        if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
+        GetViajesThisMonth = views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1)
+        if GetViajesThisMonth:
+            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
+                IDTransportista=request.user.IDTransportista, Status__in=("PENDIENTE", "APROBADA"), MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(), 2)).exists()
+        else:
+            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
+                IDTransportista=request.user.IDTransportista, Status__in=("PENDIENTE", "APROBADA"), MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(), 3)).exists()
+
+        # if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
+        if not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1) and not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 2):
+            return HttpResponse(status=500)
+        elif GetLastCartaUpload:
             return HttpResponse(status=500)
         else:
             if request.POST['type'] == 'application/pdf':

@@ -318,7 +318,7 @@ $('#TableReportePagos').DataTable({
         idPago = $('input[name="IDPago"]').data("pagoid");
         if(UserRol == "Proveedor" || UserRol == "Contabilidad")
           return  '';
-        else if ( IDUsuraio_ == 2829 || IDUsuraio_ == 2893 || IDUsuraio_ == 210)
+        else if ( IDUsuraio_ == 2829 || IDUsuraio_ == 210 || SupUsu == "True")
           return '<button type ="button" class="btnEliminarPago btn btn-danger btn-elevate btn-pill btn-sm" data-idpago="'+idPago+'"><i class="flaticon-delete"></i></button>';
         else
         return '';

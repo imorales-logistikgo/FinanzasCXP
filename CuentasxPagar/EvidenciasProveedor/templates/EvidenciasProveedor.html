@@ -7,7 +7,7 @@ kt-menu__item--active
 
 {% block ContadoresEvidenciasProveedor %}
 
-{% if request.user.roles == "MesaControl" or request.user.roles == "users" %}
+{% if request.user.roles == "MesaControl" or request.user.roles == "CXP" or request.user.is_superuser %}
 <div class="kt-subheader kt-grid__item">
 
 	<div class="kt-container  kt-container--fluid ">
@@ -30,7 +30,7 @@ kt-menu__item--active
 {% endblock %}
 
 {% block FiltrosEvidenciasProveedor %}
-{% if request.user.roles == "MesaControl" or request.user.roles == "users" %}
+{% if request.user.roles == "MesaControl" or request.user.roles == "CXP" or request.user.is_superuser %}
 <div id="kt_quick_panel" class="kt-quick-panel">
 	<!--<a href="#" class="kt-quick-panel__close" id="kt_quick_panel_close_btn"><i class="flaticon2-delete"></i></a>-->
 
@@ -195,7 +195,7 @@ kt-menu__item--active
 			</div>
 			{% endif %}
 
-			{% if request.user.roles == "MesaControl"%}
+			{% if request.user.roles == "MesaControl" or request.user.is_superuser%}
 		 	<div id="divTablaPendientesEnviar">
 					{% include "TablaEvidenciasMesaControl.html" %}
 			</div>
@@ -266,7 +266,7 @@ kt-menu__item--active
 
 			{% endif %}
 
-{% if request.user.roles == "users" %}
+{% if request.user.roles == "CXP" or request.user.username == "mmesa@logistikgo" or request.user.is_superuser %}
 <div id="divTablaEvidenciaCXP">
 	{% include "TablaEvidenciasCXP.html" %}
 </div>

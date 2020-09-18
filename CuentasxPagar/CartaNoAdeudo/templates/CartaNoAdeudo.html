@@ -125,7 +125,7 @@
         </div>
         <!--end::Portlet-->
     </div>
-    {% elif request.user.roles == "users" %}
+    {% elif request.user.roles == "CXP" or request.user.is_superuser %}
 <!--    <div class="container">-->
         <div class="kt-subheader   kt-grid__item" id="kt_subheader">
             <div class="kt-container  kt-container--fluid ">

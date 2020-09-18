@@ -22,8 +22,13 @@
 			<td class="text-center">{{ CartaByProveedor.Status }}</td>
 			<td class="text-center">{{ CartaByProveedor.ComentarioRechazo|default:"" }}</td>
 			<td class="text-center"><a href="{{ CartaByProveedor.RutaCartaNoAdeudo }}" class="btn btn-primary btn-elevate btn-pill btn-sm" target="_blank" title="Carta no adeudo"><i class="fa fa-file-pdf"></i></a></td>
-			<th class="text-center">{%if CartaByProveedor.Status == "PENDIENTE" %}<button class="btn btn-success btn-elevate btn-pill btn-sm" title="Aprobar" id="BtnAprobarCarta" data-idcarta="{{CartaByProveedor.IDCartaNoAdeudo}}" name="AprobarCarta"><i class="fa fa-check"></i></button>{%endif%}</th>
-			<th class="text-center">{%if CartaByProveedor.Status == "PENDIENTE" %}<button class="btn btn-danger btn-elevate btn-pill btn-sm" title="Rechazar" id="BtnRechazarCarta" data-idcarta="{{CartaByProveedor.IDCartaNoAdeudo}}" name="RechazarCarta"><i class="fa fa-times"></i></button>{%endif%}</th>
+			{% if request.user.username == 'cxp1@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.is_superuser %}
+			<td class="text-center">{%if CartaByProveedor.Status == "PENDIENTE" %}<button class="btn btn-success btn-elevate btn-pill btn-sm" title="Aprobar" id="BtnAprobarCarta" data-idcarta="{{CartaByProveedor.IDCartaNoAdeudo}}" name="AprobarCarta"><i class="fa fa-check"></i></button>{%endif%}</td>
+			<td class="text-center">{%if CartaByProveedor.Status == "PENDIENTE" %}<button class="btn btn-danger btn-elevate btn-pill btn-sm" title="Rechazar" id="BtnRechazarCarta" data-idcarta="{{CartaByProveedor.IDCartaNoAdeudo}}" name="RechazarCarta"><i class="fa fa-times"></i></button>{%endif%}</td>
+			{% else %}
+			<td></td>
+			<td></td>
+			{% endif %}
 		</tr>
         {% endfor %}
 	</tbody>
