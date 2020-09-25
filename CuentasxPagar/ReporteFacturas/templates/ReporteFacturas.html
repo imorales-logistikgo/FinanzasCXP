@@ -5,7 +5,7 @@ kt-menu__item--active
 {% endblock %}
 
 {% block ContadoresReporteFacturas %}
-{% if request.user.roles == "users" %}
+{% if request.user.roles == "CXP" or request.user.is_superuser %}
 <div class="kt-subheader kt-grid__item">
 	<div class="kt-container  kt-container--fluid ">
 		<div>

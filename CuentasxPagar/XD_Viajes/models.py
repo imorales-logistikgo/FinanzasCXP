@@ -24,6 +24,7 @@ class XD_Viajes(models.Model):
     FechaEvidenciaDigital = models.DateTimeField()
     FechaEvidenciaFisica = models.DateTimeField()
     FechaAlta = models.DateTimeField()
+    IDClienteFiscal = models.IntegerField()
 
     class Meta:
         managed = False
@@ -53,8 +54,10 @@ class RepartosxViaje(models.Model):
         db_table = 'RepartosxViaje'
 
 class XD_Pedidos(models.Model):
-    XD_IDPedido = models.AutoField(primary_key = True)
+    XD_IDPedido = models.AutoField(primary_key=True)
     Delivery = models.CharField(max_length=100)
+    IDClienteFiscal = models.IntegerField()
+    Observaciones = models.CharField(max_length=250)
 
     class Meta:
         managed = False

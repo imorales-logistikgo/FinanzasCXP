@@ -51,8 +51,8 @@ def GetCartaNoAdeudo(request):
             with transaction.atomic(using='users'):
                 GetViajesThisMonth = views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1)
                 FechaDescargaC = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
-                # FechaDescargaC.FechaDescargaCartaNoAdeudo = datetime.datetime.now()
-                # FechaDescargaC.save()
+                FechaDescargaC.FechaDescargaCartaNoAdeudo = datetime.datetime.now()
+                FechaDescargaC.save()
                 w, h = A4
                 date = datetime.datetime.now()
                 months = (
@@ -123,13 +123,21 @@ def SaveCartaNoAdeudo(request):
     try:
         jParams = json.loads(request.body.decode('utf-8'))
         GetViajesThisMonth = views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1)
+        print(GetViajesThisMonth)
         if GetViajesThisMonth:
-            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.get(IDTransportista = request.user.IDTransportista, Status__in = ('PENDIENTE','PROBADA'), MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(),2)).exists()
+            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.get(IDTransportista=request.user.IDTransportista,
+                                                                         Status__in=('PENDIENTE', 'PROBADA'),
+                                                                         MesCartaNoAdeudo=MesCartaNoAdeudo(
+                                                                             datetime.datetime.now(), 2)).exists()
         else:
-            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.get(
-                IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE','PROBADA'),
-                MesCartaNoAdeudo=MesCartaNoAdeudo(datetime.datetime.now(), 3)).exist()
+            print(CartaNoAdeudoTransportistas.objects.filter(
+                IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE', 'PROBADA'),
+                MesCartaNoAdeudo=MesCartaNoAdeudo(datetime.datetime.now(), 3)).exists())
+            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
+                IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE', 'PROBADA'),
+                MesCartaNoAdeudo=MesCartaNoAdeudo(datetime.datetime.now(), 3)).exists()
         # if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
+        print(GetLastCartaUpload)
         if not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1) and not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 2):
             return HttpResponse(status=500)
         elif GetLastCartaUpload:

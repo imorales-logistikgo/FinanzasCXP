@@ -438,7 +438,7 @@ def VerificarCartasStatusAprobada(GetLastCartaUpload2):
 
     # Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-    # Proveedores = Proveedor.objects.filter(RFC='ATG120912EX5')
+    # Proveedores = Proveedor.objects.filter(RFC='MEX020122NS2')
     # for prov in Proveedores:
     #     try:
     #         oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
