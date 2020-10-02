@@ -7,6 +7,14 @@
 
 {% block ContadoresEstadosCuenta %}
     {% if request.user.roles == "Proveedor" %}
+
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <p class="h3">Carta de no adeudo uso exclusivo de <strong>cuentas por pagar</strong>, unicamente subir pendiente de facturar NO hojas de liberacion.</p>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
     <div class="container">
         <div class="kt-subheader   kt-grid__item" id="kt_subheader">
             <div class="kt-container  kt-container--fluid ">

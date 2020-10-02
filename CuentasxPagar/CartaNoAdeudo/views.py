@@ -123,21 +123,16 @@ def SaveCartaNoAdeudo(request):
     try:
         jParams = json.loads(request.body.decode('utf-8'))
         GetViajesThisMonth = views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1)
-        print(GetViajesThisMonth)
         if GetViajesThisMonth:
-            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.get(IDTransportista=request.user.IDTransportista,
+            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista,
                                                                          Status__in=('PENDIENTE', 'PROBADA'),
                                                                          MesCartaNoAdeudo=MesCartaNoAdeudo(
                                                                              datetime.datetime.now(), 2)).exists()
         else:
-            print(CartaNoAdeudoTransportistas.objects.filter(
-                IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE', 'PROBADA'),
-                MesCartaNoAdeudo=MesCartaNoAdeudo(datetime.datetime.now(), 3)).exists())
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
                 IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE', 'PROBADA'),
                 MesCartaNoAdeudo=MesCartaNoAdeudo(datetime.datetime.now(), 3)).exists()
         # if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
-        print(GetLastCartaUpload)
         if not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1) and not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 2):
             return HttpResponse(status=500)
         elif GetLastCartaUpload:
@@ -166,7 +161,6 @@ def MesCartaNoAdeudo(Fecha, restarMes):
         "Noviembre",
         "Diciembre")
     MesCarta = months[Fecha.month - restarMes]
-    print(MesCarta)
     return MesCarta
 
 def AprobarCarta(request):

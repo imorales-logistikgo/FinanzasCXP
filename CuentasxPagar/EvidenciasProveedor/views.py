@@ -228,7 +228,6 @@ def SaveEvidencias(request):
 
 def GetEvidenciasMesaControl(request):
     IDViaje = request.GET["XD_IDViaje"]
-    print(IDViaje)
     Folio = request.GET["Folio"]
     ListEvidencias = list()
     try:
@@ -557,7 +556,7 @@ def EvidenciaDigitalCompleta(request, viaje=""):
     ClienteFiscal = XD_Viajes.objects.get(XD_IDViaje=IDViaje)
     TieneEvidenciaDigital = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
     ListaTieneEvidenciaDigital = list()
-    if ClienteFiscal.IDClienteFiscal != 2950:
+    if ClienteFiscal.IDClienteFiscal != 7007:
         for TieneEvi in TieneEvidenciaDigital:
             ListaTieneEvidenciaDigital.append(TieneEvi.IsEvidenciaPedidoxViaje)
     else:
@@ -1038,7 +1037,7 @@ def GetObservacionesByPedidos(IDViaje):
     GetDelivery = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
     ListaObservaciones = list()
     for pedido in GetDelivery:
-        if pedido.XD_IDViaje.IDClienteFiscal == 2950:
+        if pedido.XD_IDViaje.IDClienteFiscal == 7007:
             Observaciones = pedido.XD_IDPedido.Observaciones.split("-")
             delibery = Observaciones[0] if pedido.TipoTransporte == "T1" else Observaciones[1] if pedido.TipoTransporte == "T2" and len(Observaciones) == 2 else ""
             if delibery == "":

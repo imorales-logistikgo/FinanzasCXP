@@ -24,7 +24,8 @@ def PEToList(Facturas):
 			Reporte["NombreCortoCliente"] = Fact.NombreCortoCliente
 			Reporte["NombreCortoProveedor"] = Fact.NombreCortoProveedor
 			Reporte["FechaDescarga"] = Fact.FechaDescarga
-			Reporte["Moneda"] = Fact.Moneda
+			Reporte["MonedaProveedor"] = Fact.MonedaProveedor
+			Reporte["MonedaCliente"] = Fact.Cliente
 			Reporte["Status"] = Fact.Status
 			Reporte["IsEvidenciaDigital"] = Fact.IsEvidenciaDigital
 			Reporte["IsEvidenciaFisica"] = Fact.IsEvidenciaFisica
@@ -89,4 +90,6 @@ def GetFacturasByFilters(request):
 		Facturas = Facturas.filter(Proyecto__in = Proyectos)
 	ListData = PEToList(Facturas)
 	htmlRes = render_to_string('TablaReporteMaster.html', {'ReporteMaster':ListData}, request = request,)
-	return JsonResponse({'htmlRes' : htmlRes})
+	return JsonResponse({'htmlRes':htmlRes})
+
+

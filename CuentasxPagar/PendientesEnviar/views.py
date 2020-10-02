@@ -34,7 +34,7 @@ def GetPendientesEnviar(request):
         PendingToSend = View_PendientesEnviarCxP.objects.filter(Status = 'FINALIZADO', IsEvidenciaDigital = 1, IsEvidenciaFisica = 1, IsFacturaProveedor = 0, Moneda = 'MXN', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
         ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
         DiasDelMesbloquear = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]-1
-        RangoBloquearFacturas = DiasDelMesbloquear <= datetime.datetime.now().day <=  calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
+        RangoBloquearFacturas = DiasDelMesbloquear <= datetime.datetime.now().day <= calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
         DiaDelMesbloquearAlert = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]-2
         DiaDelMesMotrarAlerta = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1] - 7
         RangoDiasAlerta = DiaDelMesMotrarAlerta <= datetime.datetime.now().day <= calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
@@ -44,13 +44,13 @@ def GetPendientesEnviar(request):
         DiaAlertaCarta = DiaEnAlertaBloquearFacturas(calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, 20))
         DiaAMostrarEnAlertaCarta = DiaAlertaCarta + " " +"20"
 
-        if request.user.roles == 'Proveedor' and datetime.datetime.now().day > 13 and GetTotalViajesEn1Mes(request.user.IDTransportista,1):
+        if request.user.roles == 'Proveedor' and datetime.datetime.now().day > 20 and GetTotalViajesEn1Mes(request.user.IDTransportista,1):
             GetFechaAltaTransportista = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
             if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA').exists():
                 if GetFechaAltaTransportista.FechaAlta is None:
                     BloquearFacturasCarta = True
                 else:
-                    BloquearFacturasCarta = True if GetFechaAltaTransportista.FechaAlta.month != datetime.datetime.now().month and GetFechaAltaTransportista.FechaAlta.year != datetime.datetime.now().year else False
+                    BloquearFacturasCarta = False if GetFechaAltaTransportista.FechaAlta.month == datetime.datetime.now().month and GetFechaAltaTransportista.FechaAlta.year == datetime.datetime.now().year else True
             else:
                 GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.get(
                     IDTransportista=request.user.IDTransportista,
@@ -72,7 +72,7 @@ def GetPendientesEnviar(request):
 
         Proveedores = Proveedor.objects.all()
         ListPendientes = PendientesToList(PendingToSend)
-        bloquearLinkCarta = 1 <= datetime.datetime.now().day <= 13
+        bloquearLinkCarta = 1 <= datetime.datetime.now().day <= 20
         FechaCorteCarta = str(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month-1)[1]) + " de " + MesEnAlertaCarta(datetime.datetime.now())
     return render(request, 'PendienteEnviar.html',
                   {'FechaCorteCarta': FechaCorteCarta, 'bloquearLinkCarta': bloquearLinkCarta,
@@ -206,7 +206,10 @@ def CheckFolioDuplicado(request):
 def FindFolioProveedor(request):
     Folio = request.GET["Folio"]
     try:
-        PendienteEnviar = View_PendientesEnviarCxP.objects.filter(Folio = Folio, IsFacturaProveedor = False, IsEvidenciaFisica = True, IsEvidenciaDigital = True, IDProveedor = request.user.IDTransportista, Status= 'FINALIZADO').last()
+        PendienteEnviar = View_PendientesEnviarCxP.objects.filter(Folio=Folio, IsFacturaProveedor=False,
+                                                                  IsEvidenciaFisica=True, IsEvidenciaDigital=True,
+                                                                  IDProveedor=request.user.IDTransportista,
+                                                                  Status='FINALIZADO').last()
         if PendienteEnviar.IsControlDesk != 0:
             return JsonResponse({'Found' : True, 'Folio' : PendienteEnviar.Folio, 'Proveedor' : PendienteEnviar.NombreProveedor, 'FechaDescarga' : PendienteEnviar.FechaDescarga, 'IDPendienteEnviar' : PendienteEnviar.IDPendienteEnviar, 'IDProveedor' : PendienteEnviar.IDProveedor, 'Subtotal': PendienteEnviar.Subtotal, 'IVA': PendienteEnviar.IVA, 'Retencion': PendienteEnviar.Retencion, 'Total' : PendienteEnviar.Total, 'Moneda' : PendienteEnviar.Moneda})
         else:
@@ -438,7 +441,7 @@ def VerificarCartasStatusAprobada(GetLastCartaUpload2):
 
     # Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-    # Proveedores = Proveedor.objects.filter(RFC='MEX020122NS2')
+    # Proveedores = Proveedor.objects.filter(RFC='PEFP890110429')
     # for prov in Proveedores:
     #     try:
     #         oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)

@@ -160,10 +160,10 @@ columnDefs: [
     "className": "dt-head-center dt-body-right",
 },
 {
-    "targets": 22,
+    "targets": 23,
     "className": "dt-head-center dt-body-center",
     "mRender": function (data, type, full) {
-      return (full[22] == 'True' ? "Si":"No");
+      return (full[23] == 'True' ? "Si":"No");
     }
 },
 {
