@@ -11,7 +11,7 @@ def GetReporteMaster(request):
 	if request.user.roles == 'Proveedor' or request.user.roles == 'Contabilidad':
 		 return render(request, '404.html')
 	else:
-		ReporteMaster = View_Master_Proveedor.objects.filter(FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
+		ReporteMaster = View_Master_Proveedor.objects.all()#filter(FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
 		Proveedores = Proveedor.objects.all()
 		return render(request, 'Master.html', {'ReporteMaster': ReporteMaster, 'Proveedores': Proveedores})
 
@@ -25,7 +25,7 @@ def PEToList(Facturas):
 			Reporte["NombreCortoProveedor"] = Fact.NombreCortoProveedor
 			Reporte["FechaDescarga"] = Fact.FechaDescarga
 			Reporte["MonedaProveedor"] = Fact.MonedaProveedor
-			Reporte["MonedaCliente"] = Fact.Cliente
+			Reporte["MonedaCliente"] = Fact.MonedaCliente
 			Reporte["Status"] = Fact.Status
 			Reporte["IsEvidenciaDigital"] = Fact.IsEvidenciaDigital
 			Reporte["IsEvidenciaFisica"] = Fact.IsEvidenciaFisica
@@ -83,7 +83,7 @@ def GetFacturasByFilters(request):
 	if Proveedores:
 		Facturas = Facturas.filter(NombreCortoProveedor__in = Proveedores)
 	if Moneda:
-		Facturas = Facturas.filter(Moneda__in = Moneda)
+		Facturas = Facturas.filter(MonedaProveedor__in=Moneda, MonedaCliente__in=Moneda)
 	if Status:
 		Facturas = Facturas.filter(Status__in = Status)#.exclude(StatusFacturaProveedor = 'DEPURADO')
 	if Proyectos:

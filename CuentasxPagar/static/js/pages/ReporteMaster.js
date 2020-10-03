@@ -117,60 +117,60 @@ $('#TablaReporteMaster').DataTable({
   }*/
  }
 ],
-columnDefs: [
-{
-    "targets": [0,1],
-    "className": "dt-head-center dt-body-center",
-},
-{
-    "targets": 2,
-    "className": "dt-head-center dt-body-center",
-},
-{
-    "targets": [3,4,5],
-    "className": "dt-head-center dt-body-center",
-},
-{
-    "targets": 6,
-    "className": "dt-head-center dt-body-center",
-    "mRender": function (data, type, full) {
-      return (full[6] == 'True' ? "Si":"No");
-    }
-},
-{
-    "targets": 7,
-    "className": "dt-head-center dt-body-center",
-    "mRender": function (data, type, full) {
-      return (full[7] == 'True' ? "Si":"No");
-    }
-},
-{
-    "targets": 10,
-    "className": "dt-head-center dt-body-center",
-    "mRender": function (data, type, full) {
-      return (full[10] == 'True' ? "Si":"No");
-    }
-},
-{
-    "targets": [11,12],
-    "className": "dt-head-center dt-body-right",
-},
-{
-    "targets": [13,14,15,16,17,18,19,20,21],
-    "className": "dt-head-center dt-body-right",
-},
-{
-    "targets": 23,
-    "className": "dt-head-center dt-body-center",
-    "mRender": function (data, type, full) {
-      return (full[23] == 'True' ? "Si":"No");
-    }
-},
-{
-    "targets": [24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44],
-    "className": "dt-head-center dt-body-right",
-},
-]
+//columnDefs: [
+//{
+//    "targets": [0,1],
+//    "className": "dt-head-center dt-body-center",
+//},
+//{
+//    "targets": 2,
+//    "className": "dt-head-center dt-body-center",
+//},
+//{
+//    "targets": [3,4,5],
+//    "className": "dt-head-center dt-body-center",
+//},
+//{
+//    "targets": 6,
+//    "className": "dt-head-center dt-body-center",
+//    "mRender": function (data, type, full) {
+//      return (full[6] == 'True' ? "Si":"No");
+//    }
+//},
+//{
+//    "targets": 7,
+//    "className": "dt-head-center dt-body-center",
+//    "mRender": function (data, type, full) {
+//      return (full[7] == 'True' ? "Si":"No");
+//    }
+//},
+//{
+//    "targets": 10,
+//    "className": "dt-head-center dt-body-center",
+//    "mRender": function (data, type, full) {
+//      return (full[10] == 'True' ? "Si":"No");
+//    }
+//},
+//{
+//    "targets": [11,12],
+//    "className": "dt-head-center dt-body-right",
+//},
+//{
+//    "targets": [13,14,15,16,17,18,19,20,21],
+//    "className": "dt-head-center dt-body-right",
+//},
+//{
+//    "targets": 23,
+//    "className": "dt-head-center dt-body-center",
+//    "mRender": function (data, type, full) {
+//      return (full[23] == 'True' ? "Si":"No");
+//    }
+//},
+//{
+//    "targets": [24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44],
+//    "className": "dt-head-center dt-body-right",
+//},
+//]
 
   });
 }
