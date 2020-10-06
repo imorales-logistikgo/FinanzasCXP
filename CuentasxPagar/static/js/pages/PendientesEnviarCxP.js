@@ -220,13 +220,13 @@ $('#kt_modal_2').on('shown.bs.modal', function(){
     endDate: '+0d',
     language: 'es'
   });
-  $("#FechaFactura").datepicker('setDate', 'today' );
+  $("#FechaFactura").datepicker('setDate', GetCurrentDate());
   $('#FechaRevision').datepicker({
     format: 'yyyy/mm/dd',
     todayHighlight: true,
     language: 'es'
   });
-  $("#FechaRevision").datepicker('setDate', 'today' );
+  $("#FechaRevision").datepicker('setDate', GetCurrentDate());
 
   $('#FechaVencimiento').datepicker({
    format: 'yyyy/mm/dd',
@@ -904,14 +904,14 @@ function BuscarFolioProveedor() {
         language:'es'
       });
 
-      $("#FechaFacturaP").datepicker('setDate', 'today' );
+      $("#FechaFacturaP").datepicker('setDate', GetCurrentDate());
       $('#FechaRevisionP').datepicker({
         format: 'yyyy/mm/dd',
         todayHighlight: true,
         language: 'es'
       });
 
-      $("#FechaRevisionP").datepicker('setDate', 'today' );
+      $("#FechaRevisionP").datepicker('setDate', GetCurrentDate());
       $('#FechaVencimientoP').prop('disabled', true);
       $('#FechaVencimientoP').datepicker({
        format: 'yyyy/mm/dd',

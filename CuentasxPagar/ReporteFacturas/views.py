@@ -83,6 +83,8 @@ def GetFacturasByFilters(request):
 def GetReporteTotales(request, **kwargs):
 	StatusIN = kwargs.get('Status', None), kwargs.get('Status2', None), "ABONADA"
 	Moneda = kwargs.get('Moneda', None)
+	FechaCorte = kwargs.get('FechaCorte', None)
+	print(FechaCorte)
 	Mes = datetime.date.today()
 	Facturas = FacturasxProveedor.objects.values('IDProveedor').distinct()
 	wb = Workbook()
@@ -113,12 +115,12 @@ def GetReporteTotales(request, **kwargs):
 		Total = 0
 		TotalVencido = 0
 		TotalPorVencer = 0
-		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN, FechaFactura__lte = '2020-09-03'):
+		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN, FechaFactura__lte = FechaCorte):
 			if Moneda == "MXN":
 				Total = Total + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else Total + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else Total + TotalesFacturas.Saldo
-			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') <= "2020-09-03" and Moneda == "MXN":
+			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') <= FechaCorte and Moneda == "MXN":
 				TotalVencido = TotalVencido + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else TotalVencido + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalVencido + TotalesFacturas.Saldo
-			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') > "2020-09-03" and Moneda == "MXN":
+			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') > FechaCorte and Moneda == "MXN":
 				TotalPorVencer = TotalPorVencer + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else TotalPorVencer + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalPorVencer + TotalesFacturas.Saldo
 		ws.cell(row=cont,column=1).value = NombreProv.RazonSocial
 		ws.cell(row=cont,column=2).value = round(TotalVencido,2)

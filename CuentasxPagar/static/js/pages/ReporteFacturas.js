@@ -20,9 +20,17 @@ $(document).ready(function(){
       arrStatusReporte.push($(this).val())
     });
     arrStatusReporte.push($('input[name="MonedaReprote"]').val())
+    arrStatusReporte.push($("#FechaCorte").val())
     arrStatusReporte.length == 1 || arrStatusReporte.length >=4 ? alertToastError('Selecciona al menos una opcion') : DownloadReporteByTotales(arrStatusReporte)
   })
 
+    $('#FechaCorte').datepicker({
+        format: 'yyyy-mm-dd',
+        todayHighlight: true,
+        language: 'es'
+    });
+
+    $("#FechaCorte").datepicker('setDate', GetCurrentDate());
 
 
 //rago fecha para el Filtro

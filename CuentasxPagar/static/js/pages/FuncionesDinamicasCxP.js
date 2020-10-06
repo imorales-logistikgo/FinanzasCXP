@@ -755,3 +755,14 @@ var RFCRecerptor = function(xml){
     return RFCInXML = null;
   }
 }
+
+
+var GetCurrentDate = function()
+{
+    var today = new Date();
+    var day = today.getDate();
+    var month = today.getMonth() +1;
+    var year = today.getFullYear();
+    var currentDate = year + '/' + month + '/' + day;
+    return currentDate;
+}
