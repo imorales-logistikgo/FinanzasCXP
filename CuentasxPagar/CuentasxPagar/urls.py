@@ -30,6 +30,7 @@ urlpatterns = [
     path('EvidenciasProveedor/', include('EvidenciasProveedor.urls')),
     path('Usuario/', include('users.urls')),
     path('CartaNoAdeudo/', include('CartaNoAdeudo.urls')),
+    path('CartaNoAdeudoMC/', include('CartaNoAdeudoMC.urls')),
 
 ]
 

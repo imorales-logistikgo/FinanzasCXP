@@ -32,6 +32,8 @@ class Proveedor(models.Model):
     Serie = models.CharField(max_length=15)
     FechaDescargaCartaNoAdeudo = models.DateTimeField()
     FechaAlta = models.DateTimeField()
+    FechaDescargaCartaNoAdeudoMC = models.DateTimeField()
+    StatusProceso = models.CharField(max_length=50)
 
     class Meta:
         managed = False

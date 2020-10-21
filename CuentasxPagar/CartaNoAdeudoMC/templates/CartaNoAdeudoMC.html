@@ -1,25 +1,25 @@
 {%extends "Base.html"%}
 {% load static %}
 
-{% block activateCartaNoAdeudo %}
-    kt-menu__item--active
+{% block activateCartaNoAdeudoMC %}
+kt-menu__item--active
 {% endblock %}
 
-{% block CartaNoAdeudo %}
+{% block CartaNoAdeudo%}
     {% if request.user.roles == "Proveedor" %}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <p class="h3">Carta de no adeudo uso exclusivo de <strong>cuentas por pagar</strong>, unicamente subir pendiente de facturar NO hojas de liberacion.</p>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
+<!--    <div class="alert alert-warning alert-dismissible fade show" role="alert">-->
+<!--        <p class="h3">Carta de no adeudo uso exclusivo de <strong>cuentas por pagar</strong>, unicamente subir pendiente de facturar NO hojas de liberacion.</p>-->
+<!--        <button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--            <span aria-hidden="true">&times;</span>-->
+<!--        </button>-->
+<!--    </div>-->
 
     <div class="container">
         <div class="kt-subheader   kt-grid__item" id="kt_subheader">
             <div class="kt-container  kt-container--fluid ">
                 <div class="kt-subheader__toolbar">
                     <div class="kt-subheader__wrapper">
-                        <h3>Carta de No Adeudo Pendientes de Facturar</h3>
+                        <h3>Carta de No Adeudo Hoja de Liberacion</h3>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                                         <div class="col">
                                             {% if not IsDescargaCartaNoAdeudo %}
                                             <button class="btn btn-outline-brand btn-elevate btn-pill"
-                                                    id="DescargarCartaNoAdeudo"
+                                                    id="DescargarCartaNoAdeudoMC"
                                                     style="position:relative; left: 50px; top:20px"><i
                                                     class="flaticon-download"></i>Descargar
                                             </button>
@@ -94,8 +94,8 @@
                                 </div>
                                 <div class="container">
                                     <div class="row">
-                                        <button type="button" name="CXP" class="btn btn-success"
-                                                id="btnGuardarCartaNoAdeudo" style="position:relative; left:800px">
+                                        <button type="button" name="MesaControl" class="btn btn-success"
+                                                id="btnGuardarCartaNoAdeudoMC" style="position:relative; left:800px">
                                             Enviar
                                         </button>
                                     </div>
@@ -132,14 +132,14 @@
         </div>
         <!--end::Portlet-->
     </div>
-    {% elif request.user.roles == "CXP" or request.user.is_superuser %}
+    {% elif request.user.roles == "MesaControl" or request.user.is_superuser %}
 <!--    <div class="container">-->
 <div id="CartaNoAdeudo" style="display:none"></div>
         <div class="kt-subheader   kt-grid__item" id="kt_subheader">
             <div class="kt-container  kt-container--fluid ">
                 <div class="kt-subheader__toolbar">
                     <div class="kt-subheader__wrapper">
-                        <h3>Carta de No Adeudo Pendientes de Facturar</h3>
+                        <h3>Carta de No Adeudo Hoja de Liberacion</h3>
                     </div>
                 </div>
             </div>
@@ -155,6 +155,7 @@
     {% else %}
     {% endif %}
 {% endblock %}
+
 {% block scripts %}
     <script src='{% static "js/pages/FuncionesDinamicasCxP.js" %}'></script>
     <script src='{% static "js/pages/gets.js" %}'></script>
@@ -162,9 +163,3 @@
     <script src='{% static "js/es_ES.min.js" %}'></script>
     <script src='{% static "js/bootstrap-datepicker.es.js" %}'></script>
 {% endblock %}
-
-
-
-
-
-

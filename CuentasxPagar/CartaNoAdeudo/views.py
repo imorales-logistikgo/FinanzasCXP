@@ -1,4 +1,3 @@
-import os
 import uuid
 from django.shortcuts import render, redirect
 from django.http import response, HttpResponse, Http404, JsonResponse
@@ -9,31 +8,30 @@ from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 import json, datetime
-from requests import Response
 from usersadmon.models import Proveedor
 from CartaNoAdeudo.models import CartaNoAdeudoTransportistas
 from django.db import transaction
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
-from PIL import Image
 import calendar
 from PendientesEnviar import views
 from django.contrib.auth.decorators import login_required
+from CartaNoAdeudoMC import views as MC
 
 @login_required
 
 def CartaNoAdeudo(request):
     if request.user.roles == "Proveedor":
         FechaDescargaCarta = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
-        CartasByProveedor = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista)
+        CartasByProveedor = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, Tipo='CXP')
         if FechaDescargaCarta.FechaDescargaCartaNoAdeudo is not None:
             IsDescargaCartaNoAdeudo = True if FechaDescargaCarta.FechaDescargaCartaNoAdeudo.month -1 == datetime.datetime.now().month -1 else False
         else:
             IsDescargaCartaNoAdeudo = False
         return render(request, 'CartaNoAdeudo.html',{"IsDescargaCartaNoAdeudo":IsDescargaCartaNoAdeudo, "CartasByProveedor":CartasByProveedor})
     elif request.user.roles == "CXP" or request.user.is_superuser:
-        CartaNoAdeudoByProveedor = CartaNoAdeudoTransportistas.objects.filter()
-        return render(request, 'CartaNoAdeudo.html', {"CartaNoAdeudoByProveedor": CartaNoAdeudoByProveedor})
-    elif request.user.roles == "users":
+        CartaNoAdeudoByProveedor = CartaNoAdeudoTransportistas.objects.filter(Tipo='CXP')
+        return render(request, 'CartaNoAdeudo.html', {"CartaNoAdeudoByProveedor": CartaNoAdeudoByProveedor, "TipoCarta":"CXP"})
+    elif request.user.roles == "users" or "MesaControl":
         return HttpResponse(status=403)
     else:
         raise Http404()
@@ -66,7 +64,7 @@ def GetCartaNoAdeudo(request):
                 messsage = "{} de {} del {}".format(day, month, year)
                 bufferMemoria = BytesIO()
                 c = canvas.Canvas(bufferMemoria, pagesize=A4)
-                c.setTitle("CartaNoAdeudo.pdf")
+                c.setTitle("CartaNoAdeudo-PendienteFacturar.pdf")
                 p = ParagraphStyle('test')
                 p.alignment = TA_JUSTIFY
                 p.fontSize = 13
@@ -123,14 +121,18 @@ def SaveCartaNoAdeudo(request):
     try:
         jParams = json.loads(request.body.decode('utf-8'))
         GetViajesThisMonth = views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1)
+        if jParams["Tipo"] == "MesaControl":
+            a = MC.SaveCartaNoAdeudo(request,jParams)
+            return HttpResponse(status=a)
         if GetViajesThisMonth:
-            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista,
-                                                                         Status__in=('PENDIENTE', 'PROBADA'),
-                                                                         MesCartaNoAdeudo=MesCartaNoAdeudo(
-                                                                             datetime.datetime.now(), 2)).exists()
+            GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
+                IDTransportista=request.user.IDTransportista,
+                Status__in=('PENDIENTE', 'APROBADA'),
+                MesCartaNoAdeudo=MesCartaNoAdeudo(
+                    datetime.datetime.now(), 2), Tipo=jParams["Tipo"]).exists()
         else:
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
-                IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE', 'PROBADA'),
+                IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE', 'APROBADA'),
                 MesCartaNoAdeudo=MesCartaNoAdeudo(datetime.datetime.now(), 3)).exists()
         # if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
         if not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1) and not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 2):
@@ -149,10 +151,12 @@ def SaveCartaNoAdeudo(request):
                     SaveCarta.MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(), 3)
                 SaveCarta.RutaCartaNoAdeudo = jParams["RutaCartaNoAdeudo"]
                 SaveCarta.Status = 'PENDIENTE'
+                SaveCarta.Tipo = jParams["Tipo"]
                 SaveCarta.save()
                 return HttpResponse(status=200)
     except Exception as e:
         print(e)
+        transaction.rollback(using='users')
         return HttpResponse(status=500)
 
 def MesCartaNoAdeudo(Fecha, restarMes):
@@ -199,10 +203,10 @@ def upload(request):
         GetViajesThisMonth = views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1)
         if GetViajesThisMonth:
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
-                IDTransportista=request.user.IDTransportista, Status__in=("PENDIENTE", "APROBADA"), MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(), 2)).exists()
+                IDTransportista=request.user.IDTransportista, Status__in=("PENDIENTE", "APROBADA"), MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(), 2), Tipo='CXP').exists()
         else:
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
-                IDTransportista=request.user.IDTransportista, Status__in=("PENDIENTE", "APROBADA"), MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(), 3)).exists()
+                IDTransportista=request.user.IDTransportista, Status__in=("PENDIENTE", "APROBADA"), MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(), 3), Tipo='CXP').exists()
 
         # if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
         if not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1) and not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 2):
@@ -216,7 +220,7 @@ def upload(request):
             blob_service_client = BlobClient.from_connection_string(conn_str="DefaultEndpointsProtocol=http;AccountName=lgklataforma;AccountKey=SpHagQjk7C4dBPv1cse9w36zmAtweXIMjcw9DWve7ipgXgf2Fa5l+vw2k57EM8uinlUOkfxt34BQpC9FBHE+Yg==",container_name=container_client, blob_name=namefile)
             blob_service_client.upload_blob(request.FILES['files[]'])
             urlFile = blob_service_client.url
-            return JsonResponse({"url":urlFile})
+            return JsonResponse({"url": urlFile})
     except Exception as e:
         print(e)
         return HttpResponse(status=500)

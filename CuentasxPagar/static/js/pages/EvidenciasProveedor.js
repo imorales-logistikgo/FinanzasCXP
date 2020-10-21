@@ -26,6 +26,12 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
         GetEvidenciasForCXP(IDViaje, folio.trim())
     });
 
+    $(document).on('click',"#UploadEvidenciaMC",function(){
+        WaitMe_Show("#TbPading")
+         var IDViaje = $($(this).parents('tr')[0]).data('idviaje');
+         GetEvidenciaMC(IDViaje)
+    });
+
 
   $('#btnCerrarDivProveedorEvidencias').on('click', function(){
     $('#uploadEvidenciasModal').css('display', 'none');
@@ -39,9 +45,13 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
     $('#BtnHojaLiberacion').removeAttr('href');
   });
 
-  $('#btnGuardarEvidenciasP').on('click', function(){
-    validarGuardarEvidencias();
+  $(document).on('click', '#btnGuardarEvidenciasP, #btnGuardarEvidenciaMC',function(){
+    $(this)[0].name == 'EvCorreo' ? validarGuardarEvidencias($(this)[0].name):validarGuardarEvidencias();
   });
+//  $('#btnGuardarEvidenciaMC').on('click', function(){
+//    validarGuardarEvidencias();
+//  });
+
 
   //filtro de fecha solo por mes y año
   $(document).on( 'change', 'input[name="fechaxMesyAño"]', function () {
@@ -315,6 +325,10 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
     $('#listaEvidenciasFisicas').empty();
   });
 
+  $('#ModalEvidenciasMC').on('hidden.bs.modal', function(){
+    $('#SubirEvidenciaMC').empty();
+  });
+
   //HOJA DE LIBERACION
     $(document).on('click', '#BtnHojaLiberacion', function(){
       WaitMe_ShowBtn('#BtnHojaLiberacion')
@@ -333,7 +347,7 @@ var validacionBuscarFolio = function(){
   alertToastError("Ingresa un Folio");
 }
 
-var validarGuardarEvidencias = function (){
+var validarGuardarEvidencias = function (Ev = null){
   var arrCompleteEvidences = [];
   var arrCompleteEvidencesRemission = []
   $('.kt-portlet__head-title').each(function(){
@@ -347,12 +361,12 @@ var validarGuardarEvidencias = function (){
   if($('.kt-portlet__head-title').data('evidencia') == 'BKG'){
     arrCompleteEvidencesRemission.includes("false") ? alertToastError("Debes subir todas las evidencias") : arrCompleteEvidences.length != 0 ? arrCompleteEvidences.includes("true") ? saveEvidencias() : alertToastError("Debes subir todas las evidencias"): saveEvidencias();
   }else{
-    arrCompleteEvidences.includes("true") ?saveEvidencias(): alertToastError("Debes subir todas las evidencias");
+    arrCompleteEvidences.includes("true") ? Ev = null ? saveEvidencias() : saveEvidencias(Ev) : alertToastError("Debes subir todas las evidencias");
   }
 }
 
-var saveEvidencias = function(){
-  WaitMe_Show('#uploadEvidenciasModal');
+var saveEvidencias = function(Ev =  null){
+  Ev == null ? WaitMe_Show('#uploadEvidenciasModal') : WaitMe_Show('#EvidenciasMC');
   var IDViajeCheck;
   var arrEvidencias = [];
   $('.kt-portlet__head-title').each(function(){
@@ -391,7 +405,7 @@ var saveEvidencias = function(){
       $('#allEvidences').empty();
       $('#StatusEvidencias').empty();
       $('#btnGuardarEvidenciasP').prop('disabled', false)
-      WaitMe_Hide('#uploadEvidenciasModal');
+        Ev == null ? WaitMe_Hide('#uploadEvidenciasModal') : (WaitMe_Hide('#EvidenciasMC'), $('#ModalEvidenciasMC').modal('hide'));
     }
     else if(response.status == 500)
     {
@@ -401,12 +415,12 @@ var saveEvidencias = function(){
         showConfirmButton: false,
         timer: 2500
       })
-       WaitMe_Hide('#uploadEvidenciasModal');
+         Ev == null ? WaitMe_Hide('#uploadEvidenciasModal') : WaitMe_Hide('#EvidenciasMC');
     }
 
   }).catch(function(ex){
     console.log(ex);
-    WaitMe_Hide('#uploadEvidenciasModal');
+    Ev == null ? WaitMe_Hide('#uploadEvidenciasModal') : WaitMe_Hide('#EvidenciasMC');
   });
 }
 

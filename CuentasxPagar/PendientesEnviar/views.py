@@ -16,12 +16,13 @@ from xml.dom import minidom
 import urllib
 import re
 import calendar
+from CartaNoAdeudoMC import views as CartaMesaControl
 from CartaNoAdeudo.views import MesCartaNoAdeudo
 
 
 @login_required
 def GetPendientesEnviar(request):
-    #PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0 AND Moneda = %s", ['FINALIZADO', 'MXN'])
+    CartaMesaControl.bloquearTransportistasByViaje(request)
     if request.user.roles == 'MesaControl':
         return redirect('EvidenciasProveedor')
     elif request.user.roles == 'Contabilidad':
@@ -46,7 +47,7 @@ def GetPendientesEnviar(request):
 
         if request.user.roles == 'Proveedor' and datetime.datetime.now().day > 20 and GetTotalViajesEn1Mes(request.user.IDTransportista,1):
             GetFechaAltaTransportista = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
-            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA').exists():
+            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA', Tipo='CXP').exists():
                 if GetFechaAltaTransportista.FechaAlta is None:
                     BloquearFacturasCarta = True
                 else:
@@ -54,14 +55,14 @@ def GetPendientesEnviar(request):
             else:
                 GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.get(
                     IDTransportista=request.user.IDTransportista,
-                    MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA')
+                    MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA', Tipo='CXP')
                 BloquearFacturasCarta = False if GetLastCartaUpload.MesCartaNoAdeudo == MesEnAlertaCarta(
                     datetime.datetime.now()) and GetLastCartaUpload.Status == "APROBADA" else True
             MesAlertaMotivoBloqueo = MesEnAlertaCarta(datetime.datetime.now())
         elif request.user.roles == 'Proveedor' and GetTotalViajesEn1Mes(request.user.IDTransportista,2):
             GetLastCartaUpload2 = CartaNoAdeudoTransportistas.objects.filter(
-                IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo__in=(MesCartaConAdeudo(datetime.datetime.now()), MesEnAlertaCarta(datetime.datetime.now())), Status='APROBADA')
-            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo__in=(MesCartaConAdeudo(datetime.datetime.now()), MesEnAlertaCarta(datetime.datetime.now())), Status='APROBADA').exists():
+                IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo__in=(MesCartaConAdeudo(datetime.datetime.now()), MesEnAlertaCarta(datetime.datetime.now())), Status='APROBADA', Tipo='CXP')
+            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo__in=(MesCartaConAdeudo(datetime.datetime.now()), MesEnAlertaCarta(datetime.datetime.now())), Status='APROBADA', Tipo='CXP').exists():
                 BloquearFacturasCarta = True
             else:
                 BloquearFacturasCarta = VerificarCartasStatusAprobada(GetLastCartaUpload2)
@@ -164,7 +165,7 @@ def SaveFacturaxProveedor(request):
     newFactura.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
     newFactura.IDProveedor =  jParams["IDProveedor"]
     newFactura.TotalXML = jParams["TotalXML"]
-    newFactura.UUID = jParams["UUID"] if request.user.idusuario != 3126 else ""
+    newFactura.UUID = jParams["UUID"] if request.user.idusuario != 3126 or request.user.idusuario != 3254 else ""
     newFactura.Status = 'DEPURADO' if(jParams["Estado"] == 'YU') else 'PENDIENTE'
     newFactura.save()
     return HttpResponse(newFactura.IDFactura)
@@ -407,7 +408,7 @@ def VerificarCartasStatusAprobada(GetLastCartaUpload2):
 
 
 
-# def CrearUsuariosTranportistas(request):
+#def CrearUsuariosTranportistas(request):
 # #editar un usuario
 #
 # 	#usuarios = User.User.objects.filter()
@@ -441,7 +442,7 @@ def VerificarCartasStatusAprobada(GetLastCartaUpload2):
 
     # Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-    # Proveedores = Proveedor.objects.filter(RFC='ROGL800415Q88')
+    # Proveedores = Proveedor.objects.filter(RFC='203237764')
     # for prov in Proveedores:
     #     try:
     #         oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)

@@ -84,7 +84,6 @@ def GetReporteTotales(request, **kwargs):
 	StatusIN = kwargs.get('Status', None), kwargs.get('Status2', None), "ABONADA"
 	Moneda = kwargs.get('Moneda', None)
 	FechaCorte = kwargs.get('FechaCorte', None)
-	print(FechaCorte)
 	Mes = datetime.date.today()
 	Facturas = FacturasxProveedor.objects.values('IDProveedor').distinct()
 	wb = Workbook()
@@ -97,10 +96,10 @@ def GetReporteTotales(request, **kwargs):
 	ws['B1'].font = Font(bold=True, size=12, color="FFFFFF")
 	ws['C1'].font = Font(bold=True, size=12, color="FFFFFF")
 	ws['D1'].font = Font(bold=True, size=12, color="FFFFFF")
-	ws['A1'].fill = PatternFill(bgColor="0C46B7", fill_type = "solid")
-	ws['B1'].fill = PatternFill(bgColor="0C46B7", fill_type = "solid")
-	ws['C1'].fill = PatternFill(bgColor="0C46B7", fill_type = "solid")
-	ws['D1'].fill = PatternFill(bgColor="0C46B7", fill_type = "solid")
+	ws['A1'].fill = PatternFill(bgColor="0C46B7", fill_type="solid")
+	ws['B1'].fill = PatternFill(bgColor="0C46B7", fill_type="solid")
+	ws['C1'].fill = PatternFill(bgColor="0C46B7", fill_type="solid")
+	ws['D1'].fill = PatternFill(bgColor="0C46B7", fill_type="solid")
 	ws.column_dimensions['A'].width = 30
 	ws.column_dimensions['B'].width = 20
 	ws.column_dimensions['C'].width = 22

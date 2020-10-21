@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'ReporteMaster',
     'EvidenciasProveedor',
     'CartaNoAdeudo',
+    'CartaNoAdeudoMC',
     'users',
     'usersadmon',
     'bkg_viajes',

@@ -100,12 +100,17 @@ end:: Header Mobile -->
 						</li>
 						<li class="kt-menu__item {% block activateEvidenciasProveedor %} {% endblock %}" aria-haspopup="true"><a href="{% url 'EvidenciasProveedor' %}" class="kt-menu__link"><i class="kt-menu__link-icon flaticon2-telegram-logo"></i><span class="kt-menu__link-text">Evidencias</span></a></li>
 						{% endif %}
-						{% if request.user.roles == "Proveedor" or request.user.roles == "CXP" or request.user.is_superuser %}
+						{% if request.user.roles == "Proveedor" or request.user.roles == "CXP" or request.user.is_superuser or request.user.roles == "MesaControl" %}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Carta No Adeudo</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
 						</li>
-						<li class="kt-menu__item {% block activateCartaNoAdeudo %} {% endblock %}" aria-haspopup="true"><a href="{% url 'CartaNoAdeudo' %}" class="kt-menu__link"><i class="kt-menu__link-icon flaticon-list"></i><span class="kt-menu__link-text">Carta No Adeudo</span></a></li>
+						{% if request.user.username == 'cxp1@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.is_superuser or request.user.roles == "Proveedor"%}
+						<li class="kt-menu__item {% block activateCartaNoAdeudo %} {% endblock %}" aria-haspopup="true"><a href="{% url 'CartaNoAdeudo' %}" class="kt-menu__link"><i class="kt-menu__link-icon flaticon-list"></i><span class="kt-menu__link-text">Pendientes de Facturar</span></a></li>
+						{% endif %}
+						{% if request.user.username == 'wbarron@logistikgo' or request.user.username == 'ealmendarez@logistikgo' or request.user.username == 'afajardo12@logistikgo' or request.user.is_superuser or request.user.roles == "Proveedor" %}
+						<li class="kt-menu__item {% block activateCartaNoAdeudoMC %} {% endblock %}" aria-haspopup="true"><a href="{% url 'CartaNoAdeudoMC' %}" class="kt-menu__link"><i class="kt-menu__link-icon flaticon-list"></i><span class="kt-menu__link-text">Pendientes de Liberacion</span></a></li>
+						{% endif %}
 						{% endif %}
 					</ul>
 				</div>

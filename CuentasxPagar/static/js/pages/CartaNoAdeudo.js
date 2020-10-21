@@ -4,14 +4,18 @@ $(document).ready(function(){
         window.open('/CartaNoAdeudo/GetCartaNoAdeudo')
     });
 
+     $("#DescargarCartaNoAdeudoMC").on("click", function(){
+        window.open('/CartaNoAdeudoMC/CreateCartaNoadeudoMC')
+    });
+
     $("#TablaCartaNoAdeudo").DataTable({
         "scrollX": true,
         "scrollY": "400px"
     });
     $("#TablaCartaNoAdeudoProveedor").DataTable();
 
-    $("#btnGuardarCartaNoAdeudo").on('click', function(){
-        $('#CartaNoAdeudo').data("rutaarchivoPDF") == undefined || $('#CartaNoAdeudo').data("rutaarchivoPDF") == null ? alertToastError("Ningun archivo ha sido cargado") : SaveCartaNoAdeudo();
+    $(document).on('click',"#btnGuardarCartaNoAdeudo, #btnGuardarCartaNoAdeudoMC", function(){
+        $('#CartaNoAdeudo').data("rutaarchivoPDF") == undefined || $('#CartaNoAdeudo').data("rutaarchivoPDF") == null ? alertToastError("Ningun archivo ha sido cargado") : SaveCartaNoAdeudo($(this)[0].name);
     });
 
     $(document).on('click',"#BtnAprobarCarta", function(){
@@ -120,10 +124,11 @@ $(document).ready(function(){
 
 //METODOS
 
-    var SaveCartaNoAdeudo = function() {
+    var SaveCartaNoAdeudo = function(_Tipo) {
       WaitMe_Show('#WaitmeSaveCarta')
       jParams = {
-        RutaCartaNoAdeudo: $('#CartaNoAdeudo').data("rutaarchivoPDF")
+        RutaCartaNoAdeudo: $('#CartaNoAdeudo').data("rutaarchivoPDF"),
+        Tipo: _Tipo
       }
       fetch("/CartaNoAdeudo/SaveCartaNoAdeudo", {
         method: "POST",

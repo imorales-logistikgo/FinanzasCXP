@@ -22,6 +22,7 @@
 						<th>Fecha Descarga</th>
 						<th>Evidencia Digital</th>
 						<th>Recepcion Evidencia</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -32,10 +33,12 @@
 						<td>{{Evidencias.FechaDescarga|date:'Y/m/d'|safe}}</td>
 						<td>{{Evidencias.IsEvidenciasDigitales}}</td>
 						<td>{{Evidencias.IsEvidenciasFisicas}}</td>
+						<td></td>
 						{% else %}
 						<td>{{Evidencias.FechaDespacho|date:'Y/m/d'|safe}}</td>
 						<td>{{Evidencias.IsEvidenciaPedidos}}</td>
 						<td>{{Evidencias.IsEvidenciaFisica}}</td>
+						<td class="text-center">{% if Evidencias.TipoViaje == 'CUSTODIA' and not Evidencias.IsEvidenciaPedidos and not Evidencias.IsEvidenciaFisica %}<button type="button" class="btn btn-primary btn-elevate btn-pill btn-sm" id="UploadEvidenciaMC" name="UploadEvidenciaMC{{Evidencias.Folio}}" title="Evidencia Correo"><i class="fa fa-file-upload"></i></button>{% endif %}</td>
 						{% endif %}
 					</tr>
 					{%endfor%}

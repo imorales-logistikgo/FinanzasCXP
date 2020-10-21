@@ -74,6 +74,7 @@ class XD_PedidosxViajes(models.Model):
     IDUsuarioEvDigital = models.IntegerField()
     IDUsuarioEvFisica = models.IntegerField()
     FechaEvidenciaFisicaxPedidoxViaje = models.DateTimeField()
+    FechaEvidenciaDigitalxPedidoxViaje = models.DateTimeField()
 
     class Meta:
         managed = False

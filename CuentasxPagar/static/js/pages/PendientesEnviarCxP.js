@@ -105,7 +105,7 @@ $('#btnGuardarFactura').on('click', function(){
 
 //btn guardar archivos proveedor
 $('#btnGuardarFacturaP').on('click', function(){
-    if(IDUsuraio_ != 3126 ? $('#archivosProveedor').data("rutaarchivoPDF") != undefined && $('#archivosProveedor').data("rutaarchivoXML") != undefined || $('#archivosProveedor').data("rutaarchivoPDF") != null && $('#archivosProveedor').data("rutaarchivoXML") != null:$('#archivosProveedor').data("rutaarchivoPDF") != undefined  || $('#archivosProveedor').data("rutaarchivoPDF") != null
+    if(IDUsuraio_ != 3126 || IDUsuraio_ != 3254 ? $('#archivosProveedor').data("rutaarchivoPDF") != undefined && $('#archivosProveedor').data("rutaarchivoXML") != undefined || $('#archivosProveedor').data("rutaarchivoPDF") != null && $('#archivosProveedor').data("rutaarchivoXML") != null:$('#archivosProveedor').data("rutaarchivoPDF") != undefined  || $('#archivosProveedor').data("rutaarchivoPDF") != null
 )
   {
     if($('#txtFolioFacturaP').val() != "" && $('#FechaRevisionP').val() != "" && $('#FechaFacturaP').val() != "" && $('#FechaVencimientoP').val() != "" && $('input[name="TipoCambio"]').val() != "")
@@ -843,8 +843,8 @@ var fnCheckFolio = function (folio, cancel, user) {
         timer: 2500
       })
       user == 'Lgk' ? ($('#btnGuardarFactura').attr('disabled',true),$('#txtFolioFactura').val('')) : user == 'Proveedor' ? ($('#btnGuardarFacturaP').attr('disabled',true),$('#txtFolioFacturaP').val('')):"";
-      IDUsuraio_ != 3126 ? cancel.cancelAll():"";
-      IDUsuraio_ != 3126 && user == 'Lgk' ? $('.uploaded-files ol').remove(): IDUsuraio_ != 3126 && user == 'Proveedor' ? $('.uploaded-files-proveedor ol').remove() : "";
+      IDUsuraio_ == 3126 || IDUsuraio_ == 3254 ? "":cancel.cancelAll();
+      IDUsuraio_ != 3126 && user == 'Lgk' || IDUsuraio_ != 3254 && user == 'Lgk' ? $('.uploaded-files ol').remove(): IDUsuraio_ != 3126 && user == 'Proveedor' || IDUsuraio_ != 3254 && user == 'Proveedor' ? $('.uploaded-files-proveedor ol').remove() : "";
       WaitMe_HideBtn(user == 'Lgk' ? '#btnGuardarFactura': '#btnGuardarFacturaP');
     }
     else {
@@ -1027,8 +1027,8 @@ function archivosproveedor()
   					note: 'Logisti-k',
            browserBackButtonClose: true,
          }
-         var filesMin = IDUsuraio_ != 3227 ? 2:1;
-         IDUsuraio_ != 3227 ? $('#txtFolioFacturaP').prop("disabled", true): $('#txtFolioFacturaP').prop("disabled", false);
+         var filesMin = IDUsuraio_ == 3227 || IDUsuraio_ == 3254 ? 1:2;
+         IDUsuraio_ == 3227 || IDUsuraio_ == 3254 ? $('#txtFolioFacturaP').prop("disabled", false):$('#txtFolioFacturaP').prop("disabled", true);
          var uppyDashboard = Uppy.Core({
            autoProceed: false,
            restrictions: {

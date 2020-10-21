@@ -81,7 +81,7 @@ var GetFolioEvidencias = function(Folio){
           </div>`)/*, $('#btnGuardarEvidenciasP').prop('disabled', true), $('#HojaLiberacion').html('<strong>Hoja de liberacion lista para descargar</strong>')*/);
           arrStatus.push(data.Folios[i].Status)
       }
-      console.log(arrStatus.includes('Rechazada'))
+//      console.log(arrStatus.includes('Rechazada'))
       if(arrStatus.includes('Pendiente') || arrStatus.includes('Rechazada') || arrStatus.includes('Otro') || arrStatus.includes('Enviada')){
         $('.BtnHojaLiberacion').css('display', 'none');
         arrStatus.includes('Pendiente') || arrStatus.includes('Rechazada') ? "": $('#btnGuardarEvidenciasP').prop('disabled', true);
@@ -572,5 +572,88 @@ var GetEvidenciasForCXP = function(IDViaje, Folio){
   }).catch(function(ex){
     console.log(ex);
     WaitMe_Hide('#TbPadingCXP');
+  });
+}
+
+var GetEvidenciaMC = function(IDViaje)
+{
+    WaitMe_Show('#TbPadingMC');
+  fetch(`/EvidenciasProveedor/GetEvidenciasMC?IDViaje=${IDViaje}`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    if(response.status == 200){
+      return response.clone().json();
+    }
+    else if(response.status == 500){
+      Swal.fire({
+        type: 'error',
+        title: 'Ocurrio un error al obtener las evidencias',
+        showConfirmButton: false,
+        timer: 2500
+      });
+      WaitMe_HideBtn("#TbPading")
+    }
+    else if(response.status == 400){
+    Swal.fire({
+        type: 'error',
+        title: 'Ya cuenta con esta evidencia',
+        showConfirmButton: false,
+        timer: 2500
+    });
+    WaitMe_Hide("#TbPading")
+    }
+  }).then(function(data){
+    if(data.Evidencias.length == 0) {
+      Swal.fire({
+        type: 'error',
+        title: 'No se pudo obtener la evidencia',
+        showConfirmButton: false,
+        timer: 2500
+      });
+      WaitMe_Hide('#TbPadingMC');
+    }
+    else {
+      $('#ModalEvidenciasMC').modal({backdrop: 'static', keyboard: false, show: true});
+      WaitMe_Hide("#TbPading")
+      for(var i=0; i<data.Evidencias.length; i++)
+      {
+        $('#SubirEvidenciaMC').append(`<div class="col-sm-5 col-lg-5 col-md-5">
+                              	<div class="kt-portlet kt-portlet--height-fluid">
+                                <h5>Estatus: <strong>${data.Evidencias[i].Status}</strong></h5>
+                              		<div class="kt-portlet__head" id="headUppyTitulo">
+                              			<div class="kt-portlet__head-label">
+                              				<h3 class="kt-portlet__head-title" id='${data.Evidencias[i].Delivery.replace(/ /g, "")}' data-status="${data.Evidencias[i].Status}" data-evidencia="${data.Evidencias[i].TipoEvidencia}">
+                              					${data.Evidencias[i].Delivery.replace(/ /g, "")}
+                              				</h3>
+                              			</div>
+                              		</div>
+                              			<div class="kt-portlet__body">
+                              				<div class="row" id="prueba">
+                              				</div>
+                              				<div class="kt-uppy verificar" id="uploadEvidencesProveedor${data.Evidencias[i].Delivery.replace(/ /g, "")}">
+                              					<div  class="kt-uppy__dashboard"></div>
+                              					<div class="kt-uppy__progress"></div>
+                              				</div>
+                                      <input type="text" id="ComentarioEvidencia" class="form-control" placeholder="Comentario" disabled value="${data.Evidencias[i].ComentarioRechazo}">
+                              			</div>
+                              	</div>
+                                </div>`);
+          $(`#${data.Evidencias[i].Delivery.replace(/ /g, "")}`).data('idpedido', data.Evidencias[i].XD_IDPedido)
+          $(`#${data.Evidencias[i].Delivery.replace(/ /g, "")}`).data('idviaje', data.Evidencias[i].IDViaje)
+          $(`#${data.Evidencias[i].Delivery.replace(/ /g, "")}`).data('tipoevidencia', data.Evidencias[i].TipoEvidencia)
+          data.Evidencias[i].Status == 'Pendiente' || data.Evidencias[i].Status == 'Rechazada' ? uploadEvidences(`#uploadEvidencesProveedor${data.Evidencias[i].Delivery.replace(/ /g, "")}`, `${data.Evidencias[i].Delivery.replace(/ /g, "")}`) : ($(`#uploadEvidencesProveedor${data.Evidencias[i].Delivery.replace(/ /g, "")}`).append(`<div class="row">
+            <div class="col-md-4" ><img src="/static/img/pdf-2.png" height="150px" width="150px" style="position:relative; left:70px; bottom:20px"></div>
+            </div>`))
+      }
+      WaitMe_Hide('#TbPadingMC');
+    }
+  }).catch(function(ex){
+    console.log(ex);
+    WaitMe_Hide('#TbPadingMC');
   });
 }

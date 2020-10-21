@@ -14,6 +14,7 @@ class CartaNoAdeudoTransportistas(models.Model):
     RutaCartaNoAdeudo = models.CharField(max_length=200)
     Status = models.CharField(max_length=100)
     ComentarioRechazo = models.CharField(max_length=300, default=None)
+    Tipo = models.CharField(max_length=15)
 
     class Meta:
         db_table = "CartaNoAdeudoTransportistas"
