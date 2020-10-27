@@ -624,6 +624,7 @@ function CleanModal()
  $('#ComplementosPagos').data("rutaarchivoXML", "");
  $('#ComplementosPagos').data("rutaarchivoPDF", "");
  rutaComprobante = "";
+ $("#NotaCredito").prop('checked', false);
 }
 //funcion para mostrar u ocultar el input del timpo de cambio
 function mostrarTipoCambio()
@@ -946,6 +947,7 @@ function savePagoxProveedor()  {
     RutaComprobante: rutaComprobante,
     Proveedor: proveedor,
     IDProveedor: proveedor,
+    IsNotaCredito: $('#NotaCredito').is(":checked")
   }
 
   fetch("/EstadosdeCuenta/SavePagoxProveedor", {
@@ -1009,6 +1011,8 @@ function ValidarFactura(IDFactura, btn) {
         timer: 2500
       })
       WaitMe_Hide('#TbPading');
+      const error = new Error('Hubo un error validando la factura')
+      throw error
     }
 
   }).then(function(data){

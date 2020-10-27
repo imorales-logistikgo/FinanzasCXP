@@ -265,14 +265,14 @@ $('#TableReportePagos').DataTable({
       "targets": [6],
       "visible": false,
       "mRender": function (data, type, full) {
-        return $(full[12]).data("americano") == "True" ? 'IsAmericano': full[6];
+        return $(full[12]).data("americano") == "True" ? 'IsAmericano': $(full[12]).data("status") == "NotaCredito" ? 'Nota de credito' : full[6];
       }
     },
      {
       "targets": [7],
       "visible": false,
       "mRender": function (data, type, full) {
-        return  $(full[12]).data("americano") == "True" ? 'IsAmericano': full[7];
+        return  $(full[12]).data("americano") == "True" ? 'IsAmericano': $(full[12]).data("status") == "NotaCredito" ? 'Nota de credito' : full[7];
       }
     },
     {
@@ -307,7 +307,7 @@ $('#TableReportePagos').DataTable({
         if(UserRol == "Contabilidad")
           return '';
         else
-          return (full[6] != "" || $(full[12]).data("americano") == "True" ? '':`<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-totalpago="${full[3]}" data-vercomplementoxml="${full[6]}" data-vercomplementopdf="${full[7]}" data-idpagocomplementos="`+idPago+`" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`);
+          return (full[6] != "" || $(full[12]).data("americano") == "True" || $(full[12]).data("status") == "NotaCredito" ? '':`<button type ="button" id="btnComplementos" class="btn btn-success btn-elevate btn-pill btn-sm" data-totalpago="${full[3]}" data-vercomplementoxml="${full[6]}" data-vercomplementopdf="${full[7]}" data-idpagocomplementos="`+idPago+`" data-toggle="modal" data-target="#ModalComplementos" data-backdrop="static" data-keyboard="false"><i class="fas fa-upload"></i></button>`);
       }
     },
     {

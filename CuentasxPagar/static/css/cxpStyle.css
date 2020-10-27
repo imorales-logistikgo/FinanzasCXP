@@ -93,6 +93,9 @@ input[name="checkEC"]:checked
 #EDP{
   padding-left: 180px;
 }
+#NotaCreditoCXP{
+  padding-left: 380px;
+}
 
 
 @media only screen and (min-width: 1300px) {

@@ -189,7 +189,6 @@ def GetFacturasByFilters(request):
 	Proveedores = json.loads(request.GET["Proveedor"])
 	Status = json.loads(request.GET["Status"])
 	Moneda = json.loads(request.GET["Moneda"])
-	print(Proveedores)
 	if "Year" in request.GET:
 		arrMonth = json.loads(request.GET["arrMonth"])
 		Year = request.GET["Year"]
@@ -311,10 +310,12 @@ def SavePagoxProveedor(request):
 		newPago.RutaComprobante = jParams["RutaComprobante"]
 	newPago.Comentarios = jParams["Comentarios"]
 	newPago.TipoCambio = jParams["TipoCambio"]
-	NombrePro = Proveedor.objects.filter(IDTransportista = jParams["Proveedor"]).get()
+	NombrePro = Proveedor.objects.filter(IDTransportista=jParams["Proveedor"]).get()
 	newPago.NombreCortoProveedor = NombrePro.NombreComercial
-	newPago.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
-	newPago.IDProveedor = Proveedor.objects.get(IDTransportista = jParams["IDProveedor"])
+	newPago.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario=request.user.idusuario)
+	newPago.IDProveedor = Proveedor.objects.get(IDTransportista=jParams["IDProveedor"])
+	if jParams["IsNotaCredito"]:
+		newPago.Status = "NotaCredito"
 	newPago.save()
 	return HttpResponse(newPago.IDPago)
 
@@ -360,10 +361,13 @@ def ValidarFactura(request):
 			if Factura:
 				Factura.IsAutorizada = True
 				Factura.Status = 'APROBADA'
+				Factura.IDUsuarioAprueba = AdmonUsuarios.objects.get(idusuario=request.user.idusuario)
+				Factura.FechaAprobacion = datetime.datetime.now()
 				Factura.save()
 			Status = Factura.Status
-			return JsonResponse({"Status":Status})
+			return JsonResponse({"Status": Status})
 	except Exception as e:
+		print(e)
 		transaction.rollback(using='users')
 		return HttpResponse(status=500)
 
@@ -447,22 +451,22 @@ def FixIDProveedor(request):
 # 		except Exception as e:
 # 			print(e)
 
-def leerExcel(reques):
-	archivo_excel = pd.read_excel('static/json/UUIDErrorMAriel.xlsx')
-	# values = archivo_excel['Factura']
-	try:
-		for i in archivo_excel.index:
-			a = FacturasxProveedor.objects.filter(IDFactura = archivo_excel['IDFactura'][i]).exclude(Status = 'CANCELADA').get()
-			a.UUID = archivo_excel['Correcto'][i]
-			a.save()
-			print(a.IDFactura)
-			# if a.UUID is None:
-				# a.UUID = archivo_excel['UUID'][i]
-				# a.save()
-				# print(a.Folio)
-	except Exception as e:
-		print(archivo_excel['IDFactura'][i])
-		print(e)
+# def leerExcel(reques):
+# 	archivo_excel = pd.read_excel('static/json/UUIDErrorMAriel.xlsx')
+# 	# values = archivo_excel['Factura']
+# 	try:
+# 		for i in archivo_excel.index:
+# 			a = FacturasxProveedor.objects.filter(IDFactura = archivo_excel['IDFactura'][i]).exclude(Status = 'CANCELADA').get()
+# 			a.UUID = archivo_excel['Correcto'][i]
+# 			a.save()
+# 			print(a.IDFactura)
+# 			# if a.UUID is None:
+# 				# a.UUID = archivo_excel['UUID'][i]
+# 				# a.save()
+# 				# print(a.Folio)
+# 	except Exception as e:
+# 		print(archivo_excel['IDFactura'][i])
+# 		print(e)
 
 	# 	z = {}
 	# 	z['Folio'] = a.Folio

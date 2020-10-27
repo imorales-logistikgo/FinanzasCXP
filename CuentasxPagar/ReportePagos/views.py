@@ -17,11 +17,11 @@ from datetime import datetime as dt
 def ReportePagos(request):
 	if request.user.roles == 'Proveedor':
 		# return redirect('Actualizacion')
-		Pagos = PagosxProveedor.objects.exclude(Status = "CANCELADA").filter(IDProveedor = request.user.IDTransportista)
+		Pagos = PagosxProveedor.objects.exclude(Status="CANCELADA").filter(IDProveedor=request.user.IDTransportista)
 		Folios = list()
 		for Pago in Pagos:
 			FoliosFactura = ""
-			for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago = Pago.IDPago).select_related('IDFactura'):
+			for Factura in RelacionPagosFacturasxProveedor.objects.filter(IDPago=Pago.IDPago).select_related('IDFactura'):
 				FoliosFactura += Factura.IDFactura.Folio + ", "
 			FoliosFactura = FoliosFactura[:-2]
 			Folios.append(FoliosFactura)
