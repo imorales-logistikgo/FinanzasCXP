@@ -171,12 +171,16 @@ def AprobarCarta(request):
     try:
         jParams = json.loads(request.body.decode('utf-8'))
         with transaction.atomic(using='users'):
-            CartaAprobar = CartaNoAdeudoTransportistas.objects.get(IDCartaNoAdeudo = jParams["IDCarta"])
+            CartaAprobar = CartaNoAdeudoTransportistas.objects.get(IDCartaNoAdeudo=jParams["IDCarta"])
             CartaAprobar.Status = "APROBADA"
             CartaAprobar.IDUsuarioAprueba = request.user.idusuario
             CartaAprobar.FechaAprueba = datetime.datetime.now()
             CartaAprobar.save()
-            return HttpResponse(status=200)
+        transaction.commit(using='users')
+        print(CartaAprobar.Status)
+        if CartaAprobar.Tipo == "MesaControl":
+            MC.BloquearProveedor(CartaAprobar.IDTransportista.IDTransportista)
+        return HttpResponse(status=200)
     except Exception as e:
         print(e)
         transaction.rollback(using='users')
@@ -186,13 +190,16 @@ def RechazarCarta(request):
     try:
         jParams = json.loads(request.body.decode('utf-8'))
         with transaction.atomic(using='users'):
-            CartaRechazar = CartaNoAdeudoTransportistas.objects.get(IDCartaNoAdeudo = jParams["IDCarta"])
+            CartaRechazar = CartaNoAdeudoTransportistas.objects.get(IDCartaNoAdeudo=jParams["IDCarta"])
             CartaRechazar.Status = 'RECHAZADA'
             CartaRechazar.IDUsuarioRechaza = request.user.idusuario
             CartaRechazar.FechaRechaza = datetime.datetime.now()
             CartaRechazar.ComentarioRechazo = jParams["ComentarioRechazo"]
             CartaRechazar.save()
-            return HttpResponse(status=200)
+        transaction.commit(using='users')
+        if CartaRechazar.Tipo == "MesaControl":
+            MC.BloquearProveedor(CartaRechazar.IDTransportista.IDTransportista)
+        return HttpResponse(status=200)
     except Exception as e:
         print(e)
         transaction.rollback(using='users')
@@ -224,6 +231,7 @@ def upload(request):
     except Exception as e:
         print(e)
         return HttpResponse(status=500)
+
 
 # def readIMG(salf):
 #     # pytesseract.pytesseract.tesseract_cmd = r'C:\repositorioLGK\FinanzasCXP'

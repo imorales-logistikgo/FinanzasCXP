@@ -32,6 +32,7 @@ def GetPendientesEnviar(request):
     elif request.user.roles == 'users':
         return HttpResponse(status=403)
     elif request.user.roles == 'Proveedor' or 'CXP' or request.user.is_superuser:
+        CartaMesaControl.BloquearProveedor(request.user.IDTransportista) if request.user.roles == 'Proveedor' else ""
         PendingToSend = View_PendientesEnviarCxP.objects.filter(Status = 'FINALIZADO', IsEvidenciaDigital = 1, IsEvidenciaFisica = 1, IsFacturaProveedor = 0, Moneda = 'MXN', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
         ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
         DiasDelMesbloquear = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]-1
@@ -165,7 +166,7 @@ def SaveFacturaxProveedor(request):
     newFactura.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
     newFactura.IDProveedor =  jParams["IDProveedor"]
     newFactura.TotalXML = jParams["TotalXML"]
-    newFactura.UUID = jParams["UUID"] if request.user.idusuario != 3126 or request.user.idusuario != 3254 else ""
+    newFactura.UUID = "" if request.user.idusuario == 3126 or request.user.idusuario == 3254 else jParams["UUID"]
     newFactura.Status = 'DEPURADO' if(jParams["Estado"] == 'YU') else 'PENDIENTE'
     newFactura.save()
     return HttpResponse(newFactura.IDFactura)

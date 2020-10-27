@@ -333,11 +333,11 @@ def SavePagoxFactura(request):
 		newPagoxFactura.FechaAlta = datetime.datetime.now()
 		newPagoxFactura.save()
 		newRelacionPagoxFactura = RelacionPagosFacturasxProveedor()
-		newRelacionPagoxFactura.IDPago = PagosxProveedor.objects.get(IDPago = jParams["IDPago"])
+		newRelacionPagoxFactura.IDPago = PagosxProveedor.objects.get(IDPago=jParams["IDPago"])
 		newRelacionPagoxFactura.IDPagoxFactura = newPagoxFactura
-		Factura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
+		Factura = FacturasxProveedor.objects.get(IDFactura=Pago["IDFactura"])
 		Factura.Saldo -= Decimal(float(Pago["Total"])/float(jParams["TipoCambio"]) if (Factura.Moneda == 'USD') else Pago["Total"])
-		newRelacionPagoxFactura.IDFactura = FacturasxProveedor.objects.get(IDFactura = Pago["IDFactura"])
+		newRelacionPagoxFactura.IDFactura = FacturasxProveedor.objects.get(IDFactura=Pago["IDFactura"])
 		if truncate(float(Factura.Saldo), 2) == 0:
 			Factura.Status = "PAGADA"
 		else:
@@ -356,7 +356,7 @@ def ValidarFactura(request):
 	try:
 		with transaction.atomic(using='users'):
 			IDFactura = json.loads(request.body.decode('utf-8'))["IDFactura"]
-			Factura = FacturasxProveedor.objects.get(IDFactura = IDFactura)
+			Factura = FacturasxProveedor.objects.get(IDFactura=IDFactura)
 			if Factura:
 				Factura.IsAutorizada = True
 				Factura.Status = 'APROBADA'
@@ -365,20 +365,20 @@ def ValidarFactura(request):
 			return JsonResponse({"Status":Status})
 	except Exception as e:
 		transaction.rollback(using='users')
-		return HttpResponse(status = 500)
+		return HttpResponse(status=500)
 
 
 
 
 def CheckFolioDuplicado(request):
-	IsDuplicated = PagosxProveedor.objects.filter(Folio = request.GET["Folio"]).exclude(Status = "CANCELADA").exists()
-	return JsonResponse({'IsDuplicated' : IsDuplicated})
+	IsDuplicated = PagosxProveedor.objects.filter(Folio=request.GET["Folio"]).exclude(Status="CANCELADA").exists()
+	return JsonResponse({'IsDuplicated': IsDuplicated})
 
 
 def EnviarCorreoProveedor(IDPagoEmail):
-	DatosPagoProveedor = PagosxProveedor.objects.get(IDPago = IDPagoEmail)
+	DatosPagoProveedor = PagosxProveedor.objects.get(IDPago=IDPagoEmail)
 	try:
-		CorreoProveedor = list(AdmonCorreosxTransportista.objects.filter(IDTransportista = DatosPagoProveedor.IDProveedor.IDTransportista, IsEnviarCorreo = 1).values('Correo'))
+		CorreoProveedor = list(AdmonCorreosxTransportista.objects.filter(IDTransportista=DatosPagoProveedor.IDProveedor.IDTransportista, IsEnviarCorreo=1).values('Correo'))
 		if CorreoProveedor != []:
 			SendEmail = list()
 			for new in CorreoProveedor:

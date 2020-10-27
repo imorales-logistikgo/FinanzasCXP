@@ -3,8 +3,8 @@ import time
 import uuid
 import calendar
 from io import BytesIO
+import requests
 
-import schedule
 from azure.storage.blob import BlobClient
 from django.db import transaction
 from django.http import HttpResponse, Http404, JsonResponse
@@ -28,7 +28,7 @@ def CartaNoAdeudoMC(request):
         CartasByProveedor = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista,
                                                                        Tipo='MesaControl')
         if FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC is not None:
-            IsDescargaCartaNoAdeudo = True if FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC.month - 1 == datetime.datetime.now().month - 1 else False
+            IsDescargaCartaNoAdeudo = BtnDescargaHL(FechaDescargaCarta)
         else:
             IsDescargaCartaNoAdeudo = False
         return render(request, 'CartaNoAdeudoMC.html',
@@ -45,14 +45,14 @@ def CartaNoAdeudoMC(request):
 def CreateCartaNoadeudoMC(request):
     try:
         FechaDescargaCarta = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
-        if FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC is not None and FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC.month - 1 == datetime.datetime.now().month - 1:
+        if FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC is not None and BtnDescargaHL(FechaDescargaCarta):
             resp = '<h2>Solo se puede descargar la carta una sola vez</h2>'
             return HttpResponse(resp)
         else:
             with transaction.atomic(using='users'):
-                # FechaDescargaC = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
-                # FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC = datetime.datetime.now()
-                # FechaDescargaCarta.save()
+                FechaDescargaC = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
+                FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC = datetime.datetime.now()
+                FechaDescargaCarta.save()
                 w, h = A4
                 date = datetime.datetime.now()
                 months = (
@@ -233,22 +233,24 @@ def GetMonth(request):
     NumberMonth = 1 if 21 <= datetime.datetime.now().day <= \
                        calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[
                            1] else 2 if 1 <= datetime.datetime.now().day <= 5 or 6 <= datetime.datetime.now().day <= 20 else 1
-    print(NumberMonth)
     return NumberMonth
 
+def BtnDescargaHL(data):
+    CurrentDay = datetime.datetime.now().day
+    CurrentMonth = datetime.datetime.now().month
+    LastDayOfMonth = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
+    if 21 <= CurrentDay <= LastDayOfMonth:
+        ReturnData = data.FechaDescargaCartaNoAdeudoMC.day in range(21, LastDayOfMonth) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
+    elif 1 <= CurrentDay <= 5:
+        ReturnData = data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth-1 or data.FechaDescargaCartaNoAdeudoMC.day in range(1, 5) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
+    elif 6 <= CurrentDay <= 20:
+        ReturnData = data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth-1 or data.FechaDescargaCartaNoAdeudoMC.day in range(6, 20) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
+    return ReturnData
 
 
-#def job():
- #   print("hello world")
-
-# schedule.every(10).minutes.do(job)
-# schedule.every().hour.do(job)
-# schedule.every().day.at("10:30").do(job)
-# schedule.every(5).to(10).minutes.do(job)
-# schedule.every().monday.do(job)
-# schedule.every().wednesday.at("13:15").do(job)
-#schedule.every().minute.at(":17").do(job)
-
-#while True:
- #   schedule.run_pending()
-    # time.sleep(60)
+def BloquearProveedor(IDTransportista):
+    data = {'IDTransportista': IDTransportista}
+    headers = {'Content-type': 'application/json'}
+    response = requests.post('http://api-pe-demo.logistikgo.com/Status/', data=data)
+    # response = requests.post('http://api-pe.logistikgo.com/Status/', data=data_json, headers=headers)
+    return response
