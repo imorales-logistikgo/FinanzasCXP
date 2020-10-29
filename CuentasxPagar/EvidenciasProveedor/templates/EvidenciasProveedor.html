@@ -301,7 +301,7 @@ kt-menu__item--active
 
 			{% endif %}
 
-{% if request.user.roles == "CXP" or request.user.username == "mmesa@logistikgo" or request.user.is_superuser %}
+{% if request.user.roles == "CXP" or request.user.roles == "MesaControl" or request.user.is_superuser %}
 <div id="divTablaEvidenciaCXP">
 	{% include "TablaEvidenciasCXP.html" %}
 </div>

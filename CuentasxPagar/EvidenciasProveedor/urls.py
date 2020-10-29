@@ -1,3 +1,4 @@
+from django.conf.urls import url
 from django.urls import path, include
 from . import views
 
@@ -24,5 +25,6 @@ urlpatterns = [
     path('fechaevdigital', views.fechaevdigital, name='fechaevdigital'),
     path('GetEvidenciasCXP', views.GetEvidenciasCXP, name='GetEvidenciasCXP'),
     path('GetObservacionesByPedidos', views.GetObservacionesByPedidos, name='GetObservacionesByPedidos'),
-    path('GetEvidenciasMC', views.GetEvidenciasMC, name='GetEvidenciasMC')
+    path('GetEvidenciasMC', views.GetEvidenciasMC, name='GetEvidenciasMC'),
+    url(r'^DownloadHojaLiberacion/(?P<IDViaje>[\w-]+)/(?P<Folio>[\w-]+)/$', views.DownloadHojaLiberacion),
 ]

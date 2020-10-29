@@ -21,6 +21,7 @@
 						<th class="text-center">Folio</th>
 						<th class="text-center">Proveedor</th>
 						<th class="text-cener">Evidencia Digital</th>
+						<th class="text-center">Hoja Liberación</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -28,7 +29,8 @@
 					<tr data-idviaje ="{{Evidencia.IDViaje}}" data-folio = "{{Evidencia.Folio}}">
 						<td class="text-center">{{Evidencia.Folio}}</td>
                         <td class="text-center">{{Evidencia.RazonSocial}}</td>
-						<td class="text-center">{% if Evidencia.IsEvidenciaDigital %} <button type="button" class="btn btn-success btn-elevate btn-pill btn-sm" id="BtnShowEvidencia"><i class="fa fa-check"></i></button>{%endif%}</td>
+						<td class="text-center">{% if Evidencia.IsEvidenciaDigital %} <button type="button" class="btn btn-success btn-elevate btn-pill btn-sm" id="BtnShowEvidencia" name="Mostrar"><i class="fa fa-check"></i></button>{%endif%}</td>
+						<td class="text-center"><button type="button" class="btn btn-primary btn-elevate btn-pill btn-sm" id="BtnDownloadHojaLiberacion" name="Descargar"><i class="fa fa-download"></i></button></td>
 					</tr>
 					{%endfor%}
 				</tbody>

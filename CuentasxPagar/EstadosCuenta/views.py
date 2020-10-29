@@ -358,12 +358,14 @@ def ValidarFactura(request):
 		with transaction.atomic(using='users'):
 			IDFactura = json.loads(request.body.decode('utf-8'))["IDFactura"]
 			Factura = FacturasxProveedor.objects.get(IDFactura=IDFactura)
-			if Factura:
+			if Factura and Factura.Status == "PENDIENTE":
 				Factura.IsAutorizada = True
 				Factura.Status = 'APROBADA'
 				Factura.IDUsuarioAprueba = AdmonUsuarios.objects.get(idusuario=request.user.idusuario)
 				Factura.FechaAprobacion = datetime.datetime.now()
 				Factura.save()
+			else:
+				return HttpResponse(status=500)
 			Status = Factura.Status
 			return JsonResponse({"Status": Status})
 	except Exception as e:

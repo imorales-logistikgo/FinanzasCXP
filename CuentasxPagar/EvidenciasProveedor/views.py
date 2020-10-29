@@ -1,14 +1,15 @@
+import urllib
 import uuid
-from io import BytesIO
+import io
 
 from azure.storage.blob import BlobClient
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from XD_Viajes.models import XD_Viajes, XD_PedidosxViajes, XD_Pedidos, XD_AccesoriosxViajes, XD_EvidenciasxPedido, XD_EvidenciasxViaje
+from XD_Viajes.models import XD_Viajes, XD_PedidosxViajes, XD_Pedidos, XD_AccesoriosxViajes, XD_EvidenciasxPedido, XD_EvidenciasxViaje, Ext_Viajes_MesaControl as Ext_Viajes_MesaControlXD
 from PendientesEnviar.models import PendientesEnviar, RelacionConceptoxProyecto
 from usersadmon.models import AdmonUsuarios,Proveedor, View_EvidenciasCxP
-from bkg_viajes.models import Bro_Viajes, Bro_EvidenciasxViaje
+from bkg_viajes.models import Bro_Viajes, Bro_EvidenciasxViaje, Ext_Viajes_MesaControl
 import json, datetime
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
@@ -1033,3 +1034,66 @@ def GetEvidenciasMC(request):
     except Exception as e:
         print(e)
         return HttpResponse(status=500)
+
+
+def DownloadHojaLiberacion(request, **kwargs):
+    IDViaje = kwargs.get('IDViaje', 0)
+    Folio = kwargs.get('Folio', None)
+    if Folio[:3] == "FTL" or Folio[:3] == "FTI":
+        GetDatosViaje = Bro_Viajes.objects.get(IDBro_Viaje=IDViaje)
+        if GetDatosViaje.IsEvidenciasDigitales and GetDatosViaje.IsEvidenciasFisicas and GetDatosViaje.IsDescargaHojaLiberacion and not Ext_Viajes_MesaControl.objects.filter(IDBro_Viaje=IDViaje, IsDescargaHojaLiberacionMC=True).exists() if request.user.roles == "MesaControl" else not Ext_Viajes_MesaControl.objects.filter(IDBro_Viaje=IDViaje, IsDescargaHojaLiberacionCXP=True).exists():
+            URLHojaLiberacion = GetDatosViaje.RutaHojaLiberacion
+            HojaLiberacion = urllib.request.urlopen(URLHojaLiberacion)
+            response = HttpResponse(HojaLiberacion.read(), content_type="application/pdf")
+            response['Content-Disposition'] = 'attachment; filename="HojaLiberacion.pdf"'
+            resp = SaveExtViajes(request, IDViaje, "BKG")
+            return response if resp == 200 else resp
+        else:
+            resp = '<h2>La hoja de liberacion no cuenta con todas las validaciones para descargar</h2>'
+            return HttpResponse(resp)
+    elif Folio[:3] == "XDD":
+        GetDatosViaje = XD_Viajes.objects.get(XD_IDViaje=IDViaje)
+        if GetDatosViaje.IsEvidenciaPedidos and GetDatosViaje.IsEvidenciaFisica and GetDatosViaje.IsDescargaHojaLiberacion and not Ext_Viajes_MesaControlXD.objects.filter(XD_IDViaje=IDViaje, IsDescargaHojaLiberacionMC=True).exists() if request.user.roles == "MesaControl" else not Ext_Viajes_MesaControlXD.objects.filter(XD_IDViaje=IDViaje, IsDescargaHojaLiberacionCXP=True).exists():
+            URLHojaLiberacion = GetDatosViaje.RutaHojaEmbarqueCosto
+            HojaLiberacion = urllib.request.urlopen(URLHojaLiberacion)
+            response = HttpResponse(HojaLiberacion.read(), content_type="application/pdf")
+            response['Content-Disposition'] = 'attachment; filename="HojaLiberacion.pdf"'
+            resp = SaveExtViajes(request, IDViaje, "XD")
+            return response if resp == 200 else resp
+        else:
+            resp = '<h2>La hoja de liberacion no cuenta con todas las validaciones para descargar</h2>'
+            return HttpResponse(resp)
+    else:
+        resp = '<h2>Error al descargar la hoja de liberación</h2>'
+        return HttpResponse(resp)
+
+
+def SaveExtViajes(request, IDViaje, Proyecto):
+    try:
+        with transaction.atomic(using='bkg_viajesDB') if Proyecto == "BKG" else transaction.atomic(using='XD_ViajesDB'):
+            if Proyecto == "BKG":
+                SaveExtViajeMC = Ext_Viajes_MesaControl() if not Ext_Viajes_MesaControl.objects.filter(IDBro_Viaje=IDViaje).exists() else Ext_Viajes_MesaControl.objects.get(IDBro_Viaje=IDViaje)
+                SaveExtViajeMC.IDBro_Viaje = Bro_Viajes.objects.get(IDBro_Viaje=IDViaje)
+            else:
+                SaveExtViajeMC = Ext_Viajes_MesaControlXD() if not Ext_Viajes_MesaControlXD.objects.filter(XD_IDViaje=IDViaje).exists() else Ext_Viajes_MesaControlXD.objects.get(XD_IDViaje=IDViaje)
+                SaveExtViajeMC.XD_IDViaje = XD_Viajes.objects.get(XD_IDViaje=IDViaje)
+            if request.user.roles == "CXP":
+                SaveExtViajeMC.IDUsuarioCXP = AdmonUsuarios.objects.get(idusuario=request.user.idusuario)
+                SaveExtViajeMC.IsDescargaHojaLiberacionCXP = True
+                SaveExtViajeMC.FechaDescargaHojaLiberacionCXP = datetime.datetime.now()
+                SaveExtViajeMC.save()
+                return 200
+            elif request.user.roles == "MesaControl":
+                SaveExtViajeMC.IDUsuarioMC = AdmonUsuarios.objects.get(idusuario=request.user.idusuario)
+                SaveExtViajeMC.IsDescargaHojaLiberacionMC = True
+                SaveExtViajeMC.FechaDescargaHojaLiberacionMC = datetime.datetime.now()
+                SaveExtViajeMC.save()
+                return 200
+            else:
+                resp = '<h2>Ocurrio un error descargando la hoja de liberacion</h2>'
+                return HttpResponse(resp)
+    except Exception as e:
+        print(e)
+        transaction.rollback(using='bkg_viajesDB') if Proyecto == "BKG" else transaction.rollback(using='XD_ViajesDB')
+        resp = '<h2>Ocurrio un error descargando la hoja de liberacion, por favor intente de nuevo</h2>'
+        return HttpResponse(resp)

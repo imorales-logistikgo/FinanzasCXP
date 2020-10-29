@@ -439,12 +439,21 @@ $('#btnSaveReajuste').on('click', function(){
 
 //elementos a mostrar al abrirse el modeal de subir cobros
 $('#modalSubirPagos').on('shown.bs.modal', function(){
+
   $('#FechaPago').datepicker({
     format: 'yyyy/mm/dd',
     todayHighlight: true,
     language: 'es'
   });
+
   $("#FechaPago").datepicker('setDate', 'today' );
+
+  KTUtil.ready(function() {
+  var id = '#ComplementosPagos';
+  var verComp = '.uploaded-files-pagos';
+  KTUppyEvidencias.init(id, verComp);
+});
+
 
 });
 
@@ -505,7 +514,8 @@ $('#modalSubirPagos').on('hidden.bs.modal', function(){
  CleanModal()
  var id = '#ComplementosPagos';
  var verComp = '.uploaded-files-pagos';
- KTUppyEvidencias.init(id, verComp)
+ $(id).empty();
+// KTUppyEvidencias.init(id, verComp)
 });
 
 
@@ -591,11 +601,11 @@ $('input[name="Retencion"]').on('change', function(e){
 });
 
 //inicia el modal de subir complementos
-KTUtil.ready(function() {
-  var id = '#ComplementosPagos';
-  var verComp = '.uploaded-files-pagos';
-  KTUppyEvidencias.init(id, verComp);
-});
+//KTUtil.ready(function() {
+//  var id = '#ComplementosPagos';
+//  var verComp = '.uploaded-files-pagos';
+//  KTUppyEvidencias.init(id, verComp);
+//});
 
 $('input[name="TipoCambioPago"]').on('keyup change', function(){
   if($('input[name="TipoCambioPago"]').val() >=1)

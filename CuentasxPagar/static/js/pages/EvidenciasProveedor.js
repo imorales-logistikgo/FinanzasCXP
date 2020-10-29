@@ -19,17 +19,17 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
   });
 
 
-    $(document).on('click',"#BtnShowEvidencia",function(){
+    $(document).on('click',"#BtnShowEvidencia, #BtnDownloadHojaLiberacion",function(){
         var folio = $($(this).parents('tr')[0]).data('folio');
         var IDViaje = $($(this).parents('tr')[0]).data('idviaje');
 //        folio.includes('FTL') ? IDViaje = $($(this).parents('tr')[0]).data('idviajebkg') : IDViaje = $($(this).parents('tr')[0]).data('idviaje');
-        GetEvidenciasForCXP(IDViaje, folio.trim())
+        $(this)[0].name == "Mostrar" ? GetEvidenciasForCXP(IDViaje, folio.trim()) : $(this)[0].name == "Descargar" ? DownloadHojaLiberacion(IDViaje, folio.trim()): "";
     });
 
     $(document).on('click',"#UploadEvidenciaMC",function(){
         WaitMe_Show("#TbPading")
-         var IDViaje = $($(this).parents('tr')[0]).data('idviaje');
-         GetEvidenciaMC(IDViaje)
+        var IDViaje = $($(this).parents('tr')[0]).data('idviaje');
+        GetEvidenciaMC(IDViaje)
     });
 
 
@@ -505,3 +505,6 @@ function formatDataTable(){
      ]
   });
 }
+
+
+var DownloadHojaLiberacion = (IDViaje,Folio) => window.open(`/EvidenciasProveedor/DownloadHojaLiberacion/${IDViaje}/${Folio}/`)

@@ -1,6 +1,5 @@
 from django.db import models
-
-from usersadmon.models import Proveedor
+from usersadmon.models import AdmonUsuarios
 
 
 class Bro_Viajes(models.Model):
@@ -98,3 +97,17 @@ class Bro_EvidenciasxViaje(models.Model):
     class Meta:
         managed = False
         db_table = 'Bro_EvidenciasxViaje'
+
+
+class Ext_Viajes_MesaControl(models.Model):
+    IDBro_Viaje = models.OneToOneField(Bro_Viajes, on_delete=models.CASCADE, db_column='IDBro_Viaje', primary_key=True)
+    IDUsuarioCXP = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column='IDUsuarioCXP', related_name="IDUsuarioCXPBKG")
+    IDUsuarioMC = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column='IDUsuarioMC', related_name="IDUsuarioMCBKG")
+    IsDescargaHojaLiberacionCXP = models.BooleanField()
+    IsDescargaHojaLiberacionMC = models.BooleanField()
+    FechaDescargaHojaLiberacionCXP = models.DateTimeField()
+    FechaDescargaHojaLiberacionMC = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'Ext_Viajes_MesaControl'

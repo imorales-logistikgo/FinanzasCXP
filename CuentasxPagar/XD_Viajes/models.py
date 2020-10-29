@@ -133,3 +133,16 @@ class XD_EvidenciasxViaje(models.Model):
     class Meta:
         managed = False
         db_table = 'XD_EvidenciasxViaje'
+
+class Ext_Viajes_MesaControl(models.Model):
+    XD_IDViaje = models.OneToOneField(XD_Viajes, on_delete=models.CASCADE, db_column='XD_IDViaje', primary_key=True)
+    IDUsuarioCXP = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column='IDUsuarioCXP', related_name="IDUsuarioCXP")
+    IDUsuarioMC = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column='IDUsuarioMC',related_name="IDUsuarioMC")
+    IsDescargaHojaLiberacionCXP = models.BooleanField()
+    IsDescargaHojaLiberacionMC = models.BooleanField()
+    FechaDescargaHojaLiberacionCXP = models.DateTimeField()
+    FechaDescargaHojaLiberacionMC = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'Ext_Viajes_MesaControl'
