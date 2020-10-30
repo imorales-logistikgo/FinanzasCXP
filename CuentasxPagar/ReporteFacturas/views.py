@@ -13,42 +13,19 @@ from openpyxl.styles import Font, Fill, PatternFill, Alignment
 
 def ReporteFacturas(request):
 	if request.user.roles == 'Proveedor':
-		Facturas = View_ReporteFacturasCXP.objects.filter(IDProveedor = request.user.IDTransportista).exclude(Status = 'DEPURADO')
-		# listFacturas = FacturasToList(Facturas)
-		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
+		Facturas = View_ReporteFacturasCXP.objects.filter(IDProveedor=request.user.IDTransportista).exclude(Status='DEPURADO')
+		return render(request, 'ReporteFacturas.html', {'Facturas': Facturas, 'Rol': request.user.roles})
+	elif request.user.roles == 'CXP' or request.user.is_superuser:
+		Facturas = View_ReporteFacturasCXP.objects.exclude(Status__in=('CANCELADA', 'DEPURADO'))
+		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas, ContadorAprobadas = GetContadores()
 		Proveedores = Proveedor.objects.all()
-		return render(request, 'ReporteFacturas.html', {'Facturas': Facturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'Rol': request.user.roles})
+		return render(request, 'ReporteFacturas.html',
+					  {'Facturas': Facturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas,
+					   'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas,
+					   'ContadorPendientes': ContadorPendientes, 'ContadorAprobadas': ContadorAprobadas,
+					   'Rol': request.user.roles})
 	else:
-		Facturas = View_ReporteFacturasCXP.objects.exclude(Status__in= ('CANCELADA','DEPURADO'))
-		# listFacturas = FacturasToList(Facturas)
-		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas = GetContadores()
-		Proveedores = Proveedor.objects.all()
-		return render(request, 'ReporteFacturas.html', {'Facturas': Facturas, 'Proveedores': Proveedores, 'ContadorPagadas': ContadorPagadas, 'ContadorAbonadas': ContadorAbonadas, 'ContadorCanceladas': ContadorCanceladas, 'ContadorPendientes': ContadorPendientes, 'Rol': request.user.roles})
-
-
-
-def FacturasToList(Facturas):
-	listFacturas = list()
-	for Fact in Facturas:
-		Factura = {}
-		conFacturaxPartidas = RelacionFacturaProveedorxPartidas.objects.filter(IDFacturaxProveedor = Fact.IDFactura).select_related('IDPendienteEnviar')
-		Factura['Folio'] = Fact.Folio
-		Factura['Proveedor'] = Fact.NombreCortoProveedor
-		Factura['FechaFactura'] = Fact.FechaFactura
-		Factura["Subtotal"] = Fact.Subtotal
-		Factura["IVA"] = Fact.IVA
-		Factura["Retencion"] = Fact.Retencion
-		Factura["Status"] = Fact.Status
-		Factura['Total'] = Fact.Total
-		Factura['Viajes'] = ''
-		for PENDIENTE in conFacturaxPartidas:
-			Factura['Viajes'] += PENDIENTE.IDPendienteEnviar.Folio + ", "
-		Factura['Viajes'] = Factura['Viajes'][:-2]
-		Factura["ComentarioBaja"] = Fact.ComentarioBaja
-		listFacturas.append(Factura)
-	return listFacturas
-
-
+		return HttpResponse(status=403)
 
 def GetContadores():
 	AllFacturas = list(View_ReporteFacturasCXP.objects.values("Status").all())
@@ -56,7 +33,8 @@ def GetContadores():
 	ContadorPagadas = len(list(filter(lambda x: x["Status"] == "PAGADA", AllFacturas)))
 	ContadorAbonadas = len(list(filter(lambda x: x["Status"] == "ABONADA", AllFacturas)))
 	ContadorCanceladas = len(list(filter(lambda x: x["Status"] == "CANCELADA", AllFacturas)))
-	return ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas
+	ContadorAprobadas = len(list(filter(lambda x: x["Status"] == "APROBADA", AllFacturas)))
+	return ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas, ContadorAprobadas
 
 
 def GetFacturasByFilters(request):
@@ -66,18 +44,13 @@ def GetFacturasByFilters(request):
 	if "Year" in request.GET:
 		arrMonth = json.loads(request.GET["arrMonth"])
 		Year = request.GET["Year"]
-		Facturas = View_ReporteFacturasCXP.objects.filter(FechaFactura__month__in = arrMonth, FechaFactura__year = Year, Status__in = Status)#.exclude(Status = 'DEPURADO')
+		Facturas = View_ReporteFacturasCXP.objects.filter(FechaFactura__month__in=arrMonth, FechaFactura__year=Year, Status__in=Status, Moneda__in=Moneda)#.exclude(Status = 'DEPURADO')
 	else:
-		Facturas = View_ReporteFacturasCXP.objects.filter(FechaFactura__range = [datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')], Status__in = Status)#.exclude(Status = 'DEPURADO')
+		Facturas = View_ReporteFacturasCXP.objects.filter(FechaFactura__range=[datetime.datetime.strptime(request.GET["FechaFacturaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaFacturaHasta"],'%m/%d/%Y')], Status__in=Status, Moneda__in=Moneda)#.exclude(Status = 'DEPURADO')
 	if Proveedores:
-		Facturas = Facturas.filter(NombreCortoProveedor__in = Proveedores)
-	if Moneda:
-		Facturas = Facturas.filter(Moneda__in = Moneda)
-	# if Status:
-	# 	Facturas = Facturas.filter(Status__in = Status).exclude(Status = 'DEPURADO')
-	# listFacturas = FacturasToList(Facturas)
-	htmlRes = render_to_string('TablaReporteFacturas.html', {'Facturas':Facturas}, request = request,)
-	return JsonResponse({'htmlRes' : htmlRes})
+		Facturas = Facturas.filter(NombreCortoProveedor__in=Proveedores)
+	htmlRes = render_to_string('TablaReporteFacturas.html', {'Facturas':Facturas}, request=request,)
+	return JsonResponse({'htmlRes': htmlRes})
 
 
 def GetReporteTotales(request, **kwargs):
@@ -110,21 +83,21 @@ def GetReporteTotales(request, **kwargs):
 	ws['D1'].alignment = Alignment(horizontal='center')
 	cont=2
 	for Factura in Facturas:
-		NombreProv = Proveedor.objects.get(IDTransportista = Factura['IDProveedor'])
+		NombreProv = Proveedor.objects.get(IDTransportista=Factura['IDProveedor'])
 		Total = 0
 		TotalVencido = 0
 		TotalPorVencer = 0
-		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor = Factura['IDProveedor'], Status__in= StatusIN, FechaFactura__lte = FechaCorte):
+		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor=Factura['IDProveedor'], Status__in= StatusIN, FechaFactura__lte=FechaCorte):
 			if Moneda == "MXN":
 				Total = Total + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else Total + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else Total + TotalesFacturas.Saldo
 			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') <= FechaCorte and Moneda == "MXN":
 				TotalVencido = TotalVencido + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else TotalVencido + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalVencido + TotalesFacturas.Saldo
 			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') > FechaCorte and Moneda == "MXN":
 				TotalPorVencer = TotalPorVencer + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else TotalPorVencer + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalPorVencer + TotalesFacturas.Saldo
-		ws.cell(row=cont,column=1).value = NombreProv.RazonSocial
-		ws.cell(row=cont,column=2).value = round(TotalVencido,2)
-		ws.cell(row=cont,column=3).value = round(TotalPorVencer,2)
-		ws.cell(row=cont,column=4).value = round(Total,2)
+		ws.cell(row=cont, column=1).value = NombreProv.RazonSocial
+		ws.cell(row=cont, column=2).value = round(TotalVencido, 2)
+		ws.cell(row=cont, column=3).value = round(TotalPorVencer, 2)
+		ws.cell(row=cont, column=4).value = round(Total, 2)
 		cont = cont + 1
 	nombre_archivo ="ReporteFacturas.xlsx"
 	response = HttpResponse(content_type="application/ms-excel")

@@ -111,8 +111,6 @@ function getReportes(params) {
 }
 
 function formatTableReporteFacturas() {
-if (UserRol != 'Proveedor')
-{
   $("#TableReporteFacturas").DataTable({
     "scrollX": true,
     "scrollY": "395px",
@@ -127,93 +125,10 @@ if (UserRol != 'Proveedor')
       extend: 'excel',
       text: '<i class="fas fa-file-excel fa-lg"></i>',
     }
-    ],
-    columnDefs: [
-    {
-      "targets": [0],
-      "width": "10px",
-      "className": "dt-head-center dt-body-center"
-    },
-    {
-      "targets": 1,
-      //"width": "15px",
-      "className": "dt-head-center dt-body-center"
-    },
-    {
-      "targets": 2,
-      "width": "15px",
-      "className": "dt-head-center dt-body-center"
-    },
-
-    {
-      "targets": [3,4,5,6],
-      "width": "12px",
-      "className": "dt-head-center dt-body-right"
-    },
-    {
-      "targets": [7],
-      "width": "12px",
-      "className": "dt-head-center dt-body-center",
-      "mRender": function (data, type, full) {
-        return (full[7] == 'CANCELADA' ? 'RECHAZADA': full[7]);
-      }
-    },
-    ]
-  });
-}
-else
-{
-  $("#TableReporteFacturas").DataTable({
-    "scrollX": true,
-    "scrollY": "450px",
-    "language": {
-      "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
-    },
-    "lengthMenu": [200],
-    "responsive": false,
-    "paging": true,
-    "dom": 'Bfrtip',
-    "buttons": [
-    {
-      extend: 'excel',
-      text: '<i class="fas fa-file-excel fa-lg"></i>',
-    }
-    ],
-    columnDefs: [
-    {
-      "targets": [0],
-      "width": "10px",
-      "className": "dt-head-center dt-body-center"
-    },
-
-    {
-      "targets": [1,2],
-      "width": "15px",
-      "className": "dt-head-center dt-body-center"
-    },
-    {
-      "targets": 3,
-      "width": "15px",
-      "className": "dt-head-center dt-body-center",
-      "mRender": function (data, type, full) {
-        return (full[3] == 'CANCELADA' ? 'RECHAZADA': full[3]);
-      }
-    },
-    {
-      "targets": 4,
-      "width": "15px",
-      "className": "dt-head-center dt-body-center"
-    },
-    {
-      "targets": 5,
-      "width": "12px",
-      "className": "dt-head-center dt-body-left"
-    },
     ]
   });
 }
 
-}
 });
 
 

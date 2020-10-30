@@ -2,36 +2,40 @@
 <table class="table table-striped table-bordered" id="TableReporteFacturas">
 	<thead>
 		<tr>
-			<th>Folio Factura</th>
-			<th>Proveedor</th>
-			<th>Fecha Factura</th>
+			<th class="text-center">Folio Factura</th>
+			<th class="text-center">Proveedor</th>
+			<th class="text-center">Fecha Factura</th>
 			{% if Rol != "Proveedor" %}
-			<th>Subtotal</th>
-			<th>IVA</th>
-			<th>Retencion</th>
-			<th>Total</th>
+			<th class="text-center">Fecha Aprobacion</th>
+			<th class="text-center">Usuario Aprueba</th>
+			<th class="text-center">Subtotal</th>
+			<th class="text-center">IVA</th>
+			<th class="text-center">Retencion</th>
+			<th class="text-center">Total</th>
 			{% endif %}
-			<th>Status</th>
-			<th>Comentarios Rechazo</th>
-			<th>Folio viaje</th>
+			<th class="text-center">Status</th>
+			<th class="text-center">Comentarios Rechazo</th>
+			<th class="text-center">Folio viaje</th>
 			<!-- <th>Folio Pago</th> -->
 		</tr>
 	</thead>
 	<tbody>
 		{% for Factura in Facturas %}
 		<tr>
-			<td style="font-weight: bold;">{{Factura.Folio|safe}}</td>
-			<td>{{Factura.Proveedor|safe}}</td>
-			<td>{{Factura.FechaFactura|date:'Y/m/d'|safe}}</td>
+			<td class="text-center" style="font-weight: bold;">{{Factura.Folio|safe}}</td>
+			<td class="text-center">{{Factura.Proveedor|safe}}</td>
+			<td class="text-center">{{Factura.FechaFactura|date:'Y/m/d'|safe}}</td>
 			{% if Rol != "Proveedor" %}
-			<td>${{Factura.Subtotal|floatformat:"2"|intcomma|safe}}</td>
-			<td>${{Factura.IVA|floatformat:"2"|intcomma|safe}}</td>
-			<td>${{Factura.Retencion|floatformat:"2"|intcomma|safe}}</td>
-			<td>${{Factura.Total|floatformat:"2"|intcomma|safe}}</td>
+			<td class="text-center">{{Factura.FechaAprobacion|default:""|date:'Y/m/d'|safe}}</td>
+			<td class="text-center">{{Factura.UsuarioAprueba|default:""|safe}}</td>
+			<td class="text-center">${{Factura.Subtotal|floatformat:"2"|intcomma|safe}}</td>
+			<td class="text-center">${{Factura.IVA|floatformat:"2"|intcomma|safe}}</td>
+			<td class="text-center">${{Factura.Retencion|floatformat:"2"|intcomma|safe}}</td>
+			<td class="text-center">${{Factura.Total|floatformat:"2"|intcomma|safe}}</td>
 			{% endif %}
-			<td>{{Factura.Status|safe}}</td>
-			<td>{{Factura.ComentarioBaja|default:""|safe}}</td>
-			<td>{{Factura.Viajes|safe}}</td>
+			<td class="text-center">{{Factura.Status|safe}}</td>
+			<td class="text-center">{{Factura.ComentarioBaja|default:""|safe}}</td>
+			<td class="text-center">{{Factura.Viajes|safe}}</td>
 			<!-- <td></td> -->
 		</tr>
 		{%endfor%}
