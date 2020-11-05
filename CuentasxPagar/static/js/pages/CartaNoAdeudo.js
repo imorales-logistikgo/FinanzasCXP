@@ -8,6 +8,10 @@ $(document).ready(function(){
         window.open('/CartaNoAdeudoMC/CreateCartaNoadeudoMC')
     });
 
+    $(document).on("click", "#DownloadCarta",function(){
+        window.open(`/CartaNoAdeudoMC/CreateCartaNoadeudoMC?IDProveedor=${$(this).data('proveedor')}`)
+    });
+
     $("#TablaCartaNoAdeudo").DataTable({
         "scrollX": true,
         "scrollY": "400px"

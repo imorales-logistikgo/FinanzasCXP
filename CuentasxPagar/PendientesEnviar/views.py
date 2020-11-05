@@ -22,7 +22,7 @@ from CartaNoAdeudo.views import MesCartaNoAdeudo
 
 @login_required
 def GetPendientesEnviar(request):
-    CartaMesaControl.bloquearTransportistasByViaje(request)
+    # CartaMesaControl.bloquearTransportistasByViaje(request)
     if request.user.roles == 'MesaControl':
         return redirect('EvidenciasProveedor')
     elif request.user.roles == 'Contabilidad':
@@ -32,7 +32,7 @@ def GetPendientesEnviar(request):
     elif request.user.roles == 'users':
         return HttpResponse(status=403)
     elif request.user.roles == 'Proveedor' or 'CXP' or request.user.is_superuser:
-        CartaMesaControl.BloquearProveedor(request.user.IDTransportista) if request.user.roles == 'Proveedor' else ""
+        # CartaMesaControl.BloquearProveedor(request.user.IDTransportista) if request.user.roles == 'Proveedor' else ""
         PendingToSend = View_PendientesEnviarCxP.objects.filter(Status = 'FINALIZADO', IsEvidenciaDigital = 1, IsEvidenciaFisica = 1, IsFacturaProveedor = 0, Moneda = 'MXN', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
         ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
         DiasDelMesbloquear = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]-1
@@ -84,7 +84,7 @@ def GetPendientesEnviar(request):
                    'contadorSinEvidencias': ContadorSinEvidencias, 'Rol': request.user.roles,
                    'IDUsuraio_': request.user.idusuario, 'BloquearFacturas': RangoBloquearFacturas,
                    'MostrarAlerta': RangoDiasAlerta, 'MesAlerta': MesAlerta, 'DiaShowAlert': DiaAMostrarEnAlerta,
-                   'BloquearFacturasCarta': BloquearFacturasCarta, 'MesAlertaMotivoBloqueo':MesAlertaMotivoBloqueo})
+                   'BloquearFacturasCarta': BloquearFacturasCarta, 'MesAlertaMotivoBloqueo': MesAlertaMotivoBloqueo})
 
 
 def PendientesToList(PendingToSend):
@@ -409,7 +409,7 @@ def VerificarCartasStatusAprobada(GetLastCartaUpload2):
 
 
 
-#def CrearUsuariosTranportistas(request):
+# def CrearUsuariosTranportistas(request):
 # #editar un usuario
 #
 # 	#usuarios = User.User.objects.filter()
@@ -439,11 +439,15 @@ def VerificarCartasStatusAprobada(GetLastCartaUpload2):
 #
 # #fin editar usuario
 #
-#dar de alta un usuario
+
+
+
 
     # Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-    # Proveedores = Proveedor.objects.filter(RFC='203237764')
+#dar de alta un usuario
+## apartir de aqui crear proveedor
+    # Proveedores = Proveedor.objects.filter(RFC='MLT1103177V1')
     # for prov in Proveedores:
     #     try:
     #         oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
@@ -471,7 +475,7 @@ def VerificarCartasStatusAprobada(GetLastCartaUpload2):
     #             user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
     #             user.email = newUser.correo
     #             user.idusuario = newUser.idusuario
-    #             user.is_staff = True
+    #             user.is_staff = False
     #             user.roles = "Proveedor"
     #             user.IDTransportista = prov.IDTransportista
     #             user.save()

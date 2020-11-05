@@ -44,15 +44,16 @@ def CartaNoAdeudoMC(request):
 
 def CreateCartaNoadeudoMC(request):
     try:
-        FechaDescargaCarta = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
-        if FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC is not None and BtnDescargaHL(FechaDescargaCarta):
+        FechaDescargaCarta = Proveedor.objects.get(IDTransportista=request.user.IDTransportista if request.user.roles == "Proveedor" else request.GET["IDProveedor"])
+        if FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC is not None and BtnDescargaHL(FechaDescargaCarta) and request.user.roles == "Proveedor":
             resp = '<h2>Solo se puede descargar la carta una sola vez</h2>'
             return HttpResponse(resp)
         else:
             with transaction.atomic(using='users'):
-                FechaDescargaC = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
-                FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC = datetime.datetime.now()
-                FechaDescargaCarta.save()
+                # FechaDescargaC = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
+                if request.user.roles == "Proveedor":
+                    FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC = datetime.datetime.now()
+                    FechaDescargaCarta.save()
                 w, h = A4
                 date = datetime.datetime.now()
                 months = (
@@ -60,7 +61,7 @@ def CreateCartaNoadeudoMC(request):
                     "Noviembre",
                     "Diciembre")
                 day = date.day
-                NombreProveedor = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
+                NombreProveedor = Proveedor.objects.get(IDTransportista=request.user.IDTransportista if request.user.roles == "Proveedor" else request.GET["IDProveedor"])
                 month = months[date.month - 1]
                 year = date.year
                 messsage = "{} de {} del {}".format(day, month, year)
@@ -129,11 +130,12 @@ def upload(request):
         elif 1 <= datetime.datetime.now().day <= 5:
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
                 IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE', 'APROBADA'),
-                MesCartaNoAdeudo=views.MesCartaNoAdeudo(datetime.datetime.now(), 2, Tipo='MesaControl')).exists()
+                MesCartaNoAdeudo=views.MesCartaNoAdeudo(datetime.datetime.now(), 2), Tipo='MesaControl').exists()
         elif 6 <= datetime.datetime.now().day <= 20:
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
                 IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE', 'APROBADA'),
                 MesCartaNoAdeudo=views.MesCartaNoAdeudo(datetime.datetime.now(), 2), Tipo='MesaControl').exists()
+        print("yez")
         if GetLastCartaUpload:
             return HttpResponse(status=500)
         else:
@@ -161,7 +163,7 @@ def SaveCartaNoAdeudo(request,params):
                 Status__in=('PENDIENTE', 'APROBADA'),
                 MesCartaNoAdeudo=views.MesCartaNoAdeudo(
                     datetime.datetime.now(), 1), Tipo=jParams["Tipo"]).exists()
-            SaveMonth = True
+            SaveMonth = False
         elif 1 <= datetime.datetime.now().day <= 5:
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
                 IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE', 'APROBADA'),
@@ -171,7 +173,7 @@ def SaveCartaNoAdeudo(request,params):
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
                 IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE', 'APROBADA'),
                 MesCartaNoAdeudo=views.MesCartaNoAdeudo(datetime.datetime.now(), 2), Tipo=jParams["Tipo"]).exists()
-            SaveMonth = False
+            SaveMonth = True
         if GetLastCartaUpload:
             Response = 500
             return Response
@@ -182,9 +184,9 @@ def SaveCartaNoAdeudo(request,params):
                 SaveCarta.IDUsuarioAlta = request.user.idusuario
                 SaveCarta.FechaAlta = datetime.datetime.now()
                 if SaveMonth:
-                    SaveCarta.MesCartaNoAdeudo = views.MesCartaNoAdeudo(datetime.datetime.now(), 1)
-                else:
                     SaveCarta.MesCartaNoAdeudo = views.MesCartaNoAdeudo(datetime.datetime.now(), 2)
+                else:
+                    SaveCarta.MesCartaNoAdeudo = views.MesCartaNoAdeudo(datetime.datetime.now(), 1)
                 SaveCarta.RutaCartaNoAdeudo = jParams["RutaCartaNoAdeudo"]
                 SaveCarta.Status = 'PENDIENTE'
                 SaveCarta.Tipo = jParams["Tipo"]
@@ -240,11 +242,11 @@ def BtnDescargaHL(data):
     CurrentMonth = datetime.datetime.now().month
     LastDayOfMonth = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
     if 21 <= CurrentDay <= LastDayOfMonth:
-        ReturnData = data.FechaDescargaCartaNoAdeudoMC.day in range(21, LastDayOfMonth) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
+        ReturnData = data.FechaDescargaCartaNoAdeudoMC.day in range(21, LastDayOfMonth+1) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
     elif 1 <= CurrentDay <= 5:
-        ReturnData = data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth-1 or data.FechaDescargaCartaNoAdeudoMC.day in range(1, 5) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
+        ReturnData = data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth-1 or data.FechaDescargaCartaNoAdeudoMC.day in range(1, 6) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
     elif 6 <= CurrentDay <= 20:
-        ReturnData = data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth-1 or data.FechaDescargaCartaNoAdeudoMC.day in range(6, 20) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
+        ReturnData = data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth-1 or data.FechaDescargaCartaNoAdeudoMC.day in range(6, 21) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
     return ReturnData
 
 

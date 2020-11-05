@@ -15,7 +15,7 @@ def ReporteFacturas(request):
 	if request.user.roles == 'Proveedor':
 		Facturas = View_ReporteFacturasCXP.objects.filter(IDProveedor=request.user.IDTransportista).exclude(Status='DEPURADO')
 		return render(request, 'ReporteFacturas.html', {'Facturas': Facturas, 'Rol': request.user.roles})
-	elif request.user.roles == 'CXP' or request.user.is_superuser:
+	elif request.user.roles == 'CXP' or request.user.is_superuser or request.user.roles == 'Contabilidad':
 		Facturas = View_ReporteFacturasCXP.objects.exclude(Status__in=('CANCELADA', 'DEPURADO'))
 		ContadorPendientes, ContadorPagadas, ContadorAbonadas, ContadorCanceladas, ContadorAprobadas = GetContadores()
 		Proveedores = Proveedor.objects.all()

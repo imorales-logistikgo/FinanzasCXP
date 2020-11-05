@@ -177,9 +177,10 @@ def AprobarCarta(request):
             CartaAprobar.FechaAprueba = datetime.datetime.now()
             CartaAprobar.save()
         transaction.commit(using='users')
-        print(CartaAprobar.Status)
+
         if CartaAprobar.Tipo == "MesaControl":
-            MC.BloquearProveedor(CartaAprobar.IDTransportista.IDTransportista)
+            print(CartaAprobar.Status)
+            # MC.BloquearProveedor(CartaAprobar.IDTransportista.IDTransportista)
         return HttpResponse(status=200)
     except Exception as e:
         print(e)

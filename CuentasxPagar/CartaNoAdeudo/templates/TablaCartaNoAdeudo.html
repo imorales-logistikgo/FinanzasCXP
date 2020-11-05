@@ -11,6 +11,7 @@
 			<th></th>
 			<th></th>
 			<th></th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -26,9 +27,11 @@
 			{% if TipoCarta == 'CXP' %}
 			<td class="text-center">{%if CartaByProveedor.Status == "PENDIENTE" %}<button class="btn btn-success btn-elevate btn-pill btn-sm" title="Aprobar" id="BtnAprobarCarta" data-idcarta="{{CartaByProveedor.IDCartaNoAdeudo}}" name="AprobarCarta"><i class="fa fa-check"></i></button>{%endif%}</td>
 			<td class="text-center">{%if CartaByProveedor.Status == "PENDIENTE" %}<button class="btn btn-danger btn-elevate btn-pill btn-sm" title="Rechazar" id="BtnRechazarCarta" data-idcarta="{{CartaByProveedor.IDCartaNoAdeudo}}" name="RechazarCarta"><i class="fa fa-times"></i></button>{%endif%}</td>
+			<td></td>
 			{% elif TipoCarta == 'MesaControl' %}
 			<td class="text-center">{%if CartaByProveedor.Status == "PENDIENTE" %}<button class="btn btn-success btn-elevate btn-pill btn-sm" title="Aprobar" id="BtnAprobarCarta" data-idcarta="{{CartaByProveedor.IDCartaNoAdeudo}}" name="AprobarCarta"><i class="fa fa-check"></i></button>{%endif%}</td>
 			<td class="text-center">{%if CartaByProveedor.Status == "PENDIENTE" %}<button class="btn btn-danger btn-elevate btn-pill btn-sm" title="Rechazar" id="BtnRechazarCarta" data-idcarta="{{CartaByProveedor.IDCartaNoAdeudo}}" name="RechazarCarta"><i class="fa fa-times"></i></button>{%endif%}</td>
+			<td class="text-center"><button class="btn btn-primary btn-elevate btn-pill btn-sm" title="Descargar" id="DownloadCarta" data-idcarta="{{CartaByProveedor.IDCartaNoAdeudo}}" data-proveedor="{{CartaByProveedor.IDTransportista.IDTransportista}}" name="DownloadCarta"><i class="fa fa-download"></i></button></td>
 			{% else %}
 			<td></td>
 			<td></td>
