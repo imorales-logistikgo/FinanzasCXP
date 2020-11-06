@@ -14,6 +14,10 @@ def Indicadores(request):
 
 def ManualPDF(request):
     with open('static/pdf/Manual_cxp_proveedores.pdf', 'rb') as pdf:
+        #Demo
+    # with open('C:\inetpub\Proyects\WebApps\LogistikGO-Finanzas-demo\CuentasxPagar\static\pdf\Manual_cxp_proveedores.pdf','rb') as pdf:
+        #Produccion
+    # with open('C:\inetpub\Proyects\WebApps\LogistikGO-Finanzas\CuentasxPagar\static\pdf\Manual_cxp_proveedores.pdf', 'rb') as pdf:
         response = HttpResponse(pdf.read(), content_type='application/pdf')
         response['Content-Disposition'] = 'inline;filename=Manual_cxp_proveedores.pdf'
         return response
