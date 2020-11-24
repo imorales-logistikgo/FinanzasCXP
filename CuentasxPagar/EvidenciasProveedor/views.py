@@ -84,17 +84,6 @@ def FindFolioProveedorE(request):
                         for eachpedido in EvidenciaByObservacion:
                             if not XD_EvidenciasxPedido.objects.filter(XD_IDViaje=eachpedido["IDViaje"], IDXD_Pedido=eachpedido["XD_IDPedido"], Titulo='BITACORA').exists():
                                 arrFoliosEvidencias.append(eachpedido)
-                    # print(len(EvidenciaByObservacion))
-                    # arrExtraEv = list()
-                    # for eachpedido in GetDelivery:
-                    #     if eachpedido.XD_IDPedido.IDClienteFiscal == 5267 and not XD_EvidenciasxPedido.objects.filter(XD_IDViaje=eachpedido.XD_IDViaje.XD_IDViaje, IDXD_Pedido=eachpedido.XD_IDPedido.XD_IDPedido, Titulo='BITACORA').exists():
-                    #         EvidenciaByObservacion = GetObservacionesByPedidos(eachpedido.XD_IDPedido.XD_IDPedido)
-                    #         for eachEv in EvidenciaByObservacion:
-                    #             arrExtraEv.append(eachEv)
-                    # depurado = {each['Delivery']: each for each in arrExtraEv}.values()
-                    # listadepurada = list(depurado)
-                    # for eachEvComentario in listadepurada:
-                    #     arrFoliosEvidencias.append(eachEvComentario)
 
                     for Delivery in GetDelivery:
                         if len(XD_EvidenciasxPedido.objects.filter(IDXD_Pedido=Delivery.XD_IDPedido.XD_IDPedido, XD_IDViaje=Delivery.XD_IDViaje.XD_IDViaje)) >= 1:
@@ -115,8 +104,12 @@ def FindFolioProveedorE(request):
                             newDelivery['Delivery'] = Delivery.XD_IDPedido.Delivery.replace(".","")
                             newDelivery['IDViaje'] = Delivery.XD_IDViaje.XD_IDViaje
                             newDelivery['TipoEvidencia'] = 'Pedido'
-                            newDelivery['RutaArchivo'] = "" if(GetDelivery[0].IsEvidenciaPedidoxViaje == 1 or GetDelivery[0].IsEvidenciaFisicaPedidoxViaje == 1) else ""
-                            newDelivery['Status'] = 'Otro' if(GetDelivery[0].IsEvidenciaPedidoxViaje == 1 or GetDelivery[0].IsEvidenciaFisicaPedidoxViaje == 1) else 'Pendiente'
+                            newDelivery['RutaArchivo'] = "" if (
+                                        Delivery.IsEvidenciaPedidoxViaje or Delivery.IsEvidenciaFisicaPedidoxViaje) else ""
+                            newDelivery['Status'] = 'Otro' if (
+                                        Delivery.IsEvidenciaPedidoxViaje or Delivery.IsEvidenciaFisicaPedidoxViaje) else 'Pendiente'
+                            # newDelivery['RutaArchivo'] = "" if(GetDelivery[0].IsEvidenciaPedidoxViaje == 1 or GetDelivery[0].IsEvidenciaFisicaPedidoxViaje == 1) else ""
+                            # newDelivery['Status'] = 'Otro' if(GetDelivery[0].IsEvidenciaPedidoxViaje == 1 or GetDelivery[0].IsEvidenciaFisicaPedidoxViaje == 1) else 'Pendiente'
                             newDelivery['ComentarioRechazo'] = ""
                             arrFoliosEvidencias.append(newDelivery)
             for Maniobras in XD_AccesoriosxViajes.objects.filter(XD_IDViaje=XDFolio.XD_IDViaje, Descripcion__in=('Maniobras de descarga', 'Maniobras de carga')):
