@@ -2,6 +2,7 @@ import urllib
 import uuid
 import io
 
+from django.conf import settings
 from azure.storage.blob import BlobClient
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
@@ -84,10 +85,19 @@ def FindFolioProveedorE(request):
                         for eachpedido in EvidenciaByObservacion:
                             if not XD_EvidenciasxPedido.objects.filter(XD_IDViaje=eachpedido["IDViaje"], IDXD_Pedido=eachpedido["XD_IDPedido"], Titulo='BITACORA').exists():
                                 arrFoliosEvidencias.append(eachpedido)
-
+                            else:
+                                newDelivery = {}
+                                newDelivery['XD_IDPedido'] = eachpedido["XD_IDPedido"]
+                                newDelivery['Delivery'] = eachpedido["Delivery"]
+                                newDelivery['IDViaje'] = eachpedido["IDViaje"]
+                                newDelivery['TipoEvidencia'] = eachpedido["TipoEvidencia"]
+                                newDelivery['RutaArchivo'] = ""
+                                newDelivery['Status'] = "Enviada" if XD_EvidenciasxPedido.objects.filter(XD_IDViaje=eachpedido["IDViaje"], IDXD_Pedido=eachpedido["XD_IDPedido"], Titulo='BITACORA', IsValidada=0, IsRechazada=0, IsEnviada=1).exists() else "Aprobada" if XD_EvidenciasxPedido.objects.filter(XD_IDViaje=eachpedido["IDViaje"], IDXD_Pedido=eachpedido["XD_IDPedido"], Titulo='BITACORA', IsValidada=1, IsRechazada=0, IsEnviada=1).exists() else "Rechazada" if XD_EvidenciasxPedido.objects.filter(XD_IDViaje=eachpedido["IDViaje"], IDXD_Pedido=eachpedido["XD_IDPedido"], Titulo='BITACORA', IsValidada=0, IsRechazada=1, IsEnviada=1).exists() else "Otro"
+                                newDelivery['ComentarioRechazo'] = ""
+                                arrFoliosEvidencias.append(newDelivery)
                     for Delivery in GetDelivery:
-                        if len(XD_EvidenciasxPedido.objects.filter(IDXD_Pedido=Delivery.XD_IDPedido.XD_IDPedido, XD_IDViaje=Delivery.XD_IDViaje.XD_IDViaje)) >= 1:
-                            TieneEvidencia = XD_EvidenciasxPedido.objects.filter(IDXD_Pedido=Delivery.XD_IDPedido.XD_IDPedido, XD_IDViaje=Delivery.XD_IDViaje.XD_IDViaje)
+                        if len(XD_EvidenciasxPedido.objects.filter(IDXD_Pedido=Delivery.XD_IDPedido.XD_IDPedido, XD_IDViaje=Delivery.XD_IDViaje.XD_IDViaje, Titulo='EVIDENCIA1')) >= 1:
+                            TieneEvidencia = XD_EvidenciasxPedido.objects.filter(IDXD_Pedido=Delivery.XD_IDPedido.XD_IDPedido, XD_IDViaje=Delivery.XD_IDViaje.XD_IDViaje, Titulo='EVIDENCIA1')
                             for TieneEvidencia1 in TieneEvidencia:
                                 newDelivery = {}
                                 newDelivery['XD_IDPedido'] = Delivery.XD_IDPedido.XD_IDPedido
@@ -104,8 +114,7 @@ def FindFolioProveedorE(request):
                             newDelivery['Delivery'] = Delivery.XD_IDPedido.Delivery.replace(".","")
                             newDelivery['IDViaje'] = Delivery.XD_IDViaje.XD_IDViaje
                             newDelivery['TipoEvidencia'] = 'Pedido'
-                            newDelivery['RutaArchivo'] = "" if (
-                                        Delivery.IsEvidenciaPedidoxViaje or Delivery.IsEvidenciaFisicaPedidoxViaje) else ""
+                            newDelivery['RutaArchivo'] = "" #if (Delivery.IsEvidenciaPedidoxViaje or Delivery.IsEvidenciaFisicaPedidoxViaje) else ""
                             newDelivery['Status'] = 'Otro' if (
                                         Delivery.IsEvidenciaPedidoxViaje or Delivery.IsEvidenciaFisicaPedidoxViaje) else 'Pendiente'
                             # newDelivery['RutaArchivo'] = "" if(GetDelivery[0].IsEvidenciaPedidoxViaje == 1 or GetDelivery[0].IsEvidenciaFisicaPedidoxViaje == 1) else ""
@@ -241,20 +250,25 @@ def GetEvidenciasMesaControl(request):
                 ListEvidencias.append(AddEvidencia)
         else:
             GetIDPedidos = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
-            if not ValidacionEviByObservaciones(IDViaje):
+            if not ValidacionEviByObservaciones(IDViaje) and GetIDPedidos[0].XD_IDViaje.IDClienteFiscal == 5267:
                 return HttpResponse(status=500)
-            for GetPedidos in GetIDPedidos:
-                GetDelivery = XD_Pedidos.objects.get(XD_IDPedido=GetPedidos.XD_IDPedido.XD_IDPedido)
-                GetEvidenciaxPedido = XD_EvidenciasxPedido.objects.filter(IDXD_Pedido=GetPedidos.XD_IDPedido.XD_IDPedido, XD_IDViaje=IDViaje)
-                for eachEvidenciaxPedido in GetEvidenciaxPedido:
-                    if eachEvidenciaxPedido.IsEnviada and not eachEvidenciaxPedido.IsValidada and not eachEvidenciaxPedido.IsRechazada:
-                        AddEvidencia = {}
-                        AddEvidencia['IDEvidencia'] = eachEvidenciaxPedido.IDEvidenciaxPedido
-                        AddEvidencia['URLEvidencia'] = eachEvidenciaxPedido.RutaArchivo
-                        AddEvidencia['Delivery'] = GetDelivery.Delivery.replace('.',"") if eachEvidenciaxPedido.Titulo != "BITACORA" else GetObservacionesByPedidoT1(GetDelivery.Observaciones, GetPedidos.TipoTransporte)
-                        AddEvidencia['TipoEvidencia'] = 'Pedido' if eachEvidenciaxPedido.Titulo != "BITACORA" else 'Bitacora'
-                        AddEvidencia['IDViaje'] = eachEvidenciaxPedido.XD_IDViaje
-                        ListEvidencias.append(AddEvidencia)
+            TotalObservaciones = CountTotalEvidencias(GetIDPedidos)
+            TotalEvidencias = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje).count() + TotalObservaciones
+            if XD_EvidenciasxPedido.objects.filter(XD_IDViaje=IDViaje).count() == TotalEvidencias:
+                for GetPedidos in GetIDPedidos:
+                    GetDelivery = XD_Pedidos.objects.get(XD_IDPedido=GetPedidos.XD_IDPedido.XD_IDPedido)
+                    GetEvidenciaxPedido = XD_EvidenciasxPedido.objects.filter(IDXD_Pedido=GetPedidos.XD_IDPedido.XD_IDPedido, XD_IDViaje=IDViaje)
+                    for eachEvidenciaxPedido in GetEvidenciaxPedido:
+                        if eachEvidenciaxPedido.IsEnviada and not eachEvidenciaxPedido.IsValidada and not eachEvidenciaxPedido.IsRechazada:
+                            AddEvidencia = {}
+                            AddEvidencia['IDEvidencia'] = eachEvidenciaxPedido.IDEvidenciaxPedido
+                            AddEvidencia['URLEvidencia'] = eachEvidenciaxPedido.RutaArchivo
+                            AddEvidencia['Delivery'] = GetDelivery.Delivery.replace('.',"") if eachEvidenciaxPedido.Titulo != "BITACORA" else GetObservacionesByPedidoT1(GetDelivery.Observaciones, GetPedidos.TipoTransporte)
+                            AddEvidencia['TipoEvidencia'] = 'Pedido' if eachEvidenciaxPedido.Titulo != "BITACORA" else 'Bitacora'
+                            AddEvidencia['IDViaje'] = eachEvidenciaxPedido.XD_IDViaje
+                            ListEvidencias.append(AddEvidencia)
+            else:
+                return HttpResponse(status=500)
             GetEvidenciasxViaje = XD_EvidenciasxViaje.objects.filter(Q(IDXD_Viaje=IDViaje, Titulo__in=('Maniobras de descarga','Maniobras de carga'), Tipo='MESA CONTROL') | Q(IDXD_Viaje=IDViaje, Tipo='EVCUSTODIAF'))
             # ListEvi = EvidenciasToList(GetEvidenciasxViaje)
             for Maniobras in GetEvidenciasxViaje: #ListEvi:
@@ -269,15 +283,6 @@ def GetEvidenciasMesaControl(request):
                         AddManiobras['TipoEvidencia'] = "Custodia" if(Maniobras.Tipo == 'EVCUSTODIAF') else "Maniobras"
                         AddManiobras['IDViaje'] = Maniobras.IDXD_Viaje
                         ListEvidencias.append(AddManiobras)
-
-                # if Maniobras['Titulo'] and not Maniobras['IsValidada'] and not Maniobras['IsRechazada']:
-                #     AddManiobras = {}
-                #     AddManiobras["IDEvidencia"] = Maniobras['IDEvidenciaxViaje']
-                #     AddManiobras['URLEvidencia'] = Maniobras['RutaArchivo']
-                #     AddManiobras['Delivery'] = Maniobras['Titulo']
-                #     AddManiobras['TipoEvidencia'] = Maniobras['TipoEvidencia']
-                #     AddManiobras['IDViaje'] = Maniobras['IDXD_Viaje']
-                #     ListEvidencias.append(AddManiobras)
         return JsonResponse({'Evidencias': ListEvidencias})
     except Exception as e:
         print(e)
@@ -560,7 +565,7 @@ def EvidenciaDigitalCompleta(request, viaje=""):
     ClienteFiscal = XD_Viajes.objects.get(XD_IDViaje=IDViaje)
     TieneEvidenciaDigital = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
     ListaTieneEvidenciaDigital = list()
-    if ClienteFiscal.IDClienteFiscal != 5267:
+    if ClienteFiscal.IDClienteFiscal != settings.IDCLIENTEFISCAL:
         for TieneEvi in TieneEvidenciaDigital:
             ListaTieneEvidenciaDigital.append(TieneEvi.IsEvidenciaPedidoxViaje)
     else:
@@ -811,7 +816,6 @@ def FilterBy(request):
             Evidencias = Bro_Viajes.objects.filter(IDTransportista__in = Proveedores)
         elif "XD" in Proveedores and "BKG" not in Proveedores:
             Evidencias = XD_Viajes.objects.filter(IDTransportista__in = Proveedores)
-    # ListData = PEToList(Evidencias)
     htmlRes = render_to_string('TablaEvidenciasMesaControl.html', {'EvidenciasxAprobar':Evidencias}, request = request,)
     return JsonResponse({'htmlRes' : htmlRes})
 
@@ -830,9 +834,9 @@ def uploadEvidencias(request):
 
 
 def descarga(IDViaje, Proyecto):
-    sendAPI = CheckAllEvidenciaFisicaPedidoTrue(IDViaje) if Proyecto != "BKG" else CheckAllEvidenciaFisicaTrue(IDViaje)
+    sendAPI = CheckAllEvidenciaFisicaPedidoTrue(IDViaje) if Proyecto[:3] != "BKG" else CheckAllEvidenciaFisicaTrue(IDViaje)
     if sendAPI:
-        Project = "BKG" if Proyecto == "BKG" else "XD"
+        Project = "BKG" if Proyecto[:3] == "BKG" else "XD"
         jsonParams = {'IDConcepto': IDViaje, 'Proyecto':Project}
         # respose = requests.post("http://api-admon.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion",
         #                         headers={'content-type': 'application/json'}, json=jsonParams)
@@ -981,7 +985,7 @@ def GetObservacionesByPedidos(IDViaje):
     GetDelivery = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
     ListaObservaciones = list()
     for pedido in GetDelivery:
-        if pedido.XD_IDPedido.IDClienteFiscal == 5267:
+        if pedido.XD_IDPedido.IDClienteFiscal == settings.IDCLIENTEFISCAL:
             Observaciones = pedido.XD_IDPedido.Observaciones.split("-")
             delibery = Observaciones[0] if pedido.TipoTransporte == "T1" else Observaciones[
                 1] if pedido.TipoTransporte == "T2" and len(Observaciones) == 2 else ""
@@ -1112,3 +1116,16 @@ def ValidacionEviByObservaciones(XD_IDViaje):
         return all(TotalEvidencias)
     else:
         return False
+
+
+
+def CountTotalEvidencias(Pedidos):
+    CountList = list()
+    if Pedidos[0].XD_IDViaje.IDClienteFiscal == settings.IDCLIENTEFISCAL:
+        for eachPedido in Pedidos:
+            observaciones = {}
+            observaciones["name"] = GetObservacionesByPedidoT1(eachPedido.XD_IDPedido.Observaciones, eachPedido.TipoTransporte)
+            "" if observaciones["name"] == '' or observaciones["name"] == None or observaciones["name"] == [] else CountList.append(observaciones)
+        return len(CountList)
+    else:
+        return 0
