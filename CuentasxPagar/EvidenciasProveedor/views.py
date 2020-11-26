@@ -250,6 +250,7 @@ def GetEvidenciasMesaControl(request):
                 ListEvidencias.append(AddEvidencia)
         else:
             GetIDPedidos = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
+            print(ValidacionEviByObservaciones(IDViaje))
             if not ValidacionEviByObservaciones(IDViaje) and GetIDPedidos[0].XD_IDViaje.IDClienteFiscal == 5267:
                 return HttpResponse(status=500)
             TotalObservaciones = CountTotalEvidencias(GetIDPedidos)
@@ -519,38 +520,38 @@ def SaveEvidenciaFisica(request):
                         SaveEvidenciaPedidosxViaje.FechaEvidenciaFisicaxPedidoxViaje = datetime.datetime.now()
                         SaveEvidenciaPedidosxViaje.save()
                         if jParams["TipoEvidencia"] != 'FOLIO' or jParams["TipoEvidencia"] != 'CORREO':
-                            IsExpress = XD_Viajes.objects.get(XD_IDViaje = jParams['IDViaje'])
+                            IsExpress = XD_Viajes.objects.get(XD_IDViaje=jParams['IDViaje'])
                             if IsExpress.TipoViaje == 'XPRESS':
-                                GetIDPE = RelacionConceptoxProyecto.objects.filter(IDConcepto = jParams['IDPedido']).values("IDPendienteEnviar")
+                                GetIDPE = RelacionConceptoxProyecto.objects.filter(IDConcepto=jParams['IDPedido']).values("IDPendienteEnviar")
                                 for Conceptos in GetIDPE:
-                                    SaveEVFisPE = PendientesEnviar.objects.get(IDPendienteEnviar = Conceptos["IDPendienteEnviar"])
+                                    SaveEVFisPE = PendientesEnviar.objects.get(IDPendienteEnviar=Conceptos["IDPendienteEnviar"])
                                     if SaveEVFisPE.TipoConcepto == 'PEDIDO':
                                         SaveEVFisPE.IsEvidenciaFisica = True
                                         SaveEVFisPE.Status = "COMPLETO"
                                         SaveEVFisPE.save()
                         SaveXD_Viajes = ValidarEvidenciaXD_Viajea(jParams['IDViaje'])
                         if SaveXD_Viajes:
-                            SaveBanderasXD_Viajes = XD_Viajes.objects.get(XD_IDViaje = jParams['IDViaje'])
+                            SaveBanderasXD_Viajes = XD_Viajes.objects.get(XD_IDViaje=jParams['IDViaje'])
                             SaveBanderasXD_Viajes.IsEvidenciaFisica = True
                             SaveBanderasXD_Viajes.FechaEvidenciaFisica = datetime.datetime.now()
                             # SaveBanderasXD_Viajes.Status = 'COMPLETO'
                             SaveBanderasXD_Viajes.save()
-                            PedidoStatus = XD_PedidosxViajes.objects.filter(XD_IDViaje = jParams['IDViaje'])
+                            PedidoStatus = XD_PedidosxViajes.objects.filter(XD_IDViaje=jParams['IDViaje'])
                             if len(PedidoStatus) != 0:
                                 for GetPedidoStatus in PedidoStatus:
-                                    SavePedidoStatus = XD_PedidosxViajes.objects.get(XD_IDPedido = GetPedidoStatus.XD_IDPedido, XD_IDViaje = GetPedidoStatus.XD_IDViaje)
+                                    SavePedidoStatus = XD_PedidosxViajes.objects.get(XD_IDPedido=GetPedidoStatus.XD_IDPedido, XD_IDViaje=GetPedidoStatus.XD_IDViaje)
                                     SavePedidoStatus.StatusPedido = 'COMPLETO'
                                     SavePedidoStatus.save()
-                            GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto = jParams['IDViaje']).values('IDPendienteEnviar')
+                            GetIDPendientesEnviar = RelacionConceptoxProyecto.objects.filter(IDConcepto=jParams['IDViaje']).values('IDPendienteEnviar')
                             for conceptos in GetIDPendientesEnviar:
-                                SaveEvFisicaAdmon = PendientesEnviar.objects.get(IDPendienteEnviar = conceptos['IDPendienteEnviar'])
+                                SaveEvFisicaAdmon = PendientesEnviar.objects.get(IDPendienteEnviar=conceptos['IDPendienteEnviar'])
                                 if SaveEvFisicaAdmon.TipoConcepto == 'VIAJE':
                                     SaveEvFisicaAdmon.IsEvidenciaFisica = True
                                     SaveEvFisicaAdmon.save()
                 transaction.commit(using='users')
             transaction.commit(using='bkg_viajesDB')
         transaction.commit(using='XD_ViajesDB')
-        api = descarga(jParams['IDViaje'], jParams["TipoEvidencia"])
+        api = descarga(jParams['IDViaje'], str(jParams["TipoEvidencia"]))
         return HttpResponse(status=200)
     except Exception as e:
         transaction.rollback(using = 'XD_ViajesDB')
@@ -565,14 +566,14 @@ def EvidenciaDigitalCompleta(request, viaje=""):
     ClienteFiscal = XD_Viajes.objects.get(XD_IDViaje=IDViaje)
     TieneEvidenciaDigital = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
     ListaTieneEvidenciaDigital = list()
-    if ClienteFiscal.IDClienteFiscal != settings.IDCLIENTEFISCAL:
+    if ClienteFiscal.IDClienteFiscal != settings.ID_CLIENTE_FISCAL:
         for TieneEvi in TieneEvidenciaDigital:
             ListaTieneEvidenciaDigital.append(TieneEvi.IsEvidenciaPedidoxViaje)
     else:
         TieneEvidencia = XD_EvidenciasxPedido.objects.filter(XD_IDViaje=IDViaje)
         for EachEvidencia in TieneEvidencia:
             ListaTieneEvidenciaDigital.append(EachEvidencia.IsValidada)
-    TieneEvidenciaManiobrasAll = XD_EvidenciasxViaje.objects.filter(Q(IDXD_Viaje=IDViaje, Titulo__in = ('Maniobras de descarga', 'Maniobras de carga'), Tipo="MESA CONTROL") | Q(IDXD_Viaje=IDViaje, Tipo = 'EVCUSTODIAF'))
+    TieneEvidenciaManiobrasAll = XD_EvidenciasxViaje.objects.filter(Q(IDXD_Viaje=IDViaje, Titulo__in=('Maniobras de descarga', 'Maniobras de carga'), Tipo="MESA CONTROL") | Q(IDXD_Viaje=IDViaje, Tipo = 'EVCUSTODIAF'))
     for TieneEviManiobrasAll in TieneEvidenciaManiobrasAll:
         ListaTieneEvidenciaDigital.append(TieneEviManiobrasAll.IsValidada)
     IsEvidenciaDigitalCompleta = all(ListaTieneEvidenciaDigital)
@@ -595,9 +596,9 @@ def GetTituloForCustodia(Titulo):
 
 def FindFolioEvidenciaBGK(Folio, Transportista):
     try:
-        GetIDViaje = Bro_Viajes.objects.get(Folio = Folio, StatusProceso = 'FINALIZADO', IDTransportista = Transportista)
+        GetIDViaje = Bro_Viajes.objects.get(Folio = Folio, StatusProceso='FINALIZADO', IDTransportista = Transportista)
         # ListaEvidencias=''
-        if not Bro_EvidenciasxViaje.objects.filter(IDBro_Viaje = GetIDViaje.IDBro_Viaje).exists():
+        if not Bro_EvidenciasxViaje.objects.filter(IDBro_Viaje=GetIDViaje.IDBro_Viaje).exists():
             ListaEvidencias = readJson(GetIDViaje.Remisiones) if(len(GetIDViaje.Remisiones) >= 1) else readJson(0)
             for AddNewDataToJdon in ListaEvidencias:
                 AddNewDataToJdon['XD_IDPedido'] = GetIDViaje.IDBro_Viaje
@@ -652,7 +653,7 @@ def GetEachRemision(Remision):
 
 def EvidenciaDigitalCompletaBKG(request, IDViaje=""):
     IDViajeBKG = request.GET["IDViaje"] if(IDViaje=="") else IDViaje
-    GetIDViaje = Bro_EvidenciasxViaje.objects.filter(IDBro_Viaje = IDViajeBKG)
+    GetIDViaje = Bro_EvidenciasxViaje.objects.filter(IDBro_Viaje=IDViajeBKG)
     ListaEviBKG = list()
     for EachEvidence in GetIDViaje:
         ListaEviBKG.append(EachEvidence.IsValidada)
@@ -834,14 +835,12 @@ def uploadEvidencias(request):
 
 
 def descarga(IDViaje, Proyecto):
-    sendAPI = CheckAllEvidenciaFisicaPedidoTrue(IDViaje) if Proyecto[:3] != "BKG" else CheckAllEvidenciaFisicaTrue(IDViaje)
+    sendAPI = CheckAllEvidenciaFisicaPedidoTrue(IDViaje) if str(Proyecto[:3]) != "BKG" else CheckAllEvidenciaFisicaTrue(IDViaje)
+
     if sendAPI:
-        Project = "BKG" if Proyecto[:3] == "BKG" else "XD"
+        Project = "BKG" if str(Proyecto[:3]) == "BKG" else "XD"
         jsonParams = {'IDConcepto': IDViaje, 'Proyecto':Project}
-        # respose = requests.post("http://api-admon.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion",
-        #                         headers={'content-type': 'application/json'}, json=jsonParams)
-        respose = requests.post("http://api-admon-demo.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion",
-                                headers={'content-type': 'application/json'}, json=jsonParams)
+        respose = requests.post(settings.API_ADMON+"api/Usuarios/SaveFolioHojaLiberacion", headers={'content-type': 'application/json'}, json=jsonParams)
         return respose.status_code
     else:
         return "ok"
@@ -985,7 +984,7 @@ def GetObservacionesByPedidos(IDViaje):
     GetDelivery = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
     ListaObservaciones = list()
     for pedido in GetDelivery:
-        if pedido.XD_IDPedido.IDClienteFiscal == settings.IDCLIENTEFISCAL:
+        if pedido.XD_IDPedido.IDClienteFiscal == settings.ID_CLIENTE_FISCAL:
             Observaciones = pedido.XD_IDPedido.Observaciones.split("-")
             delibery = Observaciones[0] if pedido.TipoTransporte == "T1" else Observaciones[
                 1] if pedido.TipoTransporte == "T2" and len(Observaciones) == 2 else ""
@@ -1115,13 +1114,13 @@ def ValidacionEviByObservaciones(XD_IDViaje):
                                                        Titulo='BITACORA').exists() else False)
         return all(TotalEvidencias)
     else:
-        return False
+        return True
 
 
 
 def CountTotalEvidencias(Pedidos):
     CountList = list()
-    if Pedidos[0].XD_IDViaje.IDClienteFiscal == settings.IDCLIENTEFISCAL:
+    if Pedidos[0].XD_IDViaje.IDClienteFiscal == settings.ID_CLIENTE_FISCAL:
         for eachPedido in Pedidos:
             observaciones = {}
             observaciones["name"] = GetObservacionesByPedidoT1(eachPedido.XD_IDPedido.Observaciones, eachPedido.TipoTransporte)
