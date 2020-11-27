@@ -5,6 +5,7 @@ import calendar
 from io import BytesIO
 import requests
 
+from django.conf import settings
 from azure.storage.blob import BlobClient
 from django.db import transaction
 from django.http import HttpResponse, Http404, JsonResponse
@@ -19,8 +20,9 @@ from reportlab.platypus import Paragraph
 
 from CartaNoAdeudo.models import CartaNoAdeudoTransportistas
 from CartaNoAdeudo import views
+from CartaNoAdeudoMC.models import LogStatusTransportista
 from usersadmon.models import Proveedor
-
+from PendientesEnviar import views as PE
 
 def CartaNoAdeudoMC(request):
     if request.user.roles == "Proveedor":
@@ -76,13 +78,8 @@ def CreateCartaNoadeudoMC(request):
                 p1.alignment = TA_CENTER
                 p1.fontSize = 13
                 p1.leading = 15
-                # local
-                c.drawImage('static/img/F.png', -1, 5, 600, 841)
-                # Demo
-                # c.drawImage('C:\inetpub\Proyects\WebApps\LogistikGO-Finanzas-Demo\CuentasxPagar\static\img\F.png', -1, 5, 600, 841)
-                # produccion
-                # c.drawImage('C:\inetpub\Proyects\WebApps\LogistikGO-Finanzas\CuentasxPagar\static\img\F.png', -1, 5, 600, 841)
-                # c.setFont("Helvetica-Bold",8)
+
+                c.drawImage(settings.RUTA_IMG_PDF, -1, 5, 600, 841)
                 c.drawString(300, 690, "San Luis Potosí, S.L.P. a " + str(messsage))
                 c.drawString(100, 640, "Logisti-k de México SA de CV")
                 c.drawString(100, 620, "Av. Chapultepec #1385 3er. Piso")
@@ -251,8 +248,100 @@ def BtnDescargaHL(data):
 
 
 def BloquearProveedor(IDTransportista):
-    data = {'IDTransportista': IDTransportista}
-    headers = {'Content-type': 'application/json'}
-    response = requests.post('http://api-pe-demo.logistikgo.com/Status/', data=data)
-    # response = requests.post('http://api-pe.logistikgo.com/Status/', data=data_json, headers=headers)
-    return response
+    DataTransportistas = Proveedor.objects.get(IDTransportista=IDTransportista)
+    LastDayOfMonth = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
+    if datetime.datetime.now().day in range(1, 6):
+        verificar(IDTransportista, 1)
+        return "ok"
+    elif datetime.datetime.now().day in range(6, 21):
+        verificar(IDTransportista, 2)
+        return "ok"
+    elif datetime.datetime.now().day in range(21, LastDayOfMonth + 1):
+        verificar(IDTransportista, 3)
+        return "ok"
+    else:
+        MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "VALIDADO")
+        return "ok"#Response(status=SaveData)
+
+def MesCartaConAdeudoMC(Fecha, restar):
+    months = (
+            "Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+            "Noviembre", "Diciembre")
+    Mes1 = months[Fecha - restar]
+    return Mes1
+
+def MethodSave(idtransportista, statusAnterior, NuevoStatus):
+    print(NuevoStatus)
+    if statusAnterior == NuevoStatus:
+        return "ok"
+    else:
+        try:
+            with transaction.atomic(using="default"):
+                ChangeStatus = Proveedor.objects.get(IDTransportista=idtransportista)
+                ChangeStatus.StatusProceso = NuevoStatus
+                ChangeStatus.save()
+                SaveInLog = LogStatusTransportista()
+                SaveInLog.IDTransportista = Proveedor.objects.get(IDTransportista=ChangeStatus.IDTransportista)
+                SaveInLog.IDUsuarioAlta = ChangeStatus.IDTransportista
+                SaveInLog.StatusAnterior = statusAnterior
+                SaveInLog.StatusActual = ChangeStatus.StatusProceso
+                SaveInLog.FechaCambio = datetime.datetime.now()
+                SaveInLog.save()
+                return 200
+        except Exception as e:
+            transaction.rollback(using="default")
+            return 500
+
+def Letter2MonthsAgo(transportista, RestarMes):
+    Data = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=transportista,
+                                                      MesCartaNoAdeudo=(
+                                                          MesCartaConAdeudoMC(datetime.datetime.now().month,
+                                                                              RestarMes)), Status="APROBADA",
+                                                      Tipo="MesaControl").exists()
+    return Data
+
+
+
+def verificar(IDTransportista, rango):
+    DataTransportistas = Proveedor.objects.get(IDTransportista=IDTransportista)
+    CurrentMonth = datetime.datetime.now().month
+    ViajesMeseActual = PE.GetTotalViajesEn1Mes(DataTransportistas.IDTransportista, 0)
+    Viajes1Mes = PE.GetTotalViajesEn1Mes(DataTransportistas.IDTransportista, 1)
+    Viajes2Mes = PE.GetTotalViajesEn1Mes(DataTransportistas.IDTransportista, 2)
+
+    ItHasCarta = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=DataTransportistas.IDTransportista,
+                                                            MesCartaNoAdeudo=(
+                                                                MesCartaConAdeudoMC(CurrentMonth, 1 if rango == 3 else 2)),
+                                                            Status="APROBADA",
+                                                            Tipo="MesaControl").exists()
+    ItHasCarta1MonthAgo = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=DataTransportistas.IDTransportista,
+                                                        MesCartaNoAdeudo=(
+                                                            MesCartaConAdeudoMC(CurrentMonth, 2)),
+                                                        Status="APROBADA", Tipo="MesaControl").exists()
+    ItHasCarta2MonthsAgo = CartaNoAdeudoTransportistas.objects.filter(
+                                                        IDTransportista=DataTransportistas.IDTransportista,
+                                                        MesCartaNoAdeudo=(
+                                                            MesCartaConAdeudoMC(CurrentMonth, 3)),
+                                                        Status="APROBADA", Tipo="MesaControl").exists()
+
+    if not ItHasCarta and rango == 3 and ViajesMeseActual:
+        if not ItHasCarta1MonthAgo and Viajes1Mes:
+            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "ADEUDO")
+        else:
+            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "VALIDADO")
+    elif not ItHasCarta and rango == 2:
+        if not Viajes1Mes:
+            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "ADEUDO" if Viajes2Mes and not ItHasCarta2MonthsAgo else "VALIDADO")
+        else:
+            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "ADEUDO")
+    elif not ItHasCarta and rango == 1:
+        if not Viajes1Mes:
+            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso,
+                       "ADEUDO" if Viajes2Mes and not ItHasCarta2MonthsAgo else "VALIDADO")
+        else:
+            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "ADEUDO" if Viajes2Mes and not ItHasCarta2MonthsAgo else "VALIDADO")
+    elif ItHasCarta:
+        MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "VALIDADO")
+
+    return "ok"
+

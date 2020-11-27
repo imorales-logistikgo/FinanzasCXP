@@ -16,13 +16,14 @@ import calendar
 from PendientesEnviar import views
 from django.contrib.auth.decorators import login_required
 from CartaNoAdeudoMC import views as MC
+from django.conf import settings
 
 @login_required
 
 def CartaNoAdeudo(request):
     if request.user.roles == "Proveedor":
         FechaDescargaCarta = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
-        CartasByProveedor = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, Tipo='CXP')
+        CartasByProveedor = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, Tipo='CXP').exclude(Status='SINPROCESAR')
         if FechaDescargaCarta.FechaDescargaCartaNoAdeudo is not None:
             IsDescargaCartaNoAdeudo = True if FechaDescargaCarta.FechaDescargaCartaNoAdeudo.month -1 == datetime.datetime.now().month -1 else False
         else:
@@ -73,12 +74,8 @@ def GetCartaNoAdeudo(request):
                 p1.alignment = TA_CENTER
                 p1.fontSize = 13
                 p1.leading = 15
-                #local
-                c.drawImage('static/img/F.png', -1, 5, 600, 841)
-                #Demo
-                # c.drawImage('C:\inetpub\Proyects\WebApps\LogistikGO-Finanzas-Demo\CuentasxPagar\static\img\F.png', -1, 5, 600, 841)
-                #produccion
-                # c.drawImage('C:\inetpub\Proyects\WebApps\LogistikGO-Finanzas\CuentasxPagar\static\img\F.png', -1, 5, 600, 841)
+
+                c.drawImage(settings.RUTA_IMG_PDF, -1, 5, 600, 841)
                 c.drawString(300, 690, "San Luis Potosí, S.L.P. a " + str(messsage))
                 c.drawString(100, 640, "Logisti-k de México SA de CV")
                 c.drawString(100, 620, "Av. Chapultepec #1385 3er. Piso")
@@ -177,10 +174,8 @@ def AprobarCarta(request):
             CartaAprobar.FechaAprueba = datetime.datetime.now()
             CartaAprobar.save()
         transaction.commit(using='users')
-
         if CartaAprobar.Tipo == "MesaControl":
-            print(CartaAprobar.Status)
-            # MC.BloquearProveedor(CartaAprobar.IDTransportista.IDTransportista)
+            MC.BloquearProveedor(CartaAprobar.IDTransportista.IDTransportista)
         return HttpResponse(status=200)
     except Exception as e:
         print(e)
