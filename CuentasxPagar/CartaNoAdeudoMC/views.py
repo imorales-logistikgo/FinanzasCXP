@@ -21,8 +21,11 @@ from reportlab.platypus import Paragraph
 from CartaNoAdeudo.models import CartaNoAdeudoTransportistas
 from CartaNoAdeudo import views
 from CartaNoAdeudoMC.models import LogStatusTransportista
+from XD_Viajes.models import XD_Viajes
+from bkg_viajes.models import Bro_Viajes
 from usersadmon.models import Proveedor
 from PendientesEnviar import views as PE
+
 
 def CartaNoAdeudoMC(request):
     if request.user.roles == "Proveedor":
@@ -37,7 +40,8 @@ def CartaNoAdeudoMC(request):
                       {"IsDescargaCartaNoAdeudo": IsDescargaCartaNoAdeudo, "CartasByProveedor": CartasByProveedor})
     elif request.user.roles == "MesaControl" or request.user.is_superuser:
         CartaNoAdeudoByProveedor = CartaNoAdeudoTransportistas.objects.filter(Tipo='MesaControl')
-        return render(request, 'CartaNoAdeudoMC.html', {"CartaNoAdeudoByProveedor": CartaNoAdeudoByProveedor, "TipoCarta":"MesaControl"})
+        return render(request, 'CartaNoAdeudoMC.html',
+                      {"CartaNoAdeudoByProveedor": CartaNoAdeudoByProveedor, "TipoCarta": "MesaControl"})
     elif request.user.roles == "users" or "CXP":
         return HttpResponse(status=403)
     else:
@@ -46,8 +50,11 @@ def CartaNoAdeudoMC(request):
 
 def CreateCartaNoadeudoMC(request):
     try:
-        FechaDescargaCarta = Proveedor.objects.get(IDTransportista=request.user.IDTransportista if request.user.roles == "Proveedor" else request.GET["IDProveedor"])
-        if FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC is not None and BtnDescargaHL(FechaDescargaCarta) and request.user.roles == "Proveedor":
+        FechaDescargaCarta = Proveedor.objects.get(
+            IDTransportista=request.user.IDTransportista if request.user.roles == "Proveedor" else request.GET[
+                "IDProveedor"])
+        if FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC is not None and BtnDescargaHL(
+                FechaDescargaCarta) and request.user.roles == "Proveedor":
             resp = '<h2>Solo se puede descargar la carta una sola vez</h2>'
             return HttpResponse(resp)
         else:
@@ -63,7 +70,9 @@ def CreateCartaNoadeudoMC(request):
                     "Noviembre",
                     "Diciembre")
                 day = date.day
-                NombreProveedor = Proveedor.objects.get(IDTransportista=request.user.IDTransportista if request.user.roles == "Proveedor" else request.GET["IDProveedor"])
+                NombreProveedor = Proveedor.objects.get(
+                    IDTransportista=request.user.IDTransportista if request.user.roles == "Proveedor" else request.GET[
+                        "IDProveedor"])
                 month = months[date.month - 1]
                 year = date.year
                 messsage = "{} de {} del {}".format(day, month, year)
@@ -150,7 +159,7 @@ def upload(request):
         return HttpResponse(status=500)
 
 
-def SaveCartaNoAdeudo(request,params):
+def SaveCartaNoAdeudo(request, params):
     jParams = params
     try:
         if 21 <= datetime.datetime.now().day <= \
@@ -234,16 +243,20 @@ def GetMonth(request):
                            1] else 2 if 1 <= datetime.datetime.now().day <= 5 or 6 <= datetime.datetime.now().day <= 20 else 1
     return NumberMonth
 
+
 def BtnDescargaHL(data):
     CurrentDay = datetime.datetime.now().day
     CurrentMonth = datetime.datetime.now().month
     LastDayOfMonth = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
     if 21 <= CurrentDay <= LastDayOfMonth:
-        ReturnData = data.FechaDescargaCartaNoAdeudoMC.day in range(21, LastDayOfMonth+1) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
+        ReturnData = data.FechaDescargaCartaNoAdeudoMC.day in range(21,
+                                                                    LastDayOfMonth + 1) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
     elif 1 <= CurrentDay <= 5:
-        ReturnData = data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth-1 or data.FechaDescargaCartaNoAdeudoMC.day in range(1, 6) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
+        ReturnData = data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth - 1 or data.FechaDescargaCartaNoAdeudoMC.day in range(
+            1, 6) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
     elif 6 <= CurrentDay <= 20:
-        ReturnData = data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth-1 or data.FechaDescargaCartaNoAdeudoMC.day in range(6, 21) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
+        ReturnData = data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth - 1 or data.FechaDescargaCartaNoAdeudoMC.day in range(
+            6, 21) and data.FechaDescargaCartaNoAdeudoMC.month == CurrentMonth
     return ReturnData
 
 
@@ -261,14 +274,16 @@ def BloquearProveedor(IDTransportista):
         return "ok"
     else:
         MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "VALIDADO")
-        return "ok"#Response(status=SaveData)
+        return "ok"  # Response(status=SaveData)
+
 
 def MesCartaConAdeudoMC(Fecha, restar):
     months = (
-            "Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
-            "Noviembre", "Diciembre")
+        "Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+        "Noviembre", "Diciembre")
     Mes1 = months[Fecha - restar]
     return Mes1
+
 
 def MethodSave(idtransportista, statusAnterior, NuevoStatus):
     print(NuevoStatus)
@@ -292,6 +307,7 @@ def MethodSave(idtransportista, statusAnterior, NuevoStatus):
             transaction.rollback(using="default")
             return 500
 
+
 def Letter2MonthsAgo(transportista, RestarMes):
     Data = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=transportista,
                                                       MesCartaNoAdeudo=(
@@ -301,47 +317,68 @@ def Letter2MonthsAgo(transportista, RestarMes):
     return Data
 
 
-
 def verificar(IDTransportista, rango):
     DataTransportistas = Proveedor.objects.get(IDTransportista=IDTransportista)
     CurrentMonth = datetime.datetime.now().month
-    ViajesMeseActual = PE.GetTotalViajesEn1Mes(DataTransportistas.IDTransportista, 0)
+    # ViajesMeseActual = PE.GetTotalViajesEn1Mes(DataTransportistas.IDTransportista, 0)
     Viajes1Mes = PE.GetTotalViajesEn1Mes(DataTransportistas.IDTransportista, 1)
     Viajes2Mes = PE.GetTotalViajesEn1Mes(DataTransportistas.IDTransportista, 2)
 
     ItHasCarta = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=DataTransportistas.IDTransportista,
                                                             MesCartaNoAdeudo=(
-                                                                MesCartaConAdeudoMC(CurrentMonth, 1 if rango == 3 else 2)),
+                                                                MesCartaConAdeudoMC(CurrentMonth,
+                                                                                    1 if rango == 3 else 2)),
                                                             Status="APROBADA",
                                                             Tipo="MesaControl").exists()
     ItHasCarta1MonthAgo = CartaNoAdeudoTransportistas.objects.filter(IDTransportista=DataTransportistas.IDTransportista,
-                                                        MesCartaNoAdeudo=(
-                                                            MesCartaConAdeudoMC(CurrentMonth, 2)),
-                                                        Status="APROBADA", Tipo="MesaControl").exists()
+                                                                     MesCartaNoAdeudo=(
+                                                                         MesCartaConAdeudoMC(CurrentMonth, 2)),
+                                                                     Status="APROBADA", Tipo="MesaControl").exists()
     ItHasCarta2MonthsAgo = CartaNoAdeudoTransportistas.objects.filter(
-                                                        IDTransportista=DataTransportistas.IDTransportista,
-                                                        MesCartaNoAdeudo=(
-                                                            MesCartaConAdeudoMC(CurrentMonth, 3)),
-                                                        Status="APROBADA", Tipo="MesaControl").exists()
+        IDTransportista=DataTransportistas.IDTransportista,
+        MesCartaNoAdeudo=(
+            MesCartaConAdeudoMC(CurrentMonth, 3)),
+        Status="APROBADA", Tipo="MesaControl").exists()
 
-    if not ItHasCarta and rango == 3 and ViajesMeseActual:
-        if not ItHasCarta1MonthAgo and Viajes1Mes:
-            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "ADEUDO")
-        else:
-            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "VALIDADO")
+    if not ItHasCarta and rango == 3: #and GetTotalViajesByMonth(DataTransportistas.IDTransportista, 0):
+        MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso,
+                   "ADEUDO" if not ItHasCarta1MonthAgo and Viajes1Mes else "VALIDADO")
+        # if not ItHasCarta1MonthAgo and Viajes1Mes:
+        #     MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "ADEUDO")
+        # else:
+        #     MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "VALIDADO")
     elif not ItHasCarta and rango == 2:
-        if not Viajes1Mes:
-            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "ADEUDO" if Viajes2Mes and not ItHasCarta2MonthsAgo else "VALIDADO")
-        else:
-            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "ADEUDO")
-    elif not ItHasCarta and rango == 1:
-        if not Viajes1Mes:
+        if not GetTotalViajesByMonth(DataTransportistas.IDTransportista, 1):
             MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso,
                        "ADEUDO" if Viajes2Mes and not ItHasCarta2MonthsAgo else "VALIDADO")
         else:
-            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "ADEUDO" if Viajes2Mes and not ItHasCarta2MonthsAgo else "VALIDADO")
+            MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "ADEUDO")
+    elif not ItHasCarta and rango == 1:
+        MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso,
+                   "ADEUDO" if Viajes2Mes and not ItHasCarta2MonthsAgo else "VALIDADO")
+        # if not Viajes1Mes:
+        #     MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso,
+        #                "ADEUDO" if Viajes2Mes and not ItHasCarta2MonthsAgo else "VALIDADO")
+        # else:
+        #     MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso,
+        #                "ADEUDO" if Viajes2Mes and not ItHasCarta2MonthsAgo else "VALIDADO")
     elif ItHasCarta:
         MethodSave(DataTransportistas.IDTransportista, DataTransportistas.StatusProceso, "VALIDADO")
 
     return "ok"
 
+
+def GetTotalViajesByMonth(IDTransportista, RestarMes, step=0, ListData=list()):
+    CountViajesEnXD = XD_Viajes.objects.exclude(Status='CANCELADO').filter(IDTransportista=IDTransportista,
+                                                                           FechaAlta__month=datetime.datetime.now().month - RestarMes)
+    CountViajesEnBKG = Bro_Viajes.objects.exclude(StatusProceso='CANCELADO').filter(IDTransportista=IDTransportista,
+                                                                                    FechaAlta__month=datetime.datetime.now().month - RestarMes)
+    CheckViajesFrom = CountViajesEnXD if step == 0 else CountViajesEnBKG
+    if len(CheckViajesFrom) >= 1:
+        for i in CheckViajesFrom:
+            ListData.append(i.FechaAlta.day in range(1, 21))
+    step += 1
+    if step < 2:
+        GetTotalViajesByMonth(IDTransportista, RestarMes, 1, ListData)
+    else:
+        return any(ListData)
