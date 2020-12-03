@@ -657,3 +657,26 @@ var GetEvidenciaMC = function(IDViaje)
     WaitMe_Hide('#TbPadingMC');
   });
 }
+
+
+var  GetReporteTotales = function(params){
+  fetch(`/ReporteGeneralMC/ReporteByFilter?${params}`, {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    return response.clone().json();
+  }).then(function(data){
+    $('#divTablaReproteGeneral').html(data.htmlRes);
+    DataTableStyle();
+//    $('#TableReporteGeneral').css("display", "block");
+    WaitMe_Hide('#divTablaReproteGeneral');
+  }).catch(function(ex){
+    console.log(ex);
+    WaitMe_Hide('#divTablaReproteGeneral');
+    alertToastError("Ocurrio un error");
+  });
+}

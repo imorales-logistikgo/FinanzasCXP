@@ -1,0 +1,178 @@
+{% load humanize %}
+{% load static %}
+{% load my_tags %}
+<div class="kt-subheader   kt-grid__item" id="kt_subheader">
+	<div class="kt-container  kt-container--fluid ">
+		<div class="kt-subheader__toolbar">
+			<div class="kt-subheader__wrapper">
+				<h3>Reporte General XD y BKG</h3>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+		<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+			<table class="table table-striped table-bordered" id="TableReporteGeneral">
+				<thead>
+					<tr>
+						<th>Folio Viaje</th>
+                        <th>Folio Factura CXP</th>
+                        <th>Folio Factura CXC</th>
+                        <th>Tipo Viaje</th>
+                        <th>Status</th>
+                        <th>Cliente</th>
+                        <th>Transportista</th>
+                        <th>Tipo Unidad</th>
+                        <th>Placas Tracto</th>
+                        <th>Placas Remolque</th>
+                        <th>Proyecto</th>
+                        <th>Fecha Alta</th>
+                        <th>Fecha Carga</th>
+                        <th>Fecha Descarga</th>
+                        <th>FechaRecEviDigitales</th>
+                        <th>FechaEviFisicas</th>
+                        <th>FechaCapturaControlDesk</th>
+                        <th>FechaRecEviDigitales VS FechaDescarga</th>
+                        <th>FechaRecEviDigitales VS FechaAlta</th>
+                        <th>FechaEviFisicas VS FechaDescarga</th>
+                        <th>FechaCapturaControlDesk VS FechaEviFisicas</th>
+                        <th>FechaRecEviDigitales VS FechaEviFisicas</th>
+                        <th>Precio Estadias</th>
+                        <th>PrecioViajeLocal</th>
+                        <th>Precio Otros</th>
+                        <th>PrecioManiobrasDescarga</th>
+                        <th>PrecioManiobrasCarga</th>
+                        <th>Precio Almacenaje</th>
+                        <th>Precio Maniobras</th>
+                        <th>Precio Viaje</th>
+                        <th>Precio Servicios</th>
+                        <th>Precio Subtotal</th>
+                        <th>Precio IVA</th>
+                        <th>Precio Retencion</th>
+                        <th>Precio Total</th>
+                        <th>Costo Estadias</th>
+                        <th>CostoViajeLocal</th>
+                        <th>Costo Otros</th>
+                        <th>CostoManiobrasDescarga</th>
+                        <th>CostoManiobrasCarga</th>
+                        <th>Costo Almacenaje</th>
+                        <th>Costo Maniobras</th>
+                        <th>Costo Subtotal</th>
+                        <th>Costo IVA</th>
+                        <th>Costo Retencion</th>
+                        <th>Costo Total</th>
+					</tr>
+				</thead>
+				<tbody>
+                {% for datos in page_obj %}
+					<tr>
+						<td>{{datos.Folio|safe}}</td>
+                        <td>{{datos.FolioFacturaProveedor|default:''|safe}}</td>
+                        <td>{{datos.FolioFacturaCliente|default:''|safe}}</td>
+                        <td>{{datos.Tipo|safe}}</td>
+                        <td>{{datos.StatusProceso|safe}}</td>
+                        <td>{{datos.Cliente|safe}}</td>
+                        <td>{{datos.Transportista|safe}}</td>
+                        <td>{{datos.TipoUnidad|safe}}</td>
+                        <td>{{datos.TractoPlacas|safe}}</td>
+                        <td>{{datos.RemolquePlacas|safe}}</td>
+                        <td>{{datos.OrigenBd|safe}}</td>
+                        <td>{{datos.FechaAlta|date:'Y/m/d h:i a'|safe}}</td>
+                        <td>{{datos.FechaCarga|date:'Y/m/d h:i a'|safe}}</td>
+                        <td>{{datos.FechaDescarga|date:'Y/m/d h:i a'|safe}}</td>
+                        <td>{{datos.FechaRecEviDigitales|date:'Y/m/d h:i a'|safe}}</td>
+                        <td>{{datos.FechaEviFisicas|date:'Y/m/d h:i a'|safe}}</td>
+                        <td>{{datos.FechaCapturaControlDesk|date:'Y/m/d h:i a'|safe}}</td>
+                        <td>{{datos.FechaRecEviDigitalesVsFechaDescarga|default:''|safe}}</td>
+                        <td>{{datos.FechaRecEviDigitalesVsFechaAlta|default:''|safe}}</td>
+                        <td>{{datos.FechaEviFisicasVsFechaDescarga|default:''|safe}}</td>
+                        <td>{{datos.FechaCapturaControlDeskVsFechaEviFisicas|default:''|safe}}</td>
+                        <td>{{datos.FechaRecEviDigitalesVsFechaEviFisicas|default:''|safe}}</td>
+                        <td>${{datos.PrecioStays}}</td>
+                        <td>${{datos.PrecioTrip}}</td>
+                        <td>${{datos.PrecioOthers}}</td>
+                        <td>${{datos.PrecioUnloadingManeuvers}}</td>
+                        <td>${{datos.PrecioLoadingManeuvers}}</td>
+                        <td>${{datos.PrecioStorage}}</td>
+                        <td>${{datos.PrecioManeuvers}}</td>
+                        <td>${{datos.PrecioViaje}}</td>
+                        <td>${{datos.PrecioServicios}}</td>
+                        <td>${{datos.PrecioSubtotal}}</td>
+                        <td>${{datos.PrecioIVA}}</td>
+                        <td>${{datos.PrecioRetencion}}</td>
+                        <td>${{datos.PrecioTotal}}</td>
+                        <td>${{datos.CostoStays}}</td>
+                        <td>${{datos.CostoTrip}}</td>
+                        <td>${{datos.CostoOthers}}</td>
+                        <td>${{datos.CostoUnloadingManeuvers}}</td>
+                        <td>${{datos.CostoLoadingManeuvers}}</td>
+                        <td>${{datos.CostoStorage}}</td>
+                        <td>${{datos.CostoManeuvers}}</td>
+                        <td>${{datos.CostoSubtotal}}</td>
+                        <td>${{datos.CostoIVA}}</td>
+                        <td>${{datos.CostoRetencion}}</td>
+                        <td>${{datos.CostoTotal}}</td>
+					</tr>
+                {% endfor %}
+				</tbody>
+			</table>
+
+
+<!--            {% if page_obj.has_other_pages %}-->
+<!--  {% if page_obj.has_previous %}-->
+<!--    <a href="?{% param_replace page=1 %}">First</a>-->
+<!--    {% if page_obj.previous_page_number != 1 %}-->
+<!--      <a href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>-->
+<!--    {% endif %}-->
+<!--  {% endif %}-->
+
+<!--  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}-->
+
+<!--  {% if page_obj.has_next %}-->
+<!--    {% if page_obj.next_page_number != page_obj.paginator.num_pages %}-->
+<!--      <a href="ReporteByFilter?{% param_replace page=page_obj.next_page_number %}">Next</a>-->
+<!--    {% endif %}-->
+<!--    <a href="ReporteByFilter?{% param_replace page=page_obj.paginator.num_pages %}">Last</a>-->
+<!--  {% endif %}-->
+
+<!--  <p>Objects {{ page_obj.start_index }}—{{ page_obj.end_index }}</p>-->
+<!--{% endif %}-->
+
+<!--{% if Data.has_other_pages %}-->
+<!--            <div class="kt-pagination  kt-pagination&#45;&#45;brand">-->
+<!--                <ul class="kt-pagination__links">-->
+<!--                    {% if Data.has_previous %}-->
+<!--                    <li class="kt-pagination__link&#45;&#45;next">-->
+<!--                        <a href="?{% param_replace page=1 %}"><i-->
+<!--                                class="fa fa-angle-left kt-font-brand"></i></a>-->
+<!--                    </li>-->
+<!--                    {% endif %}-->
+<!--                    {% for i in Data.paginator.page_range%}-->
+<!--                    {% if Data.number == i %}-->
+<!--                    <li class="kt-pagination__link&#45;&#45;active">-->
+<!--                        <a>{{ i }}</a>-->
+<!--                    </li>-->
+<!--                    {% else %}-->
+<!--                    <li>-->
+<!--                        <a href="?page={{ i }}">{{ i }}</a>-->
+<!--                    </li>-->
+<!--                    {% endif %}-->
+<!--                    {% endfor %}-->
+<!--                    {% if Data.has_next %}-->
+<!--                    <li class="kt-pagination__link&#45;&#45;prev">-->
+<!--                        <a href="?page={{ Data.next_page_number"><i class="fa fa-angle-right kt-font-brand"></i></a>-->
+<!--                    </li>-->
+<!--                    {% endif %}-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--{% endif %}-->
+
+		</div>
+	</div>
+</div>
+
+
