@@ -65,8 +65,8 @@ class XD_Pedidos(models.Model):
 
 class XD_PedidosxViajes(models.Model):
     XD_PedidoxViaje = models.AutoField(primary_key=True)
-    XD_IDPedido = models.ForeignKey(XD_Pedidos, on_delete=models.CASCADE, db_column = 'XD_IDPedido')
-    XD_IDViaje = models.ForeignKey(XD_Viajes, on_delete=models.CASCADE, db_column = 'XD_IDViaje')
+    XD_IDPedido = models.ForeignKey(XD_Pedidos, on_delete=models.CASCADE, db_column='XD_IDPedido')
+    XD_IDViaje = models.ForeignKey(XD_Viajes, on_delete=models.CASCADE, db_column='XD_IDViaje')
     IsEvidenciaPedidoxViaje = models.BooleanField()
     IsEvidenciaFisicaPedidoxViaje = models.BooleanField()
     StatusPedido = models.CharField(max_length = 100)

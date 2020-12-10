@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.hashers import check_password
 from users import models as User
 from usersadmon import models as Admon
+from django.conf import settings
 import base64, hashlib
 from django.utils.crypto import pbkdf2
 import requests
@@ -20,8 +21,7 @@ class EmailBackend():
         }
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         data_json = json.dumps(data)
-        # response = requests.post('http://api-admon.logistikgo.com/api/Usuarios/Encripta',data=data_json,headers=headers)
-        response = requests.post('http://api-admon-demo.logistikgo.com/api/Usuarios/Encripta', data=data_json,headers=headers)
+        response = requests.post(settings.API_ADMON+'api/Usuarios/Encripta', data=data_json,headers=headers)
         respuesta = response.json()
         if respuesta:
             try:

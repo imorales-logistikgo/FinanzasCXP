@@ -87,13 +87,17 @@ def GetReporteTotales(request, **kwargs):
 		Total = 0
 		TotalVencido = 0
 		TotalPorVencer = 0
-		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor=Factura['IDProveedor'], Status__in= StatusIN, FechaFactura__lte=FechaCorte):
+		for TotalesFacturas in FacturasxProveedor.objects.filter(IDProveedor=Factura['IDProveedor'],
+																 Status__in=StatusIN, FechaFactura__lte=FechaCorte):
 			if Moneda == "MXN":
-				Total = Total + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else Total + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else Total + TotalesFacturas.Saldo
+				Total = Total + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else Total + (
+							TotalesFacturas.Saldo * TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else Total + TotalesFacturas.Saldo
 			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') <= FechaCorte and Moneda == "MXN":
-				TotalVencido = TotalVencido + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else TotalVencido + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalVencido + TotalesFacturas.Saldo
+				TotalVencido = TotalVencido + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else TotalVencido + (
+							TotalesFacturas.Saldo * TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalVencido + TotalesFacturas.Saldo
 			if TotalesFacturas.FechaVencimiento.strftime('%Y-%m-%d') > FechaCorte and Moneda == "MXN":
-				TotalPorVencer = TotalPorVencer + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else TotalPorVencer + (TotalesFacturas.Saldo*TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalPorVencer + TotalesFacturas.Saldo
+				TotalPorVencer = TotalPorVencer + TotalesFacturas.Saldo if TotalesFacturas.Moneda == 'MXN' else TotalPorVencer + (
+							TotalesFacturas.Saldo * TotalesFacturas.TipoCambio) if TotalesFacturas.Moneda == 'USD' else TotalPorVencer + TotalesFacturas.Saldo
 		ws.cell(row=cont, column=1).value = NombreProv.RazonSocial
 		ws.cell(row=cont, column=2).value = round(TotalVencido, 2)
 		ws.cell(row=cont, column=3).value = round(TotalPorVencer, 2)

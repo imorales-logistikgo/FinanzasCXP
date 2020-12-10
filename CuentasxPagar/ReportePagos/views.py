@@ -107,7 +107,6 @@ def GetDetallesPago(request):
 
 def SaveComplementosPago(request):
 	jParams = json.loads(request.body.decode('utf-8'))#["IDPago"]
-	print(jParams)
 	Pago = PagosxProveedor.objects.get(IDPago = jParams['IDPago'])
 	Pago.RutaPDF = jParams['RutaPDF']
 	Pago.RutaXML = jParams['RutaXML']

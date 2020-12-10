@@ -61,3 +61,14 @@ class View_EvidenciasCxP(models.Model):
     class Meta:
         managed = False
         db_table = 'View_EvidenciasCxP'
+
+
+class Cliente(models.Model):
+    IDCliente = models.AutoField(primary_key=True)
+    NombreCorto = models.CharField(max_length=50)
+    RazonSocial = models.CharField(max_length=300)
+    isFiscal = models.BooleanField()
+    StatusProceso = models.CharField(max_length=20)
+    class Meta:
+        managed = False
+        db_table = 'AdmonClientes'

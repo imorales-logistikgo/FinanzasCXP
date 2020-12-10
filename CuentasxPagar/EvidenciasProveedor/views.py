@@ -101,7 +101,7 @@ def FindFolioProveedorE(request):
                             for TieneEvidencia1 in TieneEvidencia:
                                 newDelivery = {}
                                 newDelivery['XD_IDPedido'] = Delivery.XD_IDPedido.XD_IDPedido
-                                newDelivery['Delivery'] = Delivery.XD_IDPedido.Delivery.replace(".","") if TieneEvidencia1.Titulo != 'BITACORA' else GetObservacionesByPedidoT1(Delivery.XD_IDPedido.Observaciones, Delivery.TipoTransporte)
+                                newDelivery['Delivery'] = Delivery.XD_IDPedido.Delivery.translate({ord(c): "" for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"}) if TieneEvidencia1.Titulo != 'BITACORA' else GetObservacionesByPedidoT1(Delivery.XD_IDPedido.Observaciones, Delivery.TipoTransporte)
                                 newDelivery['IDViaje'] = Delivery.XD_IDViaje.XD_IDViaje
                                 newDelivery['TipoEvidencia'] = 'Pedido' if TieneEvidencia1.Titulo != 'BITACORA' else 'Bitacora'
                                 newDelivery['RutaArchivo'] = '' if(TieneEvidencia1.IsEnviada and TieneEvidencia1.IsRechazada) else TieneEvidencia1.RutaArchivo
@@ -111,7 +111,7 @@ def FindFolioProveedorE(request):
                         else:
                             newDelivery = {}
                             newDelivery['XD_IDPedido'] = Delivery.XD_IDPedido.XD_IDPedido
-                            newDelivery['Delivery'] = Delivery.XD_IDPedido.Delivery.replace(".","")
+                            newDelivery['Delivery'] = Delivery.XD_IDPedido.Delivery.translate({ord(c): "" for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"})
                             newDelivery['IDViaje'] = Delivery.XD_IDViaje.XD_IDViaje
                             newDelivery['TipoEvidencia'] = 'Pedido'
                             newDelivery['RutaArchivo'] = "" #if (Delivery.IsEvidenciaPedidoxViaje or Delivery.IsEvidenciaFisicaPedidoxViaje) else ""
@@ -250,26 +250,29 @@ def GetEvidenciasMesaControl(request):
                 ListEvidencias.append(AddEvidencia)
         else:
             GetIDPedidos = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
-            print(ValidacionEviByObservaciones(IDViaje))
             if not ValidacionEviByObservaciones(IDViaje) and GetIDPedidos[0].XD_IDViaje.IDClienteFiscal == 5267:
                 return HttpResponse(status=500)
-            TotalObservaciones = CountTotalEvidencias(GetIDPedidos)
-            TotalEvidencias = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje).count() + TotalObservaciones
-            if XD_EvidenciasxPedido.objects.filter(XD_IDViaje=IDViaje).count() == TotalEvidencias:
-                for GetPedidos in GetIDPedidos:
-                    GetDelivery = XD_Pedidos.objects.get(XD_IDPedido=GetPedidos.XD_IDPedido.XD_IDPedido)
-                    GetEvidenciaxPedido = XD_EvidenciasxPedido.objects.filter(IDXD_Pedido=GetPedidos.XD_IDPedido.XD_IDPedido, XD_IDViaje=IDViaje)
-                    for eachEvidenciaxPedido in GetEvidenciaxPedido:
-                        if eachEvidenciaxPedido.IsEnviada and not eachEvidenciaxPedido.IsValidada and not eachEvidenciaxPedido.IsRechazada:
-                            AddEvidencia = {}
-                            AddEvidencia['IDEvidencia'] = eachEvidenciaxPedido.IDEvidenciaxPedido
-                            AddEvidencia['URLEvidencia'] = eachEvidenciaxPedido.RutaArchivo
-                            AddEvidencia['Delivery'] = GetDelivery.Delivery.replace('.',"") if eachEvidenciaxPedido.Titulo != "BITACORA" else GetObservacionesByPedidoT1(GetDelivery.Observaciones, GetPedidos.TipoTransporte)
-                            AddEvidencia['TipoEvidencia'] = 'Pedido' if eachEvidenciaxPedido.Titulo != "BITACORA" else 'Bitacora'
-                            AddEvidencia['IDViaje'] = eachEvidenciaxPedido.XD_IDViaje
-                            ListEvidencias.append(AddEvidencia)
-            else:
-                return HttpResponse(status=500)
+            print(len(GetIDPedidos))
+            if len(GetIDPedidos) >= 1:
+                TotalObservaciones = CountTotalEvidencias(GetIDPedidos)
+                TotalEvidencias = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje).count() + TotalObservaciones
+                print(TotalEvidencias)
+                print(XD_EvidenciasxPedido.objects.filter(XD_IDViaje=IDViaje).count())
+                if XD_EvidenciasxPedido.objects.filter(XD_IDViaje=IDViaje).count() == TotalEvidencias:
+                    for GetPedidos in GetIDPedidos:
+                        GetDelivery = XD_Pedidos.objects.get(XD_IDPedido=GetPedidos.XD_IDPedido.XD_IDPedido)
+                        GetEvidenciaxPedido = XD_EvidenciasxPedido.objects.filter(IDXD_Pedido=GetPedidos.XD_IDPedido.XD_IDPedido, XD_IDViaje=IDViaje)
+                        for eachEvidenciaxPedido in GetEvidenciaxPedido:
+                            if eachEvidenciaxPedido.IsEnviada and not eachEvidenciaxPedido.IsValidada and not eachEvidenciaxPedido.IsRechazada:
+                                AddEvidencia = {}
+                                AddEvidencia['IDEvidencia'] = eachEvidenciaxPedido.IDEvidenciaxPedido
+                                AddEvidencia['URLEvidencia'] = eachEvidenciaxPedido.RutaArchivo
+                                AddEvidencia['Delivery'] = GetDelivery.Delivery.translate({ord(c): "" for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"}) if eachEvidenciaxPedido.Titulo != "BITACORA" else GetObservacionesByPedidoT1(GetDelivery.Observaciones, GetPedidos.TipoTransporte)
+                                AddEvidencia['TipoEvidencia'] = 'Pedido' if eachEvidenciaxPedido.Titulo != "BITACORA" else 'Bitacora'
+                                AddEvidencia['IDViaje'] = eachEvidenciaxPedido.XD_IDViaje
+                                ListEvidencias.append(AddEvidencia)
+                else:
+                    return HttpResponse(status=500)
             GetEvidenciasxViaje = XD_EvidenciasxViaje.objects.filter(Q(IDXD_Viaje=IDViaje, Titulo__in=('Maniobras de descarga','Maniobras de carga'), Tipo='MESA CONTROL') | Q(IDXD_Viaje=IDViaje, Tipo='EVCUSTODIAF'))
             # ListEvi = EvidenciasToList(GetEvidenciasxViaje)
             for Maniobras in GetEvidenciasxViaje: #ListEvi:
@@ -1125,6 +1128,7 @@ def CountTotalEvidencias(Pedidos):
             observaciones = {}
             observaciones["name"] = GetObservacionesByPedidoT1(eachPedido.XD_IDPedido.Observaciones, eachPedido.TipoTransporte)
             "" if observaciones["name"] == '' or observaciones["name"] == None or observaciones["name"] == [] else CountList.append(observaciones)
-        return len(CountList)
+        unique = {each['name']: each for each in CountList}.values()
+        return len(unique)
     else:
         return 0

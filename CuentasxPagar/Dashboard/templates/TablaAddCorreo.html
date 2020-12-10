@@ -1,0 +1,55 @@
+{% load humanize %}
+{% load static %}
+
+
+<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+		<div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder">
+			<table class="table table-striped table-bordered" id="TablaAddCorreo">
+				<thead>
+                <tr>
+                    <th class="text-center" style="width:300px">Transportista</th>
+                    {% if request.user.username == 'cxp3@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.is_superuser %}
+                    <th class="text-center">Correos</th>
+                    <th class="text-center">Agregar</th>
+                    {% endif %}
+                    <th class="text-center" style="width:250px">Carta no adeudo</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for Proveedor in Proveedores %}
+                <tr>
+                    <td class="text-center">{{Proveedor.RazonSocial}}</td>
+                    {% if request.user.username == 'cxp3@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.is_superuser %}
+                    <td class="text-center">{% if Proveedor.Correo != None %}<a href="#detallesCorreos"
+                                                                                data-toggle="modal"
+                                                                                data-backdrop="static"
+                                                                                data-keyboard="false"
+                                                                                data-idtransportista="{{Proveedor.IDTransportista}}"
+                                                                                class="Correos">Ver Correos</a>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-success btn-elevate btn-circle btn-icon" title="Agregar Correo"
+                                data-idtransportista="{{Proveedor.IDTransportista}}" data-keyboard="false"
+                                data-backdrop="static" data-toggle="modal" data-target="#AddCorreo" id="NewCorreo"><i
+                                class="fa fa-plus"></i></button>
+                    </td>
+                    {% endif %}
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-elevate btn-circle btn-icon" title="Carta no adeudo"
+                                id="CartaNOAdeudo" data-idtransportista="{{Proveedor.IDTransportista}}"><i
+                                class="fa fa-file-pdf"></i></button>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+
+
+
+

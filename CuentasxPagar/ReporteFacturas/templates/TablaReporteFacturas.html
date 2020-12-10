@@ -33,7 +33,7 @@
 			<td class="text-center">${{Factura.Retencion|floatformat:"2"|intcomma|safe}}</td>
 			<td class="text-center">${{Factura.Total|floatformat:"2"|intcomma|safe}}</td>
 			{% endif %}
-			<td class="text-center">{{Factura.Status|safe}}</td>
+			<td class="text-center">{%if Factura.Status == "CANCELADA" %} RECHAZADA {% else %} {{Factura.Status|safe}} {% endif %}</td>
 			<td class="text-center">{{Factura.ComentarioBaja|default:""|safe}}</td>
 			<td class="text-center">{{Factura.Viajes|safe}}</td>
 			<!-- <td></td> -->

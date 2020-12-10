@@ -5,6 +5,261 @@ kt-menu__item--active
 {% endblock %}
 
 {% block Indicadores %}
+<div class="kt-portlet kt-portlet--tabs">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-toolbar">
+                    <ul class="nav nav-tabs nav-tabs-line nav-tabs-line-danger nav-tabs-line-2x nav-tabs-line-right"
+                        role="tablist">
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link active" data-toggle="tab" href="#kt_portlet_base_demo_2_3_tab_content"-->
+<!--                               role="tab">-->
+<!--                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i>Usuarios-->
+<!--                            </a>-->
+<!--                        </li>-->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {%if ActiveCrearProveedor or ActiveContraseñaProveedor %} {{ActiveCrearProveedor}} {%endif%}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Usuarios</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item {%if ActiveCrearProveedor %} {{ActiveCrearProveedor}} {%endif%}" data-toggle="tab" href="#kt_portlet_base_demo_2_3_tab_content">Alta Usuarios</a>
+                                <a class="dropdown-item" data-toggle="tab" href="#UpdatePassword">Actualizar Contraseña</a>
+                            </div>
+                        </li>
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link {% if ActiveEvidencias %} {{ActiveEvidencias}} {% endif %}" data-toggle="tab" href="#kt_portlet_base_demo_2_2_tab_content"-->
+<!--                               role="tab">-->
+<!--                                <i class="fa fa-bar-chart" aria-hidden="true"></i>Evidencias-->
+<!--                            </a>-->
+<!--                        </li>-->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Transportistas</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" data-toggle="tab" href="#AddCorreoTransportista">Agregar Correo</a>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="kt-portlet__body">
+                <div class="tab-content">
+                    <div class="tab-pane {%if ActiveCrearProveedor %} {{ActiveCrearProveedor}} {%endif%}" id="kt_portlet_base_demo_2_3_tab_content" role="tabpanel">
+
+                        <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+                            <div class="kt-container  kt-container--fluid ">
+                                <div class="kt-subheader__toolbar">
+                                    <div class="kt-subheader__wrapper">
+                                        <h3>Crear Usuarios Proveedor</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                            <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                                <div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+                                    {% if error %}
+                                        <div class="alert alert-danger" role="alert">
+                                            <strong>{{ error }}</strong>
+                                        </div>
+                                    {% endif %}
+                                    {% if success %}
+                                        <div class="alert alert-success" role="alert">
+                                            <strong>{{ success }}</strong>
+                                        </div>
+                                    {% endif %}
+                                    {% if warning %}
+                                        <div class="alert alert-warning" role="alert">
+                                            <strong>{{ warning }}</strong>
+                                        </div>
+                                    {% endif %}
+                                    <form class="form-inline" action="CrearUsuario" method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group mb-2 col-5">
+                                            {{form.RFC}}
+<!--                                            <input type="text" class="form-control" size="60" name="RFC" id="RFC" placeholder="RFC">-->
+                                        </div><span></span>
+                                        {% if request.user.is_superuser%}
+                                        <button type="submit" class="btn btn-primary mx-sm-3 mb-2">Crear Usuario</button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+<!--                    {% if request.user.username == 'wbarrones@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.is_superuser %}-->
+<!--                    <div class="tab-pane {% if ActiveEvidencias %} {{ActiveEvidencias}} {% endif %}" id="kt_portlet_base_demo_2_2_tab_content" role="tabpanel">-->
+
+<!--                        <div class="kt-subheader   kt-grid__item" id="kt_subheader">-->
+<!--                            <div class="kt-container  kt-container&#45;&#45;fluid ">-->
+<!--                                <div class="kt-subheader__toolbar">-->
+<!--                                    <div class="kt-subheader__wrapper">-->
+<!--                                        <h3>Eliminar Evidencias</h3>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                        <div class="kt-content  kt-grid__item kt-grid__item&#45;&#45;fluid kt-grid kt-grid&#45;&#45;hor" id="kt_content">-->
+<!--                            <div class="kt-container  kt-container&#45;&#45;fluid  kt-grid__item kt-grid__item&#45;&#45;fluid">-->
+<!--                                <div class="kt-portlet kt-portlet&#45;&#45;fit kt-portlet&#45;&#45;head-noborder" id="TbPading">-->
+<!--                                    <form id="ValidateInput" method="get" action="GetEvidencias">-->
+<!--                                        {% if ErrorEvidencia %}-->
+<!--                                            <div class="alert alert-danger" role="alert">-->
+<!--                                                <strong>{{ ErrorEvidencia }}</strong>-->
+<!--                                            </div>-->
+<!--                                        {% endif %}-->
+<!--                                        <div class="container py-4">-->
+<!--                                            <div class="kt-content  kt-grid__item kt-grid__item&#45;&#45;fluid kt-grid kt-grid&#45;&#45;hor"-->
+<!--                                                 id="kt_content">-->
+<!--                                                <div class="kt-container  kt-container&#45;&#45;fluid  kt-grid__item kt-grid__item&#45;&#45;fluid">-->
+<!--                                                    <div class="kt-portlet kt-portlet&#45;&#45;fit kt-portlet&#45;&#45;head-noborder"-->
+<!--                                                         id="TbPading">-->
+<!--                                                        <div>-->
+<!--                                                            <label>Folio: </label>-->
+<!--                                                        </div>-->
+<!--                                                        <div class="input-group mb-3">-->
+<!--                                                            {{SearchEvidencia.Viaje}}-->
+<!--                                                            <div class="input-group-append">-->
+<!--                                                                <button class="btn btn-outline-primary" type="submit"-->
+<!--                                                                        id="SearchEvi">Buscar-->
+<!--                                                                </button>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </form>-->
+
+
+<!--                                    &lt;!&ndash;begin::Portlet&ndash;&gt;-->
+<!--									<div class="kt-portlet">-->
+<!--										<div class="kt-portlet__head">-->
+<!--											<div class="kt-portlet__head-label">-->
+<!--												<h3 class="kt-portlet__head-title">-->
+<!--													{{Folio}}-->
+<!--												</h3>-->
+<!--											</div>-->
+<!--										</div>-->
+<!--										<div class="kt-portlet__body">-->
+
+<!--											&lt;!&ndash;begin::Timeline 1&ndash;&gt;-->
+<!--											<div class="kt-list-timeline">-->
+<!--												<div class="kt-list-timeline__items">-->
+<!--                                                    {%for AllEvidencias in evidencia%}-->
+<!--													<div class="kt-list-timeline__item">-->
+<!--														<span class="kt-list-timeline__badge"></span>-->
+<!--														<span class="kt-list-timeline__text">evidencia.Titulo</span>-->
+<!--&lt;!&ndash;														<span class="kt-list-timeline__time">Just now</span>&ndash;&gt;-->
+<!--													</div>-->
+<!--                                                    {% endfor%}-->
+<!--												</div>-->
+<!--											</div>-->
+
+<!--										</div>-->
+<!--									</div>-->
+<!--                                &lt;!&ndash;end::Portlet&ndash;&gt;-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                    </div>-->
+<!--                    {% endif %}-->
+
+                    <div class="tab-pane" id="UpdatePassword" role="tabpanel">
+                        {% if request.user.username == "cxp3@logistikgo" or request.user.username == "jcastillo@logistikgo" or request.user.is_superuser %}
+                        <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+                            <div class="kt-container  kt-container--fluid ">
+                                <div class="kt-subheader__toolbar">
+                                    <div class="kt-subheader__wrapper">
+                                        <h3>Actualizar Contraseña</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
+                             id="kt_content">
+                            <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                                <div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+                                    {% include "TablaUpdatePassword.html" %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                    {% if request.user.username == 'cx3@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.username == 'wbarrones@logistikgo' or request.user.is_superuser %}
+                    <div class="tab-pane" id="AddCorreoTransportista" role="tabpanel">
+                        <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+                            <div class="kt-container  kt-container--fluid ">
+                                <div class="kt-subheader__toolbar">
+                                    <div class="kt-subheader__wrapper">
+                                        <h3>Agregar Correo Transportista</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
+                             id="kt_content">
+                            <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                                <div class="kt-portlet kt-portlet--fit kt-portlet--head-noborder" id="TbPading">
+                                    {% include "TablaAddCorreo.html" %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        <!--end::Portlet-->
+    </div>
+
+{% if request.user.username == 'cxp3@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.is_superuser %}
+    <div class="modal fade" id="detallesCorreos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-dark" id="exampleModalLabel">Correos</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="divTablaDetalles">
+                    {% include "TablaDetalleCorreos.html" %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="AddCorreo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-dark" id="exampleModalLabel">Agregar Correo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="divTablaDetallesAdd">
+                    <input type="email" id="EmailAdd" class="form-control" placeholder="Correo">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="GuardarCorreo">Guardar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
 
 {% endblock %}
 

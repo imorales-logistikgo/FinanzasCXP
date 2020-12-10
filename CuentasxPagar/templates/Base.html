@@ -11,6 +11,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 	<link rel="shortcut icon" href='{% static "img/LogistiKGO-06.ico" %}'>
+
 	<!--begin:: Styles -->
 	{% include "style.html" %}
 
@@ -60,7 +61,7 @@ end:: Header Mobile -->
 			<div class="kt-aside-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_aside_menu_wrapper">
 				<div id="kt_aside_menu" class="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1" data-ktmenu-dropdown-timeout="500">
 					<ul class="kt-menu__nav ">
-						{% if request.user.is_superuser%}
+						{% if request.user.is_superuser or request.user.username == 'cxp3@logistikgo' or request.user.username == 'wbarrones@logistikgo' or request.user.username == 'jcastillo@logistikgo' %}
 <!--						<li class="kt-menu__section ">-->
 <!--							<h4 class="kt-menu__section-text">Administrador</h4>-->
 <!--							<i class="kt-menu__section-icon flaticon-more-v2"></i>-->
@@ -152,6 +153,7 @@ end:: Header Mobile -->
 					<!--begin: User Bar -->
 					<div class="kt-header__topbar-item kt-header__topbar-item--user">
 						<div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="0px,0px">
+							<img alt="Logo" src='{% static "img\navidad.png" %}' width="40" height="40"/>
 							<div class="kt-header__topbar-user">
 								<span class="kt-header__topbar-welcome kt-hidden-mobile">Hola,</span>
 								<span class="kt-header__topbar-username kt-hidden-mobile">{{request.user.name}}</span>

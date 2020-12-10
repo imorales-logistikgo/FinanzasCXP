@@ -1,0 +1,27 @@
+{% load humanize %}
+{% load static %}
+
+<table class="table table-striped table-bordered nowrap" id="tablaDetallesCorreos" style="width:100%">
+    <thead>
+    <th>Correo</th>
+    <th>Activo</th>
+    <th>Activar/Desactivar</th>
+    </thead>
+    <tbody>
+    {% for Correo in Correos %}
+    <tr>
+        <td class="text-center">{{Correo.Correo}}</td>
+        <td class="text-center" name="enviarcorreo">{% if Correo.IsEnviarCorreo %} Si {% else %} No {% endif %}</td>
+        <td class="text-center">{% if Correo.IsEnviarCorreo%}
+            <button class="btn btn-danger btn-elevate btn-circle btn-icon" title="Desactivar Correo"
+                    id="DesactivarCorreo" data-idcorreo="{{Correo.IDCorreoxTransportista}}"><i class="fa fa-lock"></i>
+            </button>
+            {% else %}
+            <button class="btn btn-success btn-elevate btn-circle btn-icon" title="Activar Correo" id="ActivarCorreo"
+                    data-idcorreo="{{Correo.IDCorreoxTransportista}}"><i class="fa fa-lock-open"></i></button>
+            {% endif %}
+        </td>
+    </tr>
+    {%endfor%}
+    </tbody>
+</table>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+ {% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contraseñas</title>
+    <style>
+  .headImg
+        {
+          background-color: #000000;
+          width: 50%;
+          height: 40px;
+          text-align: center;
+        }
+
+ .bodyDiv
+        {
+          padding: 20px;
+          background-color: rgb(246, 246, 250);
+          width: 50%;
+          height: 100px;
+        }
+        .btnShowPagos{
+         text-decoration: none;
+         padding: 10px;
+         color: #ffffff;
+         font-weight: 400;
+         font-size: 15px;
+         background-color: #bd0404;
+         border-radius: 6px;
+         border: 2px solid #080808;
+       }
+       caption {
+          padding: 0.3em;
+          color: #fff;
+          background: #000000;
+          font-family: Arial;
+          font-size: 25px;
+       }
+      th, #tablapago {
+          width: 25%;
+          text-align: left;
+          vertical-align: top;
+          border: 1px solid #000;
+          border-collapse: collapse;
+          padding: 0.3em;
+          caption-side: bottom;
+      }
+  </style>
+</head>
+<body>
+    <center>
+    <table border="0" cellpadding="0" cellspacing="0" height="100%" width="50%" id="bodyTable" style="table-layout: fixed;max-width:50% !important;width: 50% !important;min-width: 50% !important;">
+      <tr>
+        <td align="center" valign="top" id="bodyCell" class="headImg">
+          <img src='http://lgklataforma.blob.core.windows.net/evidencias/dcc84646-813b-452e-bcb8-41e69133a65f.png' style="padding: 5px;" alt="No se puede ver la imagen" height="50" width="250">
+          <!-- <a style="color:#FFFFFF;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;" href="mailto:micorreo@hotmail.com" target="_blank">micorreo@hotmail.com</a> -->
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <p style="border-bottom: 1px solid; margin-left: 20px; font-size: 20px; text-align: center;">{{nombre}}, se le informa que por seguridad de su información fue cambiada su contraseña, a partir de hoy {{Fecha}} estará ingresando con los siguientes datos.</p>
+          </center>
+
+        </td>
+      </tr>
+     </table>
+  </center>
+
+  <center>
+    <table class="bodyDiv">
+      <caption>LogistikGo</caption>
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Contraseña</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: 1px solid">
+          <td id="tablapago">{{user}}</td>
+          <td id="tablapago">{{password}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+<!--      <tr>-->
+<!--        <td>-->
+<!--          <center>-->
+<!--            <p style="margin-left: 20px; font-size: 20px; text-align: center; width: 50%;">De clic en el siguiente enlace para visualizar su Transferencia Electrónica y subir sus Complementos de Pago:</p>-->
+<!--            <a href="https://cxp.logistikgo.com/ReportePagos" style="margin: 1em; color:#FFFFFF; text-decoration: none; mso-table-lspace:0; mso-table-rspace:0;" class="btnShowPagos">Subir Complementos</a>-->
+<!--          </center>-->
+<!--          <center>-->
+<!--          <span>-->
+<!--            <div style="border-bottom: 1px solid #000000; width: 50%; height: 25px;"></div>-->
+<!--          </span>-->
+<!--          </center>-->
+<!--        </td>-->
+<!--      </tr>-->
+      <tr>
+        <td>
+          <center>
+            <span>
+              <p style="text-align: center; font-size: 20px; width: 50%;"> ¿Tienes Preguntas? ¡Estamos aquí para ayudarte! Contáctanos en cualquier momento
+               | Logistik-k | Av. Parque Chapultepec 1385 3er Piso Col. Privadas del Pedregal San Luis Potosí, S.L.P. C.P 78295
+             </p>
+             </span>
+          </center>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <img src='http://lgklataforma.blob.core.windows.net/evidencias/3c60cf65-78bc-4682-b80c-5a956b84409d.png' style="margin: auto;" alt="No se puede ver la imagen" height="80" width="600">
+          </center>
+        </td>
+      </tr>
+    </table>
+  </center>
+</body>
+</html>
