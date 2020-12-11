@@ -476,10 +476,11 @@ def GetEvidenciaFisica(request):
         for TieneEvidenciaDigital in XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje).values('IsEvidenciaPedidoxViaje'):
             if len(TieneEvidenciaDigital) >= 1:
                 TieneEvidenciasEnFalse.append(TieneEvidenciaDigital['IsEvidenciaPedidoxViaje'])
+        print(TieneEvidenciasEnFalse)
         if False in TieneEvidenciasEnFalse:
             pass
         else:
-            VerificarTipoEvidencia = XD_Viajes.objects.get(XD_IDViaje = IDViaje)
+            VerificarTipoEvidencia = XD_Viajes.objects.get(XD_IDViaje=IDViaje)
             for delibery in XD_EvidenciasxViaje.objects.filter(IDXD_Viaje=IDViaje, IsEvidenciaFisicaAprobada=0) if(VerificarTipoEvidencia.TipoViaje == 'CUSTODIA') else XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje):
                 if delibery.IsEnviada if(VerificarTipoEvidencia.TipoViaje == 'CUSTODIA') else not delibery.IsEvidenciaFisicaPedidoxViaje:
                     newEvidenciasFisicas = {}
@@ -576,9 +577,15 @@ def EvidenciaDigitalCompleta(request, viaje=""):
         TieneEvidencia = XD_EvidenciasxPedido.objects.filter(XD_IDViaje=IDViaje)
         for EachEvidencia in TieneEvidencia:
             ListaTieneEvidenciaDigital.append(EachEvidencia.IsValidada)
-    TieneEvidenciaManiobrasAll = XD_EvidenciasxViaje.objects.filter(Q(IDXD_Viaje=IDViaje, Titulo__in=('Maniobras de descarga', 'Maniobras de carga'), Tipo="MESA CONTROL") | Q(IDXD_Viaje=IDViaje, Tipo = 'EVCUSTODIAF'))
-    for TieneEviManiobrasAll in TieneEvidenciaManiobrasAll:
-        ListaTieneEvidenciaDigital.append(TieneEviManiobrasAll.IsValidada)
+    if XD_AccesoriosxViajes.objects.filter(XD_IDViaje=IDViaje, Descripcion__in=('Maniobras de descarga', 'Maniobras de carga')).exists():
+        TieneEvidenciaManiobrasAll = XD_EvidenciasxViaje.objects.filter(
+            Q(IDXD_Viaje=IDViaje, Titulo__in=('Maniobras de descarga', 'Maniobras de carga'), Tipo="MESA CONTROL") | Q(
+                IDXD_Viaje=IDViaje, Tipo='EVCUSTODIAF'))
+        if len(TieneEvidenciaManiobrasAll) == 0:
+            ListaTieneEvidenciaDigital.append(False)
+        else:
+            for TieneEviManiobrasAll in TieneEvidenciaManiobrasAll:
+                ListaTieneEvidenciaDigital.append(TieneEviManiobrasAll.IsValidada)
     IsEvidenciaDigitalCompleta = all(ListaTieneEvidenciaDigital)
     if(viaje ==""):
         return JsonResponse({'IsEvidenciaDigitalCompleta': IsEvidenciaDigitalCompleta})
