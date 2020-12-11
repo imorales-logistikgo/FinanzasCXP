@@ -47,11 +47,11 @@ def Dashboard(request):
             else:
                 each["Correo"] = None
         return render(request, 'Dashboard.html',
-                      {'form': form, 'ActiveCrearProveedor': 'active',
+                      {'form': form, 'ActiveUpdatePassword': 'active',
                        'GetProveedores':GetProveedores, 'Proveedores': Proveedores})
     elif request.user.username == 'wbarrones@logistikgo':
         Proveedores = Proveedor.objects.filter().values('IDTransportista', 'RazonSocial')
-        return render(request, 'Dashboard.html',{'Proveedores': Proveedores})
+        return render(request, 'Dashboard.html',{'Proveedores': Proveedores, 'ActiveAddCorreoTransportista': 'active'})
     else:
         return redirect('/Usuario/logout')
 
@@ -116,7 +116,7 @@ def SaveUserProveedor(rfc):
             newUser.apematerno = ""
             newUser.save()
             DjangoUser = User.User.objects.filter(
-                IDTransportista=GetDatosProveedor.IDTRansportista).exists()
+                IDTransportista=GetDatosProveedor.IDTransportista).exists()
             if not DjangoUser:
                 user = User.User()
                 user.name = newUser.nombre + " " + newUser.apepaterno + " " + newUser.apematerno
@@ -215,35 +215,36 @@ def GeneradorPassword(IDTransportista):
 
 
 def EnviarCorreoContraseñaProveedor(IDTransportista, password):
-    GetIDUsuarioProveedor = User.User.objects.get(IDTransportista=IDTransportista)
-    try:
-        CorreoProveedor = list(
-            AdmonCorreosxTransportista.objects.filter(IDTransportista=GetIDUsuarioProveedor.IDTransportista,
-                                                      IsEnviarCorreo=1).values('Correo'))
-        if CorreoProveedor != []:
-            SendEmail = list()
-            for new in CorreoProveedor:
-                SendEmail.append(new["Correo"], )
-            RS = Proveedor.objects.get(IDTransportista=GetIDUsuarioProveedor.IDTransportista)
-            context = {
-                'nombre': RS.RazonSocial,
-                'user': GetIDUsuarioProveedor.username,
-                'password': password,
-            }
-            html_content = render_to_string("CorreoContrasenaProveedor.html", context)
-            subject = 'Cambio de Contraseña'
-            from_email = settings.EMAIL_HOST_USER
-            to = SendEmail
-            bcc = ['jfraga@logisti-k.com.mx', 'jcastillo@logisti-k.com.mx', 'ugaytan@logisti-k.com.mx']
-            msg = EmailMessage(subject, html_content, from_email, to, bcc=bcc)
-            msg.content_subtype = "html"
-            msg.send()
-            return "Success"
-        else:
-            return "Error"
-    except Exception as e:
-        print(e)
-        return "Error"
+    print("yes")
+    # GetIDUsuarioProveedor = User.User.objects.get(IDTransportista=IDTransportista)
+    # try:
+    #     CorreoProveedor = list(
+    #         AdmonCorreosxTransportista.objects.filter(IDTransportista=GetIDUsuarioProveedor.IDTransportista,
+    #                                                   IsEnviarCorreo=1).values('Correo'))
+    #     if CorreoProveedor != []:
+    #         SendEmail = list()
+    #         for new in CorreoProveedor:
+    #             SendEmail.append(new["Correo"], )
+    #         RS = Proveedor.objects.get(IDTransportista=GetIDUsuarioProveedor.IDTransportista)
+    #         context = {
+    #             'nombre': RS.RazonSocial,
+    #             'user': GetIDUsuarioProveedor.username,
+    #             'password': password,
+    #         }
+    #         html_content = render_to_string("CorreoContrasenaProveedor.html", context)
+    #         subject = 'Cambio de Contraseña'
+    #         from_email = settings.EMAIL_HOST_USER
+    #         to = SendEmail
+    #         bcc = ['jfraga@logisti-k.com.mx', 'jcastillo@logisti-k.com.mx', 'ugaytan@logisti-k.com.mx']
+    #         msg = EmailMessage(subject, html_content, from_email, to, bcc=bcc)
+    #         msg.content_subtype = "html"
+    #         msg.send()
+    #         return "Success"
+    #     else:
+    #         return "Error"
+    # except Exception as e:
+    #     print(e)
+    #     return "Error"
 
 
 def GetIPAdress(salf):
@@ -269,7 +270,10 @@ def BloquearAccesoProveedor(request):
 def DesbloquearAccesoProveedor(request):
     try:
         with transaction.atomic(using='default'):
+            print("here")
             jParams = json.loads(request.body.decode('utf-8'))
+            print(jParams)
+            print("gere")
             GetUsuario = User.User.objects.get(id=jParams["IDUsuario"])
             GetUsuario.is_active = True
             GetUsuario.save()

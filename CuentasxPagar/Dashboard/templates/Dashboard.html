@@ -17,7 +17,8 @@ kt-menu__item--active
 <!--                            </a>-->
 <!--                        </li>-->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle {%if ActiveCrearProveedor or ActiveContraseñaProveedor %} {{ActiveCrearProveedor}} {%endif%}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Usuarios</a>
+                            <a class="nav-link dropdown-toggle {%if ActiveCrearProveedor %} {{ActiveCrearProveedor}} {% else %} {{ActiveUpdatePassword}}{%endif%}"
+                               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Usuarios</a>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item {%if ActiveCrearProveedor %} {{ActiveCrearProveedor}} {%endif%}" data-toggle="tab" href="#kt_portlet_base_demo_2_3_tab_content">Alta Usuarios</a>
                                 <a class="dropdown-item" data-toggle="tab" href="#UpdatePassword">Actualizar Contraseña</a>
@@ -167,7 +168,7 @@ kt-menu__item--active
 <!--                    </div>-->
 <!--                    {% endif %}-->
 
-                    <div class="tab-pane" id="UpdatePassword" role="tabpanel">
+                    <div class="tab-pane {%if ActiveUpdatePassword %} {{ActiveUpdatePassword}} {%endif%}" id="UpdatePassword" role="tabpanel">
                         {% if request.user.username == "cxp3@logistikgo" or request.user.username == "jcastillo@logistikgo" or request.user.is_superuser %}
                         <div class="kt-subheader   kt-grid__item" id="kt_subheader">
                             <div class="kt-container  kt-container--fluid ">
@@ -191,7 +192,7 @@ kt-menu__item--active
                     </div>
 
                     {% if request.user.username == 'cx3@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.username == 'wbarrones@logistikgo' or request.user.is_superuser %}
-                    <div class="tab-pane" id="AddCorreoTransportista" role="tabpanel">
+                    <div class="tab-pane {%if ActiveAddCorreoTransportista %} {{ActiveAddCorreoTransportista}} {%endif%}" id="AddCorreoTransportista" role="tabpanel">
                         <div class="kt-subheader   kt-grid__item" id="kt_subheader">
                             <div class="kt-container  kt-container--fluid ">
                                 <div class="kt-subheader__toolbar">
