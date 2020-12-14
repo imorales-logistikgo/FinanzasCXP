@@ -51,7 +51,7 @@ def Dashboard(request):
                        'GetProveedores':GetProveedores, 'Proveedores': Proveedores})
     elif request.user.username == 'wbarrones@logistikgo':
         Proveedores = Proveedor.objects.filter().values('IDTransportista', 'RazonSocial')
-        return render(request, 'Dashboard.html',{'Proveedores': Proveedores, 'ActiveAddCorreoTransportista': 'active'})
+        return render(request, 'Dashboard.html', {'Proveedores': Proveedores, 'ActiveAddCorreoTransportista': 'active'})
     else:
         return redirect('/Usuario/logout')
 
@@ -118,6 +118,7 @@ def SaveUserProveedor(rfc):
             DjangoUser = User.User.objects.filter(
                 IDTransportista=GetDatosProveedor.IDTransportista).exists()
             if not DjangoUser:
+                print("here")
                 user = User.User()
                 user.name = newUser.nombre + " " + newUser.apepaterno + " " + newUser.apematerno
                 user.email = newUser.correo
@@ -125,6 +126,7 @@ def SaveUserProveedor(rfc):
                 user.is_staff = False
                 user.roles = "Proveedor"
                 user.IDTransportista = GetDatosProveedor.IDTransportista
+                print("here2")
                 user.save()
             return 201
     except Exception as e:

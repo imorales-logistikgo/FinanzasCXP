@@ -123,8 +123,8 @@ def FindFolioProveedorE(request):
                             arrFoliosEvidencias.append(newDelivery)
             for Maniobras in XD_AccesoriosxViajes.objects.filter(XD_IDViaje=XDFolio.XD_IDViaje, Descripcion__in=('Maniobras de descarga', 'Maniobras de carga')):
                 if Maniobras:
-                    GetManiobras = XD_EvidenciasxViaje.objects.filter(IDXD_Viaje=Maniobras.XD_IDViaje, Titulo__in=('Maniobras de descarga', 'Maniobras de carga'), Tipo="MESA CONTROL")
-                    if len(GetManiobras) == 0:
+                    # if len(GetManiobras) == 0:
+                    if not XD_EvidenciasxViaje.objects.filter(IDXD_Viaje=Maniobras.XD_IDViaje, Titulo=Maniobras.Descripcion, Tipo="MESA CONTROL").exists():
                         newDelivery = {}
                         newDelivery['XD_IDPedido'] = Maniobras.XD_IDAccesorioxViaje #if(len(GetManiobras) == 0) else Maniobras.XD_IDAccesorioxViaje if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else GetEachManiobra.IDEvidenciaxViaje
                         newDelivery['Delivery'] = Maniobras.Descripcion #if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else Maniobras.Descripcion if(len(GetManiobras) == 0) else GetEachManiobra.Titulo
@@ -135,16 +135,24 @@ def FindFolioProveedorE(request):
                         newDelivery['ComentarioRechazo'] = ""
                         arrFoliosEvidencias.append(newDelivery)
                     else:
-                        for GetEachManiobra in GetManiobras:
-                            newDelivery = {}
-                            newDelivery['XD_IDPedido'] =GetEachManiobra.IDEvidenciaxViaje
-                            newDelivery['Delivery'] = Maniobras.Descripcion if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else Maniobras.Descripcion if(len(GetManiobras) == 0) else GetEachManiobra.Titulo
-                            newDelivery['IDViaje'] = GetEachManiobra.IDXD_Viaje
-                            newDelivery['TipoEvidencia'] = 'Maniobras'
-                            newDelivery['RutaArchivo'] = '' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else GetEachManiobra.RutaArchivo if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else GetEachManiobra.RutaArchivo
-                            newDelivery['Status'] = 'Rechazada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsRechazada) else 'Aprobada' if(GetEachManiobra.IsEnviada and GetEachManiobra.IsValidada) else 'Pendiente' if len(GetManiobras) == 0 else "Enviada" if (GetEachManiobra.IsEnviada and not GetEachManiobra.IsRechazada and not GetEachManiobra.IsValidada) else "Otro"
-                            newDelivery['ComentarioRechazo'] = GetEachManiobra.ComentarioRechazo
-                            arrFoliosEvidencias.append(newDelivery)
+                        GetManiobras = XD_EvidenciasxViaje.objects.get(IDXD_Viaje=Maniobras.XD_IDViaje,
+                                                                       Titulo=Maniobras.Descripcion,
+                                                                       Tipo="MESA CONTROL")
+                        # for GetEachManiobra in GetManiobras:
+                        newDelivery = {}
+                        newDelivery['XD_IDPedido'] = GetManiobras.IDEvidenciaxViaje
+                        newDelivery['Delivery'] = Maniobras.Descripcion
+                        newDelivery['IDViaje'] = GetManiobras.IDXD_Viaje
+                        newDelivery['TipoEvidencia'] = 'Maniobras'
+                        newDelivery['RutaArchivo'] = '' if (
+                                    GetManiobras.IsEnviada and GetManiobras.IsRechazada) else GetManiobras.RutaArchivo if (
+                                    GetManiobras.IsEnviada and not GetManiobras.IsRechazada and not GetManiobras.IsValidada) else GetManiobras.RutaArchivo
+                        newDelivery['Status'] = 'Rechazada' if (
+                                    GetManiobras.IsEnviada and GetManiobras.IsRechazada) else 'Aprobada' if (
+                                    GetManiobras.IsEnviada and GetManiobras.IsValidada) else "Enviada" if (
+                                    GetManiobras.IsEnviada and not GetManiobras.IsRechazada and not GetManiobras.IsValidada) else "Otro"
+                        newDelivery['ComentarioRechazo'] = GetManiobras.ComentarioRechazo
+                        arrFoliosEvidencias.append(newDelivery)
         elif 'FTL' in Folio:
             GetEviBKG = FindFolioEvidenciaBGK(Folio, request.user.IDTransportista)
             for i in GetEviBKG['ListaEvidencias']:
@@ -566,7 +574,7 @@ def SaveEvidenciaFisica(request):
 
 
 def EvidenciaDigitalCompleta(request, viaje=""):
-    IDViaje = request.GET["IDViaje"] if(viaje =="") else viaje
+    IDViaje = request.GET["IDViaje"] if (viaje == "") else viaje
     ClienteFiscal = XD_Viajes.objects.get(XD_IDViaje=IDViaje)
     TieneEvidenciaDigital = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
     ListaTieneEvidenciaDigital = list()
@@ -577,20 +585,33 @@ def EvidenciaDigitalCompleta(request, viaje=""):
         TieneEvidencia = XD_EvidenciasxPedido.objects.filter(XD_IDViaje=IDViaje)
         for EachEvidencia in TieneEvidencia:
             ListaTieneEvidenciaDigital.append(EachEvidencia.IsValidada)
-    if XD_AccesoriosxViajes.objects.filter(XD_IDViaje=IDViaje, Descripcion__in=('Maniobras de descarga', 'Maniobras de carga')).exists():
-        TieneEvidenciaManiobrasAll = XD_EvidenciasxViaje.objects.filter(
-            Q(IDXD_Viaje=IDViaje, Titulo__in=('Maniobras de descarga', 'Maniobras de carga'), Tipo="MESA CONTROL") | Q(
-                IDXD_Viaje=IDViaje, Tipo='EVCUSTODIAF'))
-        if len(TieneEvidenciaManiobrasAll) == 0:
-            ListaTieneEvidenciaDigital.append(False)
-        else:
-            for TieneEviManiobrasAll in TieneEvidenciaManiobrasAll:
-                ListaTieneEvidenciaDigital.append(TieneEviManiobrasAll.IsValidada)
+    TieneEvidenciaManiobrasAll = XD_EvidenciasxViaje.objects.filter(
+        Q(IDXD_Viaje=IDViaje, Titulo__in=('Maniobras de descarga', 'Maniobras de carga'), Tipo="MESA CONTROL") | Q(
+            IDXD_Viaje=IDViaje, Tipo='EVCUSTODIAF'))
+    for TieneEviManiobrasAll in TieneEvidenciaManiobrasAll:
+        ListaTieneEvidenciaDigital.append(TieneEviManiobrasAll.IsValidada)
+    if XD_AccesoriosxViajes.objects.filter(XD_IDViaje=IDViaje, Descripcion__in=(
+    'Maniobras de descarga', 'Maniobras de carga')).exists():
+        ListaTieneEvidenciaDigital.append(TotalEvidenciasA(IDViaje))
     IsEvidenciaDigitalCompleta = all(ListaTieneEvidenciaDigital)
-    if(viaje ==""):
+    if (viaje == ""):
         return JsonResponse({'IsEvidenciaDigitalCompleta': IsEvidenciaDigitalCompleta})
     else:
         return IsEvidenciaDigitalCompleta
+
+
+def TotalEvidenciasA(IDViaje):
+    lista = list()
+    if XD_AccesoriosxViajes.objects.filter(XD_IDViaje=IDViaje, Descripcion__in=(
+    'Maniobras de descarga', 'Maniobras de carga')).count() == XD_EvidenciasxViaje.objects.filter(IDXD_Viaje=IDViaje, Titulo__in=(
+    'Maniobras de descarga', 'Maniobras de carga'), Tipo="MESA CONTROL").count():
+        TotalEvidenciasAccesorios = XD_EvidenciasxViaje.objects.filter(IDXD_Viaje=IDViaje, Titulo__in=(
+            'Maniobras de descarga', 'Maniobras de carga'), Tipo="MESA CONTROL")
+        for eachevidencia in TotalEvidenciasAccesorios:
+            lista.append(eachevidencia.IsValidada)
+        return all(lista)
+    else:
+        return False
 
 
 def GetTituloForCustodia(Titulo):
