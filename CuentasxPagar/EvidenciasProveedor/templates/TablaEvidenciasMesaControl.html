@@ -27,12 +27,17 @@
 				</thead>
 				<tbody>
 					{% for Evidencias in EvidenciasxAprobar %}
-					<tr data-idviaje ="{{Evidencias.XD_IDViaje}}" data-idviajebkg = "{{Evidencias.IDBro_Viaje}}" data-folio = "{{Evidencias.Folio}}">
+					<tr {% if "XDDMNB" in Evidencias.Folio %} data-idviaje ="{{Evidencias.IDServicio}}" {% elif "XDDMNB" not in Evidencias.Folio%} data-idviaje ="{{Evidencias.XD_IDViaje}}" {%else%}{%endif%} data-idviajebkg = "{{Evidencias.IDBro_Viaje}}" data-folio = "{{Evidencias.Folio}}" {% if "XDDMNB" in  Evidencias.Folio%}data-tipo="Servicios" {% endif %}>
 						<td>{{Evidencias.Folio}}</td>
 						{% if "FTL" in Evidencias.Folio %}
 						<td>{{Evidencias.FechaDescarga|date:'Y/m/d'|safe}}</td>
 						<td>{{Evidencias.IsEvidenciasDigitales}}</td>
 						<td>{{Evidencias.IsEvidenciasFisicas}}</td>
+						<td></td>
+						{% elif "XDDMNB" in Evidencias.Folio %}
+						<td>{{Evidencias.FechaAlta|date:'Y/m/d'|safe}}</td>
+						<td>{{Evidencias.IsEvidenciaServicio}}</td>
+						<td>{{Evidencias.IsEvidenciaFisica}}</td>
 						<td></td>
 						{% else %}
 						<td>{{Evidencias.FechaDespacho|date:'Y/m/d'|safe}}</td>

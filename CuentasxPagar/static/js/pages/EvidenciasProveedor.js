@@ -150,7 +150,7 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
           timer: 2500
         })
         $(removeBtnAprovar).parents()[0].remove()
-        GetIsEvidenciaDigitalCompleta(IDViaje, tipoEv);
+        tipoEv == 'Servicio' ? GetIsEvidenciaServiciosCompleta(IDViaje): GetIsEvidenciaDigitalCompleta(IDViaje, tipoEv);
         WaitMe_Hide('#WaitModalEP');
       }
       else if(response.status == 500)
@@ -333,7 +333,7 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
     $(document).on('click', '#BtnHojaLiberacion', function(){
       WaitMe_ShowBtn('#BtnHojaLiberacion')
       var IDViajeHoja = $(this).data('IDViajeHL');
-      GetHojaLiberacion(IDViajeHoja, $(this).data('TipoEvidenciaHL'))
+      $(this).data('TipoEvidenciaHL') == 'Servicio' ? (alertToastError("Hoja de liberacion no disponible"), WaitMe_HideBtn('#BtnHojaLiberacion')) : GetHojaLiberacion(IDViajeHoja, $(this).data('TipoEvidenciaHL'))
     });
 
 

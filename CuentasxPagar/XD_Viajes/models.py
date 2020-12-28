@@ -105,6 +105,26 @@ class XD_EvidenciasxPedido(models.Model):
         managed = False
         db_table = 'XD_EvidenciasxPedido'
 
+
+class ServiciosXD(models.Model):
+    IDServicio = models.AutoField(primary_key=True)
+    FechaAlta = models.DateTimeField()
+    IDUsuarioAlta = models.ForeignKey(AdmonUsuarios, on_delete=models.CASCADE, db_column='IDUsuarioAlta')
+    IDTransportista = models.ForeignKey(Proveedor, on_delete=models.CASCADE, db_column='IDTransportista')
+    Folio = models.CharField(max_length=100)
+    StatusProceso = models.CharField(max_length=50)
+    IsEvidenciaServicio = models.BooleanField()
+    IsEvidenciaFisica = models.BooleanField()
+    FechaEvidenciaDigital = models.DateTimeField()
+    FechaEvidenciaFisica = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'Servicios'
+
+
+
+
 class XD_EvidenciasxViaje(models.Model):
     IDEvidenciaxViaje = models.AutoField(db_column='IDXD_EvidenciaxViaje', primary_key = True)
     IDXD_Pedido = models.IntegerField() #ForeignKey(XD_Pedidos, on_delete=models.CASCADE, db_column='XD_IDPedido')
@@ -129,6 +149,7 @@ class XD_EvidenciasxViaje(models.Model):
     IDUsuarioEvFisica = models.IntegerField()
     FechaEvidenciaFisicaxPedidoxViaje = models.DateTimeField()
     IDUsuarioRechaza = models.IntegerField()
+    IDServicio = models.ForeignKey(ServiciosXD, on_delete=models.CASCADE, db_column='IDServicio')
 
     class Meta:
         managed = False
@@ -146,3 +167,6 @@ class Ext_Viajes_MesaControl(models.Model):
     class Meta:
         managed = False
         db_table = 'Ext_Viajes_MesaControl'
+
+
+

@@ -7,7 +7,8 @@ from azure.storage.blob import BlobClient
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from XD_Viajes.models import XD_Viajes, XD_PedidosxViajes, XD_Pedidos, XD_AccesoriosxViajes, XD_EvidenciasxPedido, XD_EvidenciasxViaje, Ext_Viajes_MesaControl as Ext_Viajes_MesaControlXD
+from XD_Viajes.models import XD_Viajes, XD_PedidosxViajes, XD_Pedidos, XD_AccesoriosxViajes, XD_EvidenciasxPedido, \
+    XD_EvidenciasxViaje, Ext_Viajes_MesaControl as Ext_Viajes_MesaControlXD, ServiciosXD
 from PendientesEnviar.models import PendientesEnviar, RelacionConceptoxProyecto
 from usersadmon.models import AdmonUsuarios,Proveedor, View_EvidenciasCxP
 from bkg_viajes.models import Bro_Viajes, Bro_EvidenciasxViaje, Ext_Viajes_MesaControl
@@ -24,11 +25,12 @@ from PendientesEnviar import views
 @login_required
 def EvidenciasProveedor(request):
     if request.user.roles == 'MesaControl' or request.user.is_superuser:
-        EvidenciasxAprobar = XD_Viajes.objects.filter(Status = 'FINALIZADO', FechaDespacho__month = datetime.datetime.now().month, FechaDespacho__year = datetime.datetime.now().year).exclude(Status = 'CANCELADO')
-        EvidenciasxAprobarBKG = Bro_Viajes.objects.filter(StatusProceso = 'FINALIZADO', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year).exclude(StatusProceso = 'CANCELADO')
-        Evidencias = chain(EvidenciasxAprobar, EvidenciasxAprobarBKG)
-        SinEvidenciaDigitalXD = XD_Viajes.objects.filter(IsEvidenciaPedidos = False).count()
-        SinEvidenciaDigitalBKG = Bro_Viajes.objects.filter(IsEvidenciasDigitales = False).count()
+        EvidenciasxAprobar = XD_Viajes.objects.filter(Status='FINALIZADO', FechaDespacho__month=datetime.datetime.now().month, FechaDespacho__year=datetime.datetime.now().year).exclude(Status = 'CANCELADO')
+        EvidenciasxAprobarBKG = Bro_Viajes.objects.filter(StatusProceso='FINALIZADO', FechaDescarga__month=datetime.datetime.now().month, FechaDescarga__year=datetime.datetime.now().year).exclude(StatusProceso = 'CANCELADO')
+        EvidenciasxAprobarServicios = ServiciosXD.objects.filter(StatusProceso='FINALIZADO')
+        Evidencias = chain(EvidenciasxAprobar, EvidenciasxAprobarBKG, EvidenciasxAprobarServicios)
+        SinEvidenciaDigitalXD = XD_Viajes.objects.filter(IsEvidenciaPedidos=False).count()
+        SinEvidenciaDigitalBKG = Bro_Viajes.objects.filter(IsEvidenciasDigitales=False).count()
         SinEvidenciaDigital = SinEvidenciaDigitalXD+SinEvidenciaDigitalBKG
         Proveedores = Proveedor.objects.all()
         EvidenciasByWendo = View_EvidenciasCxP.objects.all()
@@ -52,8 +54,36 @@ def FindFolioProveedorE(request):
     try:
         arrFoliosEvidencias = list()
         if 'XDD' in Folio:
-            XDFolio = XD_Viajes.objects.exclude(Status='CANCELADO').get(Folio=Folio, Status='FINALIZADO', IDTransportista=request.user.IDTransportista)
-            if XDFolio.TipoViaje == 'CUSTODIA':
+            IsServicio = True if 'XDDMNB' in Folio else False
+            XDFolio = XD_Viajes.objects.exclude(Status='CANCELADO').get(Folio=Folio, Status='FINALIZADO',
+                IDTransportista=request.user.IDTransportista) if not IsServicio else ServiciosXD.objects.get(
+                Folio=Folio, StatusProceso='FINALIZADO', IDTransportista=request.user.IDTransportista)
+            if IsServicio:
+                GetEvidenciasxServicio = XD_EvidenciasxViaje.objects.filter(IDServicio=XDFolio.IDServicio)
+                if XD_EvidenciasxViaje.objects.filter(IDServicio=XDFolio.IDServicio).exists():
+                    for each in GetEvidenciasxServicio:
+                        newDelivery = {}
+                        newDelivery['XD_IDPedido'] = each.IDEvidenciaxViaje
+                        newDelivery['Delivery'] = XDFolio.Folio
+                        newDelivery['IDViaje'] = XDFolio.IDServicio
+                        newDelivery['TipoEvidencia'] = 'Servicio'
+                        newDelivery['RutaArchivo'] = ""
+                        newDelivery['Status'] = 'Rechazada' if (each.IsEnviada and each.IsRechazada) else 'Aprobada' if (
+                            each.IsValidada) else "Enviada" if (each.IsEnviada and not each.IsRechazada and not each.IsValidada) else "Otro"
+                        newDelivery['ComentarioRechazo'] = each.ComentarioRechazo
+                        arrFoliosEvidencias.append(newDelivery)
+                else:
+                    newDelivery = {}
+                    newDelivery['XD_IDPedido'] = XDFolio.IDServicio
+                    newDelivery['Delivery'] = XDFolio.Folio
+                    newDelivery['IDViaje'] = XDFolio.IDServicio
+                    newDelivery['TipoEvidencia'] = 'Servicio'
+                    newDelivery['RutaArchivo'] = ""
+                    newDelivery['Status'] = "Pendiente"
+                    newDelivery['ComentarioRechazo'] = ""
+                    arrFoliosEvidencias.append(newDelivery)
+                return JsonResponse({'Found': True, 'Folios': arrFoliosEvidencias})
+            elif XDFolio.TipoViaje == 'CUSTODIA':
                 GetEvidenciaxManiobra = XD_EvidenciasxViaje.objects.filter(IDXD_Viaje=XDFolio.XD_IDViaje, Tipo='EVCUSTODIAF', Titulo="FOLIO")
                 if GetEvidenciaxManiobra:
                     for DataEvidenciaxManiobra in GetEvidenciaxManiobra:
@@ -171,7 +201,7 @@ def SaveEvidencias(request):
                 TituloEvidencia = 'Maniobras de descarga' if(Evidencias['Titulo'] == 'Maniobrasdedescarga') else 'Maniobras de carga' if(Evidencias['Titulo'] == 'Maniobrasdecarga') else ""
                 if Evidencias['Status'] == 'Rechazada':
                     if Evidencias['TipoEvidencia'] == 'BKG':
-                        SaveEvidenciasxBKG = Bro_EvidenciasxViaje.objects.get(IDBro_EvidenciaxViaje = Evidencias['IDPedido'])
+                        SaveEvidenciasxBKG = Bro_EvidenciasxViaje.objects.get(IDBro_EvidenciaxViaje=Evidencias['IDPedido'])
                         SaveEvidenciasxBKG.FechaCaptura = datetime.datetime.now()
                         SaveEvidenciasxBKG.NombreArchivo = Evidencias['NombreArchivo']
                         SaveEvidenciasxBKG.RutaArchivo = Evidencias['Evidencia']
@@ -180,6 +210,18 @@ def SaveEvidencias(request):
                         SaveEvidenciasxBKG.IsRemplazada = True
                         SaveEvidenciasxBKG.IDUsuarioAlta = request.user.idusuario
                         SaveEvidenciasxBKG.save()
+
+                    elif Evidencias['TipoEvidencia'] == 'Servicio':
+                        SaveEvidenciaxServicio = XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje=Evidencias["IDPedido"])
+                        SaveEvidenciaxServicio.FechaCaptura = datetime.datetime.now()
+                        SaveEvidenciaxServicio.NombreArchivo = Evidencias['NombreArchivo']
+                        SaveEvidenciaxServicio.RutaArchivo = Evidencias['Evidencia']
+                        SaveEvidenciaxServicio.IsRechazada = False
+                        SaveEvidenciaxServicio.IsEnviada = True
+                        SaveEvidenciaxServicio.IsRemplazada = True
+                        SaveEvidenciaxServicio.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario=request.user.idusuario)
+                        SaveEvidenciaxServicio.save()
+                        return HttpResponse(status=200)
                     else:
                         SaveEvidenciaxPedido = XD_EvidenciasxPedido.objects.get(IDXD_Pedido=Evidencias['IDPedido'], XD_IDViaje=Evidencias['IDViaje'], Titulo='EVIDENCIA1') if(Evidencias['TipoEvidencia'] == 'Pedido') else XD_EvidenciasxPedido.objects.get(IDXD_Pedido=Evidencias['IDPedido'], XD_IDViaje=Evidencias['IDViaje'], Titulo=Evidencias['TipoEvidencia'].upper()) if(Evidencias['TipoEvidencia'] == 'Bitacora') else XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje =Evidencias['IDPedido'], IDXD_Viaje = Evidencias['IDViaje']) if(Evidencias['TipoEvidencia'] == 'Maniobras' or Evidencias['TipoEvidencia'] == 'Custodia') else ""
                         SaveEvidenciaxPedido.FechaCaptura = datetime.datetime.now()
@@ -203,6 +245,21 @@ def SaveEvidencias(request):
                         SaveEvidenciaBKG.IsEnviada = True
                         SaveEvidenciaBKG.IDUsuarioAlta = request.user.idusuario
                         SaveEvidenciaBKG.save()
+
+                    elif Evidencias['TipoEvidencia'] == 'Servicio':
+                        SaveEvidenciaxServicio = XD_EvidenciasxViaje()
+                        SaveEvidenciaxServicio.IDServicio = ServiciosXD.objects.get(IDServicio=Evidencias['IDViaje'])
+                        SaveEvidenciaxServicio.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario=request.user.idusuario)
+                        SaveEvidenciaxServicio.FechaCaptura = datetime.datetime.now()
+                        SaveEvidenciaxServicio.Titulo = "Servicios"
+                        SaveEvidenciaxServicio.Tipo = "EVIDENCIA SERVICIOS"
+                        SaveEvidenciaxServicio.NombreArchivo = Evidencias['NombreArchivo']
+                        SaveEvidenciaxServicio.RutaArchivo = Evidencias['Evidencia']
+                        SaveEvidenciaxServicio.Observaciones = ''
+                        SaveEvidenciaxServicio.IsEnviada = True
+                        SaveEvidenciaxServicio.save()
+                        return HttpResponse(status=200)
+
                     else:
                         if Evidencias['TipoEvidencia'] == 'Custodia':
                             TituloCustodia = GetTituloForCustodia(Evidencias['Titulo'])
@@ -256,16 +313,23 @@ def GetEvidenciasMesaControl(request):
                 AddEvidencia['TipoEvidencia'] = 'BKG'
                 AddEvidencia['IDViaje'] = EvidenciaBKG.IDBro_Viaje.IDBro_Viaje
                 ListEvidencias.append(AddEvidencia)
+        elif "XDDMNB" in Folio:
+            GetEvidenciasServicios = XD_EvidenciasxViaje.objects.get(IDServicio=IDViaje, IsEnviada=1, IsRechazada=0, IsValidada=0)
+            AddEvidencia = {}
+            AddEvidencia['IDEvidencia'] = GetEvidenciasServicios.IDEvidenciaxViaje
+            AddEvidencia['URLEvidencia'] = GetEvidenciasServicios.RutaArchivo
+            AddEvidencia['Delivery'] = GetEvidenciasServicios.Titulo
+            AddEvidencia['TipoEvidencia'] = 'Servicio'
+            AddEvidencia['IDViaje'] = GetEvidenciasServicios.IDServicio.IDServicio
+            ListEvidencias.append(AddEvidencia)
+            return JsonResponse({'Evidencias': ListEvidencias})
         else:
             GetIDPedidos = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
             if not ValidacionEviByObservaciones(IDViaje) and GetIDPedidos[0].XD_IDViaje.IDClienteFiscal == 5267:
                 return HttpResponse(status=500)
-            print(len(GetIDPedidos))
             if len(GetIDPedidos) >= 1:
                 TotalObservaciones = CountTotalEvidencias(GetIDPedidos)
                 TotalEvidencias = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje).count() + TotalObservaciones
-                print(TotalEvidencias)
-                print(XD_EvidenciasxPedido.objects.filter(XD_IDViaje=IDViaje).count())
                 if XD_EvidenciasxPedido.objects.filter(XD_IDViaje=IDViaje).count() == TotalEvidencias:
                     for GetPedidos in GetIDPedidos:
                         GetDelivery = XD_Pedidos.objects.get(XD_IDPedido=GetPedidos.XD_IDPedido.XD_IDPedido)
@@ -390,6 +454,23 @@ def SaveAprobarEvidencia(request):
                                     if SaveBanderaPendientesEnviar.TipoConcepto == 'VIAJE':
                                         SaveBanderaPendientesEnviar.IsEvidenciaDigital = True
                                         SaveBanderaPendientesEnviar.save()
+                    if jParams['TipoEvidencia'] == 'Servicio':
+                        SaveAprobarEVServicio = XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje=jParams['IDSaveEvidencia'])
+                        SaveAprobarEVServicio.IsValidada = True
+                        SaveAprobarEVServicio.Observaciones = jParams['Comentarios']
+                        SaveAprobarEVServicio.FechaValidacion = datetime.datetime.now()
+                        SaveAprobarEVServicio.IDUsuarioEvDigital = request.user.idusuario
+                        SaveAprobarEVServicio.save()
+                        if AllEvServiciosTrue("",SaveAprobarEVServicio.IDServicio.IDServicio):
+                            GetServicio = ServiciosXD.objects.get(IDServicio=SaveAprobarEVServicio.IDServicio.IDServicio)
+                            GetServicio.IsEvidenciaServicio = True
+                            GetServicio.FechaEvidenciaDigital = SaveAprobarEVServicio.FechaValidacion
+                            GetServicio.save()
+                            for eachConcept in RelacionConceptoxProyecto.objects.filter(IDConcepto=SaveAprobarEVServicio.IDServicio.IDServicio):
+                                GetIDServicioPE = PendientesEnviar.objects.get(IDPendienteEnviar=eachConcept.IDPendienteEnviar.IDPendienteEnviar)
+                                if GetIDServicioPE.TipoConcepto == 'SERVICIO':
+                                    GetIDServicioPE.IsEvidenciaDigital = True
+                                    GetIDServicioPE.save()
                     if jParams['TipoEvidencia'] == 'BKG':
                         SaveAprobarEvidencia = Bro_EvidenciasxViaje.objects.get(IDBro_EvidenciaxViaje=jParams['IDSaveEvidencia'])
                         SaveAprobarEvidencia.IsValidada = True
@@ -418,7 +499,14 @@ def SaveAprobarEvidencia(request):
 
 def RechazarEvidencias(request):
     jParams = json.loads(request.body.decode('utf-8'))
-    if jParams['TipoEvidencia'] == 'Pedido' or jParams['TipoEvidencia'] == 'Bitacora':
+    if jParams['TipoEvidencia'] == 'Servicio':
+        RechazarEvidenciaxPedido = XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje=jParams['IDRechazarEvidencia'])
+        RechazarEvidenciaxPedido.IsRechazada = True
+        RechazarEvidenciaxPedido.ComentarioRechazo = jParams['ComentarioRechazo']
+        RechazarEvidenciaxPedido.IDUsuarioRechaza = request.user.idusuario
+        RechazarEvidenciaxPedido.FechaRechazo = datetime.datetime.now()
+        RechazarEvidenciaxPedido.save()
+    elif jParams['TipoEvidencia'] == 'Pedido' or jParams['TipoEvidencia'] == 'Bitacora':
         RechazarEvidenciaxPedido = XD_EvidenciasxPedido.objects.get(IDEvidenciaxPedido = jParams['IDRechazarEvidencia'])
         RechazarEvidenciaxPedido.IsRechazada = True
         RechazarEvidenciaxPedido.Observaciones = jParams['Comentarios']
@@ -477,6 +565,18 @@ def GetEvidenciaFisica(request):
                 newEvidenciasFisicas["XD_IDViaje"] = EVFisica.IDBro_Viaje.IDBro_Viaje
                 newEvidenciasFisicas["Delivery"] = "BKG-"+EVFisica.Titulo
                 EvidenciaFisica.append(newEvidenciasFisicas)
+    elif "XDDMNB" in Folio:
+        IsValidada = XD_EvidenciasxViaje.objects.filter(IDServicio=IDViaje, IsValidada=1, IsRechazada=0, IsEnviada=1, IsEvidenciaFisicaAprobada=0).exists()
+        if IsValidada:
+            EvFisica = XD_EvidenciasxViaje.objects.get(IDServicio=IDViaje, IsValidada=1, IsRechazada=0, IsEnviada=1, IsEvidenciaFisicaAprobada=0)
+            newEvidenciasFisicas = {}
+            newEvidenciasFisicas["XD_IDPedido"] = EvFisica.IDEvidenciaxViaje
+            newEvidenciasFisicas["XD_IDViaje"] = EvFisica.IDServicio.IDServicio
+            newEvidenciasFisicas["Delivery"] = EvFisica.IDServicio.Folio
+            EvidenciaFisica.append(newEvidenciasFisicas)
+            return JsonResponse({'EvidenciaFisica': EvidenciaFisica})
+        else:
+            return HttpResponse(status=500)
     else:
         for TieneEvidenciaValidada in XD_EvidenciasxViaje.objects.filter(Q(IDXD_Viaje=IDViaje, Titulo__in=('Maniobras de descarga', 'Maniobras de carga'), Tipo="MESA CONTROL") | Q(IDXD_Viaje=IDViaje, Tipo='EVCUSTODIAF')).values('IsValidada'):
             if len(TieneEvidenciaValidada) >= 1:
@@ -484,7 +584,6 @@ def GetEvidenciaFisica(request):
         for TieneEvidenciaDigital in XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje).values('IsEvidenciaPedidoxViaje'):
             if len(TieneEvidenciaDigital) >= 1:
                 TieneEvidenciasEnFalse.append(TieneEvidenciaDigital['IsEvidenciaPedidoxViaje'])
-        print(TieneEvidenciasEnFalse)
         if False in TieneEvidenciasEnFalse:
             pass
         else:
@@ -522,6 +621,26 @@ def SaveEvidenciaFisica(request):
                             SaveEvFisicaAdmon.IsEvidenciaFisica = True
                             SaveEvFisicaAdmon.save()
                             #request.get("http://api-admon-demo.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion", params = {"IDConcepto":SaveEvFisica.IDBro_Viaje.IDBro_Viaje, "Proyecto":"BKG"})
+                    elif "XDDMNB" in jParams["TipoEvidencia"]:
+                       SaveEvFisicaServicio = XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje=jParams['IDPedido'])
+                       SaveEvFisicaServicio.IsEvidenciaFisicaAprobada = True
+                       SaveEvFisicaServicio.FechaEvidenciaFisicaxPedidoxViaje = datetime.datetime.now()
+                       SaveEvFisicaServicio.IDUsuarioEvFisica = request.user.idusuario
+                       SaveEvFisicaServicio.save()
+                       if AllEvFisicaServicios("",SaveEvFisicaServicio.IDServicio.IDServicio):
+                           GetServicio = ServiciosXD.objects.get(IDServicio=SaveEvFisicaServicio.IDServicio.IDServicio)
+                           GetServicio.IsEvidenciaFisica = True
+                           GetServicio.FechaEvidenciaFisica = SaveEvFisicaServicio.FechaEvidenciaFisicaxPedidoxViaje
+                           GetServicio.save()
+                           for eachConcept in RelacionConceptoxProyecto.objects.filter(
+                                   IDConcepto=SaveEvFisicaServicio.IDServicio.IDServicio):
+                               GetIDServicioPE = PendientesEnviar.objects.get(
+                                   IDPendienteEnviar=eachConcept.IDPendienteEnviar.IDPendienteEnviar)
+                               if GetIDServicioPE.TipoConcepto == 'SERVICIO':
+                                   GetIDServicioPE.IsEvidenciaFisica = True
+                                   GetIDServicioPE.save()
+                           #APIHojaLiberacionServicios(SaveEvFisicaServicio.IDServicio.IDServicio)
+                           return HttpResponse(status=200)
                     else:
                         SaveEvidenciaPedidosxViaje = XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje=jParams['IDPedido']) if(jParams["TipoEvidencia"] == 'FOLIO' or jParams["TipoEvidencia"] == 'CORREO') else XD_PedidosxViajes.objects.get(XD_IDPedido = jParams['IDPedido'], XD_IDViaje = jParams['IDViaje'])
                         if jParams["TipoEvidencia"] == 'FOLIO' or jParams["TipoEvidencia"] == 'CORREO':
@@ -876,6 +995,16 @@ def descarga(IDViaje, Proyecto):
     else:
         return "ok"
 
+def APIHojaLiberacionServicios(IDViaje):
+    SendApi = AllEvFisicaServicios("", IDViaje)
+    if SendApi:
+        jsonParams = {'IDConcepto': IDViaje, 'Proyecto': 'Servicios'}
+        respose = requests.post(settings.API_ADMON + "api/Usuarios/SaveFolioHojaLiberacion",
+                                headers={'content-type': 'application/json'}, json=jsonParams)
+        return respose.status_code
+    else:
+        return "ok"
+
 def CheckAllEvidenciaFisicaPedidoTrue(IDViaje):
     GetEvidenciasFisicas = XD_PedidosxViajes.objects.filter(XD_IDViaje=IDViaje)
     if len(GetEvidenciasFisicas) == 0:
@@ -1160,3 +1289,27 @@ def CountTotalEvidencias(Pedidos):
         return len(unique)
     else:
         return 0
+
+def AllEvServiciosTrue(request,IDServicio=""):
+    try:
+        Servicio = IDServicio if IDServicio!="" else request.GET["IDViaje"]
+        AllEvidenciasServicios = list()
+        for eachEv in XD_EvidenciasxViaje.objects.filter(IDServicio=Servicio):
+            AllEvidenciasServicios.append(eachEv.IsValidada)
+        if IDServicio != "":
+            return all(AllEvidenciasServicios)
+        else:
+            return JsonResponse({'data': all(AllEvidenciasServicios)})
+    except Exception as e:
+        print(e)
+        return False
+
+def AllEvFisicaServicios(request, IDServicio=""):
+    Servicio = IDServicio if IDServicio != "" else request.GET["IDViaje"]
+    AllEvServiciosFisica = list()
+    for eachEv in XD_EvidenciasxViaje.objects.filter(IDServicio=Servicio):
+        AllEvServiciosFisica.append(eachEv.IsEvidenciaFisicaAprobada)
+    if IDServicio != "":
+        return all(AllEvServiciosFisica)
+    else:
+        return JsonResponse({'data': all(AllEvServiciosFisica)})

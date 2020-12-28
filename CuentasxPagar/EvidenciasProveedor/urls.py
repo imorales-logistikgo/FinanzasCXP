@@ -27,4 +27,5 @@ urlpatterns = [
     path('GetObservacionesByPedidos', views.GetObservacionesByPedidos, name='GetObservacionesByPedidos'),
     path('GetEvidenciasMC', views.GetEvidenciasMC, name='GetEvidenciasMC'),
     url(r'^DownloadHojaLiberacion/(?P<IDViaje>[\w-]+)/(?P<Folio>[\w-]+)/$', views.DownloadHojaLiberacion),
+    path('AllEvServiciosTrue', views.AllEvServiciosTrue, name='AllEvServiciosTrue')
 ]

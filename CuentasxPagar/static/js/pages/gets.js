@@ -680,3 +680,38 @@ var  GetReporteTotales = function(params){
     alertToastError("Ocurrio un error");
   });
 }
+
+
+var GetIsEvidenciaServiciosCompleta = function(IDViaje){
+    fetch(`/EvidenciasProveedor/AllEvServiciosTrue?IDViaje=${IDViaje}`,{
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+  }).then(function(response){
+    if(response.status == 200){
+      return response.clone().json();
+    }
+    else if(response.status == 500){
+      Swal.fire({
+        type: 'error',
+        title: 'Ocurrio un error',
+        showConfirmButton: false,
+        timer: 2500
+      });
+    }
+  }).then(function(data){
+    if(data.data){
+       $(btn).removeClass('btn-primary');
+       $(btn).addClass('btn-success');
+       var changeIcon = $(btn).find('i')[0];
+       $(changeIcon).removeClass('fa-clock');
+       $(changeIcon).addClass('fa-check')
+       $(btn).prop('disabled', true);
+    }
+  }).catch(function(ex){
+    console.log(ex);
+  });
+}
