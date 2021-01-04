@@ -1,6 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from PendientesEnviar.models import View_PendientesEnviarCxP, FacturasxProveedor, PartidaProveedor, RelacionFacturaProveedorxPartidas, PendientesEnviar, Ext_PendienteEnviar_Costo
+from PendientesEnviar.models import View_PendientesEnviarCxP, FacturasxProveedor, PartidaProveedor, \
+    RelacionFacturaProveedorxPartidas, PendientesEnviar, Ext_PendienteEnviar_Costo
 from usersadmon.models import Proveedor, AdmonUsuarios
 from CartaNoAdeudo.models import CartaNoAdeudoTransportistas
 from XD_Viajes.models import XD_Viajes
@@ -22,7 +23,6 @@ from CartaNoAdeudo.views import MesCartaNoAdeudo
 
 @login_required
 def GetPendientesEnviar(request):
-    # CartaMesaControl.bloquearTransportistasByViaje(request)
     if request.user.roles == 'MesaControl':
         return redirect('EvidenciasProveedor')
     elif request.user.roles == 'Contabilidad':
@@ -30,25 +30,36 @@ def GetPendientesEnviar(request):
     # elif request.user.roles == 'Proveedor':
     # 	return redirect('Actualizacion')
     elif request.user.roles == 'users':
-        return HttpResponse(status=403)
+        return redirect('/Usuario/logout')
     elif request.user.roles == 'Proveedor' or 'CXP' or request.user.is_superuser:
-        # CartaMesaControl.BloquearProveedor(request.user.IDTransportista) if request.user.roles == 'Proveedor' else ""
-        PendingToSend = View_PendientesEnviarCxP.objects.filter(Status = 'FINALIZADO', IsEvidenciaDigital = 1, IsEvidenciaFisica = 1, IsFacturaProveedor = 0, Moneda = 'MXN', FechaDescarga__month = datetime.datetime.now().month, FechaDescarga__year = datetime.datetime.now().year)
+        CartaMesaControl.BloquearProveedor(request.user.IDTransportista) if request.user.roles == 'Proveedor' else ""
+        PendingToSend = View_PendientesEnviarCxP.objects.filter(Status='FINALIZADO', IsEvidenciaDigital=1,
+                                                                IsEvidenciaFisica=1, IsFacturaProveedor=0, Moneda='MXN',
+                                                                FechaDescarga__month=datetime.datetime.now().month,
+                                                                FechaDescarga__year=datetime.datetime.now().year)
         ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias = GetContadores()
-        DiasDelMesbloquear = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]-1
-        RangoBloquearFacturas = DiasDelMesbloquear <= datetime.datetime.now().day <= calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
-        DiaDelMesbloquearAlert = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]-2
+        DiasDelMesbloquear = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1] - 1
+        RangoBloquearFacturas = DiasDelMesbloquear <= datetime.datetime.now().day <= \
+                                calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
+        DiaDelMesbloquearAlert = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1] - 2
         DiaDelMesMotrarAlerta = calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1] - 7
-        RangoDiasAlerta = DiaDelMesMotrarAlerta <= datetime.datetime.now().day <= calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
+        RangoDiasAlerta = DiaDelMesMotrarAlerta <= datetime.datetime.now().day <= \
+                          calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1]
         MesAlerta = MesEnAlertaBloquearFacturas(datetime.datetime.now())
-        DiaAlerta = DiaEnAlertaBloquearFacturas(calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, DiaDelMesbloquearAlert))
+        DiaAlerta = DiaEnAlertaBloquearFacturas(
+            calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, DiaDelMesbloquearAlert))
         DiaAMostrarEnAlerta = DiaAlerta + " " + str(DiaDelMesbloquearAlert)
-        DiaAlertaCarta = DiaEnAlertaBloquearFacturas(calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, 20))
-        DiaAMostrarEnAlertaCarta = DiaAlertaCarta + " " +"20"
-
-        if request.user.roles == 'Proveedor' and datetime.datetime.now().day > 20 and GetTotalViajesEn1Mes(request.user.IDTransportista,1):
+        DiaAlertaCarta = DiaEnAlertaBloquearFacturas(
+            calendar.weekday(datetime.datetime.now().year, datetime.datetime.now().month, 20))
+        DiaAMostrarEnAlertaCarta = DiaAlertaCarta + " " + "20"
+        if request.user.roles == 'Proveedor' and datetime.datetime.now().day > 20 and GetTotalViajesEn1Mes(
+                request.user.IDTransportista, 1):
             GetFechaAltaTransportista = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
-            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA', Tipo='CXP').exists():
+            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista,
+                                                              MesCartaNoAdeudo=MesEnAlertaCarta(
+                                                                      datetime.datetime.now()), Status='APROBADA',
+                                                              Tipo='CXP',
+                                                              FechaAlta__year=datetime.datetime.now().year if datetime.datetime.now().month != 1 else datetime.datetime.now().year - 1).exists():
                 if GetFechaAltaTransportista.FechaAlta is None:
                     BloquearFacturasCarta = True
                 else:
@@ -56,14 +67,20 @@ def GetPendientesEnviar(request):
             else:
                 GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.get(
                     IDTransportista=request.user.IDTransportista,
-                    MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA', Tipo='CXP')
+                    MesCartaNoAdeudo=MesEnAlertaCarta(datetime.datetime.now()), Status='APROBADA', Tipo='CXP', FechaAlta__year=datetime.datetime.now().year if datetime.datetime.now().month != 1 else datetime.datetime.now().year - 1)
                 BloquearFacturasCarta = False if GetLastCartaUpload.MesCartaNoAdeudo == MesEnAlertaCarta(
                     datetime.datetime.now()) and GetLastCartaUpload.Status == "APROBADA" else True
             MesAlertaMotivoBloqueo = MesEnAlertaCarta(datetime.datetime.now())
-        elif request.user.roles == 'Proveedor' and GetTotalViajesEn1Mes(request.user.IDTransportista,2):
+        elif request.user.roles == 'Proveedor' and GetTotalViajesEn1Mes(request.user.IDTransportista, 2):
             GetLastCartaUpload2 = CartaNoAdeudoTransportistas.objects.filter(
-                IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo__in=(MesCartaConAdeudo(datetime.datetime.now()), MesEnAlertaCarta(datetime.datetime.now())), Status='APROBADA', Tipo='CXP')
-            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo__in=(MesCartaConAdeudo(datetime.datetime.now()), MesEnAlertaCarta(datetime.datetime.now())), Status='APROBADA', Tipo='CXP').exists():
+                IDTransportista=request.user.IDTransportista, MesCartaNoAdeudo__in=(
+                MesCartaConAdeudo(datetime.datetime.now()), MesEnAlertaCarta(datetime.datetime.now())),
+                Status='APROBADA', Tipo='CXP')
+            if not CartaNoAdeudoTransportistas.objects.filter(IDTransportista=request.user.IDTransportista,
+                                                              MesCartaNoAdeudo__in=(
+                                                              MesCartaConAdeudo(datetime.datetime.now()),
+                                                              MesEnAlertaCarta(datetime.datetime.now())),
+                                                              Status='APROBADA', Tipo='CXP').exists():
                 BloquearFacturasCarta = True
             else:
                 BloquearFacturasCarta = VerificarCartasStatusAprobada(GetLastCartaUpload2)
@@ -75,7 +92,10 @@ def GetPendientesEnviar(request):
         Proveedores = Proveedor.objects.all()
         ListPendientes = PendientesToList(PendingToSend)
         bloquearLinkCarta = 1 <= datetime.datetime.now().day <= 20
-        FechaCorteCarta = str(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month-1)[1]) + " de " + MesEnAlertaCarta(datetime.datetime.now())
+        FechaCorteCarta = str(calendar.monthrange(
+            datetime.datetime.now().year if datetime.datetime.now().month != 1 else datetime.datetime.now().year - 1,
+            datetime.datetime.now().month - 1 if datetime.datetime.now().month != 1 else datetime.datetime.now().month + 11)[
+                                  1]) + " de " + MesEnAlertaCarta(datetime.datetime.now())
     return render(request, 'PendienteEnviar.html',
                   {'FechaCorteCarta': FechaCorteCarta, 'bloquearLinkCarta': bloquearLinkCarta,
                    'DiaAMostrarEnAlertaCarta': DiaAMostrarEnAlertaCarta, 'Pendientes': ListPendientes,
@@ -109,13 +129,14 @@ def PendientesToList(PendingToSend):
     return ListPendientes
 
 
-
 def GetContadores():
-    AllPending = list(View_PendientesEnviarCxP.objects.values("IsFacturaProveedor", "Status", "IsEvidenciaDigital", "IsEvidenciaFisica").all())
+    AllPending = list(View_PendientesEnviarCxP.objects.values("IsFacturaProveedor", "Status", "IsEvidenciaDigital",
+                                                              "IsEvidenciaFisica").all())
     ContadorTodos = len(list(filter(lambda x: x["IsFacturaProveedor"] == False, AllPending)))
     ContadorPendientes = len(list(filter(lambda x: x["Status"] == "PENDIENTE", AllPending)))
     ContadorFinalizados = len(list(filter(lambda x: x["Status"] == "FINALIZADO", AllPending)))
-    ContadorConEvidencias = len(list(filter(lambda x: x["IsEvidenciaFisica"] == True and x["IsEvidenciaDigital"] == True, AllPending)))
+    ContadorConEvidencias = len(
+        list(filter(lambda x: x["IsEvidenciaFisica"] == True and x["IsEvidenciaDigital"] == True, AllPending)))
     ContadorSinEvidencias = ContadorTodos - ContadorConEvidencias
     return ContadorTodos, ContadorPendientes, ContadorFinalizados, ContadorConEvidencias, ContadorSinEvidencias
 
@@ -127,22 +148,26 @@ def GetPendientesByFilters(request):
     if "Year" in request.GET:
         arrMonth = json.loads(request.GET["arrMonth"])
         Year = request.GET["Year"]
-        PendingToSend = View_PendientesEnviarCxP.objects.filter(FechaDescarga__month__in = arrMonth, FechaDescarga__year = Year, IsFacturaProveedor = False)
+        PendingToSend = View_PendientesEnviarCxP.objects.filter(FechaDescarga__month__in=arrMonth,
+                                                                FechaDescarga__year=Year, IsFacturaProveedor=False)
     else:
-        PendingToSend = View_PendientesEnviarCxP.objects.filter(FechaDescarga__range = [datetime.datetime.strptime(request.GET["FechaDescargaDesde"],'%m/%d/%Y'), datetime.datetime.strptime(request.GET["FechaDescargaHasta"],'%m/%d/%Y')], IsFacturaProveedor = False)
+        PendingToSend = View_PendientesEnviarCxP.objects.filter(
+            FechaDescarga__range=[datetime.datetime.strptime(request.GET["FechaDescargaDesde"], '%m/%d/%Y'),
+                                  datetime.datetime.strptime(request.GET["FechaDescargaHasta"], '%m/%d/%Y')],
+            IsFacturaProveedor=False)
     if Status:
         if "Con evidencias" in Status:
-            PendingToSend = PendingToSend.filter(IsEvidenciaDigital = True, IsEvidenciaFisica = True)
+            PendingToSend = PendingToSend.filter(IsEvidenciaDigital=True, IsEvidenciaFisica=True)
             if len(Status) > 1:
-                PendingToSend = PendingToSend.filter(Status__in = Status)
+                PendingToSend = PendingToSend.filter(Status__in=Status)
         else:
-            PendingToSend = PendingToSend.filter(Status__in = Status)
+            PendingToSend = PendingToSend.filter(Status__in=Status)
     if Proveedor:
-        PendingToSend = PendingToSend.filter(NombreProveedor__in = Proveedor)
-    PendingToSend = PendingToSend.filter(Moneda = Moneda)
+        PendingToSend = PendingToSend.filter(NombreProveedor__in=Proveedor)
+    PendingToSend = PendingToSend.filter(Moneda=Moneda)
     ListPendientes = PendientesToList(PendingToSend)
-    htmlRes = render_to_string('TablaPendientes.html', {'Pendientes':ListPendientes}, request = request,)
-    return JsonResponse({'htmlRes' : htmlRes})
+    htmlRes = render_to_string('TablaPendientes.html', {'Pendientes': ListPendientes}, request=request, )
+    return JsonResponse({'htmlRes': htmlRes})
 
 
 def SaveFacturaxProveedor(request):
@@ -150,24 +175,28 @@ def SaveFacturaxProveedor(request):
     newFactura = FacturasxProveedor()
     newFactura.Folio = jParams["FolioFactura"]
     newFactura.NombreCortoProveedor = jParams["Proveedor"]
-    newFactura.FechaFactura = datetime.datetime.strptime(jParams["FechaFactura"],'%Y/%m/%d')
-    newFactura.FechaRevision = datetime.datetime.strptime(jParams["FechaRevision"],'%Y/%m/%d')
-    newFactura.FechaVencimiento = datetime.datetime.strptime(jParams["FechaVencimiento"],'%Y/%m/%d')
+    newFactura.FechaFactura = datetime.datetime.strptime(jParams["FechaFactura"], '%Y/%m/%d')
+    newFactura.FechaRevision = datetime.datetime.strptime(jParams["FechaRevision"], '%Y/%m/%d')
+    newFactura.FechaVencimiento = datetime.datetime.strptime(jParams["FechaVencimiento"], '%Y/%m/%d')
     newFactura.Moneda = jParams["Moneda"]
     newFactura.Subtotal = jParams["SubTotal"]
     newFactura.IVA = jParams["IVA"]
     newFactura.Total = jParams["Total"]
     newFactura.Saldo = jParams["Total"]
     newFactura.Retencion = jParams["Retencion"]
-    newFactura.TipoCambio = jParams["TipoCambio"] if jParams["Moneda"] == "MXN" else GetTipoCambioXML(jParams["RutaXML"]) if jParams["Moneda"] == "USD" else jParams["TipoCambio"]
+    if request.user.idusuario == 3126 or request.user.idusuario == 3019:
+        newFactura.TipoCambio = jParams["TipoCambio"]
+    else:
+        newFactura.TipoCambio = jParams["TipoCambio"] if jParams["Moneda"] == "MXN" else GetTipoCambioXML(
+            jParams["RutaXML"]) if jParams["Moneda"] == "USD" else jParams["TipoCambio"]
     newFactura.Comentarios = jParams["Comentarios"]
     newFactura.RutaXML = jParams["RutaXML"]
     newFactura.RutaPDF = jParams["RutaPDF"]
-    newFactura.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario = request.user.idusuario)
-    newFactura.IDProveedor =  jParams["IDProveedor"]
+    newFactura.IDUsuarioAlta = AdmonUsuarios.objects.get(idusuario=request.user.idusuario)
+    newFactura.IDProveedor = jParams["IDProveedor"]
     newFactura.TotalXML = jParams["TotalXML"]
-    newFactura.UUID = "" if request.user.idusuario == 3126 or request.user.idusuario == 3254 else jParams["UUID"]
-    newFactura.Status = 'DEPURADO' if(jParams["Estado"] == 'YU') else 'PENDIENTE'
+    newFactura.UUID = "" if request.user.idusuario == 3126 or request.user.idusuario == 3019 else jParams["UUID"]
+    newFactura.Status = 'DEPURADO' if (jParams["Estado"] == 'YU') else 'PENDIENTE'
     newFactura.save()
     return HttpResponse(newFactura.IDFactura)
 
@@ -175,7 +204,7 @@ def SaveFacturaxProveedor(request):
 def SavePartidasxFactura(request):
     jParams = json.loads(request.body.decode('utf-8'))
     for IDPendienteEnviar in jParams["arrPendientes"]:
-        Viaje = View_PendientesEnviarCxP.objects.get(IDPendienteEnviar = IDPendienteEnviar)
+        Viaje = View_PendientesEnviarCxP.objects.get(IDPendienteEnviar=IDPendienteEnviar)
         newPartida = PartidaProveedor()
         newPartida.FechaAlta = datetime.datetime.now()
         newPartida.Subtotal = Viaje.Subtotal
@@ -184,25 +213,25 @@ def SavePartidasxFactura(request):
         newPartida.Total = Viaje.Total
         newPartida.save()
         newRelacionFacturaxPartida = RelacionFacturaProveedorxPartidas()
-        newRelacionFacturaxPartida.IDFacturaxProveedor = FacturasxProveedor.objects.get(IDFactura = jParams["IDFactura"])
+        newRelacionFacturaxPartida.IDFacturaxProveedor = FacturasxProveedor.objects.get(IDFactura=jParams["IDFactura"])
         newRelacionFacturaxPartida.IDPartida = newPartida
-        newRelacionFacturaxPartida.IDPendienteEnviar = PendientesEnviar.objects.get(IDPendienteEnviar = IDPendienteEnviar)
+        newRelacionFacturaxPartida.IDPendienteEnviar = PendientesEnviar.objects.get(IDPendienteEnviar=IDPendienteEnviar)
         newRelacionFacturaxPartida.IDUsuarioAlta = 1
         newRelacionFacturaxPartida.IDUsuarioBaja = 1
         newRelacionFacturaxPartida.save()
-        Ext_Costo = Ext_PendienteEnviar_Costo.objects.get(IDPendienteEnviar = Viaje.IDPendienteEnviar)
+        Ext_Costo = Ext_PendienteEnviar_Costo.objects.get(IDPendienteEnviar=Viaje.IDPendienteEnviar)
         Ext_Costo.IsFacturaProveedor = True
         Ext_Costo.save()
-    PendingToSend = View_PendientesEnviarCxP.objects.raw("SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0", ['FINALIZADO'])
-    htmlRes = render_to_string('TablaPendientes.html', {'Pendientes':PendingToSend}, request = request,)
-    return JsonResponse({'htmlRes' : htmlRes})
-
+    PendingToSend = View_PendientesEnviarCxP.objects.raw(
+        "SELECT * FROM View_PendientesEnviarCxP WHERE Status = %s AND IsEvidenciaDigital = 1 AND IsEvidenciaFisica = 1 AND IsFacturaProveedor = 0",
+        ['FINALIZADO'])
+    htmlRes = render_to_string('TablaPendientes.html', {'Pendientes': PendingToSend}, request=request, )
+    return JsonResponse({'htmlRes': htmlRes})
 
 
 def CheckFolioDuplicado(request):
-    IsDuplicated = FacturasxProveedor.objects.filter(Folio = request.GET["Folio"]).exclude(Status = "CANCELADA").exists()
-    return JsonResponse({'IsDuplicated' : IsDuplicated})
-
+    IsDuplicated = FacturasxProveedor.objects.filter(Folio=request.GET["Folio"]).exclude(Status="CANCELADA").exists()
+    return JsonResponse({'IsDuplicated': IsDuplicated})
 
 
 def FindFolioProveedor(request):
@@ -213,32 +242,39 @@ def FindFolioProveedor(request):
                                                                   IDProveedor=request.user.IDTransportista,
                                                                   Status='FINALIZADO').last()
         if PendienteEnviar.IsControlDesk != 0:
-            return JsonResponse({'Found' : True, 'Folio' : PendienteEnviar.Folio, 'Proveedor' : PendienteEnviar.NombreProveedor, 'FechaDescarga' : PendienteEnviar.FechaDescarga, 'IDPendienteEnviar' : PendienteEnviar.IDPendienteEnviar, 'IDProveedor' : PendienteEnviar.IDProveedor, 'Subtotal': PendienteEnviar.Subtotal, 'IVA': PendienteEnviar.IVA, 'Retencion': PendienteEnviar.Retencion, 'Total' : PendienteEnviar.Total, 'Moneda' : PendienteEnviar.Moneda})
+            return JsonResponse(
+                {'Found': True, 'Folio': PendienteEnviar.Folio, 'Proveedor': PendienteEnviar.NombreProveedor,
+                 'FechaDescarga': PendienteEnviar.FechaDescarga, 'IDPendienteEnviar': PendienteEnviar.IDPendienteEnviar,
+                 'IDProveedor': PendienteEnviar.IDProveedor, 'Subtotal': PendienteEnviar.Subtotal,
+                 'IVA': PendienteEnviar.IVA, 'Retencion': PendienteEnviar.Retencion, 'Total': PendienteEnviar.Total,
+                 'Moneda': PendienteEnviar.Moneda})
         else:
-            return JsonResponse({'Found' : False})
+            return JsonResponse({'Found': False})
     except:
-        return JsonResponse({'Found' : False})
+        return JsonResponse({'Found': False})
 
 
 def GetSerieProveedor(request):
     try:
         IDProveedor = request.GET["IDProveedor"]
-        getSerie = Proveedor.objects.get(IDTransportista = IDProveedor)
+        getSerie = Proveedor.objects.get(IDTransportista=IDProveedor)
         Serie = getSerie.Serie
         IsAmericano = getSerie.IsAmericano
-        return JsonResponse({'Serie' : Serie, 'IsAmericano': IsAmericano})
+        return JsonResponse({'Serie': Serie, 'IsAmericano': IsAmericano})
     except:
         return HttpResponse(status=500)
 
 
 def GetProveedorByID(request):
     IDProveedor = request.GET["IDProveedor"]
-    Proveedor1 = Proveedor.objects.get(IDTransportista = IDProveedor)
+    Proveedor1 = Proveedor.objects.get(IDTransportista=IDProveedor)
     IsAmericano = Proveedor1.IsAmericano
     return JsonResponse({'IsAmericano': IsAmericano})
 
+
 def Actualizacion(request):
     return render(request, 'update.html')
+
 
 def GetValidacionesCFDIAndOther(request):
     File = request.GET["XML"]
@@ -276,21 +312,25 @@ def GetTipoCambioXML(File):
     TipoCambio = TagComprobante[0].attributes['TipoCambio'].value
     return TipoCambio
 
+
 def GetFolioViajeXML(request):
     try:
-        if request.user.IDTransportista != 1241:
+        if request.user.IDTransportista != 1245:  # http://lgklataforma.blob.core.windows.net/evidencias/152b6b12-8f8f-4328-bb53-ee3ea0a879e7.xml,FTLT1N071220ou012723
             XMLFile = request.GET["XML"]
             FolioToCheck = request.GET["Folio"]
             xml = urllib.request.urlopen(XMLFile)
             XMLToRead = minidom.parse(xml)
             TagConcepto = XMLToRead.getElementsByTagName('cfdi:Concepto')
-            FolioViaje = TagConcepto[0].attributes['Descripcion'].value
-            FindFolioInXML = re.search(FolioToCheck, FolioViaje)
+            for each in TagConcepto:
+                FolioViaje = each.attributes['Descripcion'].value
+                FindFolioInXML = re.search(FolioToCheck, FolioViaje.upper())
+                if FindFolioInXML is not None:
+                    break
             if FindFolioInXML is not None:
                 indexstart = FindFolioInXML.start()
                 indexend = FindFolioInXML.end()
                 FolioInXML = FolioViaje[indexstart:indexend]
-                SameFolio = True if FolioInXML == FolioToCheck else False
+                SameFolio = True if FolioInXML.upper() == FolioToCheck else False
             else:
                 TagNoIdentificacion = XMLToRead.getElementsByTagName('cfdi:Concepto')
                 if 'NoIdentificacion' in TagNoIdentificacion[0].attributes:
@@ -311,7 +351,7 @@ def GetFolioViajeXML(request):
                             FolioInXML = FolioViajeInTagUnidad[indexstart:indexend]
                             SameFolio = True if FolioInXML == FolioToCheck else False
                         else:
-                            SameFolio = GetFolioInTagParte(XMLToRead,FolioToCheck)
+                            SameFolio = GetFolioInTagParte(XMLToRead, FolioToCheck)
                 else:
                     TagUnidad = XMLToRead.getElementsByTagName('cfdi:Concepto')
                     FolioViajeInTagUnidad = TagUnidad[0].attributes['Unidad'].value
@@ -322,16 +362,16 @@ def GetFolioViajeXML(request):
                         FolioInXML = FolioViajeInTagUnidad[indexstart:indexend]
                         SameFolio = True if FolioInXML == FolioToCheck else False
                     else:
-                        SameFolio = GetFolioInTagParte(XMLToRead,FolioToCheck)
+                        SameFolio = GetFolioInTagParte(XMLToRead, FolioToCheck)
         else:
             SameFolio = True
-        return JsonResponse({"Folio":SameFolio})
+        return JsonResponse({"Folio": SameFolio})
     except Exception as e:
         print(e)
-        return JsonResponse({"Folio":False})
+        return JsonResponse({"Folio": False})
 
 
-def GetFolioInTagParte(XMLToRead,FolioToCheck):
+def GetFolioInTagParte(XMLToRead, FolioToCheck):
     try:
         if XMLToRead.getElementsByTagName('cfdi:Parte') != []:
             TagParte = XMLToRead.getElementsByTagName('cfdi:Parte')
@@ -355,7 +395,6 @@ def GetFolioInTagParte(XMLToRead,FolioToCheck):
                     SameFolio = False
         else:
             SameFolio = False
-        print(SameFolio)
         return SameFolio
     except Exception as e:
         print(e)
@@ -366,34 +405,43 @@ def GetFolioInTagParte(XMLToRead,FolioToCheck):
 def MesEnAlertaBloquearFacturas(Fecha):
     months = (
         "Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
-        "Noviembre","Diciembre")
+        "Noviembre", "Diciembre")
     Mes = months[Fecha.month - 1]
     return Mes
 
+
 def DiaEnAlertaBloquearFacturas(Dia):
-    Dyas = ("Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo")
+    Dyas = ("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
     dia = Dyas[Dia]
     return dia
+
 
 def MesEnAlertaCarta(Fecha):
     months = (
         "Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
-        "Noviembre","Diciembre")
+        "Noviembre", "Diciembre")
     Mes = months[Fecha.month - 2]
     return Mes
+
 
 def MesCartaConAdeudo(Fecha):
     months = (
         "Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
-        "Noviembre","Diciembre")
+        "Noviembre", "Diciembre")
     Mes1 = months[Fecha.month - 3]
     return Mes1
 
 
-
 def GetTotalViajesEn1Mes(IDTransportista, RestarMes):
-    CountViajesEnXD = XD_Viajes.objects.exclude(Status='CANCELADO').filter(IDTransportista=IDTransportista,FechaAlta__month=datetime.datetime.now().month - RestarMes).count()
-    CountViajesEnBKG = Bro_Viajes.objects.exclude(StatusProceso = 'CANCELADO').filter(IDTransportista=IDTransportista,FechaAlta__month=datetime.datetime.now().month - RestarMes).count()
+    mes = datetime.datetime.now().month - RestarMes if datetime.datetime.now().month != 1 else (
+        datetime.datetime.now().month + 11 if RestarMes == 1 else datetime.datetime.now().month + 10)
+    year = datetime.datetime.now().year if datetime.datetime.now().month != 1 else datetime.datetime.now().year - 1
+    CountViajesEnXD = XD_Viajes.objects.exclude(Status='CANCELADO').filter(IDTransportista=IDTransportista,
+                                                                           FechaAlta__month=mes,
+                                                                           FechaAlta__year=year).count()
+    CountViajesEnBKG = Bro_Viajes.objects.exclude(StatusProceso='CANCELADO').filter(IDTransportista=IDTransportista,
+                                                                                    FechaAlta__month=mes,
+                                                                                    FechaAlta__year=year).count()
     TieneViajes = True if CountViajesEnXD >= 1 or CountViajesEnBKG >= 1 else False
     return TieneViajes
 
@@ -401,13 +449,12 @@ def GetTotalViajesEn1Mes(IDTransportista, RestarMes):
 def VerificarCartasStatusAprobada(GetLastCartaUpload2):
     NoTieneCartaValidada = True
     for CartaByMes in GetLastCartaUpload2:
-        if CartaByMes.MesCartaNoAdeudo == MesCartaConAdeudo(datetime.datetime.now()) and CartaByMes.Status == "APROBADA" or  CartaByMes.MesCartaNoAdeudo == MesEnAlertaCarta(datetime.datetime.now()) and CartaByMes.Status == "APROBADA":
+        if CartaByMes.MesCartaNoAdeudo == MesCartaConAdeudo(
+                datetime.datetime.now()) and CartaByMes.Status == "APROBADA" or CartaByMes.MesCartaNoAdeudo == MesEnAlertaCarta(
+                datetime.datetime.now()) and CartaByMes.Status == "APROBADA":
             NoTieneCartaValidada = False
             break
     return NoTieneCartaValidada
-
-
-
 
 # def CrearUsuariosTranportistas(request):
 # #editar un usuario
@@ -441,43 +488,41 @@ def VerificarCartasStatusAprobada(GetLastCartaUpload2):
 #
 
 
+# Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
 
-
-    # Proveedores = Proveedor.objects.exclude(Q(RFC__isnull=True)| Q(RFC='')|Q(RFC=None))
-
-#dar de alta un usuario
+# dar de alta un usuario
 ## apartir de aqui crear proveedor
-    # Proveedores = Proveedor.objects.filter(RFC='MLT1103177V1')
-    # for prov in Proveedores:
-    #     try:
-    #         oldUser = AdmonUsuarios.objects.get(nombreusuario = prov.RFC)
-    #     except AdmonUsuarios.DoesNotExist:
-    #         newUser = AdmonUsuarios()
-    #         newUser.nombre = prov.RazonSocial
-    #         newUser.nombreusuario = prov.RFC
-    #         newUser.correo = prov.Correo
-    #         newUser.fechacambiocontrasena = datetime.datetime.now()
-    #         newUser.hasbytes = 0
-    #         newUser.saltbytes = 0
-    #         newUser.periodo = 365
-    #         newUser.statusreg = "ACTIVO"
-    #         newUser.apepaterno = ""
-    #         newUser .apematerno = ""
-    #         newUser.save()
-    #         prov.IDUsuarioAcceso = newUser.idusuario
-    #         prov.save()
-    #         try:
-    #             DjangoUser = User.User.objects.get(username=prov.RFC)
-    #             DjangoUser.IDTransportista = prov.IDTransportista
-    #             DjangoUser.idusuario = newUser.idusuario
-    #         except User.User.DoesNotExist:
-    #             user = User.User(username=prov.RFC)
-    #             user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
-    #             user.email = newUser.correo
-    #             user.idusuario = newUser.idusuario
-    #             user.is_staff = False
-    #             user.roles = "Proveedor"
-    #             user.IDTransportista = prov.IDTransportista
-    #             user.save()
+# Proveedores = Proveedor.objects.filter(RFC='TPL 090216 JZ5')
+# for prov in Proveedores:
+#     try:
+#         oldUser = AdmonUsuarios.objects.get(nombreusuario=prov.RFC)
+#     except AdmonUsuarios.DoesNotExist:
+#         newUser = AdmonUsuarios()
+#         newUser.nombre = prov.RazonSocial
+#         newUser.nombreusuario = prov.RFC
+#         newUser.correo = prov.Correo
+#         newUser.fechacambiocontrasena = datetime.datetime.now()
+#         newUser.hasbytes = 0
+#         newUser.saltbytes = 0
+#         newUser.periodo = 365
+#         newUser.statusreg = "ACTIVO"
+#         newUser.apepaterno = ""
+#         newUser .apematerno = ""
+#         newUser.save()
+#         prov.IDUsuarioAcceso = newUser.idusuario
+#         prov.save()
+#         try:
+#             DjangoUser = User.User.objects.get(username=prov.RFC)
+#             DjangoUser.IDTransportista = prov.IDTransportista
+#             DjangoUser.idusuario = newUser.idusuario
+#         except User.User.DoesNotExist:
+#             user = User.User(username=prov.RFC)
+#             user.name = newUser.nombre+" "+newUser.apepaterno+" "+newUser.apematerno
+#             user.email = newUser.correo
+#             user.idusuario = newUser.idusuario
+#             user.is_staff = False
+#             user.roles = "Proveedor"
+#             user.IDTransportista = prov.IDTransportista
+#             user.save()
 
-    # fin dar de alta un usuario
+# fin dar de alta un usuario

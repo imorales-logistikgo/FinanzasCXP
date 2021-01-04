@@ -24,7 +24,7 @@ class PendientesEnviar(models.Model):
 
 
 class Ext_PendienteEnviar_Costo(models.Model):
-    IDPendienteEnviar = models.OneToOneField(PendientesEnviar, on_delete=models.CASCADE, db_column = 'IDPendienteEnviar', primary_key=True)
+    IDPendienteEnviar = models.OneToOneField(PendientesEnviar, on_delete=models.CASCADE, db_column='IDPendienteEnviar', primary_key=True)
     CostoSubtotal = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     CostoIVA = models.DecimalField(default=0, max_digits=30, decimal_places=5)
     CostoRetencion = models.DecimalField(default=0, max_digits=30, decimal_places=5)
