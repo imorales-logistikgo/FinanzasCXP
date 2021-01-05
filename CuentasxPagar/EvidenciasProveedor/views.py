@@ -621,7 +621,7 @@ def SaveEvidenciaFisica(request):
                             SaveEvFisicaAdmon.IsEvidenciaFisica = True
                             SaveEvFisicaAdmon.save()
                             #request.get("http://api-admon-demo.logistikgo.com/api/Usuarios/SaveFolioHojaLiberacion", params = {"IDConcepto":SaveEvFisica.IDBro_Viaje.IDBro_Viaje, "Proyecto":"BKG"})
-                    elif "XDDMNB" in jParams["TipoEvidencia"]:
+                    elif "XDDMNB" in str(jParams["TipoEvidencia"]):
                        SaveEvFisicaServicio = XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje=jParams['IDPedido'])
                        SaveEvFisicaServicio.IsEvidenciaFisicaAprobada = True
                        SaveEvFisicaServicio.FechaEvidenciaFisicaxPedidoxViaje = datetime.datetime.now()
@@ -642,15 +642,15 @@ def SaveEvidenciaFisica(request):
                            #APIHojaLiberacionServicios(SaveEvFisicaServicio.IDServicio.IDServicio)
                            return HttpResponse(status=200)
                     else:
-                        SaveEvidenciaPedidosxViaje = XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje=jParams['IDPedido']) if(jParams["TipoEvidencia"] == 'FOLIO' or jParams["TipoEvidencia"] == 'CORREO') else XD_PedidosxViajes.objects.get(XD_IDPedido = jParams['IDPedido'], XD_IDViaje = jParams['IDViaje'])
-                        if jParams["TipoEvidencia"] == 'FOLIO' or jParams["TipoEvidencia"] == 'CORREO':
+                        SaveEvidenciaPedidosxViaje = XD_EvidenciasxViaje.objects.get(IDEvidenciaxViaje=jParams['IDPedido']) if(str(jParams["TipoEvidencia"]) == 'FOLIO' or str(jParams["TipoEvidencia"]) == 'CORREO') else XD_PedidosxViajes.objects.get(XD_IDPedido = jParams['IDPedido'], XD_IDViaje = jParams['IDViaje'])
+                        if str(jParams["TipoEvidencia"]) == 'FOLIO' or str(jParams["TipoEvidencia"]) == 'CORREO':
                             SaveEvidenciaPedidosxViaje.IsEvidenciaFisicaAprobada = True
                         else:
                             SaveEvidenciaPedidosxViaje.IsEvidenciaFisicaPedidoxViaje = True
                         SaveEvidenciaPedidosxViaje.IDUsuarioEvFisica = request.user.idusuario
                         SaveEvidenciaPedidosxViaje.FechaEvidenciaFisicaxPedidoxViaje = datetime.datetime.now()
                         SaveEvidenciaPedidosxViaje.save()
-                        if jParams["TipoEvidencia"] != 'FOLIO' or jParams["TipoEvidencia"] != 'CORREO':
+                        if str(jParams["TipoEvidencia"]) != 'FOLIO' or str(jParams["TipoEvidencia"]) != 'CORREO':
                             IsExpress = XD_Viajes.objects.get(XD_IDViaje=jParams['IDViaje'])
                             if IsExpress.TipoViaje == 'XPRESS':
                                 GetIDPE = RelacionConceptoxProyecto.objects.filter(IDConcepto=jParams['IDPedido']).values("IDPendienteEnviar")
@@ -1292,7 +1292,7 @@ def CountTotalEvidencias(Pedidos):
 
 def AllEvServiciosTrue(request,IDServicio=""):
     try:
-        Servicio = IDServicio if IDServicio!="" else request.GET["IDViaje"]
+        Servicio = IDServicio if IDServicio !="" else request.GET["IDViaje"]
         AllEvidenciasServicios = list()
         for eachEv in XD_EvidenciasxViaje.objects.filter(IDServicio=Servicio):
             AllEvidenciasServicios.append(eachEv.IsValidada)

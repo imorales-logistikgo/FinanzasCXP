@@ -9,7 +9,7 @@
 				<thead>
                 <tr>
                     <th class="text-center" style="width:300px">Transportista</th>
-                    {% if request.user.username == 'cxp3@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.is_superuser %}
+                    {% if request.user.username == 'cxp1@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.is_superuser %}
                     <th class="text-center">Correos</th>
                     <th class="text-center">Agregar</th>
                     {% endif %}
@@ -20,7 +20,7 @@
                 {% for Proveedor in Proveedores %}
                 <tr>
                     <td class="text-center">{{Proveedor.RazonSocial}}</td>
-                    {% if request.user.username == 'cxp3@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.is_superuser %}
+                    {% if request.user.username == 'cxp1@logistikgo' or request.user.username == 'jcastillo@logistikgo' or request.user.is_superuser %}
                     <td class="text-center">{% if Proveedor.Correo != None %}<a href="#detallesCorreos"
                                                                                 data-toggle="modal"
                                                                                 data-backdrop="static"

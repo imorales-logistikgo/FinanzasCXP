@@ -485,7 +485,7 @@ var GetValidacionCFDIAndOther = function(XML){
     });
 }
 
-var GetFolioViajeXML = function(XML,Folio){
+var GetFolioViajeXML = function(XML,Folio, id){
   $.ajax({
         url: `/PendientesEnviar/GetFolioViajeXML?XML=${XML}&Folio=${Folio}`,
         type: 'GET',

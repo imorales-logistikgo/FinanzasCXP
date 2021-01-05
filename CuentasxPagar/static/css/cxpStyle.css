@@ -5,6 +5,7 @@
 .dataTables_scrollHeadInner
 {
   box-sizing: content-box !important;
+  /*width: auto !important;*/
   width: max-content !important;
   padding-right: 0px !important;
   /*display: initial;*/
@@ -14,7 +15,8 @@ footer{
   position: fixed;
   bottom: 0;
   width: 100%;
-  background: #757376;
+  /*background: #757376;*/
+  background: #040131;
   z-index: 1051;
 }
 
@@ -171,3 +173,6 @@ input[name="checkEC"]:checked
 {
   height: 700px;
 }
+
+
+

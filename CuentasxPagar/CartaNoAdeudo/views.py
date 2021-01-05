@@ -43,7 +43,7 @@ def GetCartaNoAdeudo(request):
         if not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1) and not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 2):
             resp = '<h2>Carta no disponible</h2>'
             return HttpResponse(resp)
-        elif FechaDescargaCarta.FechaDescargaCartaNoAdeudo is not None and FechaDescargaCarta.FechaDescargaCartaNoAdeudo.month -1 == datetime.datetime.now().month -1:
+        elif FechaDescargaCarta.FechaDescargaCartaNoAdeudo is not None and (FechaDescargaCarta.FechaDescargaCartaNoAdeudo.month -1 if datetime.datetime.now().month != 1 else FechaDescargaCarta.FechaDescargaCartaNoAdeudo.month+11) == (datetime.datetime.now().month -1 if datetime.datetime.now().month != 1 else datetime.datetime.now().month +11):
             resp = '<h2>Solo se puede descargar la carta una sola vez</h2>'
             return HttpResponse(resp)
         else:
@@ -56,8 +56,7 @@ def GetCartaNoAdeudo(request):
                 date = datetime.datetime.now()
                 months = (
                     "Enero", "Febrero", "Marzo", "Abri", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
-                    "Noviembre",
-                    "Diciembre")
+                    "Noviembre", "Diciembre")
                 day = date.day
                 NombreProveedor = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
                 month = months[date.month - 1]
@@ -85,11 +84,14 @@ def GetCartaNoAdeudo(request):
                 c.drawString(100, 500, "Gerente de Finanzas")
                 para = Paragraph(
                     "Por medio de la presente me dirijo a usted para informar que no existen pendientes de facturar y/o cobrar "
-                    "por parte de " + NombreProveedor.RazonSocial + " anteriores al " + str(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month-1 if GetViajesThisMonth else datetime.datetime.now().month-2)[1])+ " "+ months[
-                        date.month - 2 if GetViajesThisMonth else date.month - 3] + " " + str(year) + ", quedando pendiente por conciliar el periodo " + months[
-                        date.month - 1 if GetViajesThisMonth else date.month - 2] + "-" + months[12 - 1] + " " + str(year) + ", para concluir "
-                    "satisfactoriamente y cerrar el ejercicio " + str(
-                        year) + ".", p)
+                    "por parte de " + NombreProveedor.RazonSocial + " anteriores al " + str(
+                        calendar.monthrange(datetime.datetime.now().year,
+                                            datetime.datetime.now().month if GetViajesThisMonth else datetime.datetime.now().month)[
+                            1]) + " " + months[
+                        date.month - 2 if GetViajesThisMonth else date.month - 3] + " " + str(
+                        year if date.month != 1 else year-1)+ ", para concluir "
+                                "satisfactoriamente y cerrar el ejercicio " + str(
+                        year if date.month != 1 else year-1) + ".", p)
                 para.wrapOn(c, 420, 600)
                 para.drawOn(c, 100, 350)
                 c.drawString(100, 300, "Sin más por el momento reciba un cordial saludo.")
@@ -104,7 +106,7 @@ def GetCartaNoAdeudo(request):
                 pdf = bufferMemoria.getvalue()
                 bufferMemoria.close()
                 response = HttpResponse(content_type="application/pdf")
-                response['Content-Disposition'] = 'attachment; filename="CartaNoAdeudo.pdf"'
+                response['Content-Disposition'] = 'attachment; filename="CartaNoAdeudo-PendienteFacturar.pdf"'
                 response.write(pdf)
                 return response
     except Exception as e:
@@ -114,23 +116,38 @@ def GetCartaNoAdeudo(request):
 
 
 
+# para = Paragraph(
+#                     "Por medio de la presente me dirijo a usted para informar que no existen pendientes de facturar y/o cobrar "
+#                     "por parte de " + NombreProveedor.RazonSocial + " anteriores al " + str(
+#                         calendar.monthrange(datetime.datetime.now().year,
+#                                             datetime.datetime.now().month if GetViajesThisMonth else datetime.datetime.now().month)[
+#                             1]) + " " + months[
+#                         date.month - 2 if GetViajesThisMonth else date.month - 3] + " " + str(
+#                         year) + ", quedando pendiente por conciliar el periodo " + months[
+#                         date.month - 1 if GetViajesThisMonth else date.month - 2] + "-" + months[12 - 1] + " " + str(
+#                         year) + ", para concluir "
+#                                 "satisfactoriamente y cerrar el ejercicio " + str(
+#                         year) + ".", p)
+
+
+
 def SaveCartaNoAdeudo(request):
     try:
         jParams = json.loads(request.body.decode('utf-8'))
         GetViajesThisMonth = views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1)
         if jParams["Tipo"] == "MesaControl":
-            a = MC.SaveCartaNoAdeudo(request,jParams)
+            a = MC.SaveCartaNoAdeudo(request, jParams)
             return HttpResponse(status=a)
         if GetViajesThisMonth:
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
                 IDTransportista=request.user.IDTransportista,
                 Status__in=('PENDIENTE', 'APROBADA'),
                 MesCartaNoAdeudo=MesCartaNoAdeudo(
-                    datetime.datetime.now(), 2), Tipo=jParams["Tipo"]).exists()
+                    datetime.datetime.now(), 2), Tipo=jParams["Tipo"], FechaAlta__year=datetime.datetime.now().year if datetime.datetime.now().month != 1 else datetime.datetime.now().year-1).exists()
         else:
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
                 IDTransportista=request.user.IDTransportista, Status__in=('PENDIENTE', 'APROBADA'),
-                MesCartaNoAdeudo=MesCartaNoAdeudo(datetime.datetime.now(), 3)).exists()
+                MesCartaNoAdeudo=MesCartaNoAdeudo(datetime.datetime.now(), 3), Tipo=jParams["Tipo"], FechaAlta__year=datetime.datetime.now().year-1 if datetime.datetime.now().month == 1 or datetime.datetime.now().month == 2 else datetime.datetime.now().year).exists()
         # if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
         if not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1) and not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 2):
             return HttpResponse(status=500)
@@ -162,6 +179,7 @@ def MesCartaNoAdeudo(Fecha, restarMes):
         "Noviembre",
         "Diciembre")
     MesCarta = months[Fecha.month - restarMes]
+    print(MesCarta)
     return MesCarta
 
 def AprobarCarta(request):
@@ -206,10 +224,10 @@ def upload(request):
         GetViajesThisMonth = views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1)
         if GetViajesThisMonth:
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
-                IDTransportista=request.user.IDTransportista, Status__in=("PENDIENTE", "APROBADA"), MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(), 2), Tipo='CXP').exists()
+                IDTransportista=request.user.IDTransportista, Status__in=("PENDIENTE", "APROBADA"), MesCartaNoAdeudo=MesCartaNoAdeudo(datetime.datetime.now(), 2), Tipo='CXP').exists()
         else:
             GetLastCartaUpload = CartaNoAdeudoTransportistas.objects.filter(
-                IDTransportista=request.user.IDTransportista, Status__in=("PENDIENTE", "APROBADA"), MesCartaNoAdeudo = MesCartaNoAdeudo(datetime.datetime.now(), 3), Tipo='CXP').exists()
+                IDTransportista=request.user.IDTransportista, Status__in=("PENDIENTE", "APROBADA"), MesCartaNoAdeudo=MesCartaNoAdeudo(datetime.datetime.now(), 3), Tipo='CXP').exists()
 
         # if GetLastCartaUpload.MesCartaNoAdeudo == MesCartaNoAdeudo(datetime.datetime.now()) if GetLastCartaUpload is not None else False:
         if not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 1) and not views.GetTotalViajesEn1Mes(request.user.IDTransportista, 2):

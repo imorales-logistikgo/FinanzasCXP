@@ -61,7 +61,7 @@ end:: Header Mobile -->
 			<div class="kt-aside-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_aside_menu_wrapper">
 				<div id="kt_aside_menu" class="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1" data-ktmenu-dropdown-timeout="500">
 					<ul class="kt-menu__nav ">
-						{% if request.user.is_superuser or request.user.username == 'cxp3@logistikgo' or request.user.username == 'wbarrones@logistikgo' or request.user.username == 'jcastillo@logistikgo' %}
+						{% if request.user.is_superuser or request.user.username == 'cxp1@logistikgo' or request.user.username == 'wbarron@logistikgo' or request.user.username == 'jcastillo@logistikgo' %}
 <!--						<li class="kt-menu__section ">-->
 <!--							<h4 class="kt-menu__section-text">Administrador</h4>-->
 <!--							<i class="kt-menu__section-icon flaticon-more-v2"></i>-->
@@ -83,7 +83,7 @@ end:: Header Mobile -->
 						<li class="kt-menu__item {% block activateEstadosCuenta %} {% endblock %}" aria-haspopup="true"><a href="{% url 'EstadosCuenta' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas fa-money-bill-wave"></i><span class="kt-menu__link-text">Estados de cuenta</span></a></li>
 						{% endif %}
 
-						{% if request.user.roles == "CXP" or request.user.roles == "Proveedor" or request.user.roles == 'Contabilidad' or request.user.is_superuser%}
+						{% if request.user.roles == "CXP" or request.user.roles == "Proveedor" or request.user.roles == 'Contabilidad' or request.user.username == 'wbarron@logistikgo' or request.user.is_superuser%}
 						<li class="kt-menu__section ">
 							<h4 class="kt-menu__section-text">Reportes</h4>
 							<i class="kt-menu__section-icon flaticon-more-v2"></i>
@@ -97,7 +97,7 @@ end:: Header Mobile -->
 						<li class="kt-menu__item {% block activateReporteCanceladas %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteCanceladas' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Facturas Canceladas</span></a></li>
 						<li class="kt-menu__item {% block activateReportePagosCancelados %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReportePagosCancelados' %}" class="kt-menu__link "><i class="kt-menu__link-icon flaticon-cancel"></i><span class="kt-menu__link-text">Pagos cancelados</span></a></li>
 						<li class="kt-menu__item {% block activateReporteMaster %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteMaster' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas flaticon-list-1"></i><span class="kt-menu__link-text">Master</span></a></li>
-						{% if request.user.username == "wbarrones@logistikgo" or request.user.is_superuser %}
+						{% if request.user.username == "wbarron@logistikgo" or request.user.is_superuser %}
 						<li class="kt-menu__item {% block activateReporteGeneral %} {% endblock %}" aria-haspopup="true"><a href="{% url 'ReporteGeneral' %}" class="kt-menu__link "><i class="kt-menu__link-icon fas flaticon-list-1"></i><span class="kt-menu__link-text">General</span></a></li>
 						{% endif %}
 						{% endif %}
@@ -153,7 +153,7 @@ end:: Header Mobile -->
 					<!--begin: User Bar -->
 					<div class="kt-header__topbar-item kt-header__topbar-item--user">
 						<div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="0px,0px">
-							<img alt="Logo" src='{% static "img\navidad.png" %}' width="40" height="40"/>
+<!--							<img alt="Logo" src='{% static "img\navidad.png" %}' width="40" height="40"/>-->
 							<div class="kt-header__topbar-user">
 								<span class="kt-header__topbar-welcome kt-hidden-mobile">Hola,</span>
 								<span class="kt-header__topbar-username kt-hidden-mobile">{{request.user.name}}</span>

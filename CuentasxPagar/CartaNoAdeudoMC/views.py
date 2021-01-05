@@ -49,7 +49,7 @@ def CartaNoAdeudoMC(request):
 
 
 def CreateCartaNoadeudoMC(request):
-    if request.user.username == 'cxp3@logistikgo':
+    if request.user.username == 'cxp1@logistikgo':
        pdf=Admin.CreateCartaNoAdeudoCXP(request.GET["IDProveedor"])
        response = HttpResponse(content_type="application/pdf")
        response['Content-Disposition'] = 'attachment; filename="CartaNoAdeudo-PendienteFacturar.pdf"'
@@ -68,8 +68,9 @@ def CreateCartaNoadeudoMC(request):
                 with transaction.atomic(using='users'):
                     # FechaDescargaC = Proveedor.objects.get(IDTransportista=request.user.IDTransportista)
                     if request.user.roles == "Proveedor":
-                        FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC = datetime.datetime.now()
-                        FechaDescargaCarta.save()
+                        print(1)
+                        # FechaDescargaCarta.FechaDescargaCartaNoAdeudoMC = datetime.datetime.now()
+                        # FechaDescargaCarta.save()
                     w, h = A4
                     date = datetime.datetime.now()
                     months = (
@@ -106,7 +107,7 @@ def CreateCartaNoadeudoMC(request):
                     para = Paragraph(
                         "Por medio de la presente me dirijo a usted para informar que no existen viajes pendientes de Hoja de Liberación "
                         "por parte de Logisti-k a " + NombreProveedor.RazonSocial + " al 20 de " + months[
-                            date.month - GetMonth(request)] + " del " + str(year) + ".", p)
+                            date.month - GetMonth(request)] + " del " + str(year if date.month != 1 else year-1) + ".", p)
                     para.wrapOn(c, 420, 600)
                     para.drawOn(c, 100, 350)
                     c.drawString(100, 300, "Sin más por el momento reciba un cordial saludo.")

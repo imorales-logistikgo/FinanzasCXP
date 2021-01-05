@@ -29,7 +29,7 @@ from PendientesEnviar import views
 
 @login_required
 def Dashboard(request):
-    if request.user.username == 'cxp3@logistikgo' or request.user.is_superuser:
+    if request.user.username == 'cxp1@logistikgo' or request.user.is_superuser:
         form = FormCreateUser()
         GetProveedores = User.User.objects.filter(roles='Proveedor').values('id', 'name', 'is_active', 'last_login',
                                                                             'idusuario')
