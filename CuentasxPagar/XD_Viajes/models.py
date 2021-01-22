@@ -117,7 +117,8 @@ class ServiciosXD(models.Model):
     IsEvidenciaFisica = models.BooleanField()
     FechaEvidenciaDigital = models.DateTimeField()
     FechaEvidenciaFisica = models.DateTimeField()
-
+    IsDescargaHojaLiberacion = models.BooleanField()
+    RutaHojaEmbarqueCosto = models.CharField(max_length=300)
     class Meta:
         managed = False
         db_table = 'Servicios'

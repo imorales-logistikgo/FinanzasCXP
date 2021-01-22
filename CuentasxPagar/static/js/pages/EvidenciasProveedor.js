@@ -329,11 +329,12 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {};
     $('#SubirEvidenciaMC').empty();
   });
 
-  //HOJA DE LIBERACION
+  //HOJA DE LIBERACION PROVEEDOR
     $(document).on('click', '#BtnHojaLiberacion', function(){
       WaitMe_ShowBtn('#BtnHojaLiberacion')
       var IDViajeHoja = $(this).data('IDViajeHL');
-      $(this).data('TipoEvidenciaHL') == 'Servicio' ? (alertToastError("Hoja de liberacion no disponible"), WaitMe_HideBtn('#BtnHojaLiberacion')) : GetHojaLiberacion(IDViajeHoja, $(this).data('TipoEvidenciaHL'))
+      GetHojaLiberacion(IDViajeHoja, $(this).data('TipoEvidenciaHL'));
+//      $(this).data('TipoEvidenciaHL') == 'Servicio' ? (alertToastError("Hoja de liberacion no disponible"), WaitMe_HideBtn('#BtnHojaLiberacion')) : GetHojaLiberacion(IDViajeHoja, $(this).data('TipoEvidenciaHL'))
     });
 
 
